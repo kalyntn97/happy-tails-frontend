@@ -16,9 +16,15 @@
     ],
     "ios": {
       "supportsTablet": true,
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      },
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "bundleIdentifier": "com.anonymous.happy-tails-frontend"
     },
     "android": {
       "adaptiveIcon": {
