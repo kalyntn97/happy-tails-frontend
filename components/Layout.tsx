@@ -9,17 +9,19 @@ import HomeScreen from '../screens/HomeScreen'
 import SettingsScreen from '../screens/SettingsScreen'
 import LoginScreen from '../screens/LoginScreen'
 import PetsScreen from '../screens/PetsScreen'
+//styles
+import { Colors } from '../styles'
 
 const Layout: React.FC = () => {
   const Tab = createBottomTabNavigator()
-  const { authState, onLogout } = useAuth()
+  const { authState } = useAuth()
   return ( 
     <NavigationContainer>
       <Tab.Navigator
         initialRouteName='Home'
         screenOptions={({ route }) => ({
           tabBarLabel: ({ focused }) => (
-            <Text style={{ color: focused ? 'pink' : 'gray', fontSize: 14, fontWeight: 'bold' }}>
+            <Text style={{ color: focused ? Colors.darkPink : 'gray', fontSize: 14, fontWeight: 'bold' }}>
               {route.name}
             </Text>
           ),
@@ -32,17 +34,19 @@ const Layout: React.FC = () => {
               icon = focused ? require('../assets/icons/pets-active.png') : require('../assets/icons/pets-inactive.png')
             } else if (route.name === 'Settings') {
               icon = focused ? require('../assets/icons/settings-active.png') : require('../assets/icons/settings-inactive.png')
+            } else if (route.name === 'Login') {
+              icon = focused ? require('../assets/icons/login-active.png') : require('../assets/icons/login-inactive.png')
             }
 
-            return <Image source={icon} style={{width: 40, height: 40}} />
+            return <Image source={icon} style={{ width: 40, height: 40 }} />
           },
-          tabBarActiveTintColor: 'pink',
+          tabBarActiveTintColor: Colors.darkestPink,
           tabBarInactiveTintColor: 'gray',
           tabBarStyle: { padding : 10, height: 100 },
           headerStyle: {
-            backgroundColor: 'pink',
+            backgroundColor: Colors.pink,
           },
-          headerTintColor: 'white',
+          headerTintColor: Colors.lightestPink,
           headerTitleStyle: {
             fontSize: 20
           }

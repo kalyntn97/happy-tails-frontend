@@ -1,8 +1,11 @@
 //npm modules
 import { useState } from 'react'
-import { View, StyleSheet, TextInput, Button } from 'react-native'
+import { View, StyleSheet, TextInput, Button, Pressable, Text } from 'react-native'
+import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from '../context/AuthContext'
+//styles
+import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 const LoginScreen = () => {
   const [username, setUserName] = useState('')
@@ -27,6 +30,8 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
+      <LottieView source={require('../assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
+      <Text style={styles.header}>Sign in</Text>
       <View style={styles.form}>
         <TextInput 
           style={styles.input} 
@@ -42,8 +47,12 @@ const LoginScreen = () => {
           value={password} 
           secureTextEntry={true}
         />
-        <Button onPress={login} title='Sign in' />
-        <Button onPress={register} title='Create Account' />
+        <Pressable onPress={login} style={styles.mainButton}>
+          <Text style={styles.buttonText}>Sign in</Text>
+        </Pressable>
+        <Pressable onPress={register} style ={styles.subButton}>
+          <Text style={styles.buttonText}>Create Account</Text>
+        </Pressable>
       </View>
     </View>
   )
@@ -51,18 +60,36 @@ const LoginScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...Spacing.centered
+  },
+  catAnimation: {
+    width: '60%',
+  },
+  header: {
+    ...Typography.mainHeader,
+    marginTop: 0,
+    color: Colors.darkPink,
+  },
+  form: {
+    ...Forms.form,
   },
   input: {
-    height: 40,
-    width: '80%',
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 20,
-    padding: 10,
+    ...Forms.input,
+    borderColor: Colors.pink,
   },
+  mainButton: {
+    ...Buttons.smallRounded,
+    marginTop: 50,
+    backgroundColor: Colors.pink
+  },
+  subButton: {
+    ...Buttons.smallSub,
+    borderColor: Colors.darkestPink
+  },
+  buttonText: {
+    ...Buttons.buttonText,
+    color: Colors.darkestPink
+  }
 })
 
 export default LoginScreen

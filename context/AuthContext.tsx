@@ -49,39 +49,10 @@ export const AuthProvider = ({children}: any) => {
 
   const login = async (username: string, password: string) => {
     try {
-      // const response = await fetch(`${BASE_URL}/login`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     Accept: 'application/json',
-      //   },
-      //   body: JSON.stringify({ username, password }),
-      // });
-  
-      // if (!response.ok) {
-      //   throw new Error('Network response was not ok');
-      // }
-  
-      // const result = await response.json();
-      
-      // console.log('file: AuthContext.tsx:41 ~ login ~ result:', result);
-  
-      // setAuthState({
-      //   token: result.token,
-      //   authenticated: true,
-      // });
-  
-      // axios.defaults.headers.common['Authorization'] = `Bearer ${result.token}`;
-  
-      // // Save the token using SecureStore or any other secure storage mechanism
-      // await SecureStore.setItemAsync(TOKEN_KEY, result.token);
-  
-      // return result;
       const result = await axios.post(
         `${BASE_URL}/login`, 
         { username, password }
       )
-      // const result = await axios.post(`${API_URL}/auth`, { username, password })
       console.log('file: AuthContext.tsx:41 ~ login ~ result:', result)
       setAuthState({
         token: result.data.token, authenticated: true
