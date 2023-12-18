@@ -54,14 +54,14 @@ const Layout: React.FC = () => {
       >
         {authState?.authenticated ? (
           <>
-            <Tab.Screen name='Home' component={HomeScreen} />
-            <Tab.Screen name='Pets' component={PetsScreen} />
-            <Tab.Screen name='Settings' component={SettingsScreen} />
+            <Tab.Screen name='Home' component={HomeScreen} options={{title: 'Welcome'}}/>
+            <Tab.Screen name='Pets' component={PetsScreen} options={{title: 'Your Pets'}}/>
+            <Tab.Screen name='Settings' component={SettingsScreen} options={{title: 'Settings'}}/>
           </>
         ) : (
           <>
-            <Tab.Screen name='Home' component={HomeScreen} />
-            <Tab.Screen name='Login' component={LoginScreen} />
+            <Tab.Screen name='Home' component={HomeScreen} options={{title: 'Welcome'}}/>
+            <Tab.Screen name='Login' component={LoginScreen} options={{title: 'Sign In'}}/>
           </>
         )}
       </Tab.Navigator>
