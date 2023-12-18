@@ -7,32 +7,41 @@ import { useAuth } from '../context/AuthContext'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
-const LoginScreen: React.FC = () => {
+const RegisterScreen = () => {
+  const [name, setName] = useState<string>('')
   const [username, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [passwordConf, setPasswordConf] = useState<string>('')
   const { onLogin, onRegister } = useAuth()
 
-  const login = async () => {
-    const result = await onLogin!(username, password)
-    if (result && result.error) {
-      alert(result.status)
-    }
-  }
-
   const register = async () => {
-    const result = await onRegister!(username, password)
-    if (result && result.error) {
-      alert(result.msg)
+    if (password === passwordConf) {
+      const result = await onRegister!(name, username, password)
+      console.log(result)
+      if (result && result.error) {
+        alert(result.msg)
+      } else {
+        const next = await onLogin!(username, password)
+        if (next && next.error) {
+          alert(next.status)
+        }
+      }
     } else {
-      login()
+      alert('Passwords do not match!')
     }
   }
 
-  return (
+  return ( 
     <View style={styles.container}>
-      <LottieView source={require('../assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
-      <Text style={styles.header}>Sign in</Text>
+      {/* <LottieView source={require('../assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} /> */}
+      <Text style={styles.header}>Create Account</Text>
       <View style={styles.form}>
+        <TextInput 
+          style={styles.input} 
+          placeholder='Name' 
+          onChangeText={(text: string) => setName(text)} 
+          value={name} 
+        />
         <TextInput 
           style={styles.input} 
           placeholder='Username' 
@@ -47,24 +56,28 @@ const LoginScreen: React.FC = () => {
           value={password} 
           secureTextEntry={true}
         />
-        <Pressable onPress={login} style={styles.mainButton}>
-          <Text style={styles.buttonText}>Sign in</Text>
-        </Pressable>
-        <Pressable onPress={register} style ={styles.subButton}>
-          <Text style={styles.buttonText}>Create Account</Text>
+        <TextInput 
+          style={styles.input} 
+          placeholder='Confirm Password' 
+          onChangeText={(text: string) => setPasswordConf(text)} 
+          value={passwordConf} 
+          secureTextEntry={true}
+        />
+        <Pressable onPress={register} style={styles.mainButton}>
+          <Text style={styles.buttonText}>Register</Text>
         </Pressable>
       </View>
     </View>
   )
 }
-
+ 
 const styles = StyleSheet.create({
   container: {
     ...Spacing.centered
   },
-  catAnimation: {
-    width: '60%',
-  },
+  // catAnimation: {
+  //   width: '60%',
+  // },
   header: {
     ...Typography.mainHeader,
     marginTop: 0,
@@ -82,14 +95,10 @@ const styles = StyleSheet.create({
     marginTop: 50,
     backgroundColor: Colors.pink
   },
-  subButton: {
-    ...Buttons.smallSub,
-    borderColor: Colors.darkestPink
-  },
   buttonText: {
     ...Buttons.buttonText,
     color: Colors.darkestPink
   }
 })
 
-export default LoginScreen
+export default RegisterScreen

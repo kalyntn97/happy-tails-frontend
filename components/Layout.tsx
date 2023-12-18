@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext'
 //screens
 import HomeScreen from '../screens/HomeScreen'
 import SettingsScreen from '../screens/SettingsScreen'
-import LoginScreen from '../screens/LoginScreen'
+import LoginStackScreen from '../screens/LoginStackScreen'
 import PetsScreen from '../screens/PetsScreen'
 //styles
 import { Colors } from '../styles'
@@ -34,7 +34,7 @@ const Layout: React.FC = () => {
               icon = focused ? require('../assets/icons/pets-active.png') : require('../assets/icons/pets-inactive.png')
             } else if (route.name === 'Settings') {
               icon = focused ? require('../assets/icons/settings-active.png') : require('../assets/icons/settings-inactive.png')
-            } else if (route.name === 'Login') {
+            } else if (route.name === 'Profile') {
               icon = focused ? require('../assets/icons/login-active.png') : require('../assets/icons/login-inactive.png')
             }
 
@@ -61,7 +61,7 @@ const Layout: React.FC = () => {
         ) : (
           <>
             <Tab.Screen name='Home' component={HomeScreen} options={{title: 'Welcome'}}/>
-            <Tab.Screen name='Login' component={LoginScreen} options={{title: 'Sign In'}}/>
+            <Tab.Screen name='Profile' component={LoginStackScreen} options={{ title: 'Profile' }}/>
           </>
         )}
       </Tab.Navigator>
