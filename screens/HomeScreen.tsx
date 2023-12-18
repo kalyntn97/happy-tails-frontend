@@ -1,9 +1,11 @@
-import { View, Text } from "react-native"
+import { View, Text, Pressable } from "react-native"
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   return ( 
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
+      <Pressable onPress={() => navigation.navigate('Login')}>
+        <Text>Sign in here</Text>
+      </Pressable>
     </View>
   )
 }

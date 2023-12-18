@@ -1,5 +1,5 @@
 //npm modules
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { View, StyleSheet, TextInput, Button, Pressable, Text } from 'react-native'
 import LottieView from 'lottie-react-native'
 //context
@@ -7,9 +7,9 @@ import { useAuth } from '../context/AuthContext'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
-const LoginScreen = () => {
-  const [username, setUserName] = useState('')
-  const [password, setPassword] = useState('')
+const LoginScreen: React.FC = () => {
+  const [username, setUserName] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
   const { onLogin, onRegister } = useAuth()
 
   const login = async () => {
