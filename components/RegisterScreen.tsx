@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   // },
   header: {
     ...Typography.mainHeader,
-    marginTop: 0,
+    marginTop: '20%',
     color: Colors.darkPink,
   },
   form: {

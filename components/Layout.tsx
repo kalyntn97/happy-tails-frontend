@@ -34,7 +34,7 @@ const Layout: React.FC = () => {
               icon = focused ? require('../assets/icons/pets-active.png') : require('../assets/icons/pets-inactive.png')
             } else if (route.name === 'Settings') {
               icon = focused ? require('../assets/icons/settings-active.png') : require('../assets/icons/settings-inactive.png')
-            } else if (route.name === 'Profile') {
+            } else if (route.name === 'Account') {
               icon = focused ? require('../assets/icons/login-active.png') : require('../assets/icons/login-inactive.png')
             }
 
@@ -61,7 +61,7 @@ const Layout: React.FC = () => {
         ) : (
           <>
             <Tab.Screen name='Home' component={HomeScreen} options={{title: 'Welcome'}}/>
-            <Tab.Screen name='Profile' component={LoginStackScreen} options={{ title: 'Profile' }}/>
+            <Tab.Screen name='Account' component={LoginStackScreen} options={{ title: 'Account' }}/>
           </>
         )}
       </Tab.Navigator>

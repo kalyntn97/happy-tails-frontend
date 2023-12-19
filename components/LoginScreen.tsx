@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   mainButton: {
     ...Buttons.smallRounded,
-    marginTop: 50,
+    marginTop: 40,
     backgroundColor: Colors.pink
   },
   subButton: {
