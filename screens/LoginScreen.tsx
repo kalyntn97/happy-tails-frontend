@@ -1,30 +1,21 @@
 //npm modules
-import { useState } from 'react'
-import { View, StyleSheet, TextInput, Button, Pressable, Text } from 'react-native'
+import React, { useState } from 'react'
+import { View, StyleSheet, TextInput, Pressable, Text } from 'react-native'
 import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from '../context/AuthContext'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
-const LoginScreen = () => {
-  const [username, setUserName] = useState('')
-  const [password, setPassword] = useState('')
-  const { onLogin, onRegister } = useAuth()
+const LoginScreen: React.FC = ({ navigation }) => {
+  const [username, setUserName] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const { onLogin } = useAuth()
 
   const login = async () => {
     const result = await onLogin!(username, password)
     if (result && result.error) {
       alert(result.status)
-    }
-  }
-
-  const register = async () => {
-    const result = await onRegister!(username, password)
-    if (result && result.error) {
-      alert(result.msg)
-    } else {
-      login()
     }
   }
 
@@ -50,7 +41,7 @@ const LoginScreen = () => {
         <Pressable onPress={login} style={styles.mainButton}>
           <Text style={styles.buttonText}>Sign in</Text>
         </Pressable>
-        <Pressable onPress={register} style ={styles.subButton}>
+        <Pressable onPress={() => navigation.navigate('Register')} style ={styles.subButton}>
           <Text style={styles.buttonText}>Create Account</Text>
         </Pressable>
       </View>
@@ -79,7 +70,7 @@ const styles = StyleSheet.create({
   },
   mainButton: {
     ...Buttons.smallRounded,
-    marginTop: 50,
+    marginTop: 40,
     backgroundColor: Colors.pink
   },
   subButton: {

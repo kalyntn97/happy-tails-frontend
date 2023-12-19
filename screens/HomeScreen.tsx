@@ -1,10 +1,33 @@
-import { View, Text } from "react-native"
+//npm modules
+import { View, Text, Pressable } from "react-native"
+import {createNativeStackNavigator} from '@react-navigation/native-stack'
+import { useAuth } from "../context/AuthContext"
 
-const HomeScreen = () => {
+const HomeScreen: React.FC = ({ navigation }) => {
+  // const HomeStack = createNativeStackNavigator()
+  const { authState } = useAuth()
+
   return ( 
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
-    </View>
+    // <HomeStack.Navigator>
+    //   <HomeStack.Screen name='' component={} options={{ tabBarLabel: '' }}/>
+    //   <HomeStack.Screen name='' component={} options={{ tabBarLabel: '' }}/>
+    <>
+      {authState?.authenticated ? (
+        <View>
+          
+        </View>
+      ) : (
+        <View>
+          <Pressable onPress={() => navigation.navigate('Login')}>
+            <Text>Sign in</Text>
+          </Pressable>
+          <Pressable onPress={() => navigation.navigate('Register')}>
+            <Text>Register</Text>
+          </Pressable>
+        </View>
+      )}
+    </>
+    // </HomeStack.Navigator>
   )
 }
  
