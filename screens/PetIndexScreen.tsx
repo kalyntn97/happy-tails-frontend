@@ -1,15 +1,18 @@
 //npm modules
 import { useState, useEffect } from 'react'
-import { View, StyleSheet, Text } from "react-native"
+import { View, StyleSheet, Text, Pressable } from "react-native"
 import { useAuth } from '../context/AuthContext'
 //services
+import { Pet } from '../api/petsService'
 import * as petService from '../api/petsService'
+//components
+import PetCard from '../components/PetCard'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
-const PetsScreen: React.FC = () => {
+const PetIndexScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
-  const [pets, setPets] = useState([])
+  const [pets, setPets] = useState<Pet[]>([])
 
   useEffect(() => {
     const fetchAllPets = async () => {
@@ -17,12 +20,15 @@ const PetsScreen: React.FC = () => {
       setPets(petData)
     }
     fetchAllPets()
-  }, [])
+  }, [authState?.token])
 
   return ( 
     <View style={styles.container}>
-      {pets.map((pet, idx) => 
-        <Text key={pet.idx}>{pet.name}</Text>
+      <Pressable onPress={() => navigation.navigate('Create')}>
+        <Text>Add a Pet</Text>
+      </Pressable>
+      {pets.map((pet: Pet) => 
+        <PetCard key={pet._id} pet={pet} />
       )}
     </View>
   )
@@ -34,4 +40,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default PetsScreen
+export default PetIndexScreen

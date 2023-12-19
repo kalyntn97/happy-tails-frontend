@@ -2,19 +2,25 @@
 import { Image, Text } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import {createNativeStackNavigator} from '@react-navigation/native-stack'
 //context
 import { useAuth } from '../context/AuthContext'
 //screens
 import HomeScreen from '../screens/HomeScreen'
 import SettingsScreen from '../screens/SettingsScreen'
-import LoginStackScreen from '../screens/LoginStackScreen'
-import PetsScreen from '../screens/PetsScreen'
+import PetIndexScreen from '../screens/PetIndexScreen'
+import NewPetScreen from '../screens/NewPetScreen'
+import LoginScreen from '../screens/LoginScreen'
+import RegisterScreen from '../screens/RegisterScreen'
 //styles
 import { Colors } from '../styles'
 
 const Layout: React.FC = () => {
-  const Tab = createBottomTabNavigator()
   const { authState } = useAuth()
+  const Tab = createBottomTabNavigator()
+  const PetStack = createNativeStackNavigator()
+  const LoginStack = createNativeStackNavigator()
+
   return ( 
     <NavigationContainer>
       <Tab.Navigator
@@ -30,7 +36,7 @@ const Layout: React.FC = () => {
 
             if (route.name === 'Home') {
               icon = focused ? require('../assets/icons/home-active.png') : require('../assets/icons/home-inactive.png')
-            } else if (route.name === 'Pets') {
+            } else if (route.name === 'Profile') {
               icon = focused ? require('../assets/icons/pets-active.png') : require('../assets/icons/pets-inactive.png')
             } else if (route.name === 'Settings') {
               icon = focused ? require('../assets/icons/settings-active.png') : require('../assets/icons/settings-inactive.png')
@@ -53,16 +59,30 @@ const Layout: React.FC = () => {
         })}
       >
         {authState?.authenticated ? (
-          <>
+          <Tab.Group>
             <Tab.Screen name='Home' component={HomeScreen} options={{title: 'Welcome'}}/>
-            <Tab.Screen name='Pets' component={PetsScreen} options={{title: 'Your Pets'}}/>
+            <Tab.Screen name='Profile' options={{title: 'Profile'}}>
+              {() => (
+                <PetStack.Navigator>
+                  <PetStack.Screen name='Pets' component={PetIndexScreen} options={{ title: 'All Pets' }}/>
+                  <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }}/>
+                </PetStack.Navigator>
+              )}
+            </Tab.Screen>
             <Tab.Screen name='Settings' component={SettingsScreen} options={{title: 'Settings'}}/>
-          </>
+          </Tab.Group>
         ) : (
-          <>
+          <Tab.Group>
             <Tab.Screen name='Home' component={HomeScreen} options={{title: 'Welcome'}}/>
-            <Tab.Screen name='Account' component={LoginStackScreen} options={{ title: 'Account' }}/>
-          </>
+            <Tab.Screen name='Account' options={{ title: 'Account' }}>
+              {() => (
+                <LoginStack.Navigator>
+                  <LoginStack.Screen name='Login' component={LoginScreen} options={{ title: 'Sign in' }}/>
+                  <LoginStack.Screen name='Register' component={RegisterScreen} options={{ title: 'Register' }}/>
+              </LoginStack.Navigator>
+              )}
+            </Tab.Screen>
+          </Tab.Group>
         )}
       </Tab.Navigator>
     </NavigationContainer>
