@@ -15,7 +15,9 @@ const PetCard = ({ pet }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.centered
+    ...Forms.card,
+    width: '90%',
+    height: '30%',
   }
 })
  
