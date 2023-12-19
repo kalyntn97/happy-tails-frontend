@@ -8,7 +8,7 @@ import { AuthProvider } from './context/AuthContext'
 import Layout from './components/Layout'
 
 const App: React.FC = () => {
-
+  
   return (
     <AuthProvider>
       <Layout></Layout>

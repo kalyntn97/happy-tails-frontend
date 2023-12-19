@@ -1,6 +1,6 @@
 //npm modules
 import React, { useState } from 'react'
-import { View, StyleSheet, TextInput, Button, Pressable, Text } from 'react-native'
+import { View, StyleSheet, TextInput, Pressable, Text } from 'react-native'
 import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from '../context/AuthContext'
