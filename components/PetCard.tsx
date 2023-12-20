@@ -1,6 +1,6 @@
 //npm modules
 import { useEffect } from "react"
-import { StyleSheet, Text, View, Image, ImageSourcePropType, Animated } from "react-native"
+import { StyleSheet, Text, View, Image, ImageSourcePropType } from "react-native"
 //types
 import { Pet } from "../api/petsService"
 //styles
@@ -9,7 +9,7 @@ interface PetCardProps {
   pet: Pet
   currCard: number
   idx: number
-  cardWidth: number
+  cardWidth: number,
 }
 
 const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth }) => {
@@ -22,7 +22,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth }) => {
     transform: [{ scale }],
     ...(currCard === idx ? styles.focused : currCard < idx ? styles.right : styles.left),
   }
-
 
   const getIconSource = (species: string): ImageSourcePropType => {
     switch (species) {
