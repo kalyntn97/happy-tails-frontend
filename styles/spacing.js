@@ -6,3 +6,13 @@ export const centered = {
   justifyContent: 'center',
   alignItems: 'center',
 }
+
+export const flexRow = {
+  flexDirection: 'row',
+  justifyContent: 'center'
+}
+
+export const flexColumn = {
+  flexDirection: 'column',
+  alignItems: 'center'
+}

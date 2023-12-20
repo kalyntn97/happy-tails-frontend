@@ -25,35 +25,47 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     fetchAllPets()
   }, [authState?.token])
 
-  const handleClick = (e) => {
-    if (e.target.innerText === 'Next') {
-      setCurrCard(currCard + 1)
-    }
+  const handleClickNext = () => {
+    setCurrCard(currCard + 1)
+    console.log(currCard)
+  }
+  const handleClickPrev = () => {
+    setCurrCard(currCard - 1)
+    console.log(currCard)
   }
 
   return ( 
     <View style={styles.container}>
-      <Pressable onPress={() => navigation.navigate('Create')}>
-        <Text>Add a Pet</Text>
-      </Pressable>
-      
-      {pets.map((pet, i) =>
-        <PetCard key={pet._id} pet={pet} />
-      )}
+      <View style={styles.btnContainer}>
+        {currCard > 0 && 
+          <Pressable onPress={handleClickPrev}>
+            <Text>Prev</Text>  
+          </Pressable>
+        }
+        {currCard < petCount - 1 && 
+          <Pressable onPress={handleClickNext}>
+            <Text>Next</Text>  
+          </Pressable>
+        }
+      </View>
+      <View style={styles.carousel}>
+        {pets.map((pet, i) =>
+          <PetCard key={pet._id} pet={pet} idx={i} currCard={currCard}/>
+        )}
+      </View>
       <View style={styles.dotNav}>
         {pets.map((pet, i) => 
           <Text 
             key={i}
             style={currCard === i ? styles.active : styles.inactive } 
             onPress={() => setCurrCard(i)}>
-              .
+              •
           </Text>
         )}
       </View>
-      <Pressable onPress={(e) => handleClick}>
-        <Text>Next</Text>  
+      <Pressable onPress={() => navigation.navigate('Create')}>
+        <Text>Add a Pet</Text>
       </Pressable>
-      
     </View>
   )
 }
@@ -62,14 +74,35 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.centered
   },
+  btnContainer: {
+    width: '90%',
+    height: '10%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  carousel: {
+    width: '90%',
+    height: '60%',
+    flexDirection: 'row'
+  },
   dotNav: {
-
+    ...Spacing.flexRow,
+    alignItems: 'center',
+    width: '90%',
+    height: '20%',
+    padding: 10,
+    marginBottom: 10,
   },
   active: {
-    color: 'red'
+    fontSize: 50,
+    margin: 8,
+    lineHeight: '100%',
   },
   inactive: {
-
+    fontSize: 30,
+    margin: 10,
+    lineHeight: '100%',
   }
 })
 
