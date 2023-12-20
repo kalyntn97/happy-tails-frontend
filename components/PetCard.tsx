@@ -1,28 +1,28 @@
 //npm modules
-import { StyleSheet, Text, View, Image, ImageSourcePropType } from "react-native"
+import { useEffect } from "react"
+import { StyleSheet, Text, View, Image, ImageSourcePropType, Animated } from "react-native"
 //types
 import { Pet } from "../api/petsService"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 interface PetCardProps {
-  pet: Pet;
-  currCard: number;
-  idx: number;
+  pet: Pet
+  currCard: number
+  idx: number
+  cardWidth: number
 }
 
-const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx }) => {
-  const getStyle = (currCard: number, idx: number) => {
-    if (currCard === 0) {
-      return styles.base
-    } else if (currCard === idx) {
-      return {...styles.base, ...styles.focused}
-    } else if (currCard < idx) {
-      return {...styles.baseSmall, ...styles.right}
-    } else if (currCard > idx) {
-      return {...styles.baseSmall, ...styles.left}
-    }
+const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth }) => {
+  const scale = currCard === idx ? 1 : 0.9
+  const dynamicStyle = {
+    ...styles.base,
+    opacity: currCard === idx ? 1 : 0.5,
+    width: cardWidth,
+    height: cardWidth, 
+    transform: [{ scale }],
+    ...(currCard === idx ? styles.focused : currCard < idx ? styles.right : styles.left),
   }
-  const dynamicStyle = getStyle(currCard, idx)
+
 
   const getIconSource = (species: string): ImageSourcePropType => {
     switch (species) {
@@ -37,7 +37,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx }) => {
     }
   }
   const iconSource = getIconSource(pet.species)
-
+  
   return ( 
     <View style={dynamicStyle}>
       <View style={styles.nameContainer}>
@@ -63,26 +63,21 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx }) => {
 const styles = StyleSheet.create({
   base: {
     ...Forms.card,
-    width: '90%',
-    height: '90%',
     justifyContent: 'flex-start',
-    backgroundColor: Colors.lightestPink
-  },
-  baseSmall: {
-    ...Forms.card,
-    width: '85%',
-    height: '85%',
     backgroundColor: Colors.lightestPink,
-    opacity: .5
+    position: 'relative',
   },
   focused: {
-    transform: [{translateX: -300}]
+    zIndex: 1,
+    alignSelf: 'center',
   },
   left: {
-    transform: [{translateX: -300}],
+    position: 'absolute',
+    right: '110%',
   },
   right: {
-    transform: [{translateX: 300}]
+    position: 'absolute',
+    left: '110%',
   },
   petName: {
     ...Typography.subHeader
