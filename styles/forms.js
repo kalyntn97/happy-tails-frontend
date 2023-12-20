@@ -20,7 +20,6 @@ export const card = {
   margin: 10,
   paddingHorizontal: 12,
   paddingVertical: 10,
-  borderWidth: 2,
   borderRadius: 8,
   elevation: 3,
   shadowColor: '#000',

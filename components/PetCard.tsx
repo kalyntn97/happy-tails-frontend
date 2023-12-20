@@ -6,48 +6,59 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 const PetCard = ({ pet, currCard, idx }) => {
   const getStyle = (currCard, idx) => {
     if (currCard === 0) {
-      return styles.first
+      return styles.base
     } else if (currCard === idx) {
-      return styles.focused
+      return {...styles.base, ...styles.focused}
     } else if (currCard < idx) {
-      return styles.right
+      return {...styles.baseSmall, ...styles.right}
     } else if (currCard > idx) {
-      return styles.left
+      return {...styles.baseSmall, ...styles.left}
     }
   }
 
   return ( 
     <View style={getStyle(currCard, idx)}>
-      <Text>{pet.name}</Text>
-      <Text>{pet.age}</Text>
-      <Text>{pet.breed}</Text>
+      <Text style={styles.petName}>{pet.name}</Text>
+      <Text style={styles.label}>Age:
+        <Text style={styles.body}> {pet.age}</Text>
+      </Text>
+      <Text style={styles.label}>Age:
+        <Text style={styles.body}> {pet.breed}</Text>
+      </Text>
+      
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  first: {
+  base: {
     ...Forms.card,
     width: '90%',
     height: '90%',
+    backgroundColor: Colors.lightestPink
+  },
+  baseSmall: {
+    ...Forms.card,
+    width: '85%',
+    height: '85%',
   },
   focused: {
-    ...Forms.card,
-    width: '90%',
-    height: '90%',
     transform: [{translateX: -320}]
   },
   left: {
-    ...Forms.card,
-    width: '90%',
-    height: '90%',
-    transform: [{translateX: -320}]
+    transform: [{translateX: -320}],
   },
   right: {
-    ...Forms.card,
-    width: '90%',
-    height: '90%',
     transform: [{translateX: 300}]
+  },
+  petName: {
+    ...Typography.subHeader
+  },
+  label: {
+    ...Typography.smallBody
+  },
+  body: {
+    ...Typography.smallBody
   },
 })
  

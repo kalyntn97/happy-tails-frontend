@@ -27,11 +27,9 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
 
   const handleClickNext = () => {
     setCurrCard(currCard + 1)
-    console.log(currCard)
   }
   const handleClickPrev = () => {
     setCurrCard(currCard - 1)
-    console.log(currCard)
   }
 
   return ( 
@@ -63,8 +61,8 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
           </Text>
         )}
       </View>
-      <Pressable onPress={() => navigation.navigate('Create')}>
-        <Text>Add a Pet</Text>
+      <Pressable onPress={() => navigation.navigate('Create')} style={styles.addPetBtn}>
+        <Text style={styles.btnText}>Add a Pet</Text>
       </Pressable>
     </View>
   )
@@ -84,26 +82,37 @@ const styles = StyleSheet.create({
   carousel: {
     width: '90%',
     height: '60%',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   dotNav: {
     ...Spacing.flexRow,
     alignItems: 'center',
     width: '90%',
-    height: '20%',
+    height: 80,
     padding: 10,
     marginBottom: 10,
   },
   active: {
     fontSize: 50,
     margin: 8,
-    lineHeight: '100%',
+    lineHeight: 60,
+    color: Colors.pink
   },
   inactive: {
     fontSize: 30,
     margin: 10,
-    lineHeight: '100%',
-  }
+    lineHeight: 60,
+  },
+  addPetBtn: {
+    ...Buttons.smallRounded,
+    backgroundColor: Colors.darkPink,
+    marginTop: 20
+  },
+  btnText: {
+    ...Buttons.buttonText,
+    color: Colors.lightestPink
+  },
 })
 
 export default PetIndexScreen
