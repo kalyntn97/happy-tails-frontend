@@ -36,12 +36,12 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.btnContainer}>
         {currCard > 0 && 
-          <Pressable onPress={handleClickPrev}>
+          <Pressable onPress={handleClickPrev} style={styles.prevBtn}>
             <Text>Prev</Text>  
           </Pressable>
         }
         {currCard < petCount - 1 && 
-          <Pressable onPress={handleClickNext}>
+          <Pressable onPress={handleClickNext} style={styles.nextBtn}>
             <Text>Next</Text>  
           </Pressable>
         }
@@ -77,7 +77,18 @@ const styles = StyleSheet.create({
     height: '10%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    position: 'relative'
+  },
+  nextBtn: {
+    ...Buttons.smallSub,
+    position: 'absolute',
+    right: 0
+  },
+  prevBtn: {
+    ...Buttons.smallSub,
+    position: 'absolute',
+    left: 0
   },
   carousel: {
     width: '90%',
