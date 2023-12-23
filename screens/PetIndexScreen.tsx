@@ -1,7 +1,6 @@
 //npm modules
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { View, StyleSheet, Text, Pressable, SafeAreaView, ScrollView, useWindowDimensions, FlatList } from "react-native"
-import { useAuth } from '../context/AuthContext'
 //services
 import { Pet } from '../api/petsService'
 import * as petService from '../api/petsService'
@@ -11,7 +10,7 @@ import PetCard from '../components/PetCard'
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
-  const { authState } = useAuth()
+  const scrollViewRef = useRef<ScrollView>(null)
   const [pets, setPets] = useState<Pet[]>([])
   const [currCard, setCurrCard] = useState<number>(0)
   const [petCount, setPetCount] = useState<number>(0)
@@ -21,18 +20,28 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
 
   useEffect(() => {
     const fetchAllPets = async () => {
-      const petData = await petService.index(authState?.token)
+      const petData = await petService.index()
       setPets(petData)
       setPetCount(petData.length)
     }
     fetchAllPets()
-  }, [authState?.token])
+  }, [])
 
   const handleClickNext = () => {
-    setCurrCard(currCard + 1)
+    const nextCard = Math.min(currCard + 1, petCount - 1)
+    const scrollPos = nextCard * windowWidth
+    setCurrCard(nextCard)
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ x: scrollPos, animated: true })
+    }
   }
   const handleClickPrev = () => {
-    setCurrCard(currCard - 1)
+    const prevCard = Math.min(currCard - 1, 0)
+    const scrollPos = prevCard * windowWidth
+    setCurrCard(prevCard)
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ x: scrollPos, animated: true })
+    }
   }
 
   const getCurrCard = (offset: number, cardWidth: number, petCount: number) => {
@@ -40,6 +49,28 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     const currentIndex = Math.floor(offset / cardWidth)
     console.log('curr idx: ', currentIndex, 'new idx: ', Math.min(currentIndex, petCount - 1))
     return Math.min(currentIndex, petCount - 1)
+  }
+
+  const handleScroll = (event) => {
+    const offsetX = event.nativeEvent.contentOffset.x
+    const newCurrCard = getCurrCard(offsetX, cardWidth, petCount)
+    setCurrCard(newCurrCard)
+  }
+
+  const handleClickDot = (i) => {
+    console.log('curr Card', currCard, 'i', i)
+    setCurrCard(i)
+    console.log('-----', 'curr Card', currCard, 'i', i)
+    const scrollPos = currCard * windowWidth
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ x: scrollPos, animated: true })
+    }
+  }
+
+  const handleAddPet = async (name: string, age: number, species: string, breed: string) => {
+    const newPet = await petService.create({name, age, species, breed})
+    setPets([...pets, newPet])
+    navigation.navigate('pets')
   }
 
   return ( 
@@ -58,16 +89,14 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
       </View>
       <View style={styles.carousel}>
         <ScrollView
+          ref={scrollViewRef}
           horizontal={true}
           contentContainerStyle={{ width: `${100 * petCount}%` }}
           showsHorizontalScrollIndicator={false}
           scrollEventThrottle={200}
           decelerationRate="fast"
           pagingEnabled
-          onMomentumScrollEnd={(event) => {
-            const newCurrCard = getCurrCard(event.nativeEvent.contentOffset.x, cardWidth, petCount);
-            setCurrCard(newCurrCard);
-          }}
+          onMomentumScrollEnd={handleScroll}
         >
           {pets.map((pet, i) =>
             <PetCard key={pet._id} pet={pet} idx={i} currCard={currCard} cardWidth={cardWidth} />
@@ -79,12 +108,12 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
           <Text 
             key={i}
             style={currCard === i ? styles.active : styles.inactive } 
-            onPress={() => setCurrCard(i)}>
+            onPress={(e) => handleClickDot(i)}>
               •
           </Text>
         )}
       </View>
-      <Pressable onPress={() => navigation.navigate('Create')} style={styles.addPetBtn}>
+      <Pressable onPress={() => navigation.navigate('Create', { handleAddPet: handleAddPet })} style={styles.addPetBtn}>
         <Text style={styles.btnText}>Add a Pet</Text>
       </Pressable>
     </SafeAreaView>

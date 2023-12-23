@@ -1,3 +1,5 @@
+import * as tokenService from '../api/tokenService'
+
 const BASE_URL = `${process.env.EXPO_PUBLIC_BACKEND_URL}/pets`
 
 export interface Pet {
@@ -8,10 +10,10 @@ export interface Pet {
   breed: string
 }
 
-export async function index(authToken: string | undefined): Promise<Pet[]> {
+export async function index(): Promise<Pet[]> {
   try {
     const res = await fetch(BASE_URL, {
-      headers: { 'Authorization': `Bearer ${authToken}` },
+      headers: { 'Authorization': `Bearer ${tokenService.getToken}` },
     })
     return res.json()
   } catch (error) {
@@ -19,3 +21,18 @@ export async function index(authToken: string | undefined): Promise<Pet[]> {
   }
 }
 
+export async function create({ name, age, species, breed }): Promise<Pet> {
+  try {
+    const res = await fetch(BASE_URL, {
+      method: 'POST',
+      headers: { 
+        'Authorization': `Bearer ${tokenService.getToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, age, species, breed })
+    })
+    return res.json()
+  } catch (error) {
+    console.log(error)
+  }
+}

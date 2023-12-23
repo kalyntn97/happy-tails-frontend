@@ -2,19 +2,23 @@
 //npm modules
 import { useState } from "react"
 import { View, Text, StyleSheet, Pressable, TextInput} from "react-native"
+import { useRoute } from "@react-navigation/native"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 const NewPetScreen = () => {
+  const route = useRoute()
+
   const [name, setName] = useState<string>('')
   const [age, setAge] = useState<number>('')
-  const [species, setSpecies] = useState<string>('others')
-  const [breed, setBreed] = useState<string>('others')
+  const [species, setSpecies] = useState<string>('')
+  const [breed, setBreed] = useState<string>('')
 
-  const handleAddPet = () => {
-
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    route.params.handleAddPet({name, age, species, breed})
   }
-  
+
   return ( 
     <View style={styles.container}>
       <Text style={styles.header}>Add a Pet</Text>
@@ -43,7 +47,7 @@ const NewPetScreen = () => {
           onChangeText={(text: string) => setBreed(text)} 
           value={breed} 
         />
-        <Pressable onPress={handleAddPet} style={styles.mainButton}>
+        <Pressable onPress={handleSubmit} style={styles.mainButton}>
           <Text style={styles.buttonText}>Add</Text>
         </Pressable>
       </View>
