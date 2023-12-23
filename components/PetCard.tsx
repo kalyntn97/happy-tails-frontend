@@ -20,7 +20,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth }) => {
     width: cardWidth,
     height: cardWidth, 
     transform: [{ scale }],
-    ...(currCard === idx ? styles.focused : currCard < idx ? styles.right : styles.left),
+    ...(currCard === idx ? styles.focused : ''),
   }
 
   const getIconSource = (species: string): ImageSourcePropType => {
@@ -70,14 +70,14 @@ const styles = StyleSheet.create({
     zIndex: 1,
     alignSelf: 'center',
   },
-  left: {
-    position: 'absolute',
-    right: '110%',
-  },
-  right: {
-    position: 'absolute',
-    left: '110%',
-  },
+  // left: {
+  //   position: 'absolute',
+  //   right: '110%',
+  // },
+  // right: {
+  //   position: 'absolute',
+  //   left: '110%',
+  // },
   petName: {
     ...Typography.subHeader
   },

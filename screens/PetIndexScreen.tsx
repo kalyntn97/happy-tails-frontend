@@ -1,6 +1,6 @@
 //npm modules
-import { useState, useEffect, useRef } from 'react'
-import { View, StyleSheet, Text, Pressable, SafeAreaView, ScrollView, useWindowDimensions, Animated } from "react-native"
+import { useState, useEffect } from 'react'
+import { View, StyleSheet, Text, Pressable, SafeAreaView, ScrollView, useWindowDimensions, FlatList } from "react-native"
 import { useAuth } from '../context/AuthContext'
 //services
 import { Pet } from '../api/petsService'
@@ -18,7 +18,6 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
 
   const windowWidth = useWindowDimensions().width
   const cardWidth = windowWidth * 0.8
-  const scrollViewRef = useRef<ScrollView>(null)
 
   useEffect(() => {
     const fetchAllPets = async () => {
@@ -36,7 +35,16 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     setCurrCard(currCard - 1)
   }
 
-  const scrollX = useRef(new Animated.Value(0)).current;
+  const getInterval = (offset: any) => {
+    for (let i = 1; i <= petCount; i++) {
+      if (offset < (cardWidth*petCount / petCount) * i) {
+        return i
+      }
+      if (i == petCount) {
+        return i
+      }
+    }
+  }
 
   return ( 
     <SafeAreaView style={styles.container}>
@@ -53,20 +61,17 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
         }
       </View>
       <View style={styles.carousel}>
-      <ScrollView
+        <ScrollView
           horizontal={true}
-          pagingEnabled
+          contentContainerStyle={{ width: `${100 * petCount}%` }}
           showsHorizontalScrollIndicator={false}
-          onScroll={Animated.event([
-            {
-              nativeEvent: {
-                contentOffset: {
-                  x: scrollX,
-                },
-              },
-            },
-          ])}
-          scrollEventThrottle={1}>
+          scrollEventThrottle={200}
+          decelerationRate="fast"
+          pagingEnabled
+          onScroll={data => {
+            setCurrCard(getInterval(data.nativeEvent.contentOffset.x))
+          }}
+        >
           {pets.map((pet, i) =>
             <PetCard key={pet._id} pet={pet} idx={i} currCard={currCard} cardWidth={cardWidth} />
           )}
@@ -114,8 +119,6 @@ const styles = StyleSheet.create({
   carousel: {
     width: '90%',
     height: '60%',
-    flexDirection: 'row',
-    alignItems: 'center'
   },
   dotNav: {
     ...Spacing.flexRow,
