@@ -35,15 +35,11 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     setCurrCard(currCard - 1)
   }
 
-  const getInterval = (offset: any) => {
-    for (let i = 1; i <= petCount; i++) {
-      if (offset < (cardWidth*petCount / petCount) * i) {
-        return i
-      }
-      if (i == petCount) {
-        return i
-      }
-    }
+  const getCurrCard = (offset: number, cardWidth: number, petCount: number) => {
+    console.log('offset: ', offset, 'CardWidth: ', cardWidth,'Pet Count: ', petCount)
+    const currentIndex = Math.floor(offset / cardWidth)
+    console.log('curr idx: ', currentIndex, 'new idx: ', Math.min(currentIndex, petCount - 1))
+    return Math.min(currentIndex, petCount - 1)
   }
 
   return ( 
@@ -68,8 +64,9 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
           scrollEventThrottle={200}
           decelerationRate="fast"
           pagingEnabled
-          onScroll={data => {
-            setCurrCard(getInterval(data.nativeEvent.contentOffset.x))
+          onMomentumScrollEnd={(event) => {
+            const newCurrCard = getCurrCard(event.nativeEvent.contentOffset.x, cardWidth, petCount);
+            setCurrCard(newCurrCard);
           }}
         >
           {pets.map((pet, i) =>

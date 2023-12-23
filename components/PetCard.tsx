@@ -70,14 +70,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
     alignSelf: 'center',
   },
-  // left: {
-  //   position: 'absolute',
-  //   right: '110%',
-  // },
-  // right: {
-  //   position: 'absolute',
-  //   left: '110%',
-  // },
   petName: {
     ...Typography.subHeader
   },
