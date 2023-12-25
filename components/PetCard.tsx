@@ -3,6 +3,8 @@ import { useEffect } from "react"
 import { StyleSheet, Text, View, Image, ImageSourcePropType } from "react-native"
 //types
 import { Pet } from "../api/petsService"
+//components
+import UploadImage from "./UploadImage"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 interface PetCardProps {
@@ -44,7 +46,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth }) => {
       </View>
 
       <View style={styles.detailsContainer}>
-        <Image style={styles.petPhoto} source={pet.photo}/>
+        <View style={styles.petPhoto}>
+          <UploadImage />
+        </View>
         <View style={styles.petInfo}>
           <Text style={styles.label}>Age:
             <Text style={styles.body}> {pet.age}</Text>
@@ -89,13 +93,14 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     ...Spacing.flexRow,
-    width: '90%'
+    width: '90%',
   },
   petInfo: {
-    width: '60%'
+    width: '50%'
   },
   petPhoto: {
-    width: '40%',
+    width: 130,
+    height: 130,
     borderRadius: 8,
     margin: 5
   }
