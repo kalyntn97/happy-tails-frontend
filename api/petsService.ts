@@ -12,8 +12,9 @@ export interface Pet {
 
 export async function index(): Promise<Pet[]> {
   try {
+    const token = await tokenService.getToken()
     const res = await fetch(BASE_URL, {
-      headers: { 'Authorization': `Bearer ${tokenService.getToken}` },
+      headers: { 'Authorization': `Bearer ${token}` },
     })
     return res.json()
   } catch (error) {
@@ -23,10 +24,11 @@ export async function index(): Promise<Pet[]> {
 
 export async function create({ name, age, species, breed }): Promise<Pet> {
   try {
+    const token = await tokenService.getToken()
     const res = await fetch(BASE_URL, {
       method: 'POST',
-      headers: { 
-        'Authorization': `Bearer ${tokenService.getToken}`,
+      headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ name, age, species, breed })

@@ -3,20 +3,23 @@
 import { useState } from "react"
 import { View, Text, StyleSheet, Pressable, TextInput} from "react-native"
 import { useRoute } from "@react-navigation/native"
+//services
+import * as petService from '../api/petsService'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
-const NewPetScreen = () => {
-  const route = useRoute()
-
+const NewPetScreen = ({ navigation }) => {
   const [name, setName] = useState<string>('')
-  const [age, setAge] = useState<number>('')
+  const [age, setAge] = useState<number>(0)
   const [species, setSpecies] = useState<string>('')
   const [breed, setBreed] = useState<string>('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    console.log(name, age, species, breed)
     e.preventDefault()
-    route.params.handleAddPet({name, age, species, breed})
+    const newPet = await petService.create({name, age, species, breed})
+    console.log('new pet', newPet)
+    navigation.navigate('Pets', { newPet: newPet})
   }
 
   return ( 
@@ -32,7 +35,7 @@ const NewPetScreen = () => {
         <TextInput 
           style={styles.input} 
           placeholder='Age' 
-          onChangeText={(text: string) => setAge(text)} 
+          onChangeText={(text: string) => setAge(Number(text))} 
           value={age} 
         />
         <TextInput 

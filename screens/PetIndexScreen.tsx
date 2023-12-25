@@ -67,11 +67,11 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     }
   }
 
-  const handleAddPet = async (name: string, age: number, species: string, breed: string) => {
-    const newPet = await petService.create({name, age, species, breed})
-    setPets([...pets, newPet])
-    navigation.navigate('pets')
-  }
+  // const handleAddPet = async (name: string, age: number, species: string, breed: string) => {
+  //   const newPet = await petService.create({name, age, species, breed})
+  //   setPets([...pets, newPet])
+  //   navigation.navigate('Pets')
+  // }
 
   return ( 
     <SafeAreaView style={styles.container}>
@@ -113,7 +113,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
           </Text>
         )}
       </View>
-      <Pressable onPress={() => navigation.navigate('Create', { handleAddPet: handleAddPet })} style={styles.addPetBtn}>
+      <Pressable onPress={() => navigation.navigate('Create')} style={styles.addPetBtn}>
         <Text style={styles.btnText}>Add a Pet</Text>
       </Pressable>
     </SafeAreaView>
