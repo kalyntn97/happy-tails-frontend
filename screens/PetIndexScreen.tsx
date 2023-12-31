@@ -6,29 +6,22 @@ import { Pet } from '../api/petsService'
 import * as petService from '../api/petsService'
 //components
 import PetCard from '../components/PetCard'
+//context
+import { usePetContext } from '../context/PetContext'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
   const scrollViewRef = useRef<ScrollView>(null)
-  const [pets, setPets] = useState<Pet[]>([])
+  const { pets } = usePetContext()
+  const petCount: number = pets.length
   const [currCard, setCurrCard] = useState<number>(0)
-  const [petCount, setPetCount] = useState<number>(0)
 
   const windowWidth = useWindowDimensions().width
   const cardWidth = windowWidth * 0.85
 
-  useEffect(() => {
-    const fetchAllPets = async () => {
-      const petData = await petService.index()
-      setPets(petData)
-      setPetCount(petData.length)
-    }
-    fetchAllPets()
-  }, [])
-
   const handleClickNext = () => {
-    const nextCard = Math.min(currCard + 1, petCount)
+    const nextCard = Math.min(currCard + 1, petCount - 1)
     const scrollPos = nextCard * ( cardWidth + 20 )
     setCurrCard(nextCard)
     if (scrollViewRef.current) {
@@ -56,12 +49,6 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     const newCurrCard = getCurrCard(offsetX, cardWidth, petCount)
     setCurrCard(newCurrCard)
   }
-
-  // const handleAddPet = async (name: string, age: number, species: string, breed: string) => {
-  //   const newPet = await petService.create({name, age, species, breed})
-  //   setPets([...pets, newPet])
-  //   navigation.navigate('Pets')
-  // }
 
   return ( 
     <SafeAreaView style={styles.container}>

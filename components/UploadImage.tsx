@@ -55,7 +55,7 @@ const UploadImage: React.FC<UploadImageProps> = ({ pet }) => {
       <Image source={{ uri: pet.photo ? pet.photo : image }} style={styles.image} />
       <View style={styles.uploadBtnContainer}>
         <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-          <Text>{image ? 'Edit' : 'Upload'} Image</Text>
+          <Text>{pet.photo ? 'Edit' : 'Upload'} Photo</Text>
           <Image source={require('../assets/icons/camera.png')} style={styles.cameraIcon} />
         </TouchableOpacity>
       </View>

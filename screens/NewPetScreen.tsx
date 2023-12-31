@@ -5,21 +5,27 @@ import { View, Text, StyleSheet, Pressable, TextInput} from "react-native"
 import { useRoute } from "@react-navigation/native"
 //services
 import * as petService from '../api/petsService'
+//context
+import { usePetContext } from "../context/PetContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 const NewPetScreen = ({ navigation }) => {
+  const { onAddPet } = usePetContext()
   const [name, setName] = useState<string>('')
   const [age, setAge] = useState<number>(0)
   const [species, setSpecies] = useState<string>('')
   const [breed, setBreed] = useState<string>('')
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
     console.log(name, age, species, breed)
-    e.preventDefault()
-    const newPet = await petService.create({name, age, species, breed})
-    console.log('new pet', newPet)
-    navigation.navigate('Pets', { newPet: newPet })
+    
+    const result = await onAddPet!(name, age, species, breed)
+    console.log('result', result)
+    if (result && result.error) {
+      alert(result.msg)
+    }
+    navigation.navigate('Pets')
   }
 
   return ( 

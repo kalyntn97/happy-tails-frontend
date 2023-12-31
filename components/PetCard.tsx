@@ -51,7 +51,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth }) => {
 
           <View style={styles.petInfo}>
             <Image style={{ width: 30, height: 30 }} source={require('../assets/icons/birthday.png')} />
-            <Text style={styles.body}>{pet.age} {pet.age <= 1 ? 'year' : 'years'} old</Text>
+            <Text style={styles.body}>{pet.age} {pet.age <= 1 ? 'year' : 'years'}</Text>
           </View>
         </View>
       </View>
@@ -71,18 +71,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerContainer: {
-    ...Spacing.flexRow,
-    width: '100%',
-    justifyContent: 'space-between'
+    ...Spacing.flexColumn,
+    width: '100%'
   },
   petName: {
     ...Typography.subHeader,
-    width: '30%'
-    
+    margin: 0,
   },
   detailsContainer: {
-    ...Spacing.flexColumn,
-    width: '70%',
+    ...Spacing.flexRow,
+    alignItems: 'center',
+    width: '100%',
+    justifyContent: 'space-between'
   },
   petInfo: {
     ...Spacing.flexRow,
