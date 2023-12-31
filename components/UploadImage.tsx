@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: Colors.pink,
     width: '100%',
-    height: '30%',
+    height: '25%',
   },
   uploadBtn: {
     display: 'flex',

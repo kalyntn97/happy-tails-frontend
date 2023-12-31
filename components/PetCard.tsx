@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     backgroundColor: Colors.lightestPink,
     alignItems: 'center',
-    marginLeft: 20
   },
   headerContainer: {
     ...Spacing.flexRow,

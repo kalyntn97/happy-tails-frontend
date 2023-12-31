@@ -8,6 +8,7 @@ export interface Pet {
   age: number
   species: string
   breed: string
+  photo: string
 }
 
 export async function index(): Promise<Pet[]> {

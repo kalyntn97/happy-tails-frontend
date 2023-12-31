@@ -16,7 +16,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   const [petCount, setPetCount] = useState<number>(0)
 
   const windowWidth = useWindowDimensions().width
-  const cardWidth = windowWidth * 0.8
+  const cardWidth = windowWidth * 0.85
 
   useEffect(() => {
     const fetchAllPets = async () => {
@@ -29,7 +29,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
 
   const handleClickNext = () => {
     const nextCard = Math.min(currCard + 1, petCount)
-    const scrollPos = nextCard * windowWidth
+    const scrollPos = nextCard * ( cardWidth + 20 )
     setCurrCard(nextCard)
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollTo({ x: scrollPos, animated: true })
@@ -37,7 +37,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   }
   const handleClickPrev = () => {
     const prevCard = Math.max(currCard - 1, 0)
-    const scrollPos = prevCard * windowWidth
+    const scrollPos = prevCard * ( cardWidth + 20 )
     setCurrCard(prevCard)
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollTo({ x: scrollPos, animated: true })
@@ -57,14 +57,6 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     setCurrCard(newCurrCard)
   }
 
-  const handleClickDot = (i) => {
-    setCurrCard(i)
-    const scrollPos = currCard * windowWidth
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ x: scrollPos, animated: true })
-    }
-  }
-
   // const handleAddPet = async (name: string, age: number, species: string, breed: string) => {
   //   const newPet = await petService.create({name, age, species, breed})
   //   setPets([...pets, newPet])
@@ -74,17 +66,23 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   return ( 
     <SafeAreaView style={styles.container}>
       <View style={styles.btnContainer}>
-        {currCard > 0 && 
-          <Pressable onPress={handleClickPrev} style={styles.prevBtn}>
-            <Text>Prev</Text>  
-          </Pressable>
-        }
-        {currCard < petCount - 1 && 
-          <Pressable onPress={handleClickNext} style={styles.nextBtn}>
-            <Text>Next</Text>  
-          </Pressable>
-        }
+        <Pressable 
+          onPress={handleClickPrev} 
+          style={() => [styles.prevBtn, currCard == 0 && styles.disabled]}
+          disabled={currCard == 0}
+        >
+          <Text>Prev</Text>  
+        </Pressable>
+        
+        <Pressable 
+          onPress={handleClickNext} 
+          style={()=> [styles.nextBtn, currCard == petCount - 1  && styles.disabled]}
+          disabled={currCard == petCount - 1}
+        >
+          <Text>Next</Text>  
+        </Pressable>
       </View>
+      
       <View style={styles.carousel}>
         <ScrollView
           ref={scrollViewRef}
@@ -106,8 +104,8 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
           <Text 
             key={i}
             style={currCard === i ? styles.active : styles.inactive } 
-            onPress={(e) => handleClickDot(i)}>
-              •
+          >
+            •
           </Text>
         )}
       </View>
@@ -172,6 +170,9 @@ const styles = StyleSheet.create({
     ...Buttons.buttonText,
     color: Colors.lightestPink
   },
+  disabled: {
+    opacity: 0.5
+  }
 })
 
 export default PetIndexScreen

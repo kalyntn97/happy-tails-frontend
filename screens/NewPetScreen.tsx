@@ -19,7 +19,7 @@ const NewPetScreen = ({ navigation }) => {
     e.preventDefault()
     const newPet = await petService.create({name, age, species, breed})
     console.log('new pet', newPet)
-    navigation.navigate('Pets', { newPet: newPet})
+    navigation.navigate('Pets', { newPet: newPet })
   }
 
   return ( 
