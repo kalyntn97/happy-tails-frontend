@@ -22,15 +22,30 @@ export const card = {
   paddingVertical: 10,
   borderRadius: 8,
   elevation: 3,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.5,
-  shadowRadius: 2,
+  ...boxShadow
+}
+
+export const basePhoto = {
+  borderRadius: 99,
+  margin: 5,
+  ...boxShadow
 }
 
 export const photo = {
   width: 170,
   height: 170,
-  borderRadius: 8,
-  margin: 5
+  ...basePhoto
+}
+
+export const smallPhoto = {
+  width: 120,
+  height: 120,
+  ...basePhoto
+}
+
+export const boxShadow = {
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.5,
+  shadowRadius: 2,
 }

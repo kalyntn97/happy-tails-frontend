@@ -1,8 +1,8 @@
 //npm modules
 import React, { ReactNode, createContext, useContext, useState, useEffect } from "react"
-import { Pet } from "../api/petsService"
+import { Pet } from "../services/petsService"
 //services
-import * as petService from '../api/petsService'
+import * as petService from '../services/petsService'
 
 //types
 interface PetProps {

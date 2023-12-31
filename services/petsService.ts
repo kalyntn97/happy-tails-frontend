@@ -1,4 +1,4 @@
-import * as tokenService from '../api/tokenService'
+import * as tokenService from './tokenService'
 
 const BASE_URL = `${process.env.EXPO_PUBLIC_BACKEND_URL}/pets`
 
@@ -40,7 +40,7 @@ export async function create({ name, age, species, breed }): Promise<Pet> {
   }
 }
 
-export async function addPhoto(petId: string, photoData: any) {
+export async function addPhoto(petId: string, photoData: any): Promise<any> {
   try {
     const token = await tokenService.getToken()
     const photoFormData = new FormData()
@@ -57,6 +57,37 @@ export async function addPhoto(petId: string, photoData: any) {
     })
 
     return await res.json()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function edit(petId: string, { name, age, species, breed }): Promise<Pet> {
+  try {
+    const token = await tokenService.getToken()
+    const res = await fetch(`${BASE_URL}/${petId}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, age, species, breed })
+    })
+    return res.json()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function show(petId: string): Promise<Pet> {
+  try {
+    const token = await tokenService.getToken()
+    const res = await fetch(`${BASE_URL}/${petId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    })
+    return res.json()
   } catch (error) {
     console.log(error)
   }

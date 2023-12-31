@@ -2,8 +2,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { View, StyleSheet, Text, Pressable, SafeAreaView, ScrollView, useWindowDimensions, FlatList } from "react-native"
 //services
-import { Pet } from '../api/petsService'
-import * as petService from '../api/petsService'
+import { Pet } from '../services/petsService'
+import * as petService from '../services/petsService'
 //components
 import PetCard from '../components/PetCard'
 //context
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.centered,
     ...Spacing.flexColumn,
-    height: '100%'
+    ...Spacing.fullWH,
   },
   btnContainer: {
     width: '90%',

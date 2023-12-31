@@ -2,9 +2,9 @@
 import { useEffect, useState } from "react"
 import { View, StyleSheet, Image, TouchableOpacity, Text } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
-import { Pet } from "../api/petsService"
+import { Pet } from "../services/petsService"
 //services
-import * as petService from '../api/petsService'
+import * as petService from '../services/petsService'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -66,16 +66,14 @@ const UploadImage: React.FC<UploadImageProps> = ({ pet }) => {
 const styles = StyleSheet.create({
   container: {
     elevation: 2,
-    height: '100%',
-    width: '100%',
+    ...Spacing.fullWH,
     backgroundColor: Colors.lightPink,
     position: 'relative',
     borderRadius: 100,
     overflow: 'hidden',
   },
   image: {
-    width: '100%',
-    height: '100%',
+    ...Spacing.fullWH,
   },
   uploadBtnContainer: {
     opacity: 0.7,

@@ -1,8 +1,9 @@
 //npm modules
 import { useEffect } from "react"
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageSourcePropType } from "react-native"
-//types
-import { Pet } from "../api/petsService"
+//types & utils
+import { Pet } from "../services/petsService"
+import { getIconSource } from "../utils/petUtils"
 //components
 import UploadImage from "./UploadImage"
 //styles
@@ -25,18 +26,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth, naviga
     transform: [{ scale }],
   }
 
-  const getIconSource = (species: string): ImageSourcePropType => {
-    switch (species) {
-      case 'dog':
-        return require('../assets/icons/dog.png')
-      case 'cat':
-        return require('../assets/icons/cat.png')
-      case 'bird':
-        return require('../assets/icons/bird.png')
-      case 'others':
-        return require('../assets/icons/animal.png')
-    }
-  }
   const iconSource = getIconSource(pet.species)
   
   return ( 
@@ -57,17 +46,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth, naviga
         </View>
       </View>
 
-      <Image source={{uri: pet.photo}} style={[styles.petPhoto, {backgroundColor: pet.photo ? '' : Colors.lightPink}]}/>
+      <Image source={{uri: pet.photo}} style={styles.petPhoto}/>
       
-      <View style={styles.btnContainer}>
-        <TouchableOpacity style={styles.mainBtn}>
-          <Text style={styles.btnText}>Details</Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Details', { petId: pet._id })}>
+        <Text style={styles.btnText}>Details</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity style={styles.subBtn} onPress={() => navigation.navigate('Edit', { pet })}>
-          <Text style={styles.btnText}>Edit</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   )
 }
@@ -102,20 +86,12 @@ const styles = StyleSheet.create({
   },
   petPhoto: {
     ...Forms.photo,
-    borderRadius: 100
-  },
-  btnContainer: {
-    ...Spacing.flexRow,
-    width: '90%',
-    justifyContent: 'space-between'
+    borderRadius: 100,
+    backgroundColor: Colors.lightPink
   },
   mainBtn: {
     ...Buttons.xSmallRounded,
     backgroundColor: Colors.green
-  },
-  subBtn: {
-    ...Buttons.xSmallRounded,
-    backgroundColor: Colors.yellow
   },
   btnText: {
     ...Buttons.buttonText

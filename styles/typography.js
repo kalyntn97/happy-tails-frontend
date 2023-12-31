@@ -29,6 +29,11 @@ export const subHeader = {
   ...medium,
 }
 
+export const smallHeader = {
+  ...header,
+  ...small,
+}
+
 export const body = {
   padding: 10,
 }
