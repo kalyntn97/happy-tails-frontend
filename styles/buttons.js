@@ -17,6 +17,11 @@ export const sub = {
   borderBottomWidth: 2
 }
 
+export const xSmall = {
+  width: 100,
+  height: 40,
+}
+
 export const small = {
   width: 140,
   height: 50,
@@ -36,6 +41,13 @@ export const smallRounded = {
 export const smallSub = {
   ...base,
   ...sub,
+}
+
+export const xSmallRounded = {
+  ...base,
+  ...main,
+  ...xSmall,
+  ...rounded,
 }
 
 export const buttonText = {

@@ -27,3 +27,10 @@ export const card = {
   shadowOpacity: 0.5,
   shadowRadius: 2,
 }
+
+export const photo = {
+  width: 170,
+  height: 170,
+  borderRadius: 8,
+  margin: 5
+}

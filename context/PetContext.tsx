@@ -16,11 +16,11 @@ interface PetProviderProps {
 
 //define context
 const PetContext = createContext<PetProps | undefined>(undefined)
-
+//define custom hook to use context
 export const usePetContext = () => {
   return useContext(PetContext)
 }
-
+//define context provider
 export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
   const [pets, setPets] = useState<Pet[]>([])
 

@@ -1,6 +1,6 @@
 //npm modules
 import { useEffect } from "react"
-import { StyleSheet, Text, View, Image, ImageSourcePropType } from "react-native"
+import { StyleSheet, Text, View, Image, TouchableOpacity, ImageSourcePropType } from "react-native"
 //types
 import { Pet } from "../api/petsService"
 //components
@@ -11,16 +11,17 @@ interface PetCardProps {
   pet: Pet
   currCard: number
   idx: number
-  cardWidth: number,
+  cardWidth: number
+  navigation: any
 }
 
-const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth }) => {
+const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth, navigation }) => {
   const scale = currCard === idx ? 1 : 0.9
   const dynamicStyle = {
     ...styles.base,
     opacity: currCard === idx ? 1 : 0.5,
     width: cardWidth,
-    height: cardWidth, 
+    height: cardWidth * 1.1, 
     transform: [{ scale }],
   }
 
@@ -56,8 +57,16 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth }) => {
         </View>
       </View>
 
-      <View style={styles.petPhoto}>
-        <UploadImage pet={pet} />
+      <Image source={{uri: pet.photo}} style={[styles.petPhoto, {backgroundColor: pet.photo ? '' : Colors.lightPink}]}/>
+      
+      <View style={styles.btnContainer}>
+        <TouchableOpacity style={styles.mainBtn}>
+          <Text style={styles.btnText}>Details</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.subBtn} onPress={() => navigation.navigate('Edit', { pet })}>
+          <Text style={styles.btnText}>Edit</Text>
+        </TouchableOpacity>
       </View>
     </View>
   )
@@ -92,11 +101,25 @@ const styles = StyleSheet.create({
     ...Typography.smallBody
   },
   petPhoto: {
-    width: 200,
-    height: 200,
-    borderRadius: 8,
-    margin: 5
-  }
+    ...Forms.photo,
+    borderRadius: 100
+  },
+  btnContainer: {
+    ...Spacing.flexRow,
+    width: '90%',
+    justifyContent: 'space-between'
+  },
+  mainBtn: {
+    ...Buttons.xSmallRounded,
+    backgroundColor: Colors.green
+  },
+  subBtn: {
+    ...Buttons.xSmallRounded,
+    backgroundColor: Colors.yellow
+  },
+  btnText: {
+    ...Buttons.buttonText
+  },
 })
  
 export default PetCard

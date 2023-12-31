@@ -1,33 +1,27 @@
-
 //npm modules
 import { useState } from "react"
-import { View, Text, StyleSheet, Pressable, TextInput} from "react-native"
-//context
-import { usePetContext } from "../context/PetContext"
+import { View, TextInput, Text, Pressable, StyleSheet, Image } from "react-native"
+//components
+import UploadImage from "../components/UploadImage"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
-const NewPetScreen = ({ navigation }) => {
-  const { onAddPet } = usePetContext()
-  const [name, setName] = useState<string>('')
-  const [age, setAge] = useState<number>(0)
-  const [species, setSpecies] = useState<string>('')
-  const [breed, setBreed] = useState<string>('')
+const EditPetScreen: React.FC = ({ route }) => {
+  const { pet } = route.params
+  const [name, setName] = useState<string>(pet.name)
+  const [age, setAge] = useState<number>(pet.age)
+  const [species, setSpecies] = useState<string>(pet.species)
+  const [breed, setBreed] = useState<string>(pet.breed)
 
   const handleSubmit = async () => {
-    console.log(name, age, species, breed)
     
-    const result = await onAddPet!(name, age, species, breed)
-    console.log('result', result)
-    if (result && result.error) {
-      alert(result.msg)
-    }
-    navigation.navigate('Pets')
   }
 
   return ( 
     <View style={styles.container}>
-      <Text style={styles.header}>Add a Pet</Text>
+      <View style={styles.petPhoto}>
+        <UploadImage pet={pet} />
+      </View>
       <View style={styles.form}>
         <TextInput 
           style={styles.input} 
@@ -54,21 +48,20 @@ const NewPetScreen = ({ navigation }) => {
           value={breed} 
         />
         <Pressable onPress={handleSubmit} style={styles.mainButton}>
-          <Text style={styles.buttonText}>Add</Text>
+          <Text style={styles.buttonText}>Save</Text>
         </Pressable>
       </View>
     </View>
   )
 }
- 
+
 const styles = StyleSheet.create({
   container: {
     ...Spacing.centered
   },
-  header: {
-    ...Typography.mainHeader,
-    marginTop: '20%',
-    color: Colors.darkPink,
+  
+  petPhoto: {
+    ...Forms.photo
   },
   form: {
     ...Forms.form,
@@ -87,5 +80,5 @@ const styles = StyleSheet.create({
     color: Colors.darkestPink
   }
 })
-
-export default NewPetScreen
+ 
+export default EditPetScreen

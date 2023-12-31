@@ -82,10 +82,11 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
           onMomentumScrollEnd={handleScroll}
         >
           {pets.map((pet, i) =>
-            <PetCard key={pet._id} pet={pet} idx={i} currCard={currCard} cardWidth={cardWidth} />
+            <PetCard key={pet._id} pet={pet} idx={i} currCard={currCard} cardWidth={cardWidth} navigation={navigation}/>
           )}
         </ScrollView>
       </View>
+
       <View style={styles.dotNav}>
         {pets.map((pet, i) => 
           <Text 
@@ -96,6 +97,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
           </Text>
         )}
       </View>
+
       <Pressable onPress={() => navigation.navigate('Create')} style={styles.addPetBtn}>
         <Text style={styles.btnText}>Add a Pet</Text>
       </Pressable>
@@ -105,11 +107,13 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.centered
+    ...Spacing.centered,
+    ...Spacing.flexColumn,
+    height: '100%'
   },
   btnContainer: {
     width: '90%',
-    height: '10%',
+    height: '6%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -127,15 +131,12 @@ const styles = StyleSheet.create({
   },
   carousel: {
     width: '90%',
-    height: '60%',
+    height: '65%',
   },
   dotNav: {
     ...Spacing.flexRow,
-    alignItems: 'center',
     width: '90%',
-    height: 80,
-    padding: 10,
-    marginBottom: 10,
+    height: '10%',
   },
   active: {
     fontSize: 50,
@@ -151,7 +152,8 @@ const styles = StyleSheet.create({
   addPetBtn: {
     ...Buttons.smallRounded,
     backgroundColor: Colors.darkPink,
-    marginTop: 20
+    marginBottom: 20,
+    height: '10%'
   },
   btnText: {
     ...Buttons.buttonText,
