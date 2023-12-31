@@ -28,7 +28,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   }, [])
 
   const handleClickNext = () => {
-    const nextCard = Math.min(currCard + 1, petCount - 1)
+    const nextCard = Math.min(currCard + 1, petCount)
     const scrollPos = nextCard * windowWidth
     setCurrCard(nextCard)
     if (scrollViewRef.current) {
@@ -36,7 +36,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     }
   }
   const handleClickPrev = () => {
-    const prevCard = Math.min(currCard - 1, 0)
+    const prevCard = Math.max(currCard - 1, 0)
     const scrollPos = prevCard * windowWidth
     setCurrCard(prevCard)
     if (scrollViewRef.current) {
@@ -58,9 +58,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   }
 
   const handleClickDot = (i) => {
-    console.log('curr Card', currCard, 'i', i)
     setCurrCard(i)
-    console.log('-----', 'curr Card', currCard, 'i', i)
     const scrollPos = currCard * windowWidth
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollTo({ x: scrollPos, animated: true })

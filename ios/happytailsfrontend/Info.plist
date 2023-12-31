@@ -75,4 +75,10 @@
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
   </dict>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>For choosing a photo.</string>
+  <key>NSCameraUsageDescription</key>
+  <string>For taking a photo.</string>
+  <key>NSPhotoLibraryAddUsageDescription</key>
+  <string>For saving a photo.</string>
 </plist>
