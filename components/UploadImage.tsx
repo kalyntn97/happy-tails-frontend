@@ -58,16 +58,6 @@ const UploadImage: React.FC<UploadImageProps> = ({ pet }) => {
           <Text>{image ? 'Edit' : 'Upload'} Image</Text>
           <Image source={require('../assets/icons/camera.png')} style={styles.cameraIcon} />
         </TouchableOpacity>
-      {/* {image && 
-        <>
-          <TouchableOpacity onPress={() => setImage(null)}>
-            <Text>Remove Image</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text>Upload Image</Text>
-          </TouchableOpacity>
-        </>
-      } */}
       </View>
     </View>
   )
@@ -99,7 +89,7 @@ const styles = StyleSheet.create({
   uploadBtn: {
     display: 'flex',
     ...Spacing.centered
-},
+  },
   cameraIcon: {
     width: 20,
     height: 20,

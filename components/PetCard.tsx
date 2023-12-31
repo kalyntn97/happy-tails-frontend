@@ -40,19 +40,24 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth }) => {
   
   return ( 
     <View style={dynamicStyle}>
-      <View style={styles.nameContainer}>
-        <Image style={styles.icon} source={iconSource} />
+      <View style={styles.headerContainer}>
         <Text style={styles.petName}>{pet.name}</Text>
+        
+        <View style={styles.detailsContainer}>
+          <View style={styles.petInfo}>
+            <Image style={{ width: 50, height: 50 }} source={iconSource} />
+            <Text style={styles.body}>{pet.breed}</Text>
+          </View>
+
+          <View style={styles.petInfo}>
+            <Image style={{ width: 30, height: 30 }} source={require('../assets/icons/birthday.png')} />
+            <Text style={styles.body}>{pet.age} {pet.age <= 1 ? 'year' : 'years'} old</Text>
+          </View>
+        </View>
       </View>
 
-      <View style={styles.detailsContainer}>
-        <View style={styles.petInfo}>
-          <Image style={styles.label} source={require('../assets/icons/birthday.png')} />
-          <Text style={styles.body}>{pet.age} {pet.age <= 1 ? 'year' : 'years'} old {pet.breed}</Text>
-        </View>
-        <View style={styles.petPhoto}>
-          <UploadImage pet={pet} />
-        </View>
+      <View style={styles.petPhoto}>
+        <UploadImage pet={pet} />
       </View>
     </View>
   )
@@ -66,39 +71,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 20
   },
-  petName: {
-    ...Typography.subHeader
+  headerContainer: {
+    ...Spacing.flexRow,
+    width: '100%',
+    justifyContent: 'space-between'
   },
-  label: {
-    width: 25,
-    height: 25,
+  petName: {
+    ...Typography.subHeader,
+    width: '30%'
+    
+  },
+  detailsContainer: {
+    ...Spacing.flexColumn,
+    width: '70%',
+  },
+  petInfo: {
+    ...Spacing.flexRow,
+    alignItems: 'center',
   },
   body: {
     ...Typography.smallBody
   },
-  icon: {
-    width: 80,
-    height: 80,
-    // position: 'absolute',
-    // top: 0,
-    // left: 0,
-  },
-  nameContainer: {
-    ...Spacing.flexRow,
-    width: '90%',
-    justifyContent: 'flex-start'
-  },
-  detailsContainer: {
-    ...Spacing.flexColumn,
-    width: '90%',
-  },
-  petInfo: {
-    ...Spacing.flexRow,
-    alignItems: 'center'
-  },
   petPhoto: {
-    width: 130,
-    height: 130,
+    width: 200,
+    height: 200,
     borderRadius: 8,
     margin: 5
   }
