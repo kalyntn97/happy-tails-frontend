@@ -21,7 +21,6 @@ export const card = {
   paddingHorizontal: 12,
   paddingVertical: 10,
   borderRadius: 8,
-  elevation: 3,
   ...boxShadow
 }
 
@@ -43,6 +42,7 @@ export const smallPhoto = {
 }
 
 export const boxShadow = {
+  elevation: 3,
   shadowColor: '#000',
   shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.5,

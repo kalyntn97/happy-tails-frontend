@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
     top: '60%',
     left: '-5%',
     zIndex: 1,
-    ...Forms.boxShadow
   },
   infoContainer: {
     width: '50%',
