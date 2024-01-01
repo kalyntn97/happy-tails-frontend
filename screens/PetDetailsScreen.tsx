@@ -1,5 +1,5 @@
 //npm modules
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native"
 //types
 import { Pet } from "../services/petsService"
@@ -9,6 +9,7 @@ import PetInfo from "../components/PetInfo"
 import * as petService from '../services/petsService'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { useFocusEffect } from "@react-navigation/native"
 
 interface PetDetailsProps {
   navigation: any
@@ -16,16 +17,25 @@ interface PetDetailsProps {
 }
 
 const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
-  const [pet, setPet] = useState<Pet>({})
+  const [pet, setPet] = useState<Pet>({
+    _id: '',
+    name: '',
+    age: 0,
+    species: '',
+    breed: '',
+    photo: '',
+  })
   const { petId } = route.params
-  
-  useEffect(() => {
-    const fetchPetDetails = async () => {
-      const petData = await petService.show(petId)
-      setPet(petData)
-    }
-    fetchPetDetails()
-  }, [petId])
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPetDetails = async () => {
+        const petData = await petService.show(petId)
+        setPet(petData)
+      }
+      fetchPetDetails()
+    }, [petId])
+  )
   
   return ( 
     <View style={styles.container}>

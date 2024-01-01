@@ -8,7 +8,6 @@ interface PetInfoProps {
 }
 
 const PetInfo: React.FC<PetInfoProps> = ({ pet }) => {
-  console.log(pet)
   const iconSource = getIconSource(pet.species)
 
   return ( 
