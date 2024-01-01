@@ -1,9 +1,13 @@
 //npm modules
 import { useState } from "react"
-import { View, Text, StyleSheet, Pressable, TextInput, Image, TouchableOpacity} from "react-native"
+import { View, Text, StyleSheet, Pressable, TextInput, Image, TouchableOpacity, Button} from "react-native"
 import * as ImagePicker from 'expo-image-picker'
-//types
+//types & services & utils
 import { Pet } from "../services/petsService"
+import * as petService from '../services/petsService'
+import * as petUtils from '../utils/petUtils'
+//components
+import Dropdown from "./Dropdown"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -15,11 +19,13 @@ interface PetFormProps {
 const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
   const [photo, setPhoto] = useState<string | null>(initialValues?.photo || null)
   const [name, setName] = useState<string>(initialValues?.name || '')
-  const [age, setAge] = useState<number>(initialValues?.age || 0)
+  const [age, setAge] = useState<number>(initialValues?.age || '')
   const [species, setSpecies] = useState<string>(initialValues?.species || '')
   const [breed, setBreed] = useState<string>(initialValues?.breed || '')
   const petId: string | null = initialValues?.petId  ? initialValues?.petId : null
 
+  const [selected, setSelected] = useState(undefined)
+  
   const addPhoto = async (): Promise<void> => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -79,12 +85,16 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
           onChangeText={(text: string) => setSpecies(text)} 
           value={species} 
         />
-        <TextInput 
+        {!!selected && (
+          <Text>Selected: label = {selected.label} and value = {selected.value}</Text>
+        )}
+        <Dropdown label='Dropdown Label' dataType='species' onSelect={setSelected} />
+        {/* <TextInput 
           style={styles.input} 
           placeholder='Breed' 
           onChangeText={(text: string) => setBreed(text)} 
           value={breed} 
-        />
+        /> */}
         <Pressable onPress={handleSubmit} style={styles.mainButton}>
           <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Add Pet'}</Text>
         </Pressable>

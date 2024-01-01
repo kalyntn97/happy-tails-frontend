@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from "react-native"
+import { Image, ImageStyle, StyleSheet, Text, View } from "react-native"
 import { Pet } from "../services/petsService"
 import { getIconSource } from "../utils/petUtils"
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
@@ -13,8 +13,8 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet }) => {
   return ( 
     <View style={styles.container}>
       <View style={styles.petPhotoContainer}>
-        <Image source={iconSource} style={styles.petIcon} />
-        <Image source={{uri: pet.photo}} style={styles.petPhoto}/>
+        <Image source={iconSource} style={styles.petIcon as ImageStyle} />
+        <Image source={{uri: pet.photo}} style={styles.petPhoto as ImageStyle}/>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{pet.name}</Text>

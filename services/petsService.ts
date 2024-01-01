@@ -120,3 +120,4 @@ export async function deletePet(petId: string): Promise<Pet> {
     console.log(error)
   }
 }
+

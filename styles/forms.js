@@ -48,3 +48,7 @@ export const boxShadow = {
   shadowOpacity: 0.5,
   shadowRadius: 2,
 }
+
+export const icon = {
+  
+}

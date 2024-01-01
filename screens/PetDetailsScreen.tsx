@@ -1,5 +1,6 @@
 //npm modules
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
+import { useFocusEffect } from "@react-navigation/native"
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native"
 //types & context
 import { Pet } from "../services/petsService"
@@ -10,7 +11,6 @@ import PetInfo from "../components/PetInfo"
 import * as petService from '../services/petsService'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
-import { useFocusEffect } from "@react-navigation/native"
 
 interface PetDetailsProps {
   navigation: any
