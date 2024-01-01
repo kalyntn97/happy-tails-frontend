@@ -100,9 +100,20 @@ export async function show(petId: string): Promise<Pet> {
   try {
     const token = await tokenService.getToken()
     const res = await fetch(`${BASE_URL}/${petId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+    return res.json()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function deletePet(petId: string): Promise<Pet> {
+  try {
+    const token = await tokenService.getToken()
+    const res = await fetch(`${BASE_URL}/${petId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` },
     })
     return res.json()
   } catch (error) {

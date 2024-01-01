@@ -9,6 +9,7 @@ interface PetProps {
   pets: Pet[]
   onAddPet?: (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null) => Promise<any>
   onEditPet?: (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string) => Promise<any>
+  onDeletePet?: (petId: string) => Promise<any>
 }
 
 interface PetProviderProps {
@@ -45,10 +46,17 @@ export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
     return updatedPet
   }
 
+  const deletePet = async (petId: string) => {
+    const deletedPet = await petService.deletePet(petId)
+    setPets(pets.filter(pet => pet._id !== deletedPet._id))
+    return deletedPet
+  }
+
   const values: PetProps = {
     pets,
     onAddPet: addPet,
-    onEditPet: editPet
+    onEditPet: editPet,
+    onDeletePet: deletePet,
   }
 
   return (

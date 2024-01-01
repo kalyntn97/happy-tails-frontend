@@ -4,8 +4,6 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, ImageSourcePropType } 
 //types & utils
 import { Pet } from "../services/petsService"
 import { getIconSource } from "../utils/petUtils"
-//components
-import UploadImage from "./UploadImage"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 interface PetCardProps {

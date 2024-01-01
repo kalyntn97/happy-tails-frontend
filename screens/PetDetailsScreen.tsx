@@ -1,8 +1,9 @@
 //npm modules
 import { useCallback, useEffect, useState } from "react"
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native"
-//types
+import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native"
+//types & context
 import { Pet } from "../services/petsService"
+import { usePetContext } from "../context/PetContext"
 //components
 import PetInfo from "../components/PetInfo"
 //services
@@ -26,6 +27,28 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
     photo: '',
   })
   const { petId } = route.params
+  const { onDeletePet } = usePetContext()
+  
+  const handleDeletePet = async (petId: string) => {
+    const result = await onDeletePet!(petId)
+    console.log('result', result)
+
+    if (result && result.error) {
+      alert(result.msg)
+    }
+    navigation.navigate('Pets')
+  }
+  
+  const showDeleteConfirmDialog = () => {
+    return Alert.alert(
+      'Are you sure?',
+      `Remove ${pet.name} from your profile?`, 
+      [
+        { text: 'Yes', onPress: () => { handleDeletePet(petId) }},
+        { text: 'No' }
+      ]
+    )
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -36,7 +59,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
       fetchPetDetails()
     }, [petId])
   )
-  
+
   return ( 
     <View style={styles.container}>
       <View style={styles.infoCard}>
@@ -50,7 +73,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
           >
             <Text style={styles.btnText}>Edit</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{...styles.mainBtn, backgroundColor: Colors.red}}>
+          <TouchableOpacity style={{...styles.mainBtn, backgroundColor: Colors.red}} onPress={showDeleteConfirmDialog}>
             <Text style={styles.btnText}>Delete</Text>
           </TouchableOpacity>
         </View>

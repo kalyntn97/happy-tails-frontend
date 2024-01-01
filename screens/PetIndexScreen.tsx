@@ -38,9 +38,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   }
 
   const getCurrCard = (offset: number, cardWidth: number, petCount: number) => {
-    console.log('offset: ', offset, 'CardWidth: ', cardWidth,'Pet Count: ', petCount)
     const currentIndex = Math.floor(offset / cardWidth)
-    console.log('curr idx: ', currentIndex, 'new idx: ', Math.min(currentIndex, petCount - 1))
     return Math.min(currentIndex, petCount - 1)
   }
 
