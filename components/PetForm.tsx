@@ -85,7 +85,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
           value={breed} 
         />
         <Pressable onPress={handleSubmit} style={styles.mainButton}>
-          <Text style={styles.buttonText}>{}</Text>
+          <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Add Pet'}</Text>
         </Pressable>
       </View>
     </View>
