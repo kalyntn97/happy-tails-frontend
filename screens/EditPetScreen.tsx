@@ -5,8 +5,13 @@ import { View, TextInput, Text, Pressable, StyleSheet, Image } from "react-nativ
 import UploadImage from "../components/UploadImage"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Pet } from "../services/petsService"
 
-const EditPetScreen: React.FC = ({ route }) => {
+interface EditPetProps {
+  route: {params: { pet: Pet }}
+}
+
+const EditPetScreen: React.FC<EditPetProps> = ({ route }) => {
   const { pet } = route.params
   const [name, setName] = useState<string>(pet.name)
   const [age, setAge] = useState<number>(pet.age)

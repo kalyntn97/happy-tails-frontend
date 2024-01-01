@@ -39,17 +39,16 @@ const styles = StyleSheet.create({
   petPhoto: {
     ...Forms.smallPhoto,
     position: 'relative',
-    margin: 10
+    margin: 10,
+    backgroundColor: Colors.lightPink
   },
   petIcon: {
-    width: 50,
-    height: 50,
+    width: 60,
+    height: 60,
     position: 'absolute',
     top: '60%',
+    left: '-5%',
     zIndex: 1,
-    padding: 1,
-    backgroundColor: 'white',
-    borderRadius: 99,
     ...Forms.boxShadow
   },
   infoContainer: {

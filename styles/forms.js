@@ -28,7 +28,6 @@ export const card = {
 export const basePhoto = {
   borderRadius: 99,
   margin: 5,
-  ...boxShadow
 }
 
 export const photo = {

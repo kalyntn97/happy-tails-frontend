@@ -23,9 +23,10 @@ export async function index(): Promise<Pet[]> {
   }
 }
 
-export async function create({ name, age, species, breed }): Promise<Pet> {
+export async function create({ name, age, species, breed, photoData }): Promise<any> {
   try {
     const token = await tokenService.getToken()
+    console.log('photoData before', photoData)
     const res = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
@@ -34,7 +35,15 @@ export async function create({ name, age, species, breed }): Promise<Pet> {
       },
       body: JSON.stringify({ name, age, species, breed })
     })
-    return res.json()
+    if (photoData) {
+      const jsonRes = await res.json()
+      console.log('jsonRes', jsonRes)
+      const urlRes = await addPhoto(jsonRes._id, photoData)
+      jsonRes.photo = urlRes.url
+      return jsonRes
+    } else {
+      return await res.json()
+    }
   } catch (error) {
     console.log(error)
   }
