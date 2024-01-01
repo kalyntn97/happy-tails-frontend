@@ -8,6 +8,7 @@ import * as petService from '../services/petsService'
 interface PetProps {
   pets: Pet[]
   onAddPet?: (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null) => Promise<any>
+  onEditPet?: (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string) => Promise<any>
 }
 
 interface PetProviderProps {
@@ -33,14 +34,21 @@ export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
   }, [])
 
   const addPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null) => {
-    const newPet = await petService.create({ name, age, species, breed, photoData })
+    const newPet = await petService.create(name, age, species, breed, photoData)
     setPets([...pets, newPet])
     return newPet
   }
 
+  const editPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string) => {
+    const updatedPet = await petService.edit(name, age, species, breed, photoData, petId)
+    setPets(pets.map(pet => pet._id === updatedPet._id ? updatedPet : pet))
+    return updatedPet
+  }
+
   const values: PetProps = {
     pets,
-    onAddPet: addPet
+    onAddPet: addPet,
+    onEditPet: editPet
   }
 
   return (

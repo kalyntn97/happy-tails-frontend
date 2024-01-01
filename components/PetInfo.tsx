@@ -7,7 +7,8 @@ interface PetInfoProps {
   pet: Pet
 }
 
-const PetInfo: React.FC<Pet> = ({ pet }) => {
+const PetInfo: React.FC<PetInfoProps> = ({ pet }) => {
+  console.log(pet)
   const iconSource = getIconSource(pet.species)
 
   return ( 

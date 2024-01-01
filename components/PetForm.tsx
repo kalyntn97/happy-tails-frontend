@@ -8,8 +8,8 @@ import { Pet } from "../services/petsService"
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface PetFormProps {
-  onSubmit: (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null) => Promise<any>
-  initialValues?: { name?: string, age?: number, species?: string, breed?: string, photo?: string | null }
+  onSubmit: (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
+  initialValues?: { name?: string, age?: number, species?: string, breed?: string, photo?: string | null, petId?: string }
 }
 
 const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
@@ -18,6 +18,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
   const [age, setAge] = useState<number>(initialValues?.age || 0)
   const [species, setSpecies] = useState<string>(initialValues?.species || '')
   const [breed, setBreed] = useState<string>(initialValues?.breed || '')
+  const petId: string | null = initialValues?.petId  ? initialValues?.petId : null
 
   const addPhoto = async (): Promise<void> => {
     let _image = await ImagePicker.launchImageLibraryAsync({
@@ -36,9 +37,9 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
   const handleSubmit = async () => {    
     const photoData: { uri: string, name: string, type: string } | null 
       = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
-    console.log('before submit', name, age, species, breed, photoData)
+    console.log('before submit', name, age, species, breed, photoData, petId)
 
-    const result = await onSubmit(name, age, species, breed, photoData)
+    const result = await onSubmit(name, age, species, breed, photoData, petId)
     console.log('result', result)
 
     if (result && result.error) {
