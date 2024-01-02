@@ -6,11 +6,6 @@ interface DogBreedListResponse {
   status: string
 }
 
-interface DogBreedOption {
-  label: string
-  value: string
-}
-
 export const getIconSource = (species: string): ImageSourcePropType => {
   switch (species) {
     case 'dog':
@@ -34,23 +29,15 @@ const getDogBreedList = async (): Promise<DogBreedListResponse> => {
   }
 }
 
-export const getDogBreedData = async (): Promise<DogBreedOption[]> => {
+export const getDogBreedData = async (): Promise<string[]> => {
   const rawData = await getDogBreedList()
   const data = rawData.message
   const formattedData = Object.entries(data).flatMap(( [breed, subBreeds] ) => {
     return subBreeds.map(subBreed => (
-      {
-        label: `${subBreed.charAt(0).toUpperCase() + subBreed.slice(1)} ${breed.charAt(0).toUpperCase() + breed.slice(1)}`,
-        value: `${subBreed}-${breed}`
-      }
+      `${subBreed.charAt(0).toUpperCase() + subBreed.slice(1)} ${breed.charAt(0).toUpperCase() + breed.slice(1)}`
     ))
   })
   return formattedData
 }
 
-export const speciesData = [
-  { label: 'Dog', value: 'dog' },
-  { label: 'Cat', value: 'cat' },
-  { label: 'Bird', value: 'bird' },
-  { label: 'Others', value: 'others' },
-]
+export const speciesData = [ 'Dog', 'Cat', 'Bird', 'Others']

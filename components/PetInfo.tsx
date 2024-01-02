@@ -8,7 +8,7 @@ interface PetInfoProps {
 }
 
 const PetInfo: React.FC<PetInfoProps> = ({ pet }) => {
-  const iconSource = getIconSource(pet.species)
+  const iconSource = getIconSource(pet.species.value)
 
   return ( 
     <View style={styles.container}>

@@ -24,7 +24,6 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
   const [breed, setBreed] = useState<string>(initialValues?.breed || '')
   const petId: string | null = initialValues?.petId  ? initialValues?.petId : null
 
-  const [selected, setSelected] = useState(undefined)
   
   const addPhoto = async (): Promise<void> => {
     let _image = await ImagePicker.launchImageLibraryAsync({
@@ -79,16 +78,11 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
           onChangeText={(text: string) => setAge(Number(text))} 
           value={age.toString()} 
         />
-        <TextInput 
-          style={styles.input} 
-          placeholder='Species' 
-          onChangeText={(text: string) => setSpecies(text)} 
-          value={species} 
-        />
-        {!!selected && (
-          <Text>Selected: label = {selected.label} and value = {selected.value}</Text>
-        )}
-        <Dropdown label='Dropdown Label' dataType='species' onSelect={setSelected} />
+        {!!species && <Text>Select Species </Text>}
+        <Dropdown label={species ? species : 'Select Species'} dataType='species' onSelect={setSpecies} />
+
+        {!!breed && <Text>Select Breed </Text>}
+        {species === 'Dog' && <Dropdown label={breed ? breed : 'Select Breed'} dataType='dogBreed' onSelect={setBreed} />}
         {/* <TextInput 
           style={styles.input} 
           placeholder='Breed' 

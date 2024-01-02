@@ -1,5 +1,5 @@
 //npm modules
-import { ReactElement, useRef, useState } from "react"
+import { ReactElement, useEffect, useRef, useState } from "react"
 import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, FlatList } from "react-native"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
@@ -8,12 +8,14 @@ import * as petUtils from '../utils/petUtils'
 
 interface DropdownProps {
   label: string,
-  dataType: 'breed' | 'species',
-  onSelect: (item: { label: string, value: string }) => void
+  dataType: 'dogBreed' | 'species',
+  onSelect: (item: string ) => void
 }
 
 const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
   const [visible, setVisible] = useState(false)
+  const [data, setData] = useState<string[]>([])
+  const [selected, setSelected] = useState<string>('')
 
   const toggleDropdown = (): void => {
     visible ? setVisible(false) : openDropDown()
@@ -29,20 +31,28 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
     setVisible(true)
   }
   
-  const onItemPress = (item: { label: string, value: string }): void => {
+  const onItemPress = (item: string ): void => {
     onSelect(item)
+    setSelected(item)
     setVisible(false)
   }
-  //populate data
-  let data: { label: string, value: string }[]
 
-  if (dataType === 'species') {
-    data = petUtils.speciesData
-    
-  } else if (dataType === 'breed') {
-    
-  }
- 
+  //populate data
+  useEffect(() => {
+    const fetchData = async (dataType: string) => {
+        let result: string[]
+        if (dataType === 'species') {
+          result = petUtils.speciesData
+        } else if (dataType === 'dogBreed') {
+          result = await petUtils.getDogBreedData()
+        }
+        setData(result)
+        console.log(result, data)
+      
+    }
+    fetchData(dataType)
+  }, [])
+
   return (
     <TouchableOpacity style={styles.dropDownBtn} onPress={toggleDropdown} ref={DropdownBtn}>
       {visible && (
@@ -55,7 +65,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
                 renderItem={({ item }) => (
                   <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
                     <Text style={styles.btnText}>
-                      { (item && item.label) || label }
+                      { item || label }
                     </Text>
                   </TouchableOpacity>
                 )} 
@@ -64,7 +74,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
           </TouchableOpacity>
         </Modal>
       )}
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.label}>{selected ? selected : label}</Text>
       <Image source={require('../assets/icons/dropdown.png')} style={styles.icon} />
     </TouchableOpacity>
   )
@@ -92,6 +102,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: Colors.lightestPink,
     width: 250,
+    height: 200,
     padding: 10,
     ...Forms.boxShadow
   },

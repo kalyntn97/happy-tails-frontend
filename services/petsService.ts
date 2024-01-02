@@ -6,7 +6,7 @@ export interface Pet {
   _id: string
   name: string
   age: number
-  species: string
+  species: { label: string, value: string }
   breed: string
   photo: string | null
 }
