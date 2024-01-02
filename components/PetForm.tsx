@@ -3,8 +3,8 @@ import { useState } from "react"
 import { View, Text, StyleSheet, Pressable, TextInput, Image, TouchableOpacity, Button, TouchableWithoutFeedback, Keyboard, Alert} from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 //types & services & utils
-import { Pet } from "../services/petsService"
-import * as petService from '../services/petsService'
+import { Pet } from "../services/petService"
+import * as petService from '../services/petService'
 import * as petUtils from '../utils/petUtils'
 //components
 import Dropdown from "./Dropdown"

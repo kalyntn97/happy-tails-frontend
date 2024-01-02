@@ -3,12 +3,12 @@ import { useCallback, useState } from "react"
 import { useFocusEffect } from "@react-navigation/native"
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native"
 //types & context
-import { Pet } from "../services/petsService"
+import { Pet } from "../services/petService"
 import { usePetContext } from "../context/PetContext"
 //components
 import PetInfo from "../components/PetInfo"
 //services
-import * as petService from '../services/petsService'
+import * as petService from '../services/petService'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -64,7 +64,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
     <View style={styles.container}>
       <View style={styles.infoCard}>
         <View style={styles.petInfo}>
-          <PetInfo pet={pet} />
+          <PetInfo pet={pet} size='expanded' />
         </View>
         <View style={styles.btnContainer}>
           <TouchableOpacity 

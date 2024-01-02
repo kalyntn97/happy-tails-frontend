@@ -3,7 +3,7 @@ import { useState } from "react"
 import { View, TextInput, Text, Pressable, StyleSheet, Image } from "react-native"
 //components
 import PetForm from "../components/PetForm"
-import { Pet } from "../services/petsService"
+import { Pet } from "../services/petService"
 //context
 import { usePetContext } from "../context/PetContext"
 

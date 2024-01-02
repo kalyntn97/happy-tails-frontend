@@ -41,6 +41,12 @@ export const smallPhoto = {
   ...basePhoto
 }
 
+export const xSmallPhoto = {
+  width: 80,
+  height: 80,
+  ...basePhoto
+}
+
 export const boxShadow = {
   elevation: 3,
   shadowColor: '#000',

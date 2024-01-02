@@ -1,27 +1,35 @@
 import { Image, ImageStyle, StyleSheet, Text, View } from "react-native"
-import { Pet } from "../services/petsService"
+import { Pet } from "../services/petService"
 import { getIconSource } from "../utils/petUtils"
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { fullWH } from "../styles/spacing"
 
 interface PetInfoProps {
   pet: Pet
+  size: 'compact' | 'expanded'
 }
 
-const PetInfo: React.FC<PetInfoProps> = ({ pet }) => {
-  const iconSource = getIconSource(pet.species.value)
+const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
+  const iconSource = getIconSource(pet.species)
 
   return ( 
     <View style={styles.container}>
-      <View style={styles.petPhotoContainer}>
-        <Image source={iconSource} style={styles.petIcon as ImageStyle} />
-        <Image source={{uri: pet.photo}} style={styles.petPhoto as ImageStyle}/>
+      <View style={size === 'expanded' ? styles.photoContainerExpanded : styles.photoContainerCompact}>
+        {size === 'expanded' && 
+          <Image source={iconSource} style={styles.petIcon as ImageStyle} />
+        }
+        <Image source={{uri: pet.photo}} style={[styles.petPhoto as ImageStyle, size === 'expanded' ? {...Forms.smallPhoto} : {...Forms.xSmallPhoto}]} />
+        {size === 'compact' && 
+          <Text style={styles.shortName}>{pet.name.split(' ')[0]}</Text>
+        }
       </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.name}>{pet.name}</Text>
-        <View style={styles.details}>
-          <Text style={styles.body}>{pet.age} {pet.age == 1 ? 'year' : 'years'} old {pet.breed}</Text>
-        </View>
-      </View>
+      {size === 'expanded' && 
+        <View style={styles.infoContainer}>
+          <Text style={styles.name}>{pet.name}</Text>
+          <View style={styles.details}>
+            <Text style={styles.body}>{pet.age} {pet.age == 1 ? 'year' : 'years'} old {pet.breed}</Text>
+          </View>
+        </View>}
     </View>
   )
 }
@@ -31,13 +39,22 @@ const styles = StyleSheet.create({
     ...Spacing.fullWH,
     ...Spacing.flexRow
   },
-  petPhotoContainer: {
+  shortName: {
+    ...Typography.smallHeader,
+    margin: 0,
+    height: '30%'
+  },
+  photoContainerExpanded: {
     width: '40%',
     height: '100%',
     justifyContent: 'center'
   },
+  photoContainerCompact: {
+    width: '100%',
+    height: '70%',
+    alignItems: 'center'
+  },
   petPhoto: {
-    ...Forms.smallPhoto,
     position: 'relative',
     margin: 10,
     backgroundColor: Colors.lightPink

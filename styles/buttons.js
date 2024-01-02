@@ -27,8 +27,17 @@ export const small = {
   height: 50,
 }
 
+export const long = {
+  width: 250,
+  height: 50
+}
+
 export const rounded = {
   borderRadius: 30
+}
+
+export const square = {
+  borderRadius: 8
 }
 
 export const smallRounded = {
@@ -48,6 +57,13 @@ export const xSmallRounded = {
   ...main,
   ...xSmall,
   ...rounded,
+}
+
+export const longSquare = {
+  ...base,
+  ...main,
+  ...long,
+  ...square
 }
 
 export const buttonText = {

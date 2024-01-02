@@ -2,7 +2,7 @@
 import { useEffect } from "react"
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageSourcePropType } from "react-native"
 //types & utils
-import { Pet } from "../services/petsService"
+import { Pet } from "../services/petService"
 import { getIconSource } from "../utils/petUtils"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
