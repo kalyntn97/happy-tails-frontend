@@ -1,5 +1,13 @@
-export const lightestPink = '#FFF6FD'
-export const lightPink = '#FFE6FF'
-export const pink = '#F39CD6'
-export const darkPink = '#B9679F'
-export const darkestPink = '#4F003D'
+const Colors = {
+  lightestPink: '#FFF6FD',
+  lightPink: '#FFE6FF',
+  pink: '#F39CD6',
+  darkPink: '#B9679F',
+  darkestPink: '#4F003D',
+  yellow: '#FFE4C4',
+  blue: '#6EA2F7',
+  green: '#BCCA79',
+  red: '#E16628',
+}
+
+export default Colors

@@ -1,21 +1,29 @@
 
 //npm modules
-import { View, Text, StyleSheet } from "react-native"
-//styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { View } from "react-native"
+//context
+import { usePetContext } from "../context/PetContext"
+//components
+import PetForm from "../components/PetForm"
 
-const NewPetScreen = () => {
+const NewPetScreen = ({ navigation }) => {
+  const { onAddPet } = usePetContext()
+
+  const handleAddPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null) => {
+    const result = await onAddPet!(name, age, species, breed, photoData)
+    console.log('result', result)
+
+    if (result && result.error) {
+      alert(result.msg)
+    }
+    navigation.navigate('Pets')
+  }
+
   return ( 
-    <View style={styles.container}>
-      <Text>Add a Pet</Text>
+    <View style={{flex: 1}}>
+      <PetForm onSubmit={handleAddPet}/>   
     </View>
   )
 }
- 
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.centered
-  }
-})
 
 export default NewPetScreen

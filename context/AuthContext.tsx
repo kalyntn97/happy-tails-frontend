@@ -42,7 +42,8 @@ export const AuthProvider = ({children}: any) => {
     try {
       return await axios.post(`${BASE_URL}/signup`, { name, username, password })
     } catch (error) {
-      return { error: true, msg: (error as any).response.data.status}
+      console.error('Register Error:', error);
+      return { error: true, msg: (error as any).response.data.status || 'An error occurred'}
     }
   }
 
@@ -66,14 +67,18 @@ export const AuthProvider = ({children}: any) => {
   }
 
   const logout = async () => {
-    const result = await axios.post(`${BASE_URL}/logout`)
-    console.log('file: AuthContext.tsx:41 ~ login ~ result:', result)
-    await SecureStore.deleteItemAsync(TOKEN_KEY)
-    axios.defaults.headers.common['Authorization'] = ''
-    setAuthState({
-      token: null, authenticated: false
-    })
-
+    try {
+      const result = await axios.post(`${BASE_URL}/logout`)
+      console.log('file: AuthContext.tsx:41 ~ logout ~ result:', result)
+      await SecureStore.deleteItemAsync(TOKEN_KEY)
+      axios.defaults.headers.common['Authorization'] = ''
+      setAuthState({
+        token: null, authenticated: false
+      })
+    } catch (error) {
+      console.error('Logout Error:', error);
+      return { error: true, msg: (error as any).response?.data || 'An error occurred' }
+    }
   }
 
   const value = { 
@@ -88,4 +93,4 @@ export const AuthProvider = ({children}: any) => {
       {children}
     </AuthContext.Provider>
   )
-}
+} 

@@ -10,6 +10,8 @@ import HomeScreen from '../screens/HomeScreen'
 import SettingsScreen from '../screens/SettingsScreen'
 import PetIndexScreen from '../screens/PetIndexScreen'
 import NewPetScreen from '../screens/NewPetScreen'
+import EditPetScreen from '../screens/EditPetScreen'
+import PetDetailsScreen from '../screens/PetDetailsScreen'
 import LoginScreen from '../screens/LoginScreen'
 import RegisterScreen from '../screens/RegisterScreen'
 //styles
@@ -66,6 +68,8 @@ const Layout: React.FC = () => {
                 <PetStack.Navigator>
                   <PetStack.Screen name='Pets' component={PetIndexScreen} options={{ title: 'All Pets' }}/>
                   <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }}/>
+                  <PetStack.Screen name='Details' component={PetDetailsScreen} options={{ title: 'Pet Details' }}/>
+                  <PetStack.Screen name='Edit' component={EditPetScreen} options={{ title: 'Edit a Pet' }}/>
                 </PetStack.Navigator>
               )}
             </Tab.Screen>

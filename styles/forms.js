@@ -20,11 +20,35 @@ export const card = {
   margin: 10,
   paddingHorizontal: 12,
   paddingVertical: 10,
-  borderWidth: 2,
   borderRadius: 8,
+  ...boxShadow
+}
+
+export const basePhoto = {
+  borderRadius: 99,
+  margin: 5,
+}
+
+export const photo = {
+  width: 150,
+  height: 150,
+  ...basePhoto
+}
+
+export const smallPhoto = {
+  width: 120,
+  height: 120,
+  ...basePhoto
+}
+
+export const boxShadow = {
   elevation: 3,
   shadowColor: '#000',
   shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.5,
   shadowRadius: 2,
+}
+
+export const icon = {
+
 }

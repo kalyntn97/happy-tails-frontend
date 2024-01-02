@@ -4,6 +4,7 @@ import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 //context
 import { AuthProvider } from './context/AuthContext'
+import { PetProvider } from './context/PetContext'
 //components
 import Layout from './components/Layout'
 
@@ -11,7 +12,9 @@ const App: React.FC = () => {
   
   return (
     <AuthProvider>
-      <Layout></Layout>
+      <PetProvider>
+        <Layout></Layout>
+      </PetProvider>
     </AuthProvider>
   )
 }
