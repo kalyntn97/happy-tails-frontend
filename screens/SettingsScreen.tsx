@@ -1,6 +1,6 @@
 //npm modules
 import { useEffect, useState } from "react"
-import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity } from "react-native"
+import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle } from "react-native"
 //context
 import { useAuth } from "../context/AuthContext"
 //services
@@ -16,11 +16,27 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 const SettingsScreen = () => {
   const { onLogout } = useAuth()
   const [profile, setProfile] = useState<Profile>({})
+  //set a random profile photo if user does not have one
+  const randomProfilePhotos = [
+    require('../assets/icons/micon1.png'),
+    require('../assets/icons/micon2.png'),
+    require('../assets/icons/micon3.png'),
+    require('../assets/icons/ficon1.png'),
+    require('../assets/icons/ficon2.png'),
+    require('../assets/icons/ficon3.png'),
+  ]
+
+  const [randomProfile, setRandomProfile] = useState(randomProfilePhotos[0])
+  const changeRandomProfilePhoto = () => {
+    const randomIdx = Math.floor(Math.random() * randomProfilePhotos.length)
+    setRandomProfile(randomProfilePhotos[randomIdx])
+  }
 
   useEffect(() => {
     const fetchProfile = async () => {
       const data = await profileService.show()
       setProfile(data)
+      changeRandomProfilePhoto()
       console.log(profile.pets)
     }
     fetchProfile()
@@ -38,7 +54,7 @@ const SettingsScreen = () => {
       <View style={styles.headerContainer}>
         <View style={styles.profileHeader}>
           <Text style={styles.header}>{profile.name}</Text>
-          <Image source={{ uri: profile.photo }} style={styles.profilePhoto}/>
+          <Image source={profile.photo ? { uri: profile.photo } : randomProfile} style={styles.profilePhoto as ImageStyle}/>
         </View>
         
         <Text style={styles.bodyText}>{profile.bio}</Text>
@@ -51,8 +67,8 @@ const SettingsScreen = () => {
             <Text style={styles.btnText}>Delete</Text>
           </TouchableOpacity>
         </View>
-
       </View>
+
       <View style={styles.petList}>
         {profile.pets?.map((pet, idx) =>
           <View style={styles.petInfo}>
@@ -92,11 +108,11 @@ const styles = StyleSheet.create({
   },
   bodyText: {
     width: '90%',
-    height: '20%'
+    height: '15%'
   },
   btnContainer: {
     width: '90%',
-    height: '20%',
+    height: '15%',
     ...Spacing.flexRow
   },
   mainBtn : {
