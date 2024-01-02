@@ -42,20 +42,19 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
   //populate data
   useEffect(() => {
     const fetchData = async (dataType: string) => {
-        let result: string[]
-        if (dataType === 'species') {
-          result = petUtils.speciesData
-        } else if (dataType === 'dogBreed') {
-          result = await petUtils.getDogBreedData()
-        } else if (dataType === 'catBreed') {
-          result = await petUtils.getCatBreedData()
-        } else if (dataType === 'birdSpecies') {
-          result = await petUtils.getBirdSpeciesData()
-        } else if (dataType === 'fishSpecies') {
-          result = petUtils.petFishData
-        }
-        setData(result)
-      
+      let result: string[]
+      if (dataType === 'species') {
+        result = petUtils.speciesData
+      } else if (dataType === 'dogBreed') {
+        result = await petUtils.getDogBreedData()
+      } else if (dataType === 'catBreed') {
+        result = await petUtils.getCatBreedData()
+      } else if (dataType === 'birdSpecies') {
+        result = await petUtils.getBirdSpeciesData()
+      } else if (dataType === 'fishSpecies') {
+        result = petUtils.petFishData
+      }
+      setData(result)
     }
     fetchData(dataType)
   }, [])

@@ -1,6 +1,6 @@
 //npm modules
 import { useState } from "react"
-import { View, Text, StyleSheet, Pressable, TextInput, Image, TouchableOpacity, Button, TouchableWithoutFeedback, Keyboard} from "react-native"
+import { View, Text, StyleSheet, Pressable, TextInput, Image, TouchableOpacity, Button, TouchableWithoutFeedback, Keyboard, Alert} from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 //types & services & utils
 import { Pet } from "../services/petsService"
@@ -22,6 +22,8 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
   const [age, setAge] = useState<number>(initialValues?.age || '')
   const [species, setSpecies] = useState<string>(initialValues?.species || '')
   const [breed, setBreed] = useState<string>(initialValues?.breed || '')
+  const [errorMsg, setErrorMsg] = useState<string>('')
+
   const petId: string | null = initialValues?.petId  ? initialValues?.petId : null
 
   
@@ -43,7 +45,9 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
     const photoData: { uri: string, name: string, type: string } | null 
       = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
     console.log('before submit', name, age, species, breed, photoData, petId)
-
+    if (!name && !species) {
+      setErrorMsg('Please enter name and type.')
+    }
     const result = await onSubmit(name, age, species, breed, photoData, petId)
     console.log('result', result)
 
