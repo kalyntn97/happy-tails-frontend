@@ -7,15 +7,17 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 import * as petUtils from '../utils/petUtils'
 
 interface DropdownProps {
-  label: string,
-  dataType: 'dogBreed' | 'species',
+  label: string
+  dataType: 'fishSpecies' | 'birdSpecies' | 'catBreed' | 'dogBreed' | 'species'
   onSelect: (item: string ) => void
 }
 
 const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
   const [visible, setVisible] = useState(false)
   const [data, setData] = useState<string[]>([])
-  const [selected, setSelected] = useState<string>('')
+  const [selected, setSelected] = useState<string>(
+    label !== 'Select Species' || 'Select Breed' ? label : ''
+  )
 
   const toggleDropdown = (): void => {
     visible ? setVisible(false) : openDropDown()
@@ -45,9 +47,14 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
           result = petUtils.speciesData
         } else if (dataType === 'dogBreed') {
           result = await petUtils.getDogBreedData()
+        } else if (dataType === 'catBreed') {
+          result = await petUtils.getCatBreedData()
+        } else if (dataType === 'birdSpecies') {
+          result = await petUtils.getBirdSpeciesData()
+        } else if (dataType === 'fishSpecies') {
+          result = petUtils.petFishData
         }
         setData(result)
-        console.log(result, data)
       
     }
     fetchData(dataType)
@@ -64,7 +71,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
                 keyExtractor={(item, idx) => idx.toString()}
                 renderItem={({ item }) => (
                   <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
-                    <Text style={styles.btnText}>
+                    <Text style={item === selected ? styles.selected : {}}>
                       { item || label }
                     </Text>
                   </TouchableOpacity>
@@ -113,8 +120,9 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1
   },
-  btnText: {
-
+  selected: {
+    color: Colors.darkPink,
+    fontWeight: 'bold'
   }
 })
 

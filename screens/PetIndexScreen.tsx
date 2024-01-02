@@ -50,51 +50,57 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
 
   return ( 
     <SafeAreaView style={styles.container}>
-      <View style={styles.btnContainer}>
-        <Pressable 
-          onPress={handleClickPrev} 
-          style={() => [styles.prevBtn, currCard == 0 && styles.disabled]}
-          disabled={currCard == 0}
-        >
-          <Text>Prev</Text>  
-        </Pressable>
-        
-        <Pressable 
-          onPress={handleClickNext} 
-          style={()=> [styles.nextBtn, currCard == petCount - 1  && styles.disabled]}
-          disabled={currCard == petCount - 1}
-        >
-          <Text>Next</Text>  
-        </Pressable>
-      </View>
-      
-      <View style={styles.carousel}>
-        <ScrollView
-          ref={scrollViewRef}
-          horizontal={true}
-          contentContainerStyle={{ width: `${100 * petCount}%` }}
-          showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={200}
-          decelerationRate="fast"
-          pagingEnabled
-          onMomentumScrollEnd={handleScroll}
-        >
-          {pets.map((pet, i) =>
-            <PetCard key={pet._id} pet={pet} idx={i} currCard={currCard} cardWidth={cardWidth} navigation={navigation}/>
-          )}
-        </ScrollView>
-      </View>
+      {petCount > 0 ?
+        <>    
+          <View style={styles.btnContainer}>
+            <Pressable 
+              onPress={handleClickPrev} 
+              style={() => [styles.prevBtn, currCard == 0 && styles.disabled]}
+              disabled={currCard == 0}
+            >
+              <Text>Prev</Text>  
+            </Pressable>
+            
+            <Pressable 
+              onPress={handleClickNext} 
+              style={()=> [styles.nextBtn, currCard == petCount - 1  && styles.disabled]}
+              disabled={currCard == petCount - 1}
+            >
+              <Text>Next</Text>  
+            </Pressable>
+          </View>
+          
+          <View style={styles.carousel}>
+            <ScrollView
+              ref={scrollViewRef}
+              horizontal={true}
+              contentContainerStyle={{ width: `${100 * petCount}%` }}
+              showsHorizontalScrollIndicator={false}
+              scrollEventThrottle={200}
+              decelerationRate="fast"
+              pagingEnabled
+              onMomentumScrollEnd={handleScroll}
+            >
+              {pets.map((pet, i) =>
+                <PetCard key={pet._id} pet={pet} idx={i} currCard={currCard} cardWidth={cardWidth} navigation={navigation}/>
+              )}
+            </ScrollView>
+          </View>
 
-      <View style={styles.dotNav}>
-        {pets.map((pet, i) => 
-          <Text 
-            key={i}
-            style={currCard === i ? styles.active : styles.inactive } 
-          >
-            •
-          </Text>
-        )}
-      </View>
+          <View style={styles.dotNav}>
+            {pets.map((pet, i) => 
+              <Text 
+                key={i}
+                style={currCard === i ? styles.active : styles.inactive } 
+              >
+                •
+              </Text>
+            )}
+          </View>
+        </>
+      :
+        <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
+      }
 
       <Pressable onPress={() => navigation.navigate('Create')} style={styles.addPetBtn}>
         <Text style={styles.btnText}>Add a Pet</Text>
@@ -108,6 +114,10 @@ const styles = StyleSheet.create({
     ...Spacing.centered,
     ...Spacing.flexColumn,
     ...Spacing.fullWH,
+  },
+  emptyMsg: {
+    ...Typography.smallHeader,
+    
   },
   btnContainer: {
     width: '90%',

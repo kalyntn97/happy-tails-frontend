@@ -30,8 +30,8 @@ export const basePhoto = {
 }
 
 export const photo = {
-  width: 170,
-  height: 170,
+  width: 150,
+  height: 150,
   ...basePhoto
 }
 
@@ -50,5 +50,5 @@ export const boxShadow = {
 }
 
 export const icon = {
-  
+
 }

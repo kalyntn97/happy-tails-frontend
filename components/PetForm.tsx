@@ -1,6 +1,6 @@
 //npm modules
 import { useState } from "react"
-import { View, Text, StyleSheet, Pressable, TextInput, Image, TouchableOpacity, Button} from "react-native"
+import { View, Text, StyleSheet, Pressable, TextInput, Image, TouchableOpacity, Button, TouchableWithoutFeedback, Keyboard} from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 //types & services & utils
 import { Pet } from "../services/petsService"
@@ -53,47 +53,52 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
   }
 
   return ( 
-    <View style={styles.container}>
-      <View style={styles.photoUpload}>
-        <Image source={{ uri: photo }} style={styles.image} />
-        <View style={styles.uploadBtnContainer}>
-          <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
-            <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
-            <Image source={require('../assets/icons/camera.png')} style={styles.cameraIcon} />
-          </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      
+      <View style={styles.container}>
+        <View style={styles.photoUpload}>
+          <Image source={{ uri: photo }} style={styles.image} />
+          <View style={styles.uploadBtnContainer}>
+            <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
+              <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
+              <Image source={require('../assets/icons/camera.png')} style={styles.cameraIcon} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.form}>
+          <TextInput 
+            style={styles.input} 
+            placeholder='Pet Name' 
+            onChangeText={(text: string) => setName(text)} 
+            value={name} 
+          />
+          <TextInput 
+            style={styles.input} 
+            keyboardType="numeric"
+            placeholder='Age' 
+            onChangeText={(text: string) => setAge(Number(text))} 
+            value={age.toString()} 
+          />
+          {!!species && <Text>Select Type</Text>}
+          <Dropdown label={species ? species : 'Select Type'} dataType='species' onSelect={setSpecies} />
+
+          {!!breed && <Text>{species === 'Dog' || species === 'Cat' ? 'Select Breed' : 'Select Species'}</Text>}
+          {species === 'Dog' && <Dropdown label={breed ? breed : 'Select Breed'} dataType='dogBreed' onSelect={setBreed} />}
+          
+          {species === 'Cat' && <Dropdown label={breed ? breed : 'Select Breed'} dataType='catBreed' onSelect={setBreed} />}
+          
+          {species === 'Bird' && <Dropdown label={breed ? breed : 'Select Species'} dataType='birdSpecies' onSelect={setBreed} />}
+          
+          {species === 'Fish' && <Dropdown label={breed ? breed : 'Select Species'} dataType='fishSpecies' onSelect={setBreed} />}
+
+          <Pressable onPress={handleSubmit} style={styles.mainButton}>
+            <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Add Pet'}</Text>
+          </Pressable>
         </View>
       </View>
 
-      <View style={styles.form}>
-        <TextInput 
-          style={styles.input} 
-          placeholder='Pet Name' 
-          onChangeText={(text: string) => setName(text)} 
-          value={name} 
-        />
-        <TextInput 
-          style={styles.input} 
-          keyboardType="numeric"
-          placeholder='Age' 
-          onChangeText={(text: string) => setAge(Number(text))} 
-          value={age.toString()} 
-        />
-        {!!species && <Text>Select Species </Text>}
-        <Dropdown label={species ? species : 'Select Species'} dataType='species' onSelect={setSpecies} />
-
-        {!!breed && <Text>Select Breed </Text>}
-        {species === 'Dog' && <Dropdown label={breed ? breed : 'Select Breed'} dataType='dogBreed' onSelect={setBreed} />}
-        {/* <TextInput 
-          style={styles.input} 
-          placeholder='Breed' 
-          onChangeText={(text: string) => setBreed(text)} 
-          value={breed} 
-        /> */}
-        <Pressable onPress={handleSubmit} style={styles.mainButton}>
-          <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Add Pet'}</Text>
-        </Pressable>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   )
 }
  
@@ -112,7 +117,8 @@ const styles = StyleSheet.create({
   },
   form: {
     ...Forms.form,
-    height: '60%'
+    height: '60%',
+    margin: 10
   },
   input: {
     ...Forms.input,
