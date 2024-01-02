@@ -18,7 +18,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
         {size === 'expanded' && 
           <Image source={iconSource} style={styles.petIcon as ImageStyle} />
         }
-        <Image source={{uri: pet.photo}} style={[styles.petPhoto as ImageStyle, size === 'expanded' ? {...Forms.smallPhoto} : {...Forms.xSmallPhoto}]} />
+        <Image source={pet.photo ? {uri: pet.photo} : require('../assets/icons/pet-profile.png')} style={[styles.petPhoto as ImageStyle, size === 'expanded' ? {...Forms.smallPhoto} : {...Forms.xSmallPhoto}]} />
         {size === 'compact' && 
           <Text style={styles.shortName}>{pet.name.split(' ')[0]}</Text>
         }
@@ -27,7 +27,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{pet.name}</Text>
           <View style={styles.details}>
-            <Text style={styles.body}>{pet.age} {pet.age == 1 ? 'year' : 'years'} old {pet.breed}</Text>
+            <Text style={styles.body}>{pet.age} {pet.age && (pet.age !== 1 ? 'years old' : 'year old')} {pet.breed}</Text>
           </View>
         </View>}
     </View>

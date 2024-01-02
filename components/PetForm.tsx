@@ -1,6 +1,6 @@
 //npm modules
 import { useState } from "react"
-import { View, Text, StyleSheet, Pressable, TextInput, Image, TouchableOpacity, Button, TouchableWithoutFeedback, Keyboard, Alert} from "react-native"
+import { View, Text, StyleSheet, Pressable, TextInput, Image, TouchableOpacity, Button, TouchableWithoutFeedback, Keyboard, Alert, ImageStyle} from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 //types & services & utils
 import { Pet } from "../services/petService"
@@ -19,7 +19,7 @@ interface PetFormProps {
 const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
   const [photo, setPhoto] = useState<string | null>(initialValues?.photo || null)
   const [name, setName] = useState<string>(initialValues?.name || '')
-  const [age, setAge] = useState<number>(initialValues?.age || '')
+  const [age, setAge] = useState<number | ''>(initialValues?.age || '')
   const [species, setSpecies] = useState<string>(initialValues?.species || '')
   const [breed, setBreed] = useState<string>(initialValues?.breed || '')
   const [errorMsg, setErrorMsg] = useState<string>('')
@@ -45,14 +45,16 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
     const photoData: { uri: string, name: string, type: string } | null 
       = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
     console.log('before submit', name, age, species, breed, photoData, petId)
-    if (!name && !species) {
+    if (!name || !species) {
       setErrorMsg('Please enter name and type.')
-    }
-    const result = await onSubmit(name, age, species, breed, photoData, petId)
-    console.log('result', result)
-
-    if (result && result.error) {
-      alert(result.msg)
+    } else {
+      setErrorMsg('')
+      const result = await onSubmit(name, age, species, breed, photoData, petId)
+      console.log('result', result)
+  
+      if (result && result.error) {
+        alert(result.msg)
+      }
     }
   }
 
@@ -61,15 +63,15 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
       
       <View style={styles.container}>
         <View style={styles.photoUpload}>
-          <Image source={{ uri: photo }} style={styles.image} />
+          <Image source={{ uri: photo }} style={styles.image as ImageStyle} />
           <View style={styles.uploadBtnContainer}>
             <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
               <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
-              <Image source={require('../assets/icons/camera.png')} style={styles.cameraIcon} />
+              <Image source={require('../assets/icons/camera.png')} style={styles.cameraIcon as ImageStyle} />
             </TouchableOpacity>
           </View>
         </View>
-
+        <Text style={{ color: Colors.red, fontWeight: 'bold' }}>{errorMsg}</Text>
         <View style={styles.form}>
           <TextInput 
             style={styles.input} 
@@ -81,8 +83,8 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
             style={styles.input} 
             keyboardType="numeric"
             placeholder='Age' 
-            onChangeText={(text: string) => setAge(Number(text))} 
-            value={age.toString()} 
+            onChangeText={(text: string) => setAge(text !== '' ? Number(text) : 0)} 
+            value={age !== '' ? age.toString() : ''} 
           />
           {!!species && <Text>Select Type</Text>}
           <Dropdown label={species ? species : 'Select Type'} dataType='species' onSelect={setSpecies} />

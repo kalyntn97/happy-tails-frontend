@@ -41,13 +41,13 @@ const SettingsScreen = () => {
           <Image source={{ uri: profile.photo }} style={styles.profilePhoto}/>
         </View>
         
-        <Text>{profile.bio}</Text>
+        <Text style={styles.bodyText}>{profile.bio}</Text>
 
         <View style={styles.btnContainer}>
-          <TouchableOpacity style={styles.mainBtn} >
+          <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} >
             <Text style={styles.btnText}>Edit</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.mainBtn} >
+          <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} >
             <Text style={styles.btnText}>Delete</Text>
           </TouchableOpacity>
         </View>
@@ -89,6 +89,10 @@ const styles = StyleSheet.create({
   profilePhoto: {
     ...Forms.smallPhoto,
     backgroundColor: Colors.lightPink
+  },
+  bodyText: {
+    width: '90%',
+    height: '20%'
   },
   btnContainer: {
     width: '90%',
