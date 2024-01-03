@@ -36,6 +36,10 @@ export const rounded = {
   borderRadius: 30
 }
 
+export const lessRounded = {
+  borderRadius: 15
+}
+
 export const square = {
   borderRadius: 8
 }
@@ -57,6 +61,13 @@ export const xSmallRounded = {
   ...main,
   ...xSmall,
   ...rounded,
+}
+
+export const xSmallSquare = {
+  ...base,
+  ...main,
+  ...xSmall,
+  ...square,
 }
 
 export const longSquare = {

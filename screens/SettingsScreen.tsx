@@ -1,6 +1,7 @@
 //npm modules
 import { useEffect, useState } from "react"
-import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle } from "react-native"
+import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable } from "react-native"
+import { createDrawerNavigator } from "@react-navigation/drawer"
 //context
 import { useProfileContext } from "../context/ProfileContext"
 import { useAuth } from "../context/AuthContext"
@@ -13,13 +14,10 @@ import { Profile } from "../services/profileService"
 import PetInfo from "../components/PetInfo"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
-import { photo } from "../styles/forms"
 
 const SettingsScreen = ({ navigation }) => {
-  const { onLogout } = useAuth()
   const { profile } = useProfileContext()
-  console.log(profile.pets)
-  
+
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
     require('../assets/icons/micon1.png'),
@@ -43,13 +41,6 @@ const SettingsScreen = ({ navigation }) => {
     fetchProfilePhoto()
   }, [])
 
-  const logout = async () => {
-    const result = await onLogout!()
-    if (result && result.error) {
-      alert(result.status)
-    }
-  }
-
   return ( 
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -58,7 +49,9 @@ const SettingsScreen = ({ navigation }) => {
           <Image source={profile.photo ? { uri: profile.photo } : randomProfile} style={styles.profilePhoto as ImageStyle}/>
         </View>
         
-        <Text style={styles.bodyText}>{profile.bio}</Text>
+        <View style={styles.bioBox}>
+          <Text style={styles.bioText}>{profile.bio}</Text>
+        </View>
 
         <View style={styles.btnContainer}>
           <TouchableOpacity 
@@ -73,16 +66,14 @@ const SettingsScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <View style={styles.petList}>
+      <Pressable style={styles.petList} onLongPress={() => navigation.navigate('Profile')}>
         {profile.pets?.map((pet, idx) =>
-          <View style={styles.petInfo}>
-            <PetInfo key={idx} pet={pet} size='compact' />
+          <View style={styles.petInfo} key={idx}>
+            <PetInfo key={pet._id} pet={pet} size='compact' />
           </View>
         )}
-      </View>
-      <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
-        <Text style={styles.btnText}>Logout</Text>
-      </TouchableOpacity>
+      </Pressable>
+
     </View>
   )
 }
@@ -95,29 +86,37 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     width: '100%',
-    height: '40%',
-    ...Spacing.flexColumn
+    height: '50%',
+    ...Spacing.flexColumn,
   },
   profileHeader: {
     width: '90%',
-    height: '70%',
-    ...Spacing.flexColumn
+    height: '60%',
+    ...Spacing.flexColumn,
   },
   header: {
-    ...Typography.smallHeader
+    ...Typography.smallHeader,
+    height: '15%',
+    margin: 10
   },
   profilePhoto: {
     ...Forms.smallPhoto,
-    backgroundColor: Colors.lightPink
+    backgroundColor: Colors.lightPink,
   },
-  bodyText: {
+  bioBox: {
     width: '90%',
-    height: '15%'
+    maxHeight: '20%',
+    marginBottom: 10,
+    ...Spacing.centered
+  },
+  bioText: {
+    textAlign: 'left'
   },
   btnContainer: {
     width: '90%',
     height: '15%',
-    ...Spacing.flexRow
+    ...Spacing.flexRow,
+    alignItems: 'center'
   },
   mainBtn : {
     ...Buttons.xSmallRounded
@@ -128,7 +127,7 @@ const styles = StyleSheet.create({
   petList: {
     ...Spacing.flexRow,
     width: '90%',
-    height: '30%',
+    height: '40%',
     flexWrap: 'wrap',
     marginTop: 'auto',
   },
@@ -141,7 +140,7 @@ const styles = StyleSheet.create({
     ...Buttons.longSquare,
     backgroundColor: Colors.darkPink,
     marginTop: 'auto',
-    marginBottom: 20
+    marginBottom: 20,
   }
 })
 

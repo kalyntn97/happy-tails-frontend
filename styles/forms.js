@@ -56,5 +56,13 @@ export const boxShadow = {
 }
 
 export const icon = {
+  width: 40,
+  height: 40,
+  margin: 5
+}
 
+export const smallIcon = {
+  width: 30,
+  height: 30,
+  margin: 2
 }
