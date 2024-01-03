@@ -84,8 +84,8 @@ export async function edit(name: string, age: number, species: string, breed: st
     })
     if (photoData) {
       const jsonRes = await res.json()
-      console.log('jsonRes', jsonRes)
       const urlRes = await addPhoto(jsonRes._id, photoData)
+      console.log('res data', urlRes)
       jsonRes.photo = urlRes.url
       return jsonRes
     } else {

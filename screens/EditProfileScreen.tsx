@@ -21,7 +21,7 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
 
   const [name, setName] = useState<string>(profile.name)
   const [bio, setBio] = useState<string>(profile.bio ? profile.bio : '')
-  const [photo, setPhoto] = useState<string>(profile.photo ? profile.photo : '')
+  const [photo, setPhoto] = useState<string | null>(profile.photo ? profile.photo : null)
 
   const [errorMsg, setErrorMsg] = useState<string>('')
 
@@ -38,19 +38,31 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
       setPhoto(_image.assets[0].uri)
     }
   }
+
+  const handleEditProfile =  async (name: string, bio: string, photoData: { uri: string, name: string, type: string } | null) => {
+    const result = await onEditProfile!(name, bio, photoData)
+    console.log('result', result)
+
+    if (result && result.error) {
+      alert(result.msg)
+    }
+    navigation.navigate('Account')
+  }
   
   const handleSubmit = async () => {
     const photoData: { uri: string, name: string, type: string } | null 
       = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
-    console.log('before submit', name, bio, photoData)
     if (!name) {
       setErrorMsg('Please enter name.')
     } else {
       setErrorMsg('')
-      const result = await onEditProfile!(name, bio, photoData)
+      const result = await handleEditProfile(name, bio, photoData)
       console.log('result', result)
+      
+      if (result && result.error) {
+        alert(result.msg)
+      }
 
-      navigation.navigate('Account')
     }
   }
   

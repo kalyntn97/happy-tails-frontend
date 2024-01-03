@@ -1,6 +1,5 @@
 import * as tokenService from './tokenService'
 import { Pet } from './petService'
-import JWT from 'expo-jwt'
 
 const BASE_URL = `${process.env.EXPO_PUBLIC_BACKEND_URL}/profile`
 
@@ -24,8 +23,9 @@ export async function show(): Promise<Profile> {
   }
 }
 
-export async function addPhoto(photoData: any, token: string): Promise<any> {
+export async function addPhoto(photoData: any): Promise<any> {
   try {
+    const token = await tokenService.getToken()
     const photoFormData = new FormData()
     photoFormData.append('file', photoData)
 
@@ -56,9 +56,10 @@ export async function update(name: string, bio: string, photoData: { uri: string
       body: JSON.stringify({ name, bio })
     })
     if (photoData) {
+      console.log('rawPhotoData bf submit', photoData)
       const jsonRes = await res.json()
-      console.log('jsonRes', jsonRes)
-      const urlRes = await addPhoto(photoData, token)
+      const urlRes = await addPhoto(photoData)
+      console.log('res data', urlRes)
       jsonRes.photo = urlRes.url
       return jsonRes
     } else {
