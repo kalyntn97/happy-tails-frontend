@@ -52,7 +52,7 @@ export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
     return deletedPet
   }
 
-  const values: PetProps = {
+  const value: PetProps = {
     pets,
     onAddPet: addPet,
     onEditPet: editPet,
@@ -60,7 +60,7 @@ export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
   }
 
   return (
-    <PetContext.Provider value={values}>
+    <PetContext.Provider value={value}>
       {children}
     </PetContext.Provider>
   )

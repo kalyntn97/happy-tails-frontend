@@ -78,13 +78,14 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
             placeholder='Pet Name' 
             onChangeText={(text: string) => setName(text)} 
             value={name} 
+            autoCapitalize="words"
           />
           <TextInput 
             style={styles.input} 
-            keyboardType="numeric"
             placeholder='Age' 
             onChangeText={(text: string) => setAge(text !== '' ? Number(text) : 0)} 
             value={age !== '' ? age.toString() : ''} 
+            keyboardType="numeric"
           />
           {!!species && <Text>Select Type</Text>}
           <Dropdown label={species ? species : 'Select Type'} dataType='species' onSelect={setSpecies} />
@@ -98,9 +99,9 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
           
           {species === 'Fish' && <Dropdown label={breed ? breed : 'Select Species'} dataType='fishSpecies' onSelect={setBreed} />}
 
-          <Pressable onPress={handleSubmit} style={styles.mainButton}>
+          <TouchableOpacity onPress={handleSubmit} style={styles.mainButton}>
             <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Add Pet'}</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
 

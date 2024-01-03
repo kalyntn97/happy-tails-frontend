@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle } from "react-native"
 //context
+import { useProfileContext } from "../context/ProfileContext"
 import { useAuth } from "../context/AuthContext"
 //services
 import * as profileService from '../services/profileService'
@@ -12,10 +13,13 @@ import { Profile } from "../services/profileService"
 import PetInfo from "../components/PetInfo"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { photo } from "../styles/forms"
 
-const SettingsScreen = () => {
+const SettingsScreen = ({ navigation }) => {
   const { onLogout } = useAuth()
-  const [profile, setProfile] = useState<Profile>({})
+  const { profile } = useProfileContext()
+  console.log(profile.pets)
+  
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
     require('../assets/icons/micon1.png'),
@@ -33,13 +37,10 @@ const SettingsScreen = () => {
   }
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const data = await profileService.show()
-      setProfile(data)
+    const fetchProfilePhoto = async () => {
       changeRandomProfilePhoto()
-      console.log(profile.pets)
     }
-    fetchProfile()
+    fetchProfilePhoto()
   }, [])
 
   const logout = async () => {
@@ -60,7 +61,10 @@ const SettingsScreen = () => {
         <Text style={styles.bodyText}>{profile.bio}</Text>
 
         <View style={styles.btnContainer}>
-          <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} >
+          <TouchableOpacity 
+            style={[styles.mainBtn, { backgroundColor: Colors.yellow }]}
+            onPress={() => navigation.navigate('Edit', { profile : profile })}
+          >
             <Text style={styles.btnText}>Edit</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} >

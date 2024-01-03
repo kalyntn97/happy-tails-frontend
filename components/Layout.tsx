@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext'
 //screens
 import HomeScreen from '../screens/HomeScreen'
 import SettingsScreen from '../screens/SettingsScreen'
+import EditProfileScreen from '../screens/EditProfileScreen'
 import PetIndexScreen from '../screens/PetIndexScreen'
 import NewPetScreen from '../screens/NewPetScreen'
 import EditPetScreen from '../screens/EditPetScreen'
@@ -22,6 +23,7 @@ const Layout: React.FC = () => {
   const Tab = createBottomTabNavigator()
   const PetStack = createNativeStackNavigator()
   const LoginStack = createNativeStackNavigator()
+  const SettingsStack = createNativeStackNavigator()
 
   return ( 
     <NavigationContainer>
@@ -73,7 +75,14 @@ const Layout: React.FC = () => {
                 </PetStack.Navigator>
               )}
             </Tab.Screen>
-            <Tab.Screen name='Settings' component={SettingsScreen} options={{title: 'Settings'}}/>
+            <Tab.Screen name='Settings' options={{title: 'Settings'}}>
+              {() => (
+                <SettingsStack.Navigator>
+                  <SettingsStack.Screen name='Account' component={SettingsScreen} options={{ title: 'Profile', headerShown: false}} />
+                  <SettingsStack.Screen name='Edit' component={EditProfileScreen} options={{ title: 'Edit Profile' }} />
+                </SettingsStack.Navigator>
+              )}
+            </Tab.Screen>
           </Tab.Group>
         ) : (
           <Tab.Group>
@@ -81,7 +90,7 @@ const Layout: React.FC = () => {
             <Tab.Screen name='Account' options={{ title: 'Account' }}>
               {() => (
                 <LoginStack.Navigator>
-                  <LoginStack.Screen name='Login' component={LoginScreen} options={{ title: 'Sign in' }}/>
+                  <LoginStack.Screen name='Login' component={LoginScreen} options={{ title: 'Sign in', headerShown: false }}/>
                   <LoginStack.Screen name='Register' component={RegisterScreen} options={{ title: 'Register' }}/>
               </LoginStack.Navigator>
               )}
