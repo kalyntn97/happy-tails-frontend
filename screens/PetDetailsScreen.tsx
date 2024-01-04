@@ -36,7 +36,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
     if (result && result.error) {
       alert(result.msg)
     }
-    navigation.navigate('Pets')
+    navigation.navigate('Index')
   }
   
   const showDeleteConfirmDialog = () => {

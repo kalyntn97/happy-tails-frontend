@@ -14,6 +14,7 @@ import { Profile } from "../services/profileService"
 import PetInfo from "../components/PetInfo"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { ScrollView } from "react-native-gesture-handler"
 
 const SettingsScreen = ({ navigation }) => {
   const { profile } = useProfileContext()
@@ -45,7 +46,7 @@ const SettingsScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.profileHeader}>
-          <Text style={styles.header}>{profile.name}</Text>
+          {/* <Text style={styles.header}>{profile.name}</Text> */}
           <Image source={profile.photo ? { uri: profile.photo } : randomProfile} style={styles.profilePhoto as ImageStyle}/>
         </View>
         
@@ -66,12 +67,16 @@ const SettingsScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <Pressable style={styles.petList} onLongPress={() => navigation.navigate('Profile')}>
-        {profile.pets?.map((pet, idx) =>
-          <View style={styles.petInfo} key={idx}>
-            <PetInfo key={pet._id} pet={pet} size='compact' />
+      <Pressable onLongPress={() => navigation.navigate('Profile')}>
+        <ScrollView>
+          <View style={styles.petList}>
+            {profile.pets?.map((pet, idx) =>
+              <View style={styles.petInfo}>
+                <PetInfo key={pet._id} pet={pet} size='compact' />
+              </View>
+            )}
           </View>
-        )}
+        </ScrollView>
       </Pressable>
 
     </View>
@@ -102,6 +107,7 @@ const styles = StyleSheet.create({
   profilePhoto: {
     ...Forms.smallPhoto,
     backgroundColor: Colors.lightPink,
+    margin: 10,
   },
   bioBox: {
     width: '90%',
@@ -127,14 +133,11 @@ const styles = StyleSheet.create({
   petList: {
     ...Spacing.flexRow,
     width: '90%',
-    height: '40%',
     flexWrap: 'wrap',
-    marginTop: 'auto',
   },
   petInfo: {
     width: '30%',
     height: 130
-    
   },
   logoutBtn: {
     ...Buttons.longSquare,

@@ -39,16 +39,6 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
     }
   }
 
-  const handleEditProfile =  async (name: string, bio: string, photoData: { uri: string, name: string, type: string } | null) => {
-    const result = await onEditProfile!(name, bio, photoData)
-    console.log('result', result)
-
-    if (result && result.error) {
-      alert(result.msg)
-    }
-    navigation.navigate('Account')
-  }
-  
   const handleSubmit = async () => {
     const photoData: { uri: string, name: string, type: string } | null 
       = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
@@ -56,13 +46,18 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
       setErrorMsg('Please enter name.')
     } else {
       setErrorMsg('')
-      const result = await handleEditProfile(name, bio, photoData)
-      console.log('result', result)
-      
-      if (result && result.error) {
-        alert(result.msg)
-      }
 
+      try {
+        const result = await onEditProfile!(name, bio, photoData)
+        console.log('result', result)
+
+        if (result && result.error) {
+          alert(result.msg)
+        }
+      } catch (error) {
+        console.log('Error during edit profile: ', error)
+      }
+      navigation.navigate('Profile')
     }
   }
   

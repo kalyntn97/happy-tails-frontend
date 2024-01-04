@@ -16,7 +16,7 @@ const NewPetScreen = ({ navigation }) => {
     if (result && result.error) {
       alert(result.msg)
     }
-    navigation.navigate('Pets')
+    navigation.navigate('Index')
   }
 
   return ( 
