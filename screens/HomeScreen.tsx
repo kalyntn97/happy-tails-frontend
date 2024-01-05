@@ -9,6 +9,8 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
 
+  
+
   return ( 
     <>
       {authState?.authenticated ? (
@@ -19,7 +21,11 @@ const HomeScreen: React.FC = ({ navigation }) => {
         <View style={styles.container}>
            <LottieView source={require('../assets/animations/happy.json')} autoPlay loop style={styles.happyAnimation} />
            <View style={styles.headers}>
-              <Text style={styles.mainHeader}>Care, Connection, and Joy</Text>
+              <Text style={styles.mainHeader}>
+                <Text style={{ color: Colors.blue }}>Care.</Text>{'\n'}
+                <Text style={{ color: Colors.green }}>Connection.</Text>{'\n'}
+                <Text style={{ color: Colors.pink }}>Joy.</Text>
+              </Text>
               <Text style={styles.subHeader}>Ready to start a new journey with your furry friends?</Text>
            </View>
           <TouchableOpacity onPress={() => navigation.navigate('User', { screen: 'Login' })} style={styles.mainBtn}>
@@ -46,9 +52,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 10
   },
   mainHeader: {
-    fontSize: 35,
+    fontSize: 45,
     fontWeight: 'bold',
-    marginBottom: 20
+    marginBottom: 20,
   },
   subHeader: {
     fontSize: 20,
