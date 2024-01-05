@@ -34,12 +34,12 @@ const Layout: React.FC = () => {
   
   const Drawer = createDrawerNavigator()
 
-  const logout = async () => {
-    const result = await onLogout!()
-    if (result && result.error) {
-      alert(result.status)
-    }
-  }
+  // const logout = async () => {
+  //   const result = await onLogout!()
+  //   if (result && result.error) {
+  //     alert(result.status)
+  //   }
+  // }
 
   return ( 
     <NavigationContainer>
@@ -62,7 +62,7 @@ const Layout: React.FC = () => {
 
             return <Image source={icon} style={styles.icon as ImageStyle} />
           },
-          tabBarStyle: { padding : 10, height: 100 },
+          tabBarStyle: { padding : 10, height: 100, backgroundColor: Colors.lightestPink},
           headerStyle: {
             backgroundColor: Colors.pink,
           },
@@ -93,7 +93,7 @@ const Layout: React.FC = () => {
                     return (
                       <DrawerContentScrollView {...props} contentContainerStyle={styles.scrollView}>
                         <DrawerItemList {...props} />
-                        <DrawerItem
+                        {/* <DrawerItem
                           label={() => 
                             <TouchableOpacity onPress={logout} style={styles.logoutBtn}>
                               <Text style={styles.btnText}>Logout</Text>
@@ -101,8 +101,7 @@ const Layout: React.FC = () => {
                           }
                           onPress={logout}
                           style={{ marginTop: 'auto', width: '100%'}}
-                
-                        />
+                        /> */}
                       </DrawerContentScrollView>
                     )
                   }}
@@ -189,11 +188,11 @@ const styles = StyleSheet.create({
   scrollView: {
     ...Spacing.fullWH,
   },
-  logoutBtn: {
-    ...Buttons.xSmallSquare,
-    backgroundColor: Colors.darkPink,
-    width: '90%'
-  },
+  // logoutBtn: {
+  //   ...Buttons.xSmallSquare,
+  //   backgroundColor: Colors.darkPink,
+  //   width: '90%'
+  // },
   btnText: {
     ...Buttons.buttonText,
     color: Colors.lightestPink

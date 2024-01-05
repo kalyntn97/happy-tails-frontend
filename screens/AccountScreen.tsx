@@ -4,6 +4,8 @@ import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 
 //component
 import AccountForm from "../components/AccountForm"
 import ToggleableForm from "../components/ToggleableForm"
+//context
+import { useAuth } from "../context/AuthContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -13,6 +15,14 @@ interface AccountProps {
 }
 
 const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
+  const { onLogout } = useAuth()
+
+  const logout = async () => {
+    const result = await onLogout!()
+    if (result && result.error) {
+      alert(result.status)
+    }
+  }
 
   const UpdateAccountForm = () => {
     const [changePwOnly, setChangePwOnly] = useState(false)
@@ -60,8 +70,17 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
       <ToggleableForm 
         title='Delete account and all pet profiles'
         content={ 
-          <TouchableOpacity style={[styles.mainBtn, styles.warn]}>
+          <TouchableOpacity style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.red }]}>
             <Text style={styles.btnText}>Delete account</Text>
+          </TouchableOpacity>
+        }
+      />
+
+      <ToggleableForm
+        title='Log out of account'
+        content={
+          <TouchableOpacity onPress={logout} style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.darkPink }]}>
+            <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
         }
       />
@@ -115,10 +134,9 @@ const styles = StyleSheet.create({
     ...Forms.smallIcon
    },
    warn: {
-    ...Buttons.longSquare,
+    ...Buttons.xSmallSquare,
     width: '80%',
-    backgroundColor: Colors.red
-   }
+   },
 })
 
 export default AccountScreen
