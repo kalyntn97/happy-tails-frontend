@@ -38,34 +38,38 @@ const HomeScreen: React.FC = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.fullWH,
-    ...Spacing.centered,
+    alignItems: 'center',
     backgroundColor: 'white',
   },
   headers:{
     width: '80%',
-    marginHorizontal: 20
+    marginHorizontal: 10
   },
   mainHeader: {
     fontSize: 35,
     fontWeight: 'bold',
-    marginVertical: 10
+    marginBottom: 20
   },
   subHeader: {
-    fontSize: 17,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'gray',
-    marginVertical: 10
+    marginBottom: 20
   },
   happyAnimation: {
-    width: '90%',
+    width: '100%',
   },
   mainBtn: {
-    ...Buttons.longSquare,
-    backgroundColor: Colors.pink
+    ...Buttons.longRounded,
+    width: '80%',
+    height: 50,
+    backgroundColor: Colors.pink,
+    marginTop: 'auto',
+    marginBottom: 80,
   },
   btnText: {
     ...Buttons.buttonText,
-    fontSize: 17,
+    fontSize: 20,
     color: Colors.lightestPink
   }
 })

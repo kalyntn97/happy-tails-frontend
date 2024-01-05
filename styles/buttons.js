@@ -77,6 +77,13 @@ export const longSquare = {
   ...square
 }
 
+export const longRounded = {
+  ...base,
+  ...main,
+  ...long,
+  ...rounded,
+}
+
 export const buttonText = {
   fontSize: 16,
   lineHeight: 21,
