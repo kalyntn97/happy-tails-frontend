@@ -1,4 +1,5 @@
 //npm modules
+import { useEffect } from 'react'
 import { Image, Pressable, Text, View, TouchableOpacity, StyleSheet, ImageStyle } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'

@@ -28,16 +28,14 @@ const AccountForm: React.FC<AccountFormProps> = ({ changePwOnly, setShowForm }) 
     } else {
 
     }
-    navigation.navigate('Account')
+    
   }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+
       <View style={[{ backgroundColor: changePwOnly ? Colors.lightPink : !changePwOnly ? Colors.lightPink : 'white' }]}>
-        <View style={styles.header}>
-          {/* <Text style={styles.headerText}>{changePwOnly ? 'Change Password' : 'Edit Account'}</Text> */}
-          <Text style={styles.errorMsg}>{errorMsg}</Text>
-        </View>
+        <Text style={styles.errorMsg}>{errorMsg}</Text>
         <View style={styles.form}>
           {!changePwOnly && 
             <TextInput 
@@ -86,24 +84,29 @@ const styles = StyleSheet.create({
   errorMsg: {
     color: Colors.red,
     fontWeight: 'bold',
-    margin: 5
+    margin: 5,
+    height: '5%'
   },
   form: {
     ...Forms.form,
-    height: '90%',
     width: '90%',
+    height: '85%'
   },
   input: {
     ...Forms.input,
+    height: 40,
+    margin: 5,
     borderColor: Colors.pink,
   },
   mainBtn: {
     ...Buttons.smallRounded,
+    height: 40,
     margin: 10,
     backgroundColor: Colors.pink
   },
   subBtn: {
-    ...Buttons.smallSub
+    ...Buttons.smallSub,
+    height: 40
   },
   btnText: {
     ...Buttons.buttonText,
