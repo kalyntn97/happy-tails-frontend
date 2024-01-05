@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
+//types & services
+import { Profile } from "../services/profileService"
+import * as profileService from '../services/profileService'
 
 interface AuthProps {
   authState?: { token: string | null, authenticated: boolean | null }
@@ -73,7 +76,7 @@ export const AuthProvider = ({children}: any) => {
       await SecureStore.deleteItemAsync(TOKEN_KEY)
       axios.defaults.headers.common['Authorization'] = ''
       setAuthState({
-        token: null, authenticated: false
+        token: null, authenticated: false, profile: null
       })
     } catch (error) {
       console.error('Logout Error:', error);
@@ -85,7 +88,7 @@ export const AuthProvider = ({children}: any) => {
     onRegister: register,
     onLogin: login,
     onLogout: logout,
-    authState
+    authState,
   }
 
   return (

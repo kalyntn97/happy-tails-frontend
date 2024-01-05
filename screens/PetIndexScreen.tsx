@@ -2,8 +2,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { View, StyleSheet, Text, Pressable, SafeAreaView, ScrollView, useWindowDimensions, FlatList } from "react-native"
 //services
-import { Pet } from '../services/petsService'
-import * as petService from '../services/petsService'
+import { Pet } from '../services/petService'
+import * as petService from '../services/petService'
 //components
 import PetCard from '../components/PetCard'
 //context

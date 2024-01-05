@@ -1,8 +1,8 @@
 //npm modules
 import React, { ReactNode, createContext, useContext, useState, useEffect } from "react"
-import { Pet } from "../services/petsService"
+import { Pet } from "../services/petService"
 //services
-import * as petService from '../services/petsService'
+import * as petService from '../services/petService'
 
 //types
 interface PetProps {
@@ -52,7 +52,7 @@ export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
     return deletedPet
   }
 
-  const values: PetProps = {
+  const value: PetProps = {
     pets,
     onAddPet: addPet,
     onEditPet: editPet,
@@ -60,7 +60,7 @@ export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
   }
 
   return (
-    <PetContext.Provider value={values}>
+    <PetContext.Provider value={value}>
       {children}
     </PetContext.Provider>
   )
