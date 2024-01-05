@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
   },
   happyAnimation: {
     width: '100%',
+    marginVertical: 20,
   },
   mainBtn: {
     ...Buttons.longRounded,

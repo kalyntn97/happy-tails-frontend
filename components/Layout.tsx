@@ -150,7 +150,7 @@ const Layout: React.FC = () => {
           </Tab.Group>
         ) : (
           <Tab.Group>
-            <Tab.Screen name='Home' component={HomeScreen} options={{title: 'Welcome', tabBarStyle: { display: 'none' }}} />
+            <Tab.Screen name='Home' component={HomeScreen} options={{title: 'Welcome', tabBarStyle: { display: 'none' }, headerShown: false }} />
             <Tab.Screen name='User' options={{ title: 'Account' }}>
               {() => (
                 <LoginStack.Navigator>
