@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
   petName: {
     ...Typography.subHeader,
     margin: 0,
+    textAlign: "center"
   },
   detailsContainer: {
     ...Spacing.flexRow,

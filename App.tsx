@@ -12,11 +12,11 @@ const App: React.FC = () => {
   
   return (
     <AuthProvider>
-      <ProfileProvider>
-        <PetProvider>
+      <PetProvider>
+        <ProfileProvider>
           <Layout></Layout>
-        </PetProvider>
-      </ProfileProvider>
+        </ProfileProvider>
+      </PetProvider>
     </AuthProvider>
   )
 }

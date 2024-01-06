@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState} from "react"
 import { Profile } from "../services/profileService"
 //services
 import * as profileService from '../services/profileService'
+import { usePetContext } from "./PetContext"
 
 interface ProfileProps {
   profile?: Profile | null
@@ -18,6 +19,7 @@ export const useProfileContext = () => {
 
 export const ProfileProvider = ({children}: any) => {
   const [profile, setProfile] = useState<Profile>(null)
+  const { pets } = usePetContext()
   
   useEffect(() => {
     const fetchProfile = async () => {
@@ -25,7 +27,7 @@ export const ProfileProvider = ({children}: any) => {
       setProfile(profileData)
     }
     fetchProfile()
-  }, [])
+  }, [pets])
   
   const editProfile = async (name: string, bio: string, photoData: { uri: string, name: string, type: string } | null) => {
     const updatedProfile = await profileService.update(name, bio, photoData)
