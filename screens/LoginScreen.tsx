@@ -51,6 +51,7 @@ const LoginScreen: React.FC = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    ...Spacing.fullScreenDown,
     ...Spacing.centered
   },
   catAnimation: {

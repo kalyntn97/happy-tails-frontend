@@ -36,8 +36,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullWH,
-    ...Spacing.flexRow
+    ...Spacing.fullScreenAcross
   },
   shortName: {
     ...Typography.smallHeader,

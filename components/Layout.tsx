@@ -1,4 +1,5 @@
 //npm modules
+import { useEffect } from 'react'
 import { Image, Pressable, Text, View, TouchableOpacity, StyleSheet, ImageStyle } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -19,26 +20,25 @@ import PetDetailsScreen from '../screens/PetDetailsScreen'
 import LoginScreen from '../screens/LoginScreen'
 import RegisterScreen from '../screens/RegisterScreen'
 import AccountScreen from '../screens/AccountScreen'
+import CareIndexScreen from '../screens/CareIndexScreen'
+import HealthIndexScreen from '../screens/HealthIndexScreen'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 const Layout: React.FC = () => {
   const { authState, onLogout } = useAuth()
   const { profile } = useProfileContext()
+  //tabs
   const Tab = createBottomTabNavigator()
-
+  //stacks
   const PetStack = createNativeStackNavigator()
   const LoginStack = createNativeStackNavigator()
   const SettingsStack = createNativeStackNavigator()
-  
-  const Drawer = createDrawerNavigator()
-
-  const logout = async () => {
-    const result = await onLogout!()
-    if (result && result.error) {
-      alert(result.status)
-    }
-  }
+  const CareStack = createNativeStackNavigator()
+  const HealthStack = createNativeStackNavigator()
+  //drawers
+  const AccountDrawer = createDrawerNavigator()
+  const HomeDrawer = createDrawerNavigator()
 
   return ( 
     <NavigationContainer>
@@ -61,7 +61,7 @@ const Layout: React.FC = () => {
 
             return <Image source={icon} style={styles.icon as ImageStyle} />
           },
-          tabBarStyle: { padding : 10, height: 100 },
+          tabBarStyle: { padding : 10, height: 100, backgroundColor: Colors.lightestPink},
           headerStyle: {
             backgroundColor: Colors.pink,
           },
@@ -73,7 +73,27 @@ const Layout: React.FC = () => {
       >
         {authState?.authenticated ? (
           <Tab.Group>
-            <Tab.Screen name='Home' component={HomeScreen} options={{title: 'Welcome'}}/>
+            <Tab.Screen name='Home' options={{title: 'Welcome'}}>
+              {() => (
+                <HomeDrawer.Navigator>
+                  <HomeDrawer.Screen name='Welcome' component={HomeScreen} options={{ title: 'Welcome'}}/>
+                  <HomeDrawer.Screen name='Care' options={{ title: 'Pet Care' }}>
+                    {() => (
+                      <CareStack.Navigator>
+                        <CareStack.Screen name='Index' component={CareIndexScreen} options={{ title: 'All Pet Care' }}/>
+                    </CareStack.Navigator>
+                    )}
+                  </HomeDrawer.Screen>
+                  <HomeDrawer.Screen name='Health' options={{ title: 'Pet Health' }}>
+                    {() => (
+                      <HealthStack.Navigator>
+                        <HealthStack.Screen name='Index' component={HealthIndexScreen} options={{ title: 'All Health Care' }}/>
+                      </HealthStack.Navigator>
+                    )}
+                  </HomeDrawer.Screen>
+                </HomeDrawer.Navigator>
+              )}
+            </Tab.Screen>
             <Tab.Screen name='Pets' options={{title: 'All Pets'}}>
               {() => (
                 <PetStack.Navigator>
@@ -86,13 +106,13 @@ const Layout: React.FC = () => {
             </Tab.Screen>
             <Tab.Screen name='Account' options={{ title: 'Profile' }}>
               {() => (
-                <Drawer.Navigator
+                <AccountDrawer.Navigator
                   initialRouteName='My Profile'
                   drawerContent={(props) => {
                     return (
                       <DrawerContentScrollView {...props} contentContainerStyle={styles.scrollView}>
                         <DrawerItemList {...props} />
-                        <DrawerItem
+                        {/* <DrawerItem
                           label={() => 
                             <TouchableOpacity onPress={logout} style={styles.logoutBtn}>
                               <Text style={styles.btnText}>Logout</Text>
@@ -100,8 +120,7 @@ const Layout: React.FC = () => {
                           }
                           onPress={logout}
                           style={{ marginTop: 'auto', width: '100%'}}
-                
-                        />
+                        /> */}
                       </DrawerContentScrollView>
                     )
                   }}
@@ -125,7 +144,7 @@ const Layout: React.FC = () => {
                     }
                   })}
                 >
-                  <Drawer.Screen name='Settings' options={{ title: 'Profile' }}>
+                  <AccountDrawer.Screen name='Settings' options={{ title: 'Profile' }}>
                     {() => (
                       <SettingsStack.Navigator>
                         <SettingsStack.Screen
@@ -140,17 +159,17 @@ const Layout: React.FC = () => {
                         />
                       </SettingsStack.Navigator>
                     )}
-                  </Drawer.Screen>
+                  </AccountDrawer.Screen>
 
-                  <Drawer.Screen name='Config' component={AccountScreen} options={{ title: 'Manage Account' }} />
+                  <AccountDrawer.Screen name='Config' component={AccountScreen} options={{ title: 'Manage Account' }} />
                   
-                </Drawer.Navigator>
+                </AccountDrawer.Navigator>
               )}
             </Tab.Screen>
           </Tab.Group>
         ) : (
           <Tab.Group>
-            <Tab.Screen name='Home' component={HomeScreen} options={{title: 'Welcome'}}/>
+            <Tab.Screen name='Home' component={HomeScreen} options={{title: 'Welcome', tabBarStyle: { display: 'none' }, headerShown: false }} />
             <Tab.Screen name='User' options={{ title: 'Account' }}>
               {() => (
                 <LoginStack.Navigator>
@@ -188,11 +207,11 @@ const styles = StyleSheet.create({
   scrollView: {
     ...Spacing.fullWH,
   },
-  logoutBtn: {
-    ...Buttons.xSmallSquare,
-    backgroundColor: Colors.darkPink,
-    width: '90%'
-  },
+  // logoutBtn: {
+  //   ...Buttons.xSmallSquare,
+  //   backgroundColor: Colors.darkPink,
+  //   width: '90%'
+  // },
   btnText: {
     ...Buttons.buttonText,
     color: Colors.lightestPink

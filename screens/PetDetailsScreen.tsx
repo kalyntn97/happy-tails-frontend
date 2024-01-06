@@ -84,8 +84,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.flexColumn,
-    ...Spacing.fullWH,
+    ...Spacing.fullScreenDown
   },
   infoCard: {
     width: '90%',
