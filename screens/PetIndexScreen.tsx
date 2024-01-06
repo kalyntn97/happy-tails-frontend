@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     ...Spacing.fullScreenDown
   },
   emptyMsg: {
-    ...Typography.smallHeader,
+    ...Typography.xSmallHeader,
     
   },
   btnContainer: {

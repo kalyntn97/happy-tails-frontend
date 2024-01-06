@@ -6,7 +6,7 @@ import { fullWH } from "../styles/spacing"
 
 interface PetInfoProps {
   pet: Pet
-  size: 'compact' | 'expanded'
+  size: 'compact' | 'expanded' | 'small'
 }
 
 const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
@@ -18,8 +18,11 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
         {size === 'expanded' && 
           <Image source={iconSource} style={styles.petIcon as ImageStyle} />
         }
-        <Image source={pet.photo ? {uri: pet.photo} : require('../assets/icons/pet-profile.png')} style={[styles.petPhoto as ImageStyle, size === 'expanded' ? {...Forms.smallPhoto} : {...Forms.xSmallPhoto}]} />
-        {size === 'compact' && 
+        <Image source={pet.photo ? {uri: pet.photo} : require('../assets/icons/pet-profile.png')} style={[styles.petPhoto as ImageStyle, size === 'expanded' ? {...Forms.smallPhoto} : size === 'compact' ? {...Forms.xSmallPhoto} : {...Forms.tinyPhoto}]} />
+        {size === 'compact' &&
+          <Text style={styles.shortName}>{pet.name.split(' ')[0]}</Text>
+        }
+        {size === 'small' &&
           <Text style={styles.shortName}>{pet.name.split(' ')[0]}</Text>
         }
       </View>
@@ -39,7 +42,7 @@ const styles = StyleSheet.create({
     ...Spacing.fullScreenAcross
   },
   shortName: {
-    ...Typography.smallHeader,
+    ...Typography.xSmallHeader,
     margin: 0,
     height: '30%'
   },

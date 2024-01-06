@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     ...Spacing.flexColumn,
   },
   header: {
-    ...Typography.smallHeader,
+    ...Typography.xSmallHeader,
     height: '15%',
     margin: 10
   },

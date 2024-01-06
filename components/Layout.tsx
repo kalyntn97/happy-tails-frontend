@@ -75,7 +75,25 @@ const Layout: React.FC = () => {
           <Tab.Group>
             <Tab.Screen name='Home' options={{title: 'Welcome'}}>
               {() => (
-                <HomeDrawer.Navigator>
+                <HomeDrawer.Navigator
+                  screenOptions={({ route }) =>({
+                    drawerType: 'front',
+                    // drawerIcon: (),
+                    drawerLabelStyle: styles.focusedText,
+                    drawerActiveTintColor: Colors.darkPink,
+                    drawerActiveBackgroundColor: Colors.lightPink,
+                    drawerStyle: { backgroundColor: Colors.lightestPink, width: '50%' },
+                    header: ({ navigation }) => {
+                      return (
+                        <View style={styles.header}>
+                          <Pressable style={[styles.menuBtn, { left: 10 }]} onPress={() => navigation.openDrawer()}>
+                            <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon as ImageStyle} />
+                          </Pressable>
+                        </View>
+                      )
+                    }
+                  })}
+                >
                   <HomeDrawer.Screen name='Welcome' component={HomeScreen} options={{ title: 'Welcome'}}/>
                   <HomeDrawer.Screen name='Care' options={{ title: 'Pet Care' }}>
                     {() => (
@@ -136,7 +154,7 @@ const Layout: React.FC = () => {
                       return (
                         <View style={styles.header}>
                           <Text style={styles.headerText}>{profile.name}</Text>
-                          <Pressable style={styles.menuBtn} onPress={() => navigation.openDrawer()}>
+                          <Pressable style={[styles.menuBtn, { right: 10 }]} onPress={() => navigation.openDrawer()}>
                             <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon as ImageStyle} />
                           </Pressable>
                         </View>
@@ -196,12 +214,11 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow
   },
   headerText: {
-    ...Typography.smallHeader,
+    ...Typography.xSmallHeader,
     margin: 10
   },
   menuBtn: {
-    position: 'absolute', 
-    right: 10, 
+    position: 'absolute',
     top: 5
   },
   scrollView: {
