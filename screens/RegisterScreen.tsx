@@ -73,7 +73,8 @@ const RegisterScreen = () => {
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.centered
+    ...Spacing.centered,
+    ...Spacing.fullScreenDown
   },
   // catAnimation: {
   //   width: '60%',

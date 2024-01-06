@@ -1,6 +1,6 @@
 //npm modules
 import { useEffect, useState } from "react"
-import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable } from "react-native"
+import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
 import { createDrawerNavigator } from "@react-navigation/drawer"
 //context
 import { useProfileContext } from "../context/ProfileContext"
@@ -14,7 +14,6 @@ import { Profile } from "../services/profileService"
 import PetInfo from "../components/PetInfo"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
-import { ScrollView } from "react-native-gesture-handler"
 
 const SettingsScreen = ({ navigation }) => {
   const { profile } = useProfileContext()
@@ -85,8 +84,7 @@ const SettingsScreen = ({ navigation }) => {
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullWH,
-    ...Spacing.flexColumn,
+    ...Spacing.fullScreenDown,
     alignItems: 'center',
   },
   headerContainer: {

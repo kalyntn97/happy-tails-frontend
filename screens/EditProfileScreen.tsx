@@ -105,8 +105,7 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullWH,
-    ...Spacing.flexColumn,
+    ...Spacing.fullScreenDown
   },
   photoUpload: {
     ...Forms.photo,

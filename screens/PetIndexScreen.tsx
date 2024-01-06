@@ -112,8 +112,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.centered,
-    ...Spacing.flexColumn,
-    ...Spacing.fullWH,
+    ...Spacing.fullScreenDown
   },
   emptyMsg: {
     ...Typography.smallHeader,

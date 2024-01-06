@@ -111,8 +111,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullWH,
-    ...Spacing.flexColumn,
+    ...Spacing.fullScreenDown
   },
   photoUpload: {
     ...Forms.photo,

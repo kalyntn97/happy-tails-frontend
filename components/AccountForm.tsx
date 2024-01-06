@@ -77,9 +77,8 @@ const AccountForm: React.FC<AccountFormProps> = ({ changePwOnly, setShowForm }) 
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullWH,
-    ...Spacing.flexColumn,
-    ...Spacing.centered,
+    ...Spacing.fullScreenDown,
+    ...Spacing.centered
   },
   errorMsg: {
     color: Colors.red,

@@ -21,3 +21,13 @@ export const fullWH = {
   width: '100%',
   height: '100%'
 }
+
+export const fullScreenDown = {
+  ...fullWH,
+  ...flexColumn
+}
+
+export const fullScreenAcross = {
+  ...fullWH,
+  ...flexRow
+}

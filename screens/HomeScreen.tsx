@@ -6,6 +6,7 @@ import LottieView from 'lottie-react-native'
 import { useAuth } from "../context/AuthContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import CareCard from "../components/CareCard"
 
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
