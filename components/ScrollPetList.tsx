@@ -16,9 +16,9 @@ const ScrollPetList = ({ petArray, size }) => {
   return (  
     <ScrollView style={styles.scrollView}>
       <View style={styles.petList}>
-        {petArray.map(pet => 
-          <View style={size === 'small' ? { width: 60, height: 90 } : { width: 90, height: 120 }}>
-            <PetInfo pet={pet} size={size} />
+        {petArray.map((pet, idx) => 
+          <View style={size === 'small' ? { width: 60, height: 100 } : { width: 90, height: 120 }}>
+            <PetInfo pet={pet} size={size} key={idx} />
           </View>  
         )}
       </View>

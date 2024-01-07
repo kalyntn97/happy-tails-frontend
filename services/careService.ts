@@ -1,7 +1,7 @@
 import { Pet } from "./petService"
 
 //types
-interface Tracker {
+export interface Tracker {
   _id: string
   name: string
   total: number

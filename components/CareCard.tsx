@@ -1,5 +1,5 @@
 //npm
-import { View, StyleSheet, Text, Image, ImageStyle, ScrollView } from "react-native"
+import { View, StyleSheet, Text, Image, ImageStyle, ScrollView, TouchableOpacity } from "react-native"
 //types
 import { Pet } from "../services/petService"
 import { Care } from "../services/careService"
@@ -8,6 +8,7 @@ import { getIconSource } from "../utils/careUtils"
 //components
 import PetInfo from "./PetInfo"
 import ScrollPetList from "./ScrollPetList"
+import TrackerPanel from "./TrackerPanel"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -16,18 +17,7 @@ interface CareCardProps {
   care: Care
 }
 
-export const care = {
-  name: 'Teeth Brushing',
-  pets: [
-    {name: 'Luna Stella Reyes-Nguyen', age: 3, breed: 'Ragdoll', species: 'Cat', photo: 'https://res.cloudinary.com/davz8l292/image/upload/v1704500003/happy-tails/zl1mn2rhuqa1x5keabda.jpg'},
-    {name: 'Levi Milo Reyes-Nguyen', age: 3, breed: 'British Shorthair', species: 'Cat', photo: 'https://res.cloudinary.com/davz8l292/image/upload/v1704500133/happy-tails/vce2esffuxeqtxhsvcnt.jpg'},
-  ],
-  times: 3,
-  frequency: 'weekly',
-  tracker: []
-}
-
-const CareCard = () => {
+const CareCard = ({ care }) => {
 
   const iconSource = getIconSource(care.name)
 
@@ -37,13 +27,15 @@ const CareCard = () => {
         <View style={styles.colorBox}>
           <View style={styles.titleContainer}>
             <Image source={iconSource} style={styles.icon as ImageStyle} />
-            <Text style={styles.title}>{care.name}</Text>
+            <View style={styles.titleContent}>
+              <Text style={styles.title}>{care.name}</Text>
+              <Text style={styles.freq}>{care.times} / {care.frequency}</Text>
+            </View>
           </View>
         </View>
         {/* <ScrollView>
           <View style={styles.petList}>
-            {care.pets.map(pet => 
-              <View style={styles.petInfo}>
+            {care.pets.map(pet =>               <View style={styles.petInfo}>
                 <PetInfo pet={pet} size='small' />
               </View>
             )}
@@ -55,7 +47,12 @@ const CareCard = () => {
       </View>
       
       <View style={styles.body}>
-        <Text>This is body</Text>
+        <View style={styles.currentTracker}>
+          <TrackerPanel tracker={care.trackers[0]} freq={care.frequency} times={care.times}/>
+        </View>
+        <TouchableOpacity style={styles.mainBtn}>
+          <Text style={styles.btnText}>View History</Text>
+        </TouchableOpacity>
       </View>
     </View>
   )
@@ -65,11 +62,15 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
     backgroundColor: Colors.lightPink,
-    ...Forms.card
+    ...Forms.card,
+    width: '90%',
+    height: 370,
+    marginBottom: 40,
+    alignItems: 'center'
   },
   header: {
     width: '100%',
-    height: '60%',
+    height: '50%',
     ...Spacing.flexColumn,
   },
   colorBox: {
@@ -78,6 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.yellow,
     borderWidth: 3,
     borderColor: 'white',
+    marginTop: -40
   },
   titleContainer: {
     height: 70,
@@ -85,22 +87,43 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     alignItems: 'center',
   },
+  titleContent: {
+    ...Spacing.flexColumn,
+  },
   petlist: {
-    height: 90,
+    height: 100,
     width: '100%',
     ...Spacing.centered
   },
   title: {
     ...Typography.smallHeader,
-  
+    marginVertical: 0,
+    color: Colors.darkPink
   },
   icon: {
     ...Forms.icon
   },
   body: {
     width: '100%',
-    height: '60%'
+    height: '50%',
+    alignItems: 'center',
+    marginTop: -40
   },
+  currentTracker: {
+    width: '90%',
+    height: 150,
+  },
+  freq: {
+    fontWeight: 'bold',
+    marginLeft: 'auto',
+    marginRight: 20
+  },
+  btnText: {
+    ...Buttons.buttonText
+  },
+  mainBtn: {
+    ...Buttons.smallSub
+  }
 })
  
 export default CareCard
