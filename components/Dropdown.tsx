@@ -3,12 +3,15 @@ import { ReactElement, useEffect, useRef, useState } from "react"
 import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, FlatList } from "react-native"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
-//utils
+//context
+import { usePetContext } from "../context/PetContext"
+//utils 
 import * as petUtils from '../utils/petUtils'
+import * as careUtils from '../utils/careUtils'
 
 interface DropdownProps {
   label: string
-  dataType: 'fishSpecies' | 'birdSpecies' | 'catBreed' | 'dogBreed' | 'species'
+  dataType: 'fishSpecies' | 'birdSpecies' | 'catBreed' | 'dogBreed' | 'species' | 'frequency' | 'care' | 'petNames'
   onSelect: (item: string ) => void
 }
 
@@ -25,6 +28,12 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
   //measure the btn pos and set the dropdown pos
   const DropdownBtn = useRef()
   const [dropdownTop, setDropdownTop] = useState(0)
+  const { pets } = usePetContext()
+
+  const getPetNames = (): string[] => {
+    console.log('pets', pets)
+    return pets.map(pet => pet.name)
+  }
 
   const openDropDown = (): void => {
     DropdownBtn.current.measure((_fx, _fy, _w, h, _px, py) => {
@@ -53,6 +62,12 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
         result = await petUtils.getBirdSpeciesData()
       } else if (dataType === 'fishSpecies') {
         result = petUtils.petFishData
+      } else if (dataType === 'frequency') {
+        result = careUtils.frequencyData
+      } else if (dataType === 'care') {
+        result = careUtils.careData
+      } else if (dataType === 'petNames') {
+        result = getPetNames()
       }
       setData(result)
     }

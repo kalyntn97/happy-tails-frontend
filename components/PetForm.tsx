@@ -83,7 +83,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
           <TextInput 
             style={styles.input} 
             placeholder='Age' 
-            onChangeText={(text: string) => setAge(text !== '' ? Number(text) : 0)} 
+            onChangeText={(text: string) => setAge(text !== '' ? Number(text) : '')} 
             value={age !== '' ? age.toString() : ''} 
             keyboardType="numeric"
           />

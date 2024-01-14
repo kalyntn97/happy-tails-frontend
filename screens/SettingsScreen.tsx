@@ -70,7 +70,7 @@ const SettingsScreen = ({ navigation }) => {
         <ScrollView>
           <View style={styles.petList}>
             {profile.pets?.map((pet, idx) =>
-              <View style={styles.petInfo}>
+              <View style={styles.petInfo} key={idx}>
                 <PetInfo key={pet._id} pet={pet} size='compact' />
               </View>
             )}

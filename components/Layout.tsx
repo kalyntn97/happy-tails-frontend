@@ -21,6 +21,9 @@ import LoginScreen from '../screens/LoginScreen'
 import RegisterScreen from '../screens/RegisterScreen'
 import AccountScreen from '../screens/AccountScreen'
 import CareIndexScreen from '../screens/CareIndexScreen'
+import NewCareScreen from '../screens/NewCareScreen'
+import CareDetailsScreen from '../screens/CareDetailsScreen'
+import EditCareScreen from '../screens/EditCareScreen'
 import HealthIndexScreen from '../screens/HealthIndexScreen'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
@@ -99,6 +102,9 @@ const Layout: React.FC = () => {
                     {() => (
                       <CareStack.Navigator>
                         <CareStack.Screen name='Index' component={CareIndexScreen} options={{ title: 'All Pet Care' }}/>
+                        <CareStack.Screen name='Create' component={NewCareScreen} options={{ title: 'Add Tracker', headerShown: false }}/>
+                        <CareStack.Screen name='Details' component={CareDetailsScreen} options={{ title: 'Care Details' }}/>
+                        <CareStack.Screen name='Edit' component={EditCareScreen} options={{ title: 'Edit Pet Care' }}/>
                     </CareStack.Navigator>
                     )}
                   </HomeDrawer.Screen>

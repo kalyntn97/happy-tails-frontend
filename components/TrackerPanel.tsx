@@ -6,6 +6,7 @@ import { Tracker } from "../services/careService"
 import { getCurrentDate, getDaysOfWeek } from "../utils/careUtils"
 //components
 import ScrollCalendar from "./ScrollCalendar"
+import ProgressTracker from "./ProgressTracker"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -16,54 +17,42 @@ interface CurrentTrackerProps {
 }
 
 const TrackerPanel = ({ tracker, freq, times }) => {
-  const [isChecked, setIsChecked] = useState(times === tracker.done[tracker.done.length - 1])
-
-  const ProgressTracker = ({ done, times }) => {
-    const progressContainer = []
-    for (let i = 0; i < done; i++) {
-      progressContainer.push(
-        <Image source={require('../assets/icons/heart-filled.png')} style={styles.heart as ImageStyle} />
-      )
-    }
-    for (let i = 0; i < times - done; i++) {
-      progressContainer.push(
-        <Image source={require('../assets/icons/heart-gray.png')} style={styles.heart as ImageStyle} />
-      )
-    }
-
-    return(
-      <View style={styles.progress}>
-        {progressContainer}
-      </View>
-    )
-  }
 
   return (
     <View style={styles.container}>
-      
+      <Text style={styles.title}>
+        {freq === 'daily' ? 'Today' : freq === 'weekly' ? 'This week' : freq === 'monthly' ? 'This month' : 'This year'}
+      </Text> 
       {freq === 'daily' && times === 1 
       ? <>
+        <Text style={styles.msg}>
+          {tracker.done[tracker.done.length - 1] === 1 ? 'You did it!' : 'Mark as done?'}
+        </Text>
         <View style={styles.scrollCalendar}>
           <ScrollCalendar tracker={tracker} />
         </View>
       </>
       : <>
-        <Text style={styles.title}>
-          {freq === 'daily' ? 'Today' : freq === 'weekly' ? 'This week' : freq === 'monthly' ? 'This month' : 'This year'}
-        </Text> 
         <Text style={styles.msg}>
           {times === tracker.done[tracker.done.length - 1] ? 'Keep up the good work!' : `Only ${freq === 'yearly' ? times - tracker.done.length : times - tracker.done[tracker.done.length - 1]} more to go!`}
         </Text>
         
         <View style={styles.countBox}>
-          <Text style={[styles.status, {color: times === tracker.done[tracker.done.length - 1] ? Colors.green : Colors.red }]}>
+          <Text style={[
+              styles.status, 
+              {color: 
+                times === 
+                  (freq === 'yearly' ? tracker.done.length : tracker.done[tracker.done.length - 1]) 
+                ? Colors.green 
+                : Colors.red 
+            }]}>
             {times === tracker.done[tracker.done.length - 1] ? 'You did it!' : 'Mark as Done?'}
           </Text>
 
           <View style={styles.countContent}>
-            <Text style={[styles.count, { color: Colors.green }]}>{tracker.done[tracker.done.length - 1]}</Text>
+            <Text style={[styles.count, { color: Colors.green }]}>{freq === 'yearly' ? tracker.done.length : tracker.done[tracker.done.length - 1]}</Text>
 
-            <TouchableOpacity onPress={() => setIsChecked(!isChecked)} style={styles.heartBtn}>
+            <TouchableOpacity style={styles.heartBtn}>
               <ProgressTracker done={freq === 'yearly' ? tracker.done.length : tracker.done[tracker.done.length - 1]} times={times} />
               {/* {times > tracker.done[tracker.done.length - 1] && 
                 <>

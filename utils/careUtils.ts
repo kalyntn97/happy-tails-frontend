@@ -1,4 +1,5 @@
 import { ImageSourcePropType } from "react-native"
+import { usePetContext } from "../context/PetContext"
 
 export const getIconSource  = (name: string): ImageSourcePropType => {
   switch (name) {
@@ -8,7 +9,7 @@ export const getIconSource  = (name: string): ImageSourcePropType => {
       return require('../assets/icons/toothbrush.png')
     case 'Nail Clipping':
       return require('../assets/icons/clippers.png')
-    case 'Daily Walks':
+    case 'Walk':
       return require('../assets/icons/leash-walk.png')
     case 'Grooming':
       return require('../assets/icons/grooming.png')
@@ -24,10 +25,11 @@ export const getDaysOfWeek = (date: Date) => {
 }
 
 export const getCurrentDate = () => {
-  const date = new Date().getDate()
-  const month = new Date().getMonth() + 1
-  const year = new Date().getFullYear()
-  const day = getDaysOfWeek(new Date())
+  const today = new Date()
+  const date = today.getDate()
+  const month =today.getMonth() + 1
+  const year = today.getFullYear()
+  const day = getDaysOfWeek(today)
 
   const firstDayOfMonth = new Date(year, month - 1, 1)
   const lastDayOfMonth = new Date(year, month, 0)
@@ -35,8 +37,10 @@ export const getCurrentDate = () => {
   const daysInMonth = lastDayOfMonth.getDate()
   const weeksInMonth = Math.ceil((daysInMonth + firstDayOfMonth.getDay()) / 7)
   
-
-  
-  return { date: date, month: month, year: year, day: day, daysInMonth: daysInMonth }
+  return { date, month, year, day, daysInMonth, weeksInMonth }
 }
+
+export const frequencyData = ['Daily', 'Weekly', 'Monthly', 'Yearly']
+
+export const careData = ['Teeth Brushing', 'Nail Clipping', 'Walk', 'Grooming', 'Litter Box Cleaning', 'Others']
 
