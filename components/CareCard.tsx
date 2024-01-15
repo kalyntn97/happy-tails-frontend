@@ -15,9 +15,10 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface CareCardProps {
   care: Care
+  navigation: any
 }
 
-const CareCard = ({ care }) => {
+const CareCard = ({ care, navigation }) => {
 
   const iconSource = getIconSource(care.name)
 
@@ -50,7 +51,7 @@ const CareCard = ({ care }) => {
         <View style={styles.currentTracker}>
           <TrackerPanel tracker={care.trackers[0]} freq={care.frequency} times={care.times}/>
         </View>
-        <TouchableOpacity style={styles.mainBtn}>
+        <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Details', { careId: care._id })}>
           <Text style={styles.btnText}>View History</Text>
         </TouchableOpacity>
       </View>

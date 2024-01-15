@@ -2,8 +2,9 @@
 import { StyleSheet, View } from "react-native"
 //components
 import CareForm from "../components/CareForm"
+//services
 import { Care } from "../services/careService"
-import { Pet } from "../services/petService"
+import * as careService from '../services/careService'
 
 interface EditCareProps {
   navigation: any
@@ -19,12 +20,19 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
     name: care.name, frequency: care.frequency, times: care.times, pets: care.pets
   }
 
-  const editCare = () => {
-    
+  const handleSubmit = async (name: string, frequency: string, times: number, pets: string[]) => {
+    try {
+      const updatedCareCard = await careService.update(name, frequency, times, pets)
+
+      navigation.navigate('Index', { careId: updatedCareCard._id })
+    } catch (error) {
+      console.log('Error updating a care card', error)
+      alert('Error updating tracker. Please try again.')
+    }
   }
 
   return (  
-    <CareForm onSubmit={handleEditCare} initialValues={initialValues}/>
+    <CareForm onSubmit={handleSubmit} initialValues={initialValues}/>
   )
 }
 
