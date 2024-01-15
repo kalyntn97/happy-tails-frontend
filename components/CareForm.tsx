@@ -3,9 +3,9 @@ import { useState } from "react"
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from "react-native"
 //components
 import Dropdown from "./Dropdown"
+import MultipleSelection from "./MultipleSelection"
+//context
 import { usePetContext } from "../context/PetContext"
-//utils
-import { getPetNames } from "../utils/careUtils"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -32,14 +32,14 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
       setAllowManualName(false)
       setName(selected)
     }
-  } 
-
-  const handleSelectPets = (selected: string) => {
-    const petIds = [...petData, selected].map(name => {
+  }
+  
+  // handle select multiple pets
+  const handleSelectPets = (selected: string[]) => {
+    const petIds = selected.map(name => {
       const pet = pets.find(pet => pet.name === name)
       return pet._id
     })
-    console.log(petIds)
     setPetData(petIds)
   }
 
@@ -84,7 +84,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
           value={times !== '' ? times.toString() : ''} 
           keyboardType="numeric"
         />
-        <Dropdown label='Select Pets' dataType='petNames' onSelect={handleSelectPets} />
+        <MultipleSelection label='Select Pets' dataType='petNames' onSelect={handleSelectPets} />
         <TouchableOpacity onPress={handleSubmit} style={styles.mainButton}>
           <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Create'}</Text>
         </TouchableOpacity>

@@ -11,7 +11,7 @@ import * as careService from '../services/careService'
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 
-const NewCareScreen: React.FC = ({ navigation, setCareCards, careCards }) => {
+const NewCareScreen: React.FC = ({ navigation, route }) => {
 
   const addCare = async (name: string, frequency: string, times: number, pets: string[]) => {
     const newCareCard = await careService.create(name, frequency, times, pets)
@@ -24,8 +24,8 @@ const NewCareScreen: React.FC = ({ navigation, setCareCards, careCards }) => {
 
     if (result && result.error) {
       alert(result.msg)
-    } 
-    navigation.goBack()
+    }
+    navigation.navigate('Index', { careId: result._id })
   }
 
   return (

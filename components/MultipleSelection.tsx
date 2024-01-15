@@ -1,24 +1,20 @@
-//npm modules
-import { ReactElement, useEffect, useRef, useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, FlatList } from "react-native"
+//context
+import { usePetContext } from "../context/PetContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
-//utils 
-import * as petUtils from '../utils/petUtils'
-import * as careUtils from '../utils/careUtils'
 
-interface DropdownProps {
-  label: string
-  dataType: 'fishSpecies' | 'birdSpecies' | 'catBreed' | 'dogBreed' | 'species' | 'frequency' | 'care'
-  onSelect: (item: string ) => void
+interface MultipleSelectionProps {
+  label: string | string[]
+  dataType: 'petNames'
+  onSelect: (items: string[]) => void
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
-  const [visible, setVisible] = useState(false)
+const MultipleSelection: React.FC<MultipleSelectionProps> = ({ label, dataType, onSelect }) => {
+  const [visible, setVisible] = useState<boolean>(false)
   const [data, setData] = useState<string[]>([])
-  const [selected, setSelected] = useState<string>(
-    label !== 'Select Species' || 'Select Breed' ? label : ''
-  )
+  const [selected, setSelected] = useState<string[]>([])
 
   const toggleDropdown = (): void => {
     visible ? setVisible(false) : openDropDown()
@@ -26,7 +22,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
   //measure the btn pos and set the dropdown pos
   const DropdownBtn = useRef()
   const [dropdownTop, setDropdownTop] = useState(0)
- 
+
   const openDropDown = (): void => {
     DropdownBtn.current.measure((_fx, _fy, _w, h, _px, py) => {
       setDropdownTop(py + h)
@@ -35,30 +31,27 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
   }
   
   const onItemPress = (item: string ): void => {
-    onSelect(item)
-    setSelected(item)
+    if (selected.some(s => s === item)) {
+      setSelected(selected.filter(s => s !== item))
+    } else {
+      setSelected([...selected, item])
+    }
+    onSelect(selected)
     setVisible(false)
+  }
+
+  const { pets } = usePetContext()
+
+  const getPetNames = (): string[] => {
+    console.log('pets', pets)
+    return pets.map(pet => pet.name)
   }
 
   //populate data
   useEffect(() => {
     const fetchData = async (dataType: string) => {
       let result: string[]
-      if (dataType === 'species') {
-        result = petUtils.speciesData
-      } else if (dataType === 'dogBreed') {
-        result = await petUtils.getDogBreedData()
-      } else if (dataType === 'catBreed') {
-        result = await petUtils.getCatBreedData()
-      } else if (dataType === 'birdSpecies') {
-        result = await petUtils.getBirdSpeciesData()
-      } else if (dataType === 'fishSpecies') {
-        result = petUtils.petFishData
-      } else if (dataType === 'frequency') {
-        result = careUtils.frequencyData
-      } else if (dataType === 'care') {
-        result = careUtils.careData
-      } else if (dataType === 'petNames') {
+      if (dataType === 'petNames') {
         result = getPetNames()
       }
       setData(result)
@@ -66,7 +59,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
     fetchData(dataType)
   }, [])
 
-  return (
+  return (  
     <TouchableOpacity style={styles.dropDownBtn} onPress={toggleDropdown} ref={DropdownBtn}>
       {visible && (
         <Modal visible={visible} transparent animationType="none">
@@ -77,9 +70,9 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
                 keyExtractor={(item, idx) => idx.toString()}
                 renderItem={({ item }) => (
                   <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
-                    <Text style={item === selected ? styles.selected : {}}>
-                      { item || label }
-                    </Text>
+                      <Text style={selected.some(s => s === item) ? styles.selected : {}}>
+                        { item || label }
+                      </Text>
                   </TouchableOpacity>
                 )} 
               />
@@ -87,16 +80,26 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
           </TouchableOpacity>
         </Modal>
       )}
-      <Text style={styles.label}>{selected ? selected : label}</Text>
-      <Image source={require('../assets/icons/dropdown.png')} style={styles.icon} />
-    </TouchableOpacity>
+    {selected.length
+    ? <View style={styles.labelField}>
+        {selected.map(item =>
+          <Text style={styles.label}>{item}</Text>
+        )}
+      </View>
+    : <Text>{label}</Text>
+    }
+    <Image source={require('../assets/icons/dropdown.png')} style={styles.icon} />
+  </TouchableOpacity>
   )
+
+  
 }
- 
+
 const styles = StyleSheet.create({
   dropDownBtn: {
     ...Spacing.flexRow,
     ...Forms.input,
+    height: 'auto',
     borderColor: Colors.pink,
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -120,7 +123,10 @@ const styles = StyleSheet.create({
     ...Forms.boxShadow
   },
   label: {
-    
+    marginVertical: 5
+  },
+  labelField: {
+    flexDirection: 'column'
   },
   item: {
     padding: 10,
@@ -132,4 +138,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Dropdown
+export default MultipleSelection
