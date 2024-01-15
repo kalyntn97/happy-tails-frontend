@@ -52,18 +52,36 @@ const CareDetailsScreen = ({ navigation, route }) => {
 
   return (  
     <View style={styles.container}>
-      <Text>{careCard.name}</Text>
-      <TouchableOpacity onPress={showDeleteConfirmDialog}>
-        <Text>Delete</Text>
-      </TouchableOpacity>
+      <Text style={styles.header}>{careCard.name}</Text>
+      <View style={styles.btnContainer}>
+        <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} onPress={() => navigation.navigate('Edit', { care: careCard })}>
+          <Text style={styles.btnText}>Edit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} onPress={showDeleteConfirmDialog}>
+          <Text style={styles.btnText}>Delete</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-
+    ...Spacing.fullScreenDown
   },
+  header: {
+    ...Typography.subHeader,
+    color: Colors.darkPink
+  },
+  btnContainer: {
+    ...Spacing.flexRow
+  },
+  mainBtn: {
+    ...Buttons.xSmallSquare
+  },
+  btnText: {
+    ...Buttons.buttonText
+  }
 })
 
 export default CareDetailsScreen

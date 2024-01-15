@@ -5,23 +5,41 @@ const TOKEN_KEY = 'my-jwt'
 
 export async function getToken(): Promise<string | null> {
   let token: string = await SecureStore.getItemAsync(TOKEN_KEY)
-  console.log('token func', token)
   return token
 }
 
 export async function checkTokenExpiration(): Promise<boolean> {
-  const storedToken = await getToken()
-  const expirationTime = await getExpirationTime(storedToken)
-  if (new Date(expirationTime) < new Date()) {
-    console.log('Token is expired. Logging out')
-    return true
+  try {
+    const storedToken = await getToken()
+    console.log('stored', storedToken)
+    if (!storedToken) {
+      console.log('No Token found.')
+      return true
+    }
+    const expirationTime = getExpirationTime(storedToken)
+    console.log('exp time', expirationTime)
+    if (new Date(expirationTime) < new Date()) {
+      console.log('Token is expired. Logging out')
+      return true
+    }
+    console.log('Token is not expired.')
+    return false
+  } catch (error) {
+    console.log('Error checking token expiration', error)
   }
-  console.log('Token is not expired.')
-  return false
+
 }
 
-export async function getExpirationTime(token: string): Promise<number> {
-  const decoded = JWT.decode(token, TOKEN_KEY)
-  console.log(decoded)
-  return decoded.exp * 1000 //s to ms
+export function getExpirationTime(token: string): number {
+  try {
+    const decoded = JWT.decode<Record<string, number>>(token, TOKEN_KEY)
+    if (decoded) {
+      console.log('decoded tokenService', decoded)
+      return decoded.exp * 1000 //s to ms
+    } else {
+      console.log('Invalid token structure', decoded)
+    }
+  } catch (error) {
+    console.log('Error decoding token', error)
+  }
 }

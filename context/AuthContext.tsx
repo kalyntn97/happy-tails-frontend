@@ -27,9 +27,11 @@ export const AuthProvider = ({children}: any) => {
   })
 
   useEffect(() => {
+    let isMounted = true
     const loadToken = async () => {
       const isExpired = await tokenService.checkTokenExpiration()
-      if (isExpired === false) {
+      console.log('Token is expired', isExpired)
+      if (isMounted && !isExpired) {
         const token = await SecureStore.getItemAsync(TOKEN_KEY)
         console.log('file: AuthContext.tsx:32 ~ load token ~ token:', token)
         if (token) {
@@ -38,11 +40,14 @@ export const AuthProvider = ({children}: any) => {
             token: token, authenticated: true
           })
         }
-      } else {
+      } else if (isMounted) {
         logout()
       }
     }
     loadToken()
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const register = async (name: string, username: string, password: string) => {
