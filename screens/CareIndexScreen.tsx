@@ -14,7 +14,6 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 const CareIndexScreen: React.FC = ({ navigation, route }) => {
   const [careCards, setCareCards] = useState<Care[]>([])
 
-
   useEffect(() => {
     console.log('params', route.params)
     const fetchCareCards = async () => {
@@ -44,7 +43,7 @@ const CareIndexScreen: React.FC = ({ navigation, route }) => {
         <CareCard care={care3} /> */}
 
         {careCards.map((careCard, idx) => 
-          <CareCard key={careCard._id} care={careCard} />
+          <CareCard key={careCard._id} care={careCard} navigation={navigation}/>
         )}
         
       </ScrollView>

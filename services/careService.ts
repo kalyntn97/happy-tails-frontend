@@ -67,3 +67,28 @@ export async function update(name: string, frequency: string, times: number, pet
     console.log(error)
   }
 }
+
+export async function show(careId: string) {
+  try {
+    const token = await tokenService.getToken()
+    const res = await fetch(`${BASE_URL}/${careId}`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+    return res.json()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function deleteCareCard(careId: string) {
+  try {
+    const token = await tokenService.getToken()
+    const res = await fetch(`${BASE_URL}/${careId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+    return res.json()
+  } catch (error) {
+    console.log(error)
+  }
+}
