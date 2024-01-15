@@ -12,20 +12,16 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 
 const NewCareScreen: React.FC = ({ navigation, route }) => {
-
-  const addCare = async (name: string, frequency: string, times: number, pets: string[]) => {
-    const newCareCard = await careService.create(name, frequency, times, pets)
-    return newCareCard
-  }
-
+  
   const handleSubmit = async (name: string, frequency: string, times: number, pets: string[]) => {
-    const result = await addCare(name, frequency, times, pets)
-    console.log('result', result)
+    try {
+      const newCareCard = await careService.create(name, frequency, times, pets)
 
-    if (result && result.error) {
-      alert(result.msg)
+      navigation.navigate('Index', { careId: newCareCard._id })
+    } catch (error) {
+      console.log('Error creating a care card', error)
+      alert('Error creating tracker. Please try again.')
     }
-    navigation.navigate('Index', { careId: result._id })
   }
 
   return (

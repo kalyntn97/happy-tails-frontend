@@ -24,7 +24,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
     visible ? setVisible(false) : openDropDown()
   }
   //measure the btn pos and set the dropdown pos
-  const DropdownBtn = useRef()
+  const DropdownBtn = useRef(null)
   const [dropdownTop, setDropdownTop] = useState(0)
  
   const openDropDown = (): void => {

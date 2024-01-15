@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native"
 //components
 import CareForm from "../components/CareForm"
 import { Care } from "../services/careService"
+import { Pet } from "../services/petService"
 
 interface EditCareProps {
   navigation: any
@@ -13,12 +14,12 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   const { care } = route.params
 
   const initialValues: {
-    name: string, frequency: string, times: number
+    name: string, frequency: string, times: number, pets: string[]
   } = {
-    name: care.name, frequency: care.frequency, times: care.times
+    name: care.name, frequency: care.frequency, times: care.times, pets: care.pets
   }
 
-  const handleEditCare = () => {
+  const editCare = () => {
     
   }
 

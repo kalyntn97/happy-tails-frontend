@@ -16,9 +16,9 @@ const CareIndexScreen: React.FC = ({ navigation, route }) => {
 
 
   useEffect(() => {
+    console.log('params', route.params)
     const fetchCareCards = async () => {
       const data = await careService.index()
-      console.log(data)
       setCareCards(data)
     }
     fetchCareCards()

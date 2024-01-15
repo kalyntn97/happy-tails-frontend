@@ -11,29 +11,31 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface CareFormProps {
   onSubmit: (name: string, frequency: string, times: number, pets: string[]) => Promise<any>
-  initialValues?: { name?: string, frequency?: string, times?: number, petData?: string[] }
+  initialValues?: { name?: string, frequency?: string, times?: number, pets?: string[] }
 }
 
 const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
   const [name, setName] = useState<string>(initialValues?.name || '')
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency || '')
   const [times, setTimes] = useState<number | ''>(initialValues?.times || '')
-  const [petData, setPetData] = useState<string[]>([])
+  const [petData, setPetData] = useState<string[]>(initialValues?.pets || [])
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
 
   const { pets } = usePetContext()
 
   const handleSelectName = (selected: string) => {
-    if (selected === 'Others') {
-      setName('')
-      setAllowManualName(true)
-    } else {
-      setAllowManualName(false)
-      setName(selected)
-    }
+    setName(() => {
+      if (selected === 'Others') {
+        setAllowManualName(true)
+        return ''
+      } else {
+        setAllowManualName(false)
+        return selected
+      }
+    })
   }
-  
+
   // handle select multiple pets
   const handleSelectPets = (selected: string[]) => {
     const petIds = selected.map(name => {
@@ -57,7 +59,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss()}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
       <View style={styles.container}>
         <Text style={styles.header}>{initialValues?.name ? 'Edit' : 'Add'} Tracker</Text>

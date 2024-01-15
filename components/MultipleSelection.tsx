@@ -20,7 +20,7 @@ const MultipleSelection: React.FC<MultipleSelectionProps> = ({ label, dataType, 
     visible ? setVisible(false) : openDropDown()
   }
   //measure the btn pos and set the dropdown pos
-  const DropdownBtn = useRef()
+  const DropdownBtn = useRef(null)
   const [dropdownTop, setDropdownTop] = useState(0)
 
   const openDropDown = (): void => {
@@ -30,20 +30,19 @@ const MultipleSelection: React.FC<MultipleSelectionProps> = ({ label, dataType, 
     setVisible(true)
   }
   
-  const onItemPress = (item: string ): void => {
-    if (selected.some(s => s === item)) {
-      setSelected(selected.filter(s => s !== item))
-    } else {
-      setSelected([...selected, item])
-    }
-    onSelect(selected)
-    setVisible(false)
+  const onItemPress = (item: string ) => {
+    // use callback func with setState to handle asynchronous calls
+    setSelected((prev) => {
+      const selected = prev.some(p => p === item) ? prev.filter(p => p !== item) : [...prev, item]
+      onSelect(selected)
+      setVisible(false)
+      return selected
+    })
   }
 
+  // get data for select pets
   const { pets } = usePetContext()
-
   const getPetNames = (): string[] => {
-    console.log('pets', pets)
     return pets.map(pet => pet.name)
   }
 
@@ -82,13 +81,13 @@ const MultipleSelection: React.FC<MultipleSelectionProps> = ({ label, dataType, 
       )}
     {selected.length
     ? <View style={styles.labelField}>
-        {selected.map(item =>
-          <Text style={styles.label}>{item}</Text>
+        {selected.map((item, idx) =>
+          <Text key={idx} style={styles.label}>{item}</Text>
         )}
       </View>
     : <Text>{label}</Text>
     }
-    <Image source={require('../assets/icons/dropdown.png')} style={styles.icon} />
+    <Image source={require('../assets/icons/dropdown.png')} style={styles.icon as ImageStyle} />
   </TouchableOpacity>
   )
 
