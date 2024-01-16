@@ -2,6 +2,7 @@ export const header = {
   margin: 20,
   fontWeight: 'bold',
   letterSpacing: 1,
+  textAlign: 'center'
 }
 
 export const large = {

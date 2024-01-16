@@ -7,12 +7,12 @@ const ProgressTracker = ({ times, done }) => {
   const progressContainer = []
     for (let i = 0; i < done; i++) {
       progressContainer.push(
-        <Image source={require('../assets/icons/heart-filled.png')} style={styles.heart as ImageStyle} />
+        <Image source={require('../assets/icons/heart-filled.png')} style={styles.heart as ImageStyle} key={i}/>
       )
     }
     for (let i = 0; i < times - done; i++) {
       progressContainer.push(
-        <Image source={require('../assets/icons/heart-gray.png')} style={styles.heart as ImageStyle} />
+        <Image source={require('../assets/icons/heart-gray.png')} style={styles.heart as ImageStyle} key={i} />
       )
     }
 

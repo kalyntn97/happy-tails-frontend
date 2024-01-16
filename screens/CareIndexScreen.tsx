@@ -1,6 +1,7 @@
 //npm modules
 import { useEffect, useState } from "react"
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import LottieView from "lottie-react-native"
 //components
 import CareCard from "../components/CareCard"
 import CareForm from "../components/CareForm"
@@ -15,7 +16,6 @@ const CareIndexScreen: React.FC = ({ navigation, route }) => {
   const [careCards, setCareCards] = useState<Care[]>([])
 
   useEffect(() => {
-    console.log('params', route.params)
     const fetchCareCards = async () => {
       const data = await careService.index()
       setCareCards(data)
@@ -25,12 +25,18 @@ const CareIndexScreen: React.FC = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
+      {!careCards.length &&
+        <View style={styles.empty}>
+          <LottieView source={require('../assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
+          <Text style={styles.msg}>Start managing your pet's health</Text>
+        </View>
+      }
       <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Create')}>
         <Text style={styles.btnText}>Add a tracker</Text>
       </TouchableOpacity>
 
       <ScrollView
-        pagingEnabled
+        style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={200}
@@ -55,11 +61,24 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
   },
+  scrollView: {
+    width: '100%'
+  },
+  empty: {
+    
+  },
+  msg: {
+    ...Typography.smallHeader,
+    color: Colors.darkPink
+  },
+  catAnimation: {
+    width: '100%'
+  },
   scrollViewContent: {
     alignItems: 'center'
   },
   mainBtn: {
-    ...Buttons.smallSquare,
+    ...Buttons.longSquare,
     backgroundColor: Colors.pink,
   },
   btnText: {

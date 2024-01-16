@@ -16,7 +16,7 @@ const ScrollCalendar = ({ tracker }) => {
   let dailyContainer = []
     for (let i = 0; i < today.daysInMonth; i++) {
       dailyContainer.push(
-        <View style={styles.dailyBox}>
+        <View style={styles.dailyBox} key={i}>
           <Text 
             style={[styles.dailyText, { color: i + 1 === today.date ? Colors.darkPink : 'black'}]}>
               {getDaysOfWeek(new Date(today.year, today.month - 1, i + 1)).slice(0, 3)}

@@ -8,7 +8,7 @@ export interface Tracker {
   _id: string
   name: string
   total: number
-  done: number
+  done: number[]
   skipped: number
   left: number
 }
@@ -86,6 +86,40 @@ export async function deleteCareCard(careId: string) {
     const res = await fetch(`${BASE_URL}/${careId}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` },
+    })
+    return res.json()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function checkDone(careId: string, trackerId: string, index: number) {
+  try {
+    const token = await tokenService.getToken()
+    const res = await fetch(`${BASE_URL}/${careId}/${trackerId}/check`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ index })
+    })
+    return res.json()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function unCheckDone(careId: string, trackerId: string, index: number) {
+  try {
+    const token = await tokenService.getToken()
+    const res = await fetch(`${BASE_URL}/${careId}/${trackerId}/uncheck`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ index })
     })
     return res.json()
   } catch (error) {

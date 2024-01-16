@@ -1,10 +1,11 @@
 //npm
+import { useState, useEffect } from "react"
 import { View, StyleSheet, Text, Image, ImageStyle, ScrollView, TouchableOpacity } from "react-native"
 //types
 import { Pet } from "../services/petService"
 import { Care } from "../services/careService"
 //utils & services
-import { getIconSource } from "../utils/careUtils"
+import * as careUtils from "../utils/careUtils"
 //components
 import PetInfo from "./PetInfo"
 import ScrollPetList from "./ScrollPetList"
@@ -19,8 +20,19 @@ interface CareCardProps {
 }
 
 const CareCard = ({ care, navigation }) => {
+  const [index, setIndex] = useState<number>(0)
 
-  const iconSource = getIconSource(care.name)
+  const iconSource = careUtils.getIconSource(care.name)
+  
+  useEffect(() => {
+    // update as index (day, week) change
+    console.log('carecard trackers', care.trackers)
+    const updateIndex = () => {
+      const updatedIdx = careUtils.getIndex(care.frequency)
+      setIndex(updatedIdx)
+    }
+    updateIndex()
+  }, [index])
 
   return (
     <View style={styles.container}>
@@ -49,7 +61,7 @@ const CareCard = ({ care, navigation }) => {
       
       <View style={styles.body}>
         <View style={styles.currentTracker}>
-          <TrackerPanel tracker={care.trackers[0]} freq={care.frequency} times={care.times}/>
+          <TrackerPanel careId={care._id} currTracker={care.trackers[care.trackers.length - 1]} freq={care.frequency} times={care.times} index={index} />
         </View>
         <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Details', { careId: care._id })}>
           <Text style={styles.btnText}>View History</Text>

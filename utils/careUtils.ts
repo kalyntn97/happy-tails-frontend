@@ -36,11 +36,25 @@ export const getCurrentDate = () => {
 
   const daysInMonth = lastDayOfMonth.getDate()
   const weeksInMonth = Math.ceil((daysInMonth + firstDayOfMonth.getDay()) / 7)
+
+  const daysPassed = daysInMonth - date
+  const weeksPassed = Math.floor((daysInMonth - date) / 7)
   
-  return { date, month, year, day, daysInMonth, weeksInMonth }
+  return { date, month, year, day, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
 }
 
 export const frequencyData = ['Daily', 'Weekly', 'Monthly', 'Yearly']
 
 export const careData = ['Teeth Brushing', 'Nail Clipping', 'Walk', 'Grooming', 'Litter Box Cleaning', 'Others']
 
+export const getIndex = (frequency: string): number => {
+  const { date, daysPassed, weeksInMonth, weeksPassed } = getCurrentDate()
+  switch (frequency) {
+    case 'Daily':
+      return date - daysPassed
+    case 'Weekly':
+      return weeksInMonth - weeksPassed
+    case 'Monthly' || 'Yearly':
+      return 0
+  }
+}

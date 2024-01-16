@@ -3,7 +3,8 @@ import { useLayoutEffect, useRef, useState, useEffect } from "react"
 import { Image, ImageStyle, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 //services & utils
 import { Tracker } from "../services/careService"
-import { getCurrentDate, getDaysOfWeek } from "../utils/careUtils"
+import * as careService from '../services/careService'
+import * as careUtils from "../utils/careUtils"
 //components
 import ScrollCalendar from "./ScrollCalendar"
 import ProgressTracker from "./ProgressTracker"
@@ -11,22 +12,47 @@ import ProgressTracker from "./ProgressTracker"
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface CurrentTrackerProps {
-  tracker: Tracker
+  careId: string
+  currTracker: Tracker
   freq: string
   times: number
+  index: number
 }
 
-const TrackerPanel = ({ tracker, freq, times }) => {
+const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq, times, index }) => {
+  const [tracker, setTracker] = useState<Tracker>(currTracker)
+  
+  const checkDone = async (careId: string, trackerId: string, index: number) => {
+    try {
+      console.log('before submit', careId, trackerId, index)
+      const updatedTracker = await careService.checkDone(careId, trackerId, index)
+      console.log('after submit', updatedTracker)
+      setTracker(updatedTracker)
+    } catch (error) {
+      console.log('Error checking done', error)
+    }
+  }
+
+  const unCheckDone = async (careId: string, trackerId: string, index: number) => {
+    try {
+      console.log('before submit', careId, trackerId, index)
+      const updatedTracker = await careService.unCheckDone(careId, trackerId, index)
+      console.log('after submit', updatedTracker)
+      setTracker(updatedTracker)
+    } catch (error) {
+      console.log('Error checking done', error)
+    }
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
-        {freq === 'daily' ? 'Today' : freq === 'weekly' ? 'This week' : freq === 'monthly' ? 'This month' : 'This year'}
+        {freq === 'Daily' ? 'Today' : freq === 'Weekly' ? 'This week' : freq === 'Monthly' ? 'This month' : 'This year'}
       </Text> 
-      {freq === 'daily' && times === 1 
+      {freq === 'Daily' && times === 1 
       ? <>
         <Text style={styles.msg}>
-          {tracker.done[tracker.done.length - 1] === 1 ? 'You did it!' : 'Mark as done?'}
+          {tracker.done[index] === 1 ? 'You did it!' : 'Mark as done?'}
         </Text>
         <View style={styles.scrollCalendar}>
           <ScrollCalendar tracker={tracker} />
@@ -34,7 +60,12 @@ const TrackerPanel = ({ tracker, freq, times }) => {
       </>
       : <>
         <Text style={styles.msg}>
-          {times === tracker.done[tracker.done.length - 1] ? 'Keep up the good work!' : `Only ${freq === 'yearly' ? times - tracker.done.length : times - tracker.done[tracker.done.length - 1]} more to go!`}
+          {times === tracker.done[index] 
+            ? 'Keep up the good work!' 
+            : `Only ${freq === 'Yearly' 
+              ? times - tracker.done.length 
+              : times - tracker.done[index]} more to go!`
+          }
         </Text>
         
         <View style={styles.countBox}>
@@ -42,27 +73,42 @@ const TrackerPanel = ({ tracker, freq, times }) => {
               styles.status, 
               {color: 
                 times === 
-                  (freq === 'yearly' ? tracker.done.length : tracker.done[tracker.done.length - 1]) 
+                  (freq === 'Yearly' ? tracker.done.length : tracker.done[index]) 
                 ? Colors.green 
                 : Colors.red 
             }]}>
-            {times === tracker.done[tracker.done.length - 1] ? 'You did it!' : 'Mark as Done?'}
+            {times === tracker.done[index] ? 'You did it!' : 'Mark as Done?'}
           </Text>
 
           <View style={styles.countContent}>
-            <Text style={[styles.count, { color: Colors.green }]}>{freq === 'yearly' ? tracker.done.length : tracker.done[tracker.done.length - 1]}</Text>
+            <TouchableOpacity 
+              style={styles.iconBtn}
+              onPress={() => unCheckDone(careId, tracker._id, index)}
+              disabled={tracker.done[index] == 0}
+            >
+              <Image source={require('../assets/icons/minus.png')} style={styles.icon as ImageStyle} />
+            </TouchableOpacity>
+            <Text style={[styles.count, { color: Colors.red }]}>{freq === 'Yearly' ? times - tracker.done.length : times - tracker.done[index]}</Text>
 
-            <TouchableOpacity style={styles.heartBtn}>
-              <ProgressTracker done={freq === 'yearly' ? tracker.done.length : tracker.done[tracker.done.length - 1]} times={times} />
-              {/* {times > tracker.done[tracker.done.length - 1] && 
+            <View style={styles.heartBtn}>
+              <ProgressTracker done={freq === 'Yearly' ? tracker.done.length : tracker.done[index]} times={times} />
+              {/* {times > tracker.done[index] && 
                 <>
                   { !isChecked && <Image source={require('../assets/icons/heart-gray.png')} style={styles.heart as ImageStyle} /> }
                   { isChecked && <Image source={require('../assets/icons/heart-filled.png')} style={styles.heart as ImageStyle} /> }
                 </>
               } */}
-            </TouchableOpacity>
+            </View>
 
-            <Text style={[styles.count, { color: Colors.red }]}>{freq === 'yearly' ? times - tracker.done.length : times - tracker.done[tracker.done.length - 1]}</Text>
+            <Text style={[styles.count, { color: Colors.green }]}>{freq === 'Yearly' ? tracker.done.length : tracker.done[index]}</Text>
+            <TouchableOpacity 
+              style={styles.iconBtn} 
+              onPress={() => checkDone(careId, tracker._id, index)}
+              disabled={tracker.done[index] >= times}
+            >
+              <Image source={require('../assets/icons/plus.png')} style={styles.icon as ImageStyle} />
+            </TouchableOpacity>
+            
           </View>
         </View>
       </>
@@ -90,7 +136,7 @@ const styles = StyleSheet.create({
     margin: 10
   },
   count: {
-    fontSize: 25,
+    fontSize: 30,
     fontWeight: 'bold',
     padding: 5,
   },
@@ -132,6 +178,13 @@ const styles = StyleSheet.create({
     height: '50%',
     borderRadius: 8
   },
+  icon: {
+    width: 30,
+    height: 30
+  },
+  iconBtn: {
+    marginHorizontal: 10
+  }
 })
 
 export default TrackerPanel

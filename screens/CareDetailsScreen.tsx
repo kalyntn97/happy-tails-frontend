@@ -26,10 +26,9 @@ const CareDetailsScreen = ({ navigation, route }) => {
   const { careId } = route.params
 
   useEffect(() => {
-    const fetchCareDetails =async () => {
+    const fetchCareDetails = async () => {
       const data = await careService.show(careId)
       setCareCard(data)
-      console.log(careCard)
     }
     fetchCareDetails()
   }, [careId])
