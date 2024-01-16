@@ -103,7 +103,7 @@ const Layout: React.FC = () => {
                       <CareStack.Navigator>
                         <CareStack.Screen name='Index' component={CareIndexScreen} options={{ title: 'All Pet Care' }}/>
                         <CareStack.Screen name='Create' component={NewCareScreen} options={{ title: 'Add Tracker', headerShown: false }}/>
-                        <CareStack.Screen name='Details' component={CareDetailsScreen} options={{ title: 'Care Details' }}/>
+                        <CareStack.Screen name='Details' component={CareDetailsScreen} options={{ title: 'Care Details', headerShown: false }}/>
                         <CareStack.Screen name='Edit' component={EditCareScreen} options={{ title: 'Edit Pet Care' }}/>
                     </CareStack.Navigator>
                     )}

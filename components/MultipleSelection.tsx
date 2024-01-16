@@ -9,12 +9,13 @@ interface MultipleSelectionProps {
   label: string | string[]
   dataType: 'petNames'
   onSelect: (items: string[]) => void
+  initials?: string[]
 }
 
-const MultipleSelection: React.FC<MultipleSelectionProps> = ({ label, dataType, onSelect }) => {
+const MultipleSelection: React.FC<MultipleSelectionProps> = ({ label, dataType, onSelect, initials }) => {
   const [visible, setVisible] = useState<boolean>(false)
   const [data, setData] = useState<string[]>([])
-  const [selected, setSelected] = useState<string[]>([])
+  const [selected, setSelected] = useState<string[]>(initials ? initials : [])
 
   const toggleDropdown = (): void => {
     visible ? setVisible(false) : openDropDown()

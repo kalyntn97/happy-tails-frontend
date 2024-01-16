@@ -52,6 +52,9 @@ const CareDetailsScreen = ({ navigation, route }) => {
   return (  
     <View style={styles.container}>
       <Text style={styles.header}>{careCard.name}</Text>
+      <TouchableOpacity style={styles.subBtn} onPress={() => navigation.goBack()}>
+        <Text style={styles.btnText}>Go back</Text>
+      </TouchableOpacity>
       <View style={styles.btnContainer}>
         <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} onPress={() => navigation.navigate('Edit', { care: careCard })}>
           <Text style={styles.btnText}>Edit</Text>
@@ -70,13 +73,19 @@ const styles = StyleSheet.create({
   },
   header: {
     ...Typography.subHeader,
-    color: Colors.darkPink
+    color: Colors.darkPink,
+    marginTop: 40,
+    marginBottom: 0
   },
   btnContainer: {
-    ...Spacing.flexRow
+    ...Spacing.flexRow,
+    marginVertical: 10
   },
   mainBtn: {
     ...Buttons.xSmallSquare
+  },
+  subBtn: {
+    ...Buttons.smallSub,
   },
   btnText: {
     ...Buttons.buttonText

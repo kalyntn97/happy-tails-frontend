@@ -10,11 +10,12 @@ import { usePetContext } from "../context/PetContext"
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface CareFormProps {
-  onSubmit: (name: string, frequency: string, times: number, pets: string[]) => Promise<any>
+  onSubmit: (name: string, frequency: string, times: number, pets: string[], careId?: string) => Promise<any>
   initialValues?: { name?: string, frequency?: string, times?: number, pets?: string[] }
+  careId: string
 }
 
-const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
+const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, careId }) => {
   const [name, setName] = useState<string>(initialValues?.name || '')
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency || '')
   const [times, setTimes] = useState<number | ''>(initialValues?.times || '')
@@ -38,6 +39,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
 
   // handle select multiple pets
   const handleSelectPets = (selected: string[]) => {
+    // convert names into ids
     const petIds = selected.map(name => {
       const pet = pets.find(pet => pet.name === name)
       return pet._id
@@ -50,7 +52,9 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
       setErrorMsg('Please enter all fields.')
     } else {
       setErrorMsg('')
-      const result = await onSubmit(name, frequency, times, petData)
+      const result = initialValues?.name
+      ? await onSubmit(name, frequency, times, petData, careId)
+      : await onSubmit(name, frequency, times, petData)
       console.log('result', result)
       if (result && result.error) {
         alert(result.msg)
@@ -67,7 +71,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
         {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
 
         {!!name && <Text>Enter Name</Text>}
-        <Dropdown label='Select Name' dataType="care" onSelect={handleSelectName} />
+        <Dropdown label={initialValues?.name ? initialValues.name : 'Select Name'} dataType="care" onSelect={handleSelectName} />
         {allowManualName && 
           <TextInput 
             style={styles.input}
@@ -78,7 +82,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
           />
         }
         {!!frequency && <Text>Select Frequency</Text>}
-        <Dropdown label='Select Frequency' dataType="frequency" onSelect={setFrequency} />
+        <Dropdown label={initialValues?.frequency ? initialValues.frequency : 'Select Frequency'} dataType="frequency" onSelect={setFrequency} />
         <TextInput 
           style={styles.input} 
           placeholder='Enter Times' 
@@ -86,7 +90,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
           value={times !== '' ? times.toString() : ''} 
           keyboardType="numeric"
         />
-        <MultipleSelection label='Select Pets' dataType='petNames' onSelect={handleSelectPets} />
+        <MultipleSelection label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialValues?.pets}/>
         <TouchableOpacity onPress={handleSubmit} style={styles.mainButton}>
           <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Create'}</Text>
         </TouchableOpacity>

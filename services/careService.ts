@@ -51,10 +51,10 @@ export async function create(name: string, frequency: string, times: number, pet
   }
 }
 
-export async function update(name: string, frequency: string, times: number, pets: string[]) {
+export async function update(name: string, frequency: string, times: number, pets: string[], careId: string) {
   try {
     const token = await tokenService.getToken()
-    const res = await fetch(`${BASE_URL}/update`, {
+    const res = await fetch(`${BASE_URL}/${careId}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
