@@ -60,29 +60,20 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq
       {freq === 'Daily' && times === 1 
       ? <>
         <Text style={[
-              styles.status, 
-              {color: 
-                times === tracker.done[index]
-                ? Colors.green 
-                : Colors.red 
-            }]}>
+          styles.status, 
+          { color: times === tracker.done[index] ? Colors.green : Colors.red }
+        ]}>
           {tracker.done[index] === 1 ? 'You did it!' : 'Mark as done?'}
         </Text>
         <View style={styles.scrollCalendar}>
           <ScrollCalendar careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone}/>
         </View>
-      </>
-      : <>
-       
+      </> : <>
         <View style={styles.countBox}>
           <Text style={[
-              styles.status, 
-              {color: 
-                times === 
-                  (freq === 'Yearly' ? tracker.done.length : tracker.done[index]) 
-                ? Colors.green 
-                : Colors.red 
-            }]}>
+            styles.status, 
+            { color: times === tracker.done[index] ? Colors.green : Colors.red }
+          ]}>
             {times === tracker.done[index] ? 'You did it!' : 'Mark as Done?'}
           </Text>
 
@@ -94,19 +85,13 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq
             >
               <Image source={require('../assets/icons/minus.png')} style={styles.icon as ImageStyle} />
             </TouchableOpacity>
-            <Text style={[styles.count, { color: Colors.red }]}>{freq === 'Yearly' ? times - tracker.done.length : times - tracker.done[index]}</Text>
+            <Text style={[styles.count, { color: Colors.red }]}>{times - tracker.done[index]}</Text>
 
             <View style={styles.heartBtn}>
-              <ProgressTracker done={freq === 'Yearly' ? tracker.done.length : tracker.done[index]} times={times} />
-              {/* {times > tracker.done[index] && 
-                <>
-                  { !isChecked && <Image source={require('../assets/icons/heart-gray.png')} style={styles.heart as ImageStyle} /> }
-                  { isChecked && <Image source={require('../assets/icons/heart-filled.png')} style={styles.heart as ImageStyle} /> }
-                </>
-              } */}
+              <ProgressTracker done={tracker.done[index]} times={times} />
             </View>
 
-            <Text style={[styles.count, { color: Colors.green }]}>{freq === 'Yearly' ? tracker.done.length : tracker.done[index]}</Text>
+            <Text style={[styles.count, { color: Colors.green }]}>{tracker.done[index]}</Text>
             <TouchableOpacity 
               style={styles.iconBtn} 
               onPress={() => checkDone(careId, tracker._id, index)}
