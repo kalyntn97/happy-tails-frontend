@@ -1,4 +1,4 @@
-//npm
+                              //npm
 import { Image, ImageStyle, StyleSheet, View } from "react-native"
 //styles
 import { Spacing } from "../styles"

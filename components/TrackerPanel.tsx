@@ -89,7 +89,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq
           <View style={styles.countContent}>
             <TouchableOpacity 
               style={styles.iconBtn}
-              onPress={() => unCheckDone(careId, tracker._id, index)}
+              onPress={() => uncheckDone(careId, tracker._id, index)}
               disabled={tracker.done[index] == 0}
             >
               <Image source={require('../assets/icons/minus.png')} style={styles.icon as ImageStyle} />

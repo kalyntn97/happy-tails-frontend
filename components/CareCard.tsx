@@ -28,7 +28,7 @@ const CareCard = ({ care, navigation }) => {
     // update as index (day, week) change
     console.log('carecard trackers', care.trackers)
     const updateIndex = () => {
-      const updatedIdx = careUtils.getIndex(care.frequency)
+      const updatedIdx = careUtils.getCurrentTrackerIndex(care.frequency)
       setIndex(updatedIdx)
     }
     updateIndex()
