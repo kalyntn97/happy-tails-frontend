@@ -1,32 +1,44 @@
 //npm
 import { useRef, useState, useEffect } from "react"
-import { ScrollView, StyleSheet, Text, View, Image, ImageStyle } from "react-native"
+import { ScrollView, StyleSheet, Text, View, Image, ImageStyle, TouchableOpacity } from "react-native"
 //utils
-import { getCurrentDate, getDaysOfWeek } from "../utils/careUtils"
+import * as careUtils from "../utils/careUtils"
 //styles
 import { Colors, Forms } from '../styles'
 
-const ScrollCalendar = ({ tracker }) => {
+const ScrollCalendar = ({ careId, tracker, index, onCheckDone }) => {
   const [today, setToday] = useState
-    <{date: number, month: number, year: number, day: string, daysInMonth: number}>
-    ({ date: null, month: null, year: null, day: null, daysInMonth: null })
+    <{date: number, month: number, year: number, day: string, daysInMonth: number, daysPassed: number}>
+    ({ date: null, month: null, year: null, day: null, daysInMonth: null, daysPassed: null })
+
+  const handleCheckDone = async (careId: string, trackerId: string, index: number) => {
+    const result = await onCheckDone(careId, trackerId, index)
+
+    if (result && result.error) {
+      alert(result.status)
+    }
+  }
 
   const scrollViewRef = useRef(null)
 
   let dailyContainer = []
     for (let i = 0; i < today.daysInMonth; i++) {
       dailyContainer.push(
-        <View style={styles.dailyBox} key={i}>
+        <TouchableOpacity 
+          style={styles.dailyBox} key={i}
+          disabled={i + 1 !== today.date}
+          onPress={() => handleCheckDone(careId, tracker._id, index)}
+        >
           <Text 
             style={[styles.dailyText, { color: i + 1 === today.date ? Colors.darkPink : 'black'}]}>
-              {getDaysOfWeek(new Date(today.year, today.month - 1, i + 1)).slice(0, 3)}
+              {careUtils.getDaysOfWeek(new Date(today.year, today.month - 1, i + 1)).slice(0, 3)}
           </Text>
-          <Text style={[styles.dailyText, { color: i + 1 === today.date ? Colors.darkPink : 'black', fontSize: 20 }]}>{i + 1}</Text>
-          {tracker?.done[i] === 1 
+          <Text style={[styles.dailyText, { color: i + 1 === today.date ? Colors.darkestPink : 'black', fontSize: 20 }]}>{i + 1}</Text>
+          {i === today.daysPassed && tracker.done[index] === 1
             ? <Image source={require('../assets/icons/heart-filled.png')} style={styles.heart as ImageStyle} />
             : <Image source={require('../assets/icons/heart-gray.png')} style={styles.heart as ImageStyle} />
           }
-        </View>
+        </TouchableOpacity>
       )
     }
 
@@ -36,10 +48,10 @@ const ScrollCalendar = ({ tracker }) => {
         scrollViewRef.current.scrollTo({ x: offset, animated: true })
       }
     }
-  
+
     useEffect(() => {
-      const { date, month, year, day, daysInMonth } = getCurrentDate()
-      setToday({ date, month, year, day, daysInMonth })
+      const { date, month, year, day, daysInMonth, daysPassed } = careUtils.getCurrentDate()
+      setToday({ date, month, year, day, daysInMonth, daysPassed })
     }, [today.date])
 
   return (  

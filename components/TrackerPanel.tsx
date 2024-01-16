@@ -46,28 +46,34 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        {freq === 'Daily' ? 'Today' : freq === 'Weekly' ? 'This week' : freq === 'Monthly' ? 'This month' : 'This year'}
-      </Text> 
-      {freq === 'Daily' && times === 1 
-      ? <>
-        <Text style={styles.msg}>
-          {tracker.done[index] === 1 ? 'You did it!' : 'Mark as done?'}
-        </Text>
-        <View style={styles.scrollCalendar}>
-          <ScrollCalendar tracker={tracker} />
-        </View>
-      </>
-      : <>
-        <Text style={styles.msg}>
+      {/* <Text style={styles.msg}>
           {times === tracker.done[index] 
             ? 'Keep up the good work!' 
             : `Only ${freq === 'Yearly' 
               ? times - tracker.done.length 
               : times - tracker.done[index]} more to go!`
           }
+        </Text> */}
+      <Text style={styles.title}>
+        {freq === 'Daily' ? 'Today' : freq === 'Weekly' ? 'This week' : freq === 'Monthly' ? 'This month' : 'This year'}
+      </Text> 
+      {freq === 'Daily' && times === 1 
+      ? <>
+        <Text style={[
+              styles.status, 
+              {color: 
+                times === tracker.done[index]
+                ? Colors.green 
+                : Colors.red 
+            }]}>
+          {tracker.done[index] === 1 ? 'You did it!' : 'Mark as done?'}
         </Text>
-        
+        <View style={styles.scrollCalendar}>
+          <ScrollCalendar careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} />
+        </View>
+      </>
+      : <>
+       
         <View style={styles.countBox}>
           <Text style={[
               styles.status, 
@@ -132,9 +138,6 @@ const styles = StyleSheet.create({
     ...Spacing.flexColumn,
     margin: 10
   },
-  msg: {
-    margin: 10
-  },
   count: {
     fontSize: 30,
     fontWeight: 'bold',
@@ -145,7 +148,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   status: {
-    fontSize: 12,
+    fontSize: 15,
     fontWeight: 'bold'
   },
   heartBtn: {
@@ -158,7 +161,7 @@ const styles = StyleSheet.create({
   },  
   title: {
     ...Typography.smallHeader,
-    margin: 5,
+    marginVertical: 10,
     color: Colors.darkPink
   },
   dateContainer: {
@@ -176,7 +179,8 @@ const styles = StyleSheet.create({
   scrollCalendar: {
     width: 275,
     height: '50%',
-    borderRadius: 8
+    borderRadius: 8,
+    marginVertical: 10
   },
   icon: {
     width: 30,
