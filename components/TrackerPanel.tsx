@@ -33,10 +33,10 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq
     }
   }
 
-  const unCheckDone = async (careId: string, trackerId: string, index: number) => {
+  const uncheckDone = async (careId: string, trackerId: string, index: number) => {
     try {
       console.log('before submit', careId, trackerId, index)
-      const updatedTracker = await careService.unCheckDone(careId, trackerId, index)
+      const updatedTracker = await careService.uncheckDone(careId, trackerId, index)
       console.log('after submit', updatedTracker)
       setTracker(updatedTracker)
     } catch (error) {
@@ -69,7 +69,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq
           {tracker.done[index] === 1 ? 'You did it!' : 'Mark as done?'}
         </Text>
         <View style={styles.scrollCalendar}>
-          <ScrollCalendar careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} />
+          <ScrollCalendar careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone}/>
         </View>
       </>
       : <>

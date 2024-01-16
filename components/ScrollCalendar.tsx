@@ -3,17 +3,19 @@ import { useRef, useState, useEffect } from "react"
 import { ScrollView, StyleSheet, Text, View, Image, ImageStyle, TouchableOpacity } from "react-native"
 //utils
 import * as careUtils from "../utils/careUtils"
+import { Tracker } from "../services/careService"
 //styles
 import { Colors, Forms } from '../styles'
 
-const ScrollCalendar = ({ careId, tracker, index, onCheckDone }) => {
+const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone }) => {
   const [today, setToday] = useState
     <{date: number, month: number, year: number, day: string, daysInMonth: number, daysPassed: number}>
     ({ date: null, month: null, year: null, day: null, daysInMonth: null, daysPassed: null })
 
-  const handleCheckDone = async (careId: string, trackerId: string, index: number) => {
-    const result = await onCheckDone(careId, trackerId, index)
-
+  const handleCheck = async (careId: string, tracker: Tracker, index: number) => {
+    const result = tracker.done[index] === 1
+      ? await onUncheckDone(careId, tracker._id, index)
+      : await onCheckDone(careId, tracker._id, index)
     if (result && result.error) {
       alert(result.status)
     }
@@ -27,7 +29,7 @@ const ScrollCalendar = ({ careId, tracker, index, onCheckDone }) => {
         <TouchableOpacity 
           style={styles.dailyBox} key={i}
           disabled={i + 1 !== today.date}
-          onPress={() => handleCheckDone(careId, tracker._id, index)}
+          onPress={() => handleCheck(careId, tracker, index)}
         >
           <Text 
             style={[styles.dailyText, { color: i + 1 === today.date ? Colors.darkPink : 'black'}]}>

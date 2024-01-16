@@ -110,7 +110,7 @@ export async function checkDone(careId: string, trackerId: string, index: number
   }
 }
 
-export async function unCheckDone(careId: string, trackerId: string, index: number) {
+export async function uncheckDone(careId: string, trackerId: string, index: number) {
   try {
     const token = await tokenService.getToken()
     const res = await fetch(`${BASE_URL}/${careId}/${trackerId}/uncheck`, {
