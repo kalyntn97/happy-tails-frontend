@@ -72,3 +72,9 @@ export const smallIcon = {
   height: 30,
   margin: 2
 }
+
+export const largeIcon = {
+  width: 60,
+  height: 60,
+  margin: 5
+}

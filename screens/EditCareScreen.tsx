@@ -1,11 +1,13 @@
 //npm
-import { StyleSheet, View } from "react-native"
+import { TouchableOpacity, Text, StyleSheet, View } from "react-native"
 //components
 import CareForm from "../components/CareForm"
 //services
 import { Care } from "../services/careService"
 import { Pet } from "../services/petService"
 import * as careService from '../services/careService'
+//styles
+import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface EditCareProps {
   navigation: any
@@ -34,8 +36,26 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   }
 
   return (  
-    <CareForm onSubmit={handleSubmit} initialValues={initialValues} careId={care._id} />
+    <View style={styles.container}>
+      <CareForm onSubmit={handleSubmit} initialValues={initialValues} careId={care._id} />
+      <TouchableOpacity style={styles.subBtn} onPress={() => navigation.goBack()}>
+            <Text style={styles.buttonText}>Cancel</Text>
+      </TouchableOpacity>
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    ...Spacing.fullScreenDown,
+  },
+  buttonText: {
+    ...Buttons.buttonText,
+    color: Colors.darkestPink
+  },
+  subBtn: {
+    ...Buttons.smallSub,
+  },
+})
 
 export default EditCareScreen

@@ -25,11 +25,12 @@ const CareCard = ({ care, navigation }) => {
   const iconSource = careUtils.getIconSource(care.name)
   
   useEffect(() => {
-    // update as index (day, week) change
+    // update as index (day, week) change, get the latest tracker
     console.log('carecard trackers', care.trackers)
     const updateIndex = () => {
       const updatedIdx = careUtils.getCurrentTrackerIndex(care.frequency)
       setIndex(updatedIdx)
+      console.log('latest tracker', care.trackers[care.trackers.length - 1])
     }
     updateIndex()
   }, [index])
@@ -42,21 +43,14 @@ const CareCard = ({ care, navigation }) => {
             <Image source={iconSource} style={styles.icon as ImageStyle} />
             <View style={styles.titleContent}>
               <Text style={styles.title}>{care.name}</Text>
-              <Text style={styles.freq}>{care.times} / {care.frequency}</Text>
+              <Text style={styles.freq}>
+                {care.times} times / {care.frequency === 'Daily' ? 'day' : care.frequency === 'Weekly' ? 'week' : care.frequency === 'Monthly' ? 'month' : 'year'}
+              </Text>
             </View>
           </View>
         </View>
-        {/* <ScrollView>
-          <View style={styles.petList}>
-            {care.pets.map(pet =>               <View style={styles.petInfo}>
-                <PetInfo pet={pet} size='small' />
-              </View>
-            )}
-          </View>
-        </ScrollView> */}
-        <View style={styles.petList}>
-          <ScrollPetList petArray={care.pets} size='small' />
-        </View>
+        
+        <ScrollPetList petArray={care.pets} size='small' />
       </View>
       
       <View style={styles.body}>
@@ -102,11 +96,6 @@ const styles = StyleSheet.create({
   },
   titleContent: {
     ...Spacing.flexColumn,
-  },
-  petlist: {
-    height: 100,
-    width: '100%',
-    ...Spacing.centered
   },
   title: {
     ...Typography.smallHeader,

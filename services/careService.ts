@@ -18,7 +18,7 @@ export interface Care {
   pets: string[]
   name: string
   times: number
-  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly'
+  frequency: 'Daily' | 'Weekly' | 'Monthly' | 'Yearly'
   trackers: Array<string>
 }
 

@@ -38,15 +38,10 @@ const CareIndexScreen: React.FC = ({ navigation, route }) => {
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
-        showsVerticalScrollIndicator={false}
+        // showsVerticalScrollIndicator={false}
         scrollEventThrottle={200}
         decelerationRate="fast" 
       > 
-        {/* <ToggleableForm title='Add a care tracker' content={<CareForm />} />
-        <CareCard care={care4} />
-        <CareCard care={care2} />
-        <CareCard care={care1} />
-        <CareCard care={care3} /> */}
 
         {careCards.map((careCard, idx) => 
           <CareCard key={careCard._id} care={careCard} navigation={navigation}/>
@@ -62,20 +57,21 @@ const styles = StyleSheet.create({
     ...Spacing.fullScreenDown,
   },
   scrollView: {
-    width: '100%'
+    width: '100%',
   },
   empty: {
     
   },
   msg: {
-    ...Typography.smallHeader,
-    color: Colors.darkPink
+    ...Typography.subHeader,
+    color: Colors.darkPink,
+    marginTop: 50
   },
   catAnimation: {
     width: '100%'
   },
   scrollViewContent: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   mainBtn: {
     ...Buttons.longSquare,

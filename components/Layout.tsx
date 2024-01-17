@@ -27,6 +27,7 @@ import EditCareScreen from '../screens/EditCareScreen'
 import HealthIndexScreen from '../screens/HealthIndexScreen'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { header } from '../styles/typography'
 
 const Layout: React.FC = () => {
   const { authState, onLogout } = useAuth()
@@ -74,7 +75,7 @@ const Layout: React.FC = () => {
           }
         })}
       >
-        {authState?.authenticated ? (
+        {authState.authenticated ? (
           <Tab.Group>
             <Tab.Screen name='Home' options={{title: 'Welcome'}}>
               {() => (
@@ -100,10 +101,10 @@ const Layout: React.FC = () => {
                   <HomeDrawer.Screen name='Welcome' component={HomeScreen} options={{ title: 'Welcome'}}/>
                   <HomeDrawer.Screen name='Care' options={{ title: 'Pet Care' }}>
                     {() => (
-                      <CareStack.Navigator>
+                      <CareStack.Navigator screenOptions={{ headerShown: false }}>
                         <CareStack.Screen name='Index' component={CareIndexScreen} options={{ title: 'All Pet Care' }}/>
-                        <CareStack.Screen name='Create' component={NewCareScreen} options={{ title: 'Add Tracker', headerShown: false }}/>
-                        <CareStack.Screen name='Details' component={CareDetailsScreen} options={{ title: 'Care Details', headerShown: false }}/>
+                        <CareStack.Screen name='Create' component={NewCareScreen} options={{ title: 'Add Tracker' }}/>
+                        <CareStack.Screen name='Details' component={CareDetailsScreen} options={{ title: 'Care Details' }}/>
                         <CareStack.Screen name='Edit' component={EditCareScreen} options={{ title: 'Edit Pet Care' }}/>
                     </CareStack.Navigator>
                     )}

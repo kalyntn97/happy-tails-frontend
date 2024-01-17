@@ -1,5 +1,6 @@
 import { ImageSourcePropType } from "react-native"
 import { usePetContext } from "../context/PetContext"
+import { Colors } from "../styles"
 
 export const getIconSource  = (name: string): ImageSourcePropType => {
   switch (name) {
@@ -19,7 +20,33 @@ export const getIconSource  = (name: string): ImageSourcePropType => {
   }
 }
 
-export const getDaysOfWeek = (date: Date) => {
+export const getMonth = (monthIdx: number) => {
+  const months = [
+    'January', 'February', 'March', 'April',
+    'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December'
+  ]
+  return months[monthIdx - 1]
+}
+
+export const getColorArray = (): string[] => {
+  const colorArrays = [
+    Colors.greenArray, Colors.blueArray, Colors.pinkArray, Colors.yellowArray, Colors.purpleArray
+  ]
+  const randomIdx = Math.floor(Math.random() * colorArrays.length)
+  return colorArrays[randomIdx]
+}
+
+export const getColor = (ref: number, value: number, colorArray: string[]): string => {
+  const color = ref === value 
+    ? colorArray[0] 
+    : value === 0 
+      ? colorArray[2] 
+      : colorArray[1]
+  return color
+}
+
+export const getDayOfWeek = (date: Date) => {
   const daysOfWeek: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   return daysOfWeek[date.getDay()]
 }
@@ -29,7 +56,7 @@ export const getCurrentDate = () => {
   const date = today.getDate()
   const month =today.getMonth() + 1
   const year = today.getFullYear()
-  const day = getDaysOfWeek(today)
+  const day = getDayOfWeek(today)
 
   const firstDayOfMonth = new Date(year, month - 1, 1)
   const lastDayOfMonth = new Date(year, month, 0)
@@ -51,7 +78,7 @@ export const getCurrentTrackerIndex = (frequency: string): number => {
   const { date, weeksInMonth, weeksPassed } = getCurrentDate()
   switch (frequency) {
     case 'Daily':
-      return date //current date
+      return date - 1//current date
     case 'Weekly':
       console.log('weeksPassed', weeksPassed, 'weeksInMonth', weeksInMonth)
       return weeksInMonth - weeksPassed - 1 //current week, 0-index based

@@ -14,8 +14,9 @@ import { Profile } from "../services/profileService"
 import PetInfo from "../components/PetInfo"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import ScrollPetList from "../components/ScrollPetList"
 
-const SettingsScreen = ({ navigation }) => {
+const SettingsScreen = ({ navigation, route }) => {
   const { profile } = useProfileContext()
 
   //set a random profile photo if user does not have one
@@ -39,7 +40,7 @@ const SettingsScreen = ({ navigation }) => {
       changeRandomProfilePhoto()
     }
     fetchProfilePhoto()
-  }, [])
+  }, [route.params?.profileId])
 
   return ( 
     <View style={styles.container}>
@@ -67,15 +68,7 @@ const SettingsScreen = ({ navigation }) => {
       </View>
 
       <Pressable onLongPress={() => navigation.navigate('Profile')}>
-        <ScrollView>
-          <View style={styles.petList}>
-            {profile.pets?.map((pet, idx) =>
-              <View style={styles.petInfo} key={idx}>
-                <PetInfo key={pet._id} pet={pet} size='compact' />
-              </View>
-            )}
-          </View>
-        </ScrollView>
+        <ScrollPetList petArray={profile.pets} size='compact' />
       </Pressable>
 
     </View>

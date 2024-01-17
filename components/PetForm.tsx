@@ -90,7 +90,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
           {!!species && <Text>Select Type</Text>}
           <Dropdown label={species ? species : 'Select Type'} dataType='species' onSelect={setSpecies} />
 
-          {!!breed && <Text>{species === 'Dog' || species === 'Cat' ? 'Select Breed' : 'Select Species'}</Text>}
+          {!!breed && species !== 'Others' && <Text>{species === 'Dog' || species === 'Cat' ? 'Select Breed' : 'Select Species'}</Text>}
           {species === 'Dog' && <Dropdown label={breed ? breed : 'Select Breed'} dataType='dogBreed' onSelect={setBreed} />}
           
           {species === 'Cat' && <Dropdown label={breed ? breed : 'Select Breed'} dataType='catBreed' onSelect={setBreed} />}

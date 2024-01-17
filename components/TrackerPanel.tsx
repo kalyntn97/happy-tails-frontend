@@ -56,51 +56,42 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq
         </Text> */}
       <Text style={styles.title}>
         {freq === 'Daily' ? 'Today' : freq === 'Weekly' ? 'This week' : freq === 'Monthly' ? 'This month' : 'This year'}
-      </Text> 
-      {freq === 'Daily' && times === 1 
-      ? <>
-        <Text style={[
+      </Text>
+      <Text style={[
           styles.status, 
           { color: times === tracker.done[index] ? Colors.green : Colors.red }
         ]}>
-          {tracker.done[index] === 1 ? 'You did it!' : 'Mark as done?'}
+          {tracker.done[index] === times ? 'You did it!' : `Only ${times - tracker.done[index]} more to go!`}
         </Text>
+      {freq === 'Daily' && times === 1 
+      ? <>
         <View style={styles.scrollCalendar}>
           <ScrollCalendar careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone}/>
         </View>
       </> : <>
         <View style={styles.countBox}>
-          <Text style={[
-            styles.status, 
-            { color: times === tracker.done[index] ? Colors.green : Colors.red }
-          ]}>
-            {times === tracker.done[index] ? 'You did it!' : 'Mark as Done?'}
-          </Text>
+          <TouchableOpacity 
+            style={styles.iconBtn}
+            onPress={() => uncheckDone(careId, tracker._id, index)}
+            disabled={tracker.done[index] == 0}
+          >
+            <Image source={require('../assets/icons/minus.png')} style={styles.icon as ImageStyle} />
+          </TouchableOpacity>
+          <Text style={[styles.count, { color: Colors.red }]}>{times - tracker.done[index]}</Text>
 
-          <View style={styles.countContent}>
-            <TouchableOpacity 
-              style={styles.iconBtn}
-              onPress={() => uncheckDone(careId, tracker._id, index)}
-              disabled={tracker.done[index] == 0}
-            >
-              <Image source={require('../assets/icons/minus.png')} style={styles.icon as ImageStyle} />
-            </TouchableOpacity>
-            <Text style={[styles.count, { color: Colors.red }]}>{times - tracker.done[index]}</Text>
-
-            <View style={styles.heartBtn}>
-              <ProgressTracker done={tracker.done[index]} times={times} />
-            </View>
-
-            <Text style={[styles.count, { color: Colors.green }]}>{tracker.done[index]}</Text>
-            <TouchableOpacity 
-              style={styles.iconBtn} 
-              onPress={() => checkDone(careId, tracker._id, index)}
-              disabled={tracker.done[index] >= times}
-            >
-              <Image source={require('../assets/icons/plus.png')} style={styles.icon as ImageStyle} />
-            </TouchableOpacity>
-            
+          <View style={styles.heartBtn}>
+            <ProgressTracker done={tracker.done[index]} times={times} />
           </View>
+
+          <Text style={[styles.count, { color: Colors.green }]}>{tracker.done[index]}</Text>
+          <TouchableOpacity 
+            style={styles.iconBtn} 
+            onPress={() => checkDone(careId, tracker._id, index)}
+            disabled={tracker.done[index] >= times}
+          >
+            <Image source={require('../assets/icons/plus.png')} style={styles.icon as ImageStyle} />
+          </TouchableOpacity>
+          
         </View>
       </>
       }
@@ -119,18 +110,15 @@ const styles = StyleSheet.create({
   },
   tracker: {
   },
-  countBox: {
-    ...Spacing.flexColumn,
-    margin: 10
-  },
   count: {
     fontSize: 30,
     fontWeight: 'bold',
     padding: 5,
   },
-  countContent: {
+  countBox: {
     ...Spacing.flexRow,
-    alignItems: 'center'
+    alignItems: 'center',
+    marginVertical: 10
   },
   status: {
     fontSize: 15,
