@@ -39,7 +39,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, careId }) 
 
   // handle select multiple pets
   const handleSelectPets = (selected: string[]) => {
-    // convert names into ids
+    // convert names into ids before submitting
     const petIds = selected.map(name => {
       const pet = pets.find(pet => pet.name === name)
       return pet._id
@@ -55,10 +55,10 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, careId }) 
       const result = initialValues?.name
       ? await onSubmit(name, frequency, times, petData, careId)
       : await onSubmit(name, frequency, times, petData)
-      console.log('result', result)
-      if (result && result.error) {
-        alert(result.msg)
-      }
+      // console.log('result', result)
+      // if (result && result.error) {
+      //   alert(result.msg)
+      // }
     }
   }
 
