@@ -14,7 +14,7 @@ interface BarChartProps {
 
 const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
 
-  const { month, year, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
+  const { month, year, currMonth, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
   const { week: currWeek } = careUtils.getCurrentDate()
 
   const windowWidth = useWindowDimensions().width
@@ -30,10 +30,24 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
     <View style={[styles.container, { width: chartWidth, height: chartHeight }]}>
       <View style={[styles.chartName, {  }]}>
       <View style={[styles.header, { height: '30%' }]}>
-          <Text style={[styles.headerText, { fontSize: 15, width: chartHeight * 0.3 }]}>{year}</Text>
+          <Text style={[
+            styles.headerText,
+            { color: isCurrent ? Colors.darkPink : 'black' },
+            frequency === 'Weekly' 
+            ? { fontSize: 15, width: chartHeight * 0.3 }
+            : { fontSize: 30, width: chartHeight}
+          ]}>
+            {year}
+          </Text>
         </View>
         <View style={[styles.header, { height: '70%' }]}>
-          <Text style={[styles.headerText, { fontSize: 20, width: chartHeight * 0.7 }]}>{month}</Text>
+          <Text style={[
+            styles.headerText,
+            { color: isCurrent ? Colors.darkPink : 'black' },
+            { fontSize: 20, width: chartHeight * 0.7 }
+          ]}>
+            {month}
+          </Text>
         </View>
       </View>
 
@@ -45,18 +59,31 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
                 width: barWidth,
                 height: barHeightUnit * value ,
                 backgroundColor: careUtils.getColor(times, value, colorArray),
-                marginHorizontal: 10
+                marginHorizontal: frequency === 'Weekly' ? 10 : 7
               }
             ]}
           > 
             <Text style={[styles.label, 
-              { width: barHeightUnit, bottom: -25 },
-              currWeek === idx + 1 && isCurrent ? { color: Colors.darkPink, fontWeight: 'bold' } : {}
+              { width: barHeightUnit }, 
+              frequency === 'Monthly' ? { bottom: -60, left: -80 } : { bottom: -50, left: -45 },
+              ( 
+                (currWeek === idx + 1 && isCurrent && frequency === 'Weekly') 
+                || (currMonth === idx + 1 && isCurrent && frequency === 'Monthly') 
+              ) ? { color: Colors.darkPink, fontWeight: 'bold' } 
+              : {}
             ]}>
-                Week {idx + 1}
+                {frequency === 'Weekly' 
+                  ? `Week ${idx + 1}`
+                  : careUtils.getMonth(idx + 1).slice(0, 3)
+                }
             </Text>
            
-            <Text style={styles.value}>{value}</Text>
+            <Text style={[
+              styles.value, 
+              { fontSize: frequency === 'Weekly' ? 15 : 10 }
+            ]}>
+              {value}
+            </Text>
           </View>
         )}
       </View>
@@ -101,12 +128,13 @@ header: {
   value: {
     position: 'absolute',
     top: -20,
-    fontSize: 15,
+    // fontSize: 15,
     fontWeight: 'bold'
   },
   label: {
     transform: [{ rotate: '315deg'}],
     position: 'absolute',
+    textAlign: 'right'
   }
 })
 

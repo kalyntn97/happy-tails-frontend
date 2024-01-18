@@ -19,14 +19,14 @@ interface CareDetailsProps {
 }
 
 export const testCare = {
-  _id: '1', name: 'Teeth Brushing', frequency: 'Weekly', times: 3, 
+  _id: '1', name: 'Nail Clipping', frequency: 'Weekly', times: 3, 
   pets: [
     {_id: "65989b22aab8137117ea79e2", age: 3, breed: "Ragdoll", name: "Luna Stella Reyes-Nguyen", photo: "https://res.cloudinary.com/davz8l292/image/upload/v1704500003/happy-tails/zl1mn2rhuqa1x5keabda.jpg", species: "Cat",}, 
     {_id: "65989b998504f2bca8d477ac", age: 3, breed: "British Shorthair", name: "Levi Milo Reyes-Nguyen", photo: "https://res.cloudinary.com/davz8l292/image/upload/v1704500133/happy-tails/vce2esffuxeqtxhsvcnt.jpg", species: "Cat",}
   ],
   trackers: [
-    {_id: '1', name: '12-2023', done: [3, 3, 2, 1, 1], total: 5, firstDay: 5},
-    {_id: '2', name: '1-2024', done: [3, 3, 2, 1, 0], total: 5, firstDay: 1},
+    {_id: '1', name: '12-2023', done: [2, 1, 0, 3, 1], total: 5 },
+    {_id: '2', name: '1-2024', done: [1,0,0,0,0], total: 5 },
   ]
   
 }
