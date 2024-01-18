@@ -20,9 +20,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   const [tracker, setTracker] = useState<Tracker>(care.trackers[care.trackers.length - 1])
   const [index, setIndex] = useState<number>(0)
 
-  const freq = care.frequency
-  const times = care.times
-  const careId = care._id
+  const {frequency: freq, times, _id: careId } = care
   // get month and year of current tracker from name
   const { year: currYear, month: month } = careUtils.getDateTimeFromTracker(tracker.name)
   const currMonth = careUtils.getMonth(month)
@@ -61,14 +59,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.msg}>
-          {times === tracker.done[index] 
-            ? 'Keep up the good work!' 
-            : `Only ${freq === 'Yearly' 
-              ? times - tracker.done.length 
-              : times - tracker.done[index]} more to go!`
-          }
-        </Text> */}
+
       <Text style={styles.title}>
         {freq === 'Daily' ? 'Today' : freq === 'Weekly' ? `Week ${index + 1}` : freq === 'Monthly' ? currMonth : currYear}
       </Text>
@@ -79,39 +70,37 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
           {tracker.done[index] === times ? 'You did it!' : `Only ${times - tracker.done[index]} more to go!`}
         </Text>
       {freq === 'Daily' && times === 1 
-      ? <>
-        <View style={styles.scrollCalendar}>
-          <ScrollCalendar careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone}/>
-        </View>
-      </> : <>
-        <View style={styles.countBox}>
-          <TouchableOpacity 
-            style={styles.iconBtn}
-            onPress={() => uncheckDone(careId, tracker._id, index)}
-            disabled={tracker.done[index] == 0}
-          >
-            <Image source={require('../assets/icons/minus.png')} style={styles.icon as ImageStyle} />
-          </TouchableOpacity>
-          <Text style={[styles.count, { color: Colors.red }]}>{times - tracker.done[index]}</Text>
-
-          <View style={styles.heartBtn}>
-            <ProgressTracker done={tracker.done[index]} times={times} size={times > 5 ? 'xSmall' : 'small'} />
+        ? <>
+          <View style={styles.scrollCalendar}>
+            <ScrollCalendar careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone}/>
           </View>
+        </> : <>
+          <View style={styles.countBox}>
+            <TouchableOpacity 
+              style={styles.iconBtn}
+              onPress={() => uncheckDone(careId, tracker._id, index)}
+              disabled={tracker.done[index] == 0}
+            >
+              <Image source={require('../assets/icons/minus.png')} style={styles.icon as ImageStyle} />
+            </TouchableOpacity>
+            <Text style={[styles.count, { color: Colors.red }]}>{times - tracker.done[index]}</Text>
 
-          <Text style={[styles.count, { color: Colors.green }]}>{tracker.done[index]}</Text>
-          <TouchableOpacity 
-            style={styles.iconBtn} 
-            onPress={() => checkDone(careId, tracker._id, index)}
-            disabled={tracker.done[index] >= times}
-          >
-            <Image source={require('../assets/icons/plus.png')} style={styles.icon as ImageStyle} />
-          </TouchableOpacity>
-          
-        </View>
-      </>
+            <View style={styles.heartBtn}>
+              <ProgressTracker done={tracker.done[index]} times={times} size={times > 5 ? 'xSmall' : 'small'} />
+            </View>
+
+            <Text style={[styles.count, { color: Colors.green }]}>{tracker.done[index]}</Text>
+            <TouchableOpacity 
+              style={styles.iconBtn} 
+              onPress={() => checkDone(careId, tracker._id, index)}
+              disabled={tracker.done[index] >= times}
+            >
+              <Image source={require('../assets/icons/plus.png')} style={styles.icon as ImageStyle} />
+            </TouchableOpacity>
+            
+          </View>
+        </>
       }
-     
-     
     </View>
   )
 }

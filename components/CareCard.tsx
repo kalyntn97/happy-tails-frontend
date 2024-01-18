@@ -6,6 +6,7 @@ import { Pet } from "../services/petService"
 import { Care } from "../services/careService"
 //utils & services
 import * as careUtils from "../utils/careUtils"
+import * as careService from '../services/careService'
 //components
 import PetInfo from "./PetInfo"
 import ScrollPetList from "./ScrollPetList"
@@ -21,6 +22,22 @@ interface CareCardProps {
 
 const CareCard = ({ care, navigation }) => {
   const iconSource = careUtils.getIconSource(care.name)
+  const [careCard, setCareCard] = useState<Care>(care)
+
+  const latestTracker = careCard.trackers[careCard.trackers.length - 1]
+  const { isCurrent } = careUtils.getDateTimeFromTracker(latestTracker.name)
+  console.log('checking if new month or year has passed...', isCurrent)
+  
+  useEffect(() => {
+    const autoUpdateCareCard = async () => {
+      if ( !isCurrent ) {
+        const data = await careService.autoCreateTracker(careCard._id)
+        console.log('updated CareCard data', data)
+        setCareCard(data)
+      }
+    }
+    autoUpdateCareCard()
+  }, [isCurrent, careCard._id])
 
   return (
     <View style={styles.container}>

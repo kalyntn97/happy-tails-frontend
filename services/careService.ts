@@ -126,3 +126,16 @@ export async function uncheckDone(careId: string, trackerId: string, index: numb
     console.log(error)
   }
 }
+
+export async function autoCreateTracker(careId: string) {
+  try {
+    const token = await tokenService.getToken()
+    const res = await fetch(`${BASE_URL}/${careId}/auto`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    return res.json()
+  } catch (error) {
+    console.log(error)
+  }
+}
