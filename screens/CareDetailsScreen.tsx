@@ -13,6 +13,7 @@ import BarChart from "../components/BarChart"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 import YearChart from "../components/YearChart"
+import FillChart from "../components/FillChart"
 
 interface CareDetailsProps {
   navigation: any
@@ -102,6 +103,8 @@ const CareDetailsScreen = ({ navigation, route }) => {
         <>
           {careCard.frequency === 'Daily' 
           ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={careCard.times} />
+          : careCard.times === 1 && careCard.frequency !== 'Yearly'
+          ? <FillChart key={`1X-${idx}`} tracker={tracker} frequency={careCard.frequency} times={careCard.times} />
           : ( careCard.frequency === 'Weekly' || careCard.frequency === 'Monthly' ) 
             ? <BarChart key={`${careCard.frequency}-${idx}`} tracker={tracker} frequency={careCard.frequency} times={careCard.times} />
             : <YearChart key={`Yearly-${idx}`} tracker={tracker} times={careCard.times} />

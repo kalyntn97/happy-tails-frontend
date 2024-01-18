@@ -1,4 +1,5 @@
 //npm
+import { useEffect, useState } from "react"
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
 //services & utils
 import { Tracker } from "../services/careService"
@@ -13,6 +14,8 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
+  const [barWidth, setBarWidth] = useState<number>(0)
+  const [barHeightUnit, setBarHeightUnit] = useState<number>(0)
 
   const { month, year, currMonth, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
   const { week: currWeek } = careUtils.getCurrentDate()
@@ -21,10 +24,16 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
   const windowHeight = useWindowDimensions().height
   const chartWidth = windowWidth * 0.9
   const chartHeight = windowHeight * 0.35
-  const barWidth = frequency === 'Weekly' ? chartWidth * 0.25 / times : chartWidth * 0.25 / 12
-  const barHeightUnit = chartHeight * 0.7 / times
 
   const colorArray = careUtils.getColorArray()
+
+  useEffect(() => {
+    const newBarWidth = frequency === 'Weekly' ? chartWidth * 0.1 : chartWidth * 0.25 / 12
+    const newBarHeightUnit = chartHeight * 0.7 / times
+
+    setBarWidth(newBarWidth)
+    setBarHeightUnit(newBarHeightUnit)
+  }, [frequency, times])
 
   return (  
     <View style={[styles.container, { width: chartWidth, height: chartHeight }]}>
@@ -63,9 +72,9 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
               }
             ]}
           > 
-            <Text style={[styles.label, 
-              { width: barHeightUnit }, 
-              frequency === 'Monthly' ? { bottom: -60, left: -80 } : { bottom: -50, left: -45 },
+            <Text style={[
+              styles.label, 
+              frequency === 'Monthly' ? { bottom: -40, left: -55 } : { bottom: -50, left: -45 },
               ( 
                 (currWeek === idx + 1 && isCurrent && frequency === 'Weekly') 
                 || (currMonth === idx + 1 && isCurrent && frequency === 'Monthly') 
@@ -133,7 +142,8 @@ header: {
   label: {
     transform: [{ rotate: '315deg'}],
     position: 'absolute',
-    textAlign: 'right'
+    textAlign: 'right',
+    width: 60 
   }
 })
 
