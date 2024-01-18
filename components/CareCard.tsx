@@ -20,20 +20,7 @@ interface CareCardProps {
 }
 
 const CareCard = ({ care, navigation }) => {
-  const [index, setIndex] = useState<number>(0)
-
   const iconSource = careUtils.getIconSource(care.name)
-  
-  useEffect(() => {
-    // update as index (day, week) change, get the latest tracker
-    console.log('carecard trackers', care.trackers)
-    const updateIndex = () => {
-      const updatedIdx = careUtils.getCurrentTrackerIndex(care.frequency)
-      setIndex(updatedIdx)
-      console.log('latest tracker', care.trackers[care.trackers.length - 1])
-    }
-    updateIndex()
-  }, [index])
 
   return (
     <View style={styles.container}>
@@ -55,7 +42,7 @@ const CareCard = ({ care, navigation }) => {
       
       <View style={styles.body}>
         <View style={styles.currentTracker}>
-          <TrackerPanel careId={care._id} currTracker={care.trackers[care.trackers.length - 1]} freq={care.frequency} times={care.times} index={index} />
+          <TrackerPanel care={care} />
         </View>
         <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Details', { careId: care._id })}>
           <Text style={styles.btnText}>View History</Text>

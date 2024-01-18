@@ -3,6 +3,7 @@ import { useLayoutEffect, useRef, useState, useEffect } from "react"
 import { Image, ImageStyle, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 //services & utils
 import { Tracker } from "../services/careService"
+import { Care } from "../services/careService"
 import * as careService from '../services/careService'
 import * as careUtils from "../utils/careUtils"
 //components
@@ -12,15 +13,19 @@ import ProgressTracker from "./ProgressTracker"
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface CurrentTrackerProps {
-  careId: string
-  currTracker: Tracker
-  freq: string
-  times: number
-  index: number
+  care: Care
 }
 
-const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq, times, index }) => {
-  const [tracker, setTracker] = useState<Tracker>(currTracker)
+const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
+  const [tracker, setTracker] = useState<Tracker>(care.trackers[care.trackers.length - 1])
+  const [index, setIndex] = useState<number>(0)
+
+  const freq = care.frequency
+  const times = care.times
+  const careId = care._id
+  // get month and year of current tracker from name
+  const { year: currYear, month: month } = careUtils.getDateTimeFromTracker(tracker.name)
+  const currMonth = careUtils.getMonth(month)
   
   const checkDone = async (careId: string, trackerId: string, index: number) => {
     try {
@@ -44,6 +49,16 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq
     }
   }
 
+  useEffect(() => {
+    // update as index (day, week) change, get the latest tracker
+    console.log('trackers', care.trackers)
+    const updateIndex = () => {
+      const updatedIdx = careUtils.getCurrentTrackerIndex(freq)
+      setIndex(updatedIdx)
+    }
+    updateIndex()
+  }, [index])
+
   return (
     <View style={styles.container}>
       {/* <Text style={styles.msg}>
@@ -55,7 +70,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq
           }
         </Text> */}
       <Text style={styles.title}>
-        {freq === 'Daily' ? 'Today' : freq === 'Weekly' ? 'This week' : freq === 'Monthly' ? 'This month' : 'This year'}
+        {freq === 'Daily' ? 'Today' : freq === 'Weekly' ? `Week ${index + 1}` : freq === 'Monthly' ? currMonth : currYear}
       </Text>
       <Text style={[
           styles.status, 

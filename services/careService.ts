@@ -19,7 +19,7 @@ export interface Care {
   name: string
   times: number
   frequency: 'Daily' | 'Weekly' | 'Monthly' | 'Yearly'
-  trackers: Array<string>
+  trackers: Tracker[]
 }
 
 export async function index(): Promise<Care[]> {

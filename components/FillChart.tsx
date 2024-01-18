@@ -21,7 +21,7 @@ const FillChart = ({ tracker, frequency, times }) => {
   return (  
     <View style={[styles.container, 
       { width: chartWidth,
-        height: frequency === 'Weekly' ? squareWidth * 2 : squareWidth * 3
+        height: frequency === 'Weekly' ? squareWidth * 2 : squareWidth * 4
       }
     ]}>
       <View style={styles.header}>
