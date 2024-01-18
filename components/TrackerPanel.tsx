@@ -80,7 +80,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ careId, currTracker, freq
           <Text style={[styles.count, { color: Colors.red }]}>{times - tracker.done[index]}</Text>
 
           <View style={styles.heartBtn}>
-            <ProgressTracker done={tracker.done[index]} times={times} />
+            <ProgressTracker done={tracker.done[index]} times={times} size={times > 5 ? 'xSmall' : 'small'} />
           </View>
 
           <Text style={[styles.count, { color: Colors.green }]}>{tracker.done[index]}</Text>

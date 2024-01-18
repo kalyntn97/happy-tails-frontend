@@ -77,13 +77,14 @@ export const frequencyData = ['Daily', 'Weekly', 'Monthly', 'Yearly']
 export const careData = ['Teeth Brushing', 'Nail Clipping', 'Walk', 'Grooming', 'Litter Box Cleaning', 'Others']
 
 export const getCurrentTrackerIndex = (frequency: string): number => {
-  const { date, week } = getCurrentDate()
+  const { date, week, month } = getCurrentDate()
   switch (frequency) {
     case 'Daily':
-      return date - 1//current date
+      return date - 1 //current date, all 0-index
     case 'Weekly':
-      console.log('weeksPassed', weeksPassed, 'weeksInMonth', weeksInMonth)
-      return week - 1 //current week, 0-index based
+      return week - 1 //current week
+    case 'Monthly' :
+      return month - 1 //current month
     default:
       return 0
   }

@@ -17,12 +17,12 @@ interface EditCareProps {
 const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   const { care } = route.params
 
-  const petNames: string[] = care.pets.map(pet => pet.name)
+  const petData = care.pets.map(pet => pet._id)
 
   const initialValues: {
     name: string, frequency: string, times: number, pets: string[]
   } = {
-    name: care.name, frequency: care.frequency, times: care.times, pets: petNames
+    name: care.name, frequency: care.frequency, times: care.times, pets: petData
   }
 
   const handleSubmit = async (name: string, frequency: string, times: number, pets: string[], careId: string) => {

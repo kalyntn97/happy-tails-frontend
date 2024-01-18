@@ -24,6 +24,12 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, careId }) 
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
 
   const { pets } = usePetContext()
+  //convert initial pet Ids into names
+  const initialPetNames = initialValues?.pets.map(id => {
+    const pet = pets.find(pet => pet._id === id)
+    return pet.name
+  })
+  
 
   const handleSelectName = (selected: string) => {
     setName(() => {
@@ -90,7 +96,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, careId }) 
           value={times !== '' ? times.toString() : ''} 
           keyboardType="numeric"
         />
-        <MultipleSelection label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialValues?.pets}/>
+        <MultipleSelection label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialPetNames} />
         <TouchableOpacity onPress={handleSubmit} style={styles.mainButton}>
           <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Create'}</Text>
         </TouchableOpacity>

@@ -128,7 +128,6 @@ header: {
   value: {
     position: 'absolute',
     top: -20,
-    // fontSize: 15,
     fontWeight: 'bold'
   },
   label: {

@@ -22,7 +22,7 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
     name: pet.name, age: pet.age, species: pet.species, breed: pet.breed, photo: pet.photo ? pet.photo : null, petId: pet._id
   }
 
-  const handleEditPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string)  => {
+  const handleEditPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null)  => {
     const result = await onEditPet!(name, age, species, breed, photoData, pet._id)
     console.log('result', result)
 
