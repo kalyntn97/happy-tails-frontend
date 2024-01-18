@@ -13,16 +13,19 @@ interface DailyChartProps {
 }
 
 const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
-  const { date: currDate, month: currMonth, year: currYear } = careUtils.getCurrentDate()
-  const splitName = tracker.name.split('-') // output month & year
-  const month = careUtils.getMonth(Number(splitName[0]))
-  const year = splitName[1]
-  const isCurrent = currMonth == splitName[0] && currYear == year
+  // const { date: currDate, month: currMonth, year: currYear } = careUtils.getCurrentDate()
+  // const splitName = tracker.name.split('-') // output month & year
+  // const month = careUtils.getMonth(Number(splitName[0]))
+  // const year = Number(splitName[1])
+  // const isCurrent = currMonth == Number(splitName[0]) && currYear == year
+  const { month, year, currDate, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
+
   const colorArray = careUtils.getColorArray()
 
   const windowWidth = useWindowDimensions().width
   const chartWidth = windowWidth * 0.9
   const squareWidth = chartWidth / 7
+
   console.log(tracker)
 
   const CalendarHeader = () => {
@@ -73,7 +76,7 @@ const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
                 backgroundColor: careUtils.getColor(times, value, colorArray),
                 width: squareWidth,
                 height: squareWidth,
-                borderColor: (currDate === idx + 1 && isCurrent) ? 'red' : 'white'
+                borderColor: (currDate === idx + 1 && isCurrent) ? Colors.darkPink : 'white'
               }
             ]}>
               <Text style={styles.day}>{idx + 1}</Text>

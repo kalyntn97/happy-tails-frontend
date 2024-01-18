@@ -66,8 +66,10 @@ export const getCurrentDate = () => {
 
   const daysPassed = daysInMonth - date
   const weeksPassed = Math.floor((daysInMonth - date) / 7)
+  const week = weeksPassed + 1
   
-  return { date, month, year, day, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
+  
+  return { date, month, year, day,week, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
 }
 
 export const frequencyData = ['Daily', 'Weekly', 'Monthly', 'Yearly']
@@ -75,14 +77,31 @@ export const frequencyData = ['Daily', 'Weekly', 'Monthly', 'Yearly']
 export const careData = ['Teeth Brushing', 'Nail Clipping', 'Walk', 'Grooming', 'Litter Box Cleaning', 'Others']
 
 export const getCurrentTrackerIndex = (frequency: string): number => {
-  const { date, weeksInMonth, weeksPassed } = getCurrentDate()
+  const { date, week } = getCurrentDate()
   switch (frequency) {
     case 'Daily':
       return date - 1//current date
     case 'Weekly':
       console.log('weeksPassed', weeksPassed, 'weeksInMonth', weeksInMonth)
-      return weeksInMonth - weeksPassed - 1 //current week, 0-index based
+      return week - 1 //current week, 0-index based
     default:
       return 0
   }
+}
+
+export const getDateTimeFromTracker = (trackerName: string) => {
+  let month: string, year: number, isCurrent: boolean
+  const { date: currDate, month: currMonth, year: currYear } = getCurrentDate()
+
+  if (trackerName.includes('-')) {
+    const splitName = trackerName.split('-') // output month & year
+    month = getMonth(Number(splitName[0]))
+    year = Number(splitName[1])
+    isCurrent = currMonth == Number(splitName[0]) && currYear == year
+  } else {
+    year = Number(trackerName)
+    isCurrent = year === currYear
+  }
+
+  return { month, year, currDate, currMonth, isCurrent }
 }

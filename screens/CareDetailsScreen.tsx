@@ -11,6 +11,7 @@ import ScrollPetList from "../components/ScrollPetList"
 import DailyChart from "../components/DailyChart"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import BarChart from "../components/BarChart"
 
 interface CareDetailsProps {
   navigation: any
@@ -18,20 +19,20 @@ interface CareDetailsProps {
 }
 
 export const testCare = {
-  _id: '1', name: 'Litter Box Cleaning', frequency: 'Daily', times: 2, 
+  _id: '1', name: 'Teeth Brushing', frequency: 'Weekly', times: 3, 
   pets: [
     {_id: "65989b22aab8137117ea79e2", age: 3, breed: "Ragdoll", name: "Luna Stella Reyes-Nguyen", photo: "https://res.cloudinary.com/davz8l292/image/upload/v1704500003/happy-tails/zl1mn2rhuqa1x5keabda.jpg", species: "Cat",}, 
     {_id: "65989b998504f2bca8d477ac", age: 3, breed: "British Shorthair", name: "Levi Milo Reyes-Nguyen", photo: "https://res.cloudinary.com/davz8l292/image/upload/v1704500133/happy-tails/vce2esffuxeqtxhsvcnt.jpg", species: "Cat",}
   ],
   trackers: [
-    {_id: '1', name: '12-2023', done: [2,2,2,1,2,1,2,0,2,1,1,2,2,0,2,2,2,2,1,2,1,2,1,1,1,1,0,0,1,2,2], total: 31, firstDay: 5},
-    {_id: '2', name: '1-2024', done: [2,2,2,1,2,1,2,0,2,1,1,2,2,0,2,2,2,2,1,2,1,2,1,1,1,1,0,0,1,2,2], total: 31, firstDay: 1},
+    {_id: '1', name: '12-2023', done: [3, 3, 2, 1, 1], total: 5, firstDay: 5},
+    {_id: '2', name: '1-2024', done: [3, 3, 2, 1, 0], total: 5, firstDay: 1},
   ]
   
 }
 
 const CareDetailsScreen = ({ navigation, route }) => {
-  const [careCard, setCareCard] = useState<Care>({
+  const [careCard, setCareCard] = useState/* <Care> */({
     _id: '',
     name: '',
     frequency: 'Daily',
@@ -40,18 +41,18 @@ const CareDetailsScreen = ({ navigation, route }) => {
     trackers: []
   })
 
-  const { careId } = route.params
-  // const careId = testCare._id
+  // const { careId } = route.params
+  const careId = testCare._id
 
   const iconSource = careUtils.getIconSource(careCard.name)
 
   useEffect(() => {
     const fetchCareDetails = async () => {
-      const data = await careService.show(careId)
-      console.log(data)
-      setCareCard(data)
-      // console.log(testCare)
-      // setCareCard(testCare)
+      // const data = await careService.show(careId)
+      // console.log(data)
+      // setCareCard(data)
+      console.log(testCare)
+      setCareCard(testCare)
     }
     fetchCareDetails()
   }, [careId])
@@ -102,7 +103,10 @@ const CareDetailsScreen = ({ navigation, route }) => {
       {careCard.trackers.map((tracker, idx) =>
         <>
           {careCard.frequency === 'Daily' &&
-            <DailyChart key={`daily-${idx}`} tracker={tracker} times={careCard.times} />
+            <DailyChart key={`Daily-${idx}`} tracker={tracker} times={careCard.times} />
+          }
+          {( careCard.frequency === 'Weekly' || careCard.frequency === 'Monthly' ) &&
+            <BarChart key={`${careCard.frequency}-${idx}`} tracker={tracker} frequency={careCard.frequency} times={careCard.times}/>
           }
         </>
       )}
