@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import LottieView from "lottie-react-native"
+import { DrawerNavigationProp } from "@react-navigation/drawer"
 //components
 import CareCard from "../components/CareCard"
 import CareForm from "../components/CareForm"
@@ -12,7 +13,12 @@ import * as careService from '../services/careService'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
-const CareIndexScreen: React.FC = ({ navigation, route }) => {
+type CareIndexProps = {
+  navigation: DrawerNavigationProp<{}>
+  route: { params?: { careId?: string }}
+}
+
+const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   const [careCards, setCareCards] = useState<Care[]>([])
 
   useEffect(() => {

@@ -26,7 +26,7 @@ export const getMonth = (monthIdx: number) => {
     'May', 'June', 'July', 'August',
     'September', 'October', 'November', 'December'
   ]
-  return months[monthIdx - 1]
+  return months[monthIdx - 1] // 0-index
 }
 
 export const getColorArray = (): string[] => {
@@ -54,7 +54,7 @@ export const getDayOfWeek = (date: Date) => {
 export const getCurrentDate = () => {
   const today = new Date()
   const date = today.getDate()
-  const month =today.getMonth() + 1
+  const month =today.getMonth() + 1 //0-index 
   const year = today.getFullYear()
   const day = getDayOfWeek(today)
 
@@ -94,16 +94,15 @@ export const getCurrentTrackerIndex = (frequency: string): number => {
 export const getDateTimeFromTracker = (trackerName: string) => {
   let month: any, year: number, isCurrent: boolean
   const { date: currDate, month: currMonth, year: currYear, week: currWeek } = getCurrentDate()
-
-  if (trackerName.includes('-')) {
-    const splitName = trackerName.split('-') // output month & year
-    month = getMonth(Number(splitName[0]))
+  // tracker name: 'mm-yyyy'
+  if (trackerName.includes('-')) { // tracker is monthly-based, new tracker every month
+    const splitName = trackerName.split('-') // output 'mm' & 'yyyy'
+    month = getMonth(Number(splitName[0])) // get full month name
     year = Number(splitName[1])
-    isCurrent = currMonth == Number(splitName[0]) && currYear == year
-  } else {
+    isCurrent = currMonth === Number(splitName[0]) && currYear === year
+  } else { // tracker is yearly-based, new tracker every year
     year = Number(trackerName)
     isCurrent = year === currYear
   }
-
   return { month, year, currDate, currMonth, currWeek, isCurrent }
 }

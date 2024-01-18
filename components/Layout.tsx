@@ -77,7 +77,10 @@ const Layout: React.FC = () => {
       >
         {authState.authenticated ? (
           <Tab.Group>
-            <Tab.Screen name='Home' options={{title: 'Welcome'}}>
+            <Tab.Screen name='Home' 
+              options={{ title: 'Welcome', /* unmountOnBlur: true */ }}
+              // listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
+            >
               {() => (
                 <HomeDrawer.Navigator
                   screenOptions={({ route }) =>({
@@ -119,7 +122,11 @@ const Layout: React.FC = () => {
                 </HomeDrawer.Navigator>
               )}
             </Tab.Screen>
-            <Tab.Screen name='Pets' options={{title: 'All Pets'}}>
+            <Tab.Screen name='Pets' 
+              options={{ title: 'All Pets', unmountOnBlur: true }}
+              listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
+
+            >
               {() => (
                 <PetStack.Navigator>
                   <PetStack.Screen name='Index' component={PetIndexScreen} options={{ title: 'All Pets', headerShown: false }}/>
@@ -129,7 +136,10 @@ const Layout: React.FC = () => {
                 </PetStack.Navigator>
               )}
             </Tab.Screen>
-            <Tab.Screen name='Account' options={{ title: 'Profile' }}>
+            <Tab.Screen name='Account' 
+              options={{ title: 'Profile', unmountOnBlur: true }}
+              listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
+            >
               {() => (
                 <AccountDrawer.Navigator
                   initialRouteName='My Profile'
@@ -186,7 +196,8 @@ const Layout: React.FC = () => {
                     )}
                   </AccountDrawer.Screen>
 
-                  <AccountDrawer.Screen name='Config' component={AccountScreen} options={{ title: 'Manage Account' }} />
+                  <AccountDrawer.Screen name='Config' component={AccountScreen} options={{ title: 'Manage Account' }}
+                  />
                   
                 </AccountDrawer.Navigator>
               )}
