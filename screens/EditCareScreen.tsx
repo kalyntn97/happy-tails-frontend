@@ -1,4 +1,6 @@
 //npm
+import { useEffect } from "react"
+import { useIsFocused } from "@react-navigation/native"
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native"
 //components
 import CareForm from "../components/CareForm"
@@ -16,7 +18,7 @@ interface EditCareProps {
 
 const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   const { care } = route.params
-
+  const isFocused = useIsFocused()
   const petData = care.pets.map(pet => pet._id)
 
   const initialValues: {
@@ -34,6 +36,12 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
       alert('Error updating tracker. Please try again.')
     }
   }
+
+  useEffect(() => {
+    if (!isFocused) {
+      navigation.goBack()
+    }
+  }, [navigation, isFocused])
 
   return (  
     <View style={styles.container}>

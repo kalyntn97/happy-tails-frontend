@@ -36,10 +36,12 @@ const SettingsScreen = ({ navigation, route }) => {
   }
 
   useEffect(() => {
-    const fetchProfilePhoto = async () => {
-      changeRandomProfilePhoto()
+    if (!profile.photo) {
+      const fetchProfilePhoto = async () => {
+        changeRandomProfilePhoto()
+      }
+      fetchProfilePhoto()
     }
-    fetchProfilePhoto()
   }, [route.params?.profileId])
 
   return ( 

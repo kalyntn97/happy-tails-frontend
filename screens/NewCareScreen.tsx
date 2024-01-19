@@ -1,6 +1,7 @@
 
 //npm
 import { useEffect, useState } from "react"
+import { useIsFocused } from "@react-navigation/native"
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native"
 //components
 import CareForm from "../components/CareForm"
@@ -12,7 +13,8 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 
 const NewCareScreen: React.FC = ({ navigation, route }) => {
-  
+  const isFocused = useIsFocused()
+
   const handleSubmit = async (name: string, frequency: string, times: number, pets: string[]) => {
     try {
       const newCareCard = await careService.create(name, frequency, times, pets)
@@ -23,6 +25,12 @@ const NewCareScreen: React.FC = ({ navigation, route }) => {
       alert('Error creating tracker. Please try again.')
     }
   }
+
+  useEffect(() => {
+    if (!isFocused) {
+      navigation.goBack()
+    }
+  }, [navigation, isFocused])
 
   return (
     <View style={styles.container}>

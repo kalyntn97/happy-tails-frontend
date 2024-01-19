@@ -1,9 +1,8 @@
 //npm modules
-import { useEffect } from 'react'
 import { Image, Pressable, Text, View, TouchableOpacity, StyleSheet, ImageStyle } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import {createNativeStackNavigator} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions, createNativeStackNavigator} from '@react-navigation/native-stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer'
 //context
@@ -123,14 +122,14 @@ const Layout: React.FC = () => {
               )}
             </Tab.Screen>
             <Tab.Screen name='Pets' 
-              options={{ title: 'All Pets', unmountOnBlur: true }}
-              listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
-
+              options={{ title: 'All Pets' }}
+              // listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
             >
               {() => (
                 <PetStack.Navigator>
                   <PetStack.Screen name='Index' component={PetIndexScreen} options={{ title: 'All Pets', headerShown: false }}/>
-                  <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }}/>
+                  <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }}
+                  />
                   <PetStack.Screen name='Details' component={PetDetailsScreen} options={{ title: 'Details' }} />
                   <PetStack.Screen name='Edit' component={EditPetScreen} options={({ route }) => ({ title: `${route.params.pet.name ?? 'Edit'}` })}/>
                 </PetStack.Navigator>
