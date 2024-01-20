@@ -2,8 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react"
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
 //types & services
-import { Profile } from "../services/profileService"
-import * as profileService from '../services/profileService'
+import * as tokenService from '../services/tokenService'
 
 interface AuthProps {
   authState?: { token: string | null, authenticated: boolean | null }
@@ -28,17 +27,27 @@ export const AuthProvider = ({children}: any) => {
   })
 
   useEffect(() => {
+    let isMounted = true
     const loadToken = async () => {
-      const token = await SecureStore.getItemAsync(TOKEN_KEY)
-      console.log('file: AuthContext.tsx:32 ~ load token ~ token:', token)
-      if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-        setAuthState({
-          token: token, authenticated: true
-        })
+      const isExpired = await tokenService.checkTokenExpiration()
+      console.log('Token is expired', isExpired)
+      if (isMounted && !isExpired) {
+        const token = await SecureStore.getItemAsync(TOKEN_KEY)
+        console.log('file: AuthContext.tsx:32 ~ load token ~ token:', token)
+        if (token) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+          setAuthState({
+            token: token, authenticated: true
+          })
+        }
+      } else if (isMounted) {
+        logout()
       }
     }
     loadToken()
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const register = async (name: string, username: string, password: string) => {
@@ -76,7 +85,7 @@ export const AuthProvider = ({children}: any) => {
       await SecureStore.deleteItemAsync(TOKEN_KEY)
       axios.defaults.headers.common['Authorization'] = ''
       setAuthState({
-        token: null, authenticated: false, profile: null
+        token: null, authenticated: false
       })
     } catch (error) {
       console.error('Logout Error:', error);

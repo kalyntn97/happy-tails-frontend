@@ -1,5 +1,6 @@
 import * as tokenService from './tokenService'
 import { Pet } from './petService'
+import { Care } from './careService'
 
 const BASE_URL = `${process.env.EXPO_PUBLIC_BACKEND_URL}/profile`
 
@@ -9,6 +10,7 @@ export interface Profile {
   photo: string | null
   bio: string
   pets: Pet[]
+  careCards: Care[]
 }
 
 export async function show(): Promise<Profile> {

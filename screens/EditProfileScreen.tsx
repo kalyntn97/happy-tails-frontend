@@ -57,7 +57,7 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
       } catch (error) {
         console.log('Error during edit profile: ', error)
       }
-      navigation.navigate('Profile')
+      navigation.navigate('Profile', { profileId: profile._id })
     }
   }
   

@@ -22,6 +22,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth, naviga
     width: cardWidth,
     height: cardWidth * 1.1, 
     transform: [{ scale }],
+    
   }
 
   const iconSource = getIconSource(pet.species)
@@ -68,7 +69,6 @@ const styles = StyleSheet.create({
   petName: {
     ...Typography.subHeader,
     margin: 0,
-    textAlign: "center"
   },
   detailsContainer: {
     ...Spacing.flexRow,

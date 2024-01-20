@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     margin: 5
   },
   btnText: {
-    ...Typography.smallHeader,
+    ...Typography.xSmallHeader,
     margin: 0,
     padding: 5,
     alignSelf: 'center',

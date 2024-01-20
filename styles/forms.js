@@ -47,6 +47,12 @@ export const xSmallPhoto = {
   ...basePhoto
 }
 
+export const tinyPhoto ={
+  width: 50,
+  height: 50,
+  ...basePhoto
+}
+
 export const boxShadow = {
   elevation: 3,
   shadowColor: '#000',
@@ -65,4 +71,10 @@ export const smallIcon = {
   width: 30,
   height: 30,
   margin: 2
+}
+
+export const largeIcon = {
+  width: 60,
+  height: 60,
+  margin: 5
 }

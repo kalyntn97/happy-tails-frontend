@@ -1,15 +1,21 @@
 //npm modules
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { View, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimensions, ScrollView, Image, ImageStyle } from "react-native"
 import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from "../context/AuthContext"
+import { useProfileContext } from "../context/ProfileContext"
+//components
+import CareFeed from "../components/CareFeed"
+//utils & services
+import * as careUtils from '../utils/careUtils'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
-import CareCard from "../components/CareCard"
 
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
+  const { profile } = useProfileContext()
+  const [today, setToday] = useState({})
 
   const windowHeight = useWindowDimensions().height
   const scrollViewRef = useRef<ScrollView>(null)
@@ -20,6 +26,15 @@ const HomeScreen: React.FC = ({ navigation }) => {
     }
   }
 
+  useEffect(() => {
+    const fetchToday = () => {
+      const { date, month, year } = careUtils.getCurrentDate()
+      const currMonth = careUtils.getMonth(month)
+      setToday({ currDate: date, currMonth: currMonth, currYear:year })
+    }
+    fetchToday()
+  }, [authState])
+
   return ( 
     <ScrollView
       ref={scrollViewRef}
@@ -29,9 +44,13 @@ const HomeScreen: React.FC = ({ navigation }) => {
       decelerationRate="fast"
     >
       {authState?.authenticated ? (
-        <View style={styles.container}>
-          
-        </View>
+        <>
+          {profile && 
+            <View style={styles.container}>
+              <CareFeed careCards={profile.careCards} today={today} />
+            </View>
+          }
+        </>
       ) : (
       <>
         <View style={[styles.screen, { height: windowHeight }]}>

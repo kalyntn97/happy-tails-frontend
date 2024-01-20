@@ -1,9 +1,8 @@
 //npm modules
-import { useEffect } from 'react'
 import { Image, Pressable, Text, View, TouchableOpacity, StyleSheet, ImageStyle } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import {createNativeStackNavigator} from '@react-navigation/native-stack'
+import {NativeStackNavigationOptions, createNativeStackNavigator} from '@react-navigation/native-stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer'
 //context
@@ -21,9 +20,13 @@ import LoginScreen from '../screens/LoginScreen'
 import RegisterScreen from '../screens/RegisterScreen'
 import AccountScreen from '../screens/AccountScreen'
 import CareIndexScreen from '../screens/CareIndexScreen'
+import NewCareScreen from '../screens/NewCareScreen'
+import CareDetailsScreen from '../screens/CareDetailsScreen'
+import EditCareScreen from '../screens/EditCareScreen'
 import HealthIndexScreen from '../screens/HealthIndexScreen'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { header } from '../styles/typography'
 
 const Layout: React.FC = () => {
   const { authState, onLogout } = useAuth()
@@ -71,16 +74,40 @@ const Layout: React.FC = () => {
           }
         })}
       >
-        {authState?.authenticated ? (
+        {authState.authenticated ? (
           <Tab.Group>
-            <Tab.Screen name='Home' options={{title: 'Welcome'}}>
+            <Tab.Screen name='Home' 
+              options={{ title: 'Welcome', /* unmountOnBlur: true */ }}
+              // listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
+            >
               {() => (
-                <HomeDrawer.Navigator>
+                <HomeDrawer.Navigator
+                  screenOptions={({ route }) =>({
+                    drawerType: 'front',
+                    // drawerIcon: (),
+                    drawerLabelStyle: styles.focusedText,
+                    drawerActiveTintColor: Colors.darkPink,
+                    drawerActiveBackgroundColor: Colors.lightPink,
+                    drawerStyle: { backgroundColor: Colors.lightestPink, width: '50%' },
+                    header: ({ navigation }) => {
+                      return (
+                        <View style={styles.header}>
+                          <Pressable style={[styles.menuBtn, { left: 10 }]} onPress={() => navigation.openDrawer()}>
+                            <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon as ImageStyle} />
+                          </Pressable>
+                        </View>
+                      )
+                    }
+                  })}
+                >
                   <HomeDrawer.Screen name='Welcome' component={HomeScreen} options={{ title: 'Welcome'}}/>
                   <HomeDrawer.Screen name='Care' options={{ title: 'Pet Care' }}>
                     {() => (
-                      <CareStack.Navigator>
+                      <CareStack.Navigator screenOptions={{ headerShown: false }}>
                         <CareStack.Screen name='Index' component={CareIndexScreen} options={{ title: 'All Pet Care' }}/>
+                        <CareStack.Screen name='Create' component={NewCareScreen} options={{ title: 'Add Tracker' }}/>
+                        <CareStack.Screen name='Details' component={CareDetailsScreen} options={{ title: 'Care Details' }}/>
+                        <CareStack.Screen name='Edit' component={EditCareScreen} options={{ title: 'Edit Pet Care' }}/>
                     </CareStack.Navigator>
                     )}
                   </HomeDrawer.Screen>
@@ -94,17 +121,24 @@ const Layout: React.FC = () => {
                 </HomeDrawer.Navigator>
               )}
             </Tab.Screen>
-            <Tab.Screen name='Pets' options={{title: 'All Pets'}}>
+            <Tab.Screen name='Pets' 
+              options={{ title: 'All Pets' }}
+              // listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
+            >
               {() => (
                 <PetStack.Navigator>
                   <PetStack.Screen name='Index' component={PetIndexScreen} options={{ title: 'All Pets', headerShown: false }}/>
-                  <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }}/>
+                  <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }}
+                  />
                   <PetStack.Screen name='Details' component={PetDetailsScreen} options={{ title: 'Details' }} />
                   <PetStack.Screen name='Edit' component={EditPetScreen} options={({ route }) => ({ title: `${route.params.pet.name ?? 'Edit'}` })}/>
                 </PetStack.Navigator>
               )}
             </Tab.Screen>
-            <Tab.Screen name='Account' options={{ title: 'Profile' }}>
+            <Tab.Screen name='Account' 
+              options={{ title: 'Profile', unmountOnBlur: true }}
+              listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
+            >
               {() => (
                 <AccountDrawer.Navigator
                   initialRouteName='My Profile'
@@ -136,7 +170,7 @@ const Layout: React.FC = () => {
                       return (
                         <View style={styles.header}>
                           <Text style={styles.headerText}>{profile.name}</Text>
-                          <Pressable style={styles.menuBtn} onPress={() => navigation.openDrawer()}>
+                          <Pressable style={[styles.menuBtn, { right: 10 }]} onPress={() => navigation.openDrawer()}>
                             <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon as ImageStyle} />
                           </Pressable>
                         </View>
@@ -161,7 +195,8 @@ const Layout: React.FC = () => {
                     )}
                   </AccountDrawer.Screen>
 
-                  <AccountDrawer.Screen name='Config' component={AccountScreen} options={{ title: 'Manage Account' }} />
+                  <AccountDrawer.Screen name='Config' component={AccountScreen} options={{ title: 'Manage Account' }}
+                  />
                   
                 </AccountDrawer.Navigator>
               )}
@@ -196,12 +231,11 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow
   },
   headerText: {
-    ...Typography.smallHeader,
+    ...Typography.xSmallHeader,
     margin: 10
   },
   menuBtn: {
-    position: 'absolute', 
-    right: 10, 
+    position: 'absolute',
     top: 5
   },
   scrollView: {

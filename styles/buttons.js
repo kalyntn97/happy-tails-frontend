@@ -51,6 +51,13 @@ export const smallRounded = {
   ...rounded,
 }
 
+export const smallSquare = {
+  ...base,
+  ...main,
+  ...small,
+  ...square,
+}
+
 export const smallSub = {
   ...base,
   ...sub,

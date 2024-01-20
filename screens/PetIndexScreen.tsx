@@ -76,10 +76,10 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
               horizontal={true}
               contentContainerStyle={{ width: `${100 * petCount}%` }}
               showsHorizontalScrollIndicator={false}
-              scrollEventThrottle={200}
+              scrollEventThrottle={1}
               decelerationRate="fast"
               pagingEnabled
-              onMomentumScrollEnd={handleScroll}
+              onScroll={handleScroll}
             >
               {pets.map((pet, i) =>
                 <PetCard key={pet._id} pet={pet} idx={i} currCard={currCard} cardWidth={cardWidth} navigation={navigation}/>
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     ...Spacing.fullScreenDown
   },
   emptyMsg: {
-    ...Typography.smallHeader,
+    ...Typography.xSmallHeader,
     
   },
   btnContainer: {

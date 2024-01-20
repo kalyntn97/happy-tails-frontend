@@ -2,6 +2,7 @@ export const header = {
   margin: 20,
   fontWeight: 'bold',
   letterSpacing: 1,
+  textAlign: 'center'
 }
 
 export const large = {
@@ -15,6 +16,11 @@ export const medium = {
 }
 
 export const small = {
+  fontSize: 20,
+  lineHeight: 30,
+}
+
+export const xSmall = {
   fontSize: 15,
   lineHeight: 25,
 }
@@ -29,9 +35,14 @@ export const subHeader = {
   ...medium,
 }
 
-export const smallHeader = {
+export const smallHeader ={
   ...header,
   ...small,
+}
+
+export const xSmallHeader = {
+  ...header,
+  ...xSmall,
 }
 
 export const body = {
@@ -39,6 +50,6 @@ export const body = {
 }
 
 export const smallBody = {
-  ...small,
+  ...xSmall,
   ...body,
 }

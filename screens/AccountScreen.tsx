@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   scrollViewContent: {
-    
     alignItems: 'center'
   },
   formContainer: {
@@ -102,7 +101,7 @@ const styles = StyleSheet.create({
     height: 350,
   }, 
   btnText: {
-    ...Typography.smallHeader,
+    ...Typography.xSmallHeader,
     margin: 0,
     padding: 5,
     alignSelf: 'center',
