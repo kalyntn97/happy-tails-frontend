@@ -27,7 +27,7 @@ export const ProfileProvider = ({children}: any) => {
       setProfile(profileData)
     }
     fetchProfile()
-  }, [pets])
+  }, [pets.length])
   
   const editProfile = async (name: string, bio: string, photoData: { uri: string, name: string, type: string } | null) => {
     const updatedProfile = await profileService.update(name, bio, photoData)
