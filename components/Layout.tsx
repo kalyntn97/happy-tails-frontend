@@ -100,7 +100,7 @@ const Layout: React.FC = () => {
                     }
                   })}
                 >
-                  <HomeDrawer.Screen name='Welcome' component={HomeScreen} options={{ title: 'Welcome'}}/>
+                  <HomeDrawer.Screen name='Welcome' component={HomeScreen} options={{ title: 'Welcome' }} />
                   <HomeDrawer.Screen name='Care' options={{ title: 'Pet Care' }}>
                     {() => (
                       <CareStack.Navigator screenOptions={{ headerShown: false }}>
@@ -169,7 +169,7 @@ const Layout: React.FC = () => {
                     header: ({ navigation }) => {
                       return (
                         <View style={styles.header}>
-                          <Text style={styles.headerText}>{profile.name}</Text>
+                          <Text style={styles.headerText}>{profile?.name}</Text>
                           <Pressable style={[styles.menuBtn, { right: 10 }]} onPress={() => navigation.openDrawer()}>
                             <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon as ImageStyle} />
                           </Pressable>

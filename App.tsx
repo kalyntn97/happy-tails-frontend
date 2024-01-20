@@ -14,7 +14,7 @@ const App: React.FC = () => {
     <AuthProvider>
       <PetProvider>
         <ProfileProvider>
-          <Layout></Layout>
+          <Layout />
         </ProfileProvider>
       </PetProvider>
     </AuthProvider>

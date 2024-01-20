@@ -18,16 +18,16 @@ export const useProfileContext = () => {
 }
 
 export const ProfileProvider = ({children}: any) => {
-  const [profile, setProfile] = useState<Profile>(null)
-  const { pets } = usePetContext()
+  const [profile, setProfile] = useState<Profile | null>(null)
   
   useEffect(() => {
     const fetchProfile = async () => {
       const profileData = await profileService.show()
       setProfile(profileData)
+      console.log(profileData)
     }
     fetchProfile()
-  }, [pets.length])
+  }, [])
   
   const editProfile = async (name: string, bio: string, photoData: { uri: string, name: string, type: string } | null) => {
     const updatedProfile = await profileService.update(name, bio, photoData)

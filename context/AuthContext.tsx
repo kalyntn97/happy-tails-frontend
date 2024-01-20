@@ -41,7 +41,11 @@ export const AuthProvider = ({children}: any) => {
           })
         }
       } else if (isMounted) {
-        logout()
+        await SecureStore.deleteItemAsync(TOKEN_KEY)
+        axios.defaults.headers.common['Authorization'] = ''
+        setAuthState({
+        token: null, authenticated: false
+      })
       }
     }
     loadToken()
@@ -55,7 +59,7 @@ export const AuthProvider = ({children}: any) => {
       return await axios.post(`${BASE_URL}/signup`, { name, username, password })
     } catch (error) {
       console.error('Register Error:', error);
-      return { error: true, msg: (error as any).response.data.status || 'An error occurred'}
+      return { error: true, msg: (error as any).response?.data || 'An error occurred'}
     }
   }
 

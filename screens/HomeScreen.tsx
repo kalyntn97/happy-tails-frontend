@@ -33,7 +33,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
       setToday({ currDate: date, currMonth: currMonth, currYear:year })
     }
     fetchToday()
-  }, [authState])
+  }, [authState, profile])
 
   return ( 
     <ScrollView
