@@ -23,6 +23,7 @@ interface CareCardProps {
 const CareCard = ({ care, navigation }) => {
   const iconSource = careUtils.getIconSource(care.name)
   const [careCard, setCareCard] = useState<Care>(care)
+  console.log(careCard)
 
   const latestTracker = careCard.trackers[careCard.trackers.length - 1]
   const { isCurrent } = careUtils.getDateTimeFromTracker(latestTracker.name)

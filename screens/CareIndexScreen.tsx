@@ -8,6 +8,7 @@ import CareCard from "../components/CareCard"
 import CareForm from "../components/CareForm"
 import ToggleableForm from "../components/ToggleableForm"
 //services & utils
+import { useCareContext } from "../context/CareContext"
 import { Care } from "../services/careService"
 import * as careService from '../services/careService'
 //styles
@@ -19,15 +20,7 @@ type CareIndexProps = {
 }
 
 const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
-  const [careCards, setCareCards] = useState<Care[]>([])
-
-  useEffect(() => {
-    const fetchCareCards = async () => {
-      const data = await careService.index()
-      setCareCards(data)
-    }
-    fetchCareCards()
-  }, [route.params?.careId])
+  const { careCards } = useCareContext()
 
   return (
     <View style={styles.container}>

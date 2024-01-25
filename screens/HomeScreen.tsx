@@ -11,6 +11,7 @@ import CareFeed from "../components/CareFeed"
 import * as careUtils from '../utils/careUtils'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { usePetContext } from "../context/PetContext"
 
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
@@ -28,9 +29,9 @@ const HomeScreen: React.FC = ({ navigation }) => {
 
   useEffect(() => {
     const fetchToday = () => {
-      const { date, month, year } = careUtils.getCurrentDate()
+      const { date, month, year, week } = careUtils.getCurrentDate()
       const currMonth = careUtils.getMonth(month)
-      setToday({ currDate: date, currMonth: currMonth, currYear:year })
+      setToday({ currDate: date, currMonth: currMonth, monthIdx: month, currYear: year, currWeek: week })
     }
     fetchToday()
   }, [authState, profile])
@@ -46,23 +47,23 @@ const HomeScreen: React.FC = ({ navigation }) => {
       {authState?.authenticated ? (
         <>
           {profile && 
-            <View style={styles.container}>
-              <CareFeed careCards={profile.careCards} today={today} />
+            <View style={[styles.screen, { height: windowHeight }]}>
+              <CareFeed today={today} />
             </View>
           }
         </>
       ) : (
       <>
         <View style={[styles.screen, { height: windowHeight }]}>
-           <LottieView source={require('../assets/animations/happy.json')} autoPlay loop style={styles.happyAnimation} />
-           <View style={styles.headers}>
+          <LottieView source={require('../assets/animations/happy.json')} autoPlay loop style={styles.happyAnimation} />
+          <View style={styles.headers}>
               <Text style={styles.mainHeader}>
                 <Text style={{ color: Colors.blue }}>Care.</Text>{'\n'}
                 <Text style={{ color: Colors.green }}>Connection.</Text>{'\n'}
                 <Text style={{ color: Colors.pink }}>Joy.</Text>
               </Text>
               <Text style={styles.subHeader}>Ready to start a new journey with your furry friends?</Text>
-           </View>
+          </View>
           <TouchableOpacity onPress={() => navigation.navigate('User', { screen: 'Login' })} style={styles.mainBtn}>
             <Text style={[styles.btnText, { color: Colors.lightestPink }]}>Get Started</Text>
           </TouchableOpacity>

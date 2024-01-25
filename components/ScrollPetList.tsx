@@ -13,6 +13,7 @@ interface ScrollPetListProps {
 }
 
 const ScrollPetList = ({ petArray, size }) => {
+  console.log(petArray)
   return (  
     <View style={size === 'small' ? { maxWidth: 300, height: 100 } : { maxWidth: 450, height: 240 }}>
       <ScrollView 

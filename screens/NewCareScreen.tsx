@@ -8,18 +8,21 @@ import CareForm from "../components/CareForm"
 //services
 import { Care } from "../services/careService"
 import * as careService from '../services/careService'
+import { useCareContext } from "../context/CareContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 
 const NewCareScreen: React.FC = ({ navigation, route }) => {
   const isFocused = useIsFocused()
+  const { onAddCare } = useCareContext()
 
   const handleSubmit = async (name: string, frequency: string, times: number, pets: string[]) => {
     try {
-      const newCareCard = await careService.create(name, frequency, times, pets)
+      // const newCareCard = await careService.create(name, frequency, times, pets)
+      const result = await onAddCare!(name, frequency, times, pets)
 
-      navigation.navigate('Index', { careId: newCareCard._id })
+      navigation.navigate('Index', /* { careId: newCareCard._id } */)
     } catch (error) {
       console.log('Error creating a care card', error)
       alert('Error creating tracker. Please try again.')

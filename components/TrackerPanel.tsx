@@ -9,6 +9,8 @@ import * as careUtils from "../utils/careUtils"
 //components
 import ScrollCalendar from "./ScrollCalendar"
 import ProgressTracker from "./ProgressTracker"
+//context
+import { useCareContext } from "../context/CareContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -21,14 +23,16 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   const [index, setIndex] = useState<number>(0)
 
   const {frequency: freq, times, _id: careId } = care
+  const {onCheckDone, onUncheckDone } = useCareContext()
   // get month and year of current tracker from name
-  const { year: currYear, month: month } = careUtils.getDateTimeFromTracker(tracker.name)
-  const currMonth = careUtils.getMonth(month)
-  
+  const { year: currYear, month: currMonth } = careUtils.getDateTimeFromTracker(tracker.name)
+  const { month } = careUtils.getCurrentDate()
+  const thisMonth = careUtils.getMonth(month)
+  console.log(currYear, currMonth)
   const checkDone = async (careId: string, trackerId: string, index: number) => {
     try {
       console.log('before submit', careId, trackerId, index)
-      const updatedTracker = await careService.checkDone(careId, trackerId, index)
+      const updatedTracker = await onCheckDone!(careId, trackerId, index)
       console.log('after submit', updatedTracker)
       setTracker(updatedTracker)
     } catch (error) {
@@ -39,7 +43,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   const uncheckDone = async (careId: string, trackerId: string, index: number) => {
     try {
       console.log('before submit', careId, trackerId, index)
-      const updatedTracker = await careService.uncheckDone(careId, trackerId, index)
+      const updatedTracker = await onUncheckDone!(careId, trackerId, index)
       console.log('after submit', updatedTracker)
       setTracker(updatedTracker)
     } catch (error) {
@@ -61,7 +65,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
     <View style={styles.container}>
 
       <Text style={styles.title}>
-        {freq === 'Daily' ? 'Today' : freq === 'Weekly' ? `Week ${index + 1}` : freq === 'Monthly' ? currMonth : currYear}
+        {freq === 'Daily' ? 'Today' : freq === 'Weekly' ? `Week ${index + 1}` : freq === 'Monthly' ? thisMonth : currYear}
       </Text>
       <Text style={[
           styles.status, 

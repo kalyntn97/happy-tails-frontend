@@ -5,6 +5,7 @@ import { TouchableOpacity, Text, StyleSheet, View } from "react-native"
 //components
 import CareForm from "../components/CareForm"
 //services
+import { useCareContext } from "../context/CareContext"
 import { Care } from "../services/careService"
 import { Pet } from "../services/petService"
 import * as careService from '../services/careService'
@@ -18,6 +19,7 @@ interface EditCareProps {
 
 const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   const { care } = route.params
+  const { onEditCare } = useCareContext()
   const isFocused = useIsFocused()
   const petData = care.pets.map(pet => pet._id)
 
@@ -29,8 +31,10 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
 
   const handleSubmit = async (name: string, frequency: string, times: number, pets: string[], careId: string) => {
     try {
-      const updatedCareCard = await careService.update(name, frequency, times, pets, careId)
-      navigation.navigate('Index', { careId: updatedCareCard._id })
+      // const updatedCareCard = await careService.update(name, frequency, times, pets, careId)
+      const result = await onEditCare!(name, frequency, times, pets, careId)
+      console.log(result)
+      navigation.navigate('Details', { careId: result._id })
     } catch (error) {
       console.log('Error updating a care card', error)
       alert('Error updating tracker. Please try again.')
