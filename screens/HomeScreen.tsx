@@ -18,7 +18,9 @@ const HomeScreen: React.FC = ({ navigation }) => {
   const { profile } = useProfileContext()
   const [today, setToday] = useState({})
 
+  const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
+  const centerHeight = windowHeight - 191
   const scrollViewRef = useRef<ScrollView>(null)
   
   const scrollToNext = (pageNum: number) => {
@@ -37,69 +39,68 @@ const HomeScreen: React.FC = ({ navigation }) => {
   }, [authState, profile])
 
   return ( 
-    <ScrollView
-      ref={scrollViewRef}
-      pagingEnabled
-      showsVerticalScrollIndicator={false}
-      scrollEventThrottle={200}
-      decelerationRate="fast"
-    >
+    <>
       {authState?.authenticated ? (
         <>
           {profile && 
-            <View style={[styles.screen, { height: windowHeight }]}>
+            <View style={[styles.screen, { minHeight: centerHeight }]}>
+              <Image source={require('../assets/images/happy-tails-banner.png')} style={{ width: '100%', maxHeight: windowHeight * 0.2 }} />
               <CareFeed today={today} navigation={navigation}/>
             </View>
           }
         </>
       ) : (
-      <>
-        <View style={[styles.screen, { height: windowHeight }]}>
-          <LottieView source={require('../assets/animations/happy.json')} autoPlay loop style={styles.happyAnimation} />
-          <View style={styles.headers}>
-              <Text style={styles.mainHeader}>
-                <Text style={{ color: Colors.blue }}>Care.</Text>{'\n'}
-                <Text style={{ color: Colors.green }}>Connection.</Text>{'\n'}
-                <Text style={{ color: Colors.pink }}>Joy.</Text>
-              </Text>
-              <Text style={styles.subHeader}>Ready to start a new journey with your furry friends?</Text>
+        <ScrollView
+          ref={scrollViewRef}
+          pagingEnabled
+          showsVerticalScrollIndicator={false}
+          scrollEventThrottle={200}
+          decelerationRate="fast"
+          style={{ width: windowWidth }}
+        >
+          <View style={[styles.screen, { height: windowHeight }]}>
+            <LottieView source={require('../assets/animations/happy.json')} autoPlay loop style={styles.happyAnimation} />
+            <View style={styles.headers}>
+                <Text style={styles.mainHeader}>
+                  <Text style={{ color: Colors.blue }}>Care.</Text>{'\n'}
+                  <Text style={{ color: Colors.green }}>Connection.</Text>{'\n'}
+                  <Text style={{ color: Colors.pink }}>Joy.</Text>
+                </Text>
+                <Text style={styles.subHeader}>Ready to start a new journey with your furry friends?</Text>
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('User', { screen: 'Login' })} style={styles.mainBtn}>
+              <Text style={[styles.btnText, { color: Colors.lightestPink }]}>Get Started</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.link} onPress={() => scrollToNext(1)}>
+              <LottieView source={require('../assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('User', { screen: 'Login' })} style={styles.mainBtn}>
-            <Text style={[styles.btnText, { color: Colors.lightestPink }]}>Get Started</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.link} onPress={() => scrollToNext(1)}>
-            <LottieView source={require('../assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
-          </TouchableOpacity>
-        </View>
 
-        <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.lightPink }]}>
-          <TouchableOpacity style={styles.link} onPress={() => scrollToNext(2)}>
-            <LottieView source={require('../assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
-          </TouchableOpacity>
-        </View>
+          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.lightPink }]}>
+            <TouchableOpacity style={styles.link} onPress={() => scrollToNext(2)}>
+              <LottieView source={require('../assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
+            </TouchableOpacity>
+          </View>
 
-        <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.yellow }]}>
-          <TouchableOpacity style={styles.link} onPress={() => scrollToNext(0)}>
-            <LottieView source={require('../assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
-          </TouchableOpacity>
-        </View>
-
-      </>
+          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.yellow }]}>
+            <TouchableOpacity style={styles.link} onPress={() => scrollToNext(0)}>
+              <LottieView source={require('../assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       )}
-    </ScrollView>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullWH,
-    alignItems: 'center',
-    backgroundColor: 'white',
-  },
   screen: {
     width: '100%',
     alignItems: 'center',
     backgroundColor: 'white',
+  },
+  banner: {
+    
   },
   headers:{
     width: '80%',

@@ -1,7 +1,7 @@
 //npm
 import { useCallback, useEffect, useState } from "react"
 import { useFocusEffect } from "@react-navigation/native"
-import { Image, ImageStyle, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Image, ImageStyle, StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native"
 //services & utils
 import { Care } from "../services/careService"
 import * as careUtils from '../utils/careUtils'
@@ -44,7 +44,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
 
   return (  
     <View style={styles.container}>
-      <Text>{today.currMonth} {today.currDate} {today.currYear}</Text>
+      <Text style={{ height: '3%'}}>{today.currMonth} {today.currDate} {today.currYear}</Text>
       <View style={styles.iconMenuContainer}>
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
           <Image source={require('../assets/icons/day.png')} style={styles.icon as ImageStyle} />
@@ -66,7 +66,10 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
           <Text style={styles.iconText}>This Year</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.taskContainer}>
+      <ScrollView
+        style={{ width: '100%', height: '90%' }}
+        contentContainerStyle={styles.taskContainer}
+      >
         {selected === 'day' && daily.map((d, idx) => 
           <Text key={`d-${idx}`}
             style={d.trackers[d.trackers.length - 1].done[today.currDate - 1] === d.times ? styles.done : {}}
@@ -100,17 +103,19 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
             {y.name}
           </Text>
         )}
-      </View>
-      <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Care')}>
-        <Text style={styles.btnText}>Manage Tasks</Text>
-      </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Care')}>
+          <Text style={styles.btnText}>Manage Tasks</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullWH,
+    width: '100%',
+    height: '80%',
     alignItems: 'center',
   },
   done: {
@@ -120,7 +125,7 @@ const styles = StyleSheet.create({
   iconMenuContainer: {
     ...Spacing.flexRow,
     width: '100%',
-    height: 50,
+    height: '5%',
     marginVertical: 10
   },
   iconMenu: {
@@ -136,11 +141,13 @@ const styles = StyleSheet.create({
   taskContainer: {
     ...Spacing.flexColumn,
     width: '100%',
+    minHeight: '30%',
     marginVertical: 10,
   },
   mainBtn: {
     ...Buttons.smallRounded,
-    backgroundColor: Colors.pink
+    backgroundColor: Colors.pink,
+    marginTop: 'auto',
   },
   btnText: {
     ...Buttons.buttonText,

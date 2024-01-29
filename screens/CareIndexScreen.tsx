@@ -51,8 +51,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   ]
  
   const getItemLayout = sectionListGetItemLayout({
-     // The height of the row with rowData at the given sectionIndex and rowIndex
-    getItemHeight: (rowData, sectionIndex, rowIndex) => 420,
+    getItemHeight: (/* rowData, sectionIndex, rowIndex */) => 420,
     //optional
     getSeparatorHeight: () => 0, 
     getSectionHeaderHeight: () => 0,
@@ -61,7 +60,6 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   })
 
   const handleHeaderPress = (sectionIdx: number) => {
-    console.log('section pressed', sectionIdx)
     sectionListRef.current.scrollToLocation({ sectionIndex: sectionIdx, itemIndex: 0 })
   }
 
@@ -92,6 +90,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
           <CareCard key={item._id} care={item} navigation={navigation}/>
         )}
         getItemLayout={getItemLayout}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   )
@@ -100,12 +99,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
-  },
-  scrollView: {
-    width: '100%',
-  },
-  empty: {
-    
+    ...Spacing.centered,
   },
   msg: {
     ...Typography.subHeader,
@@ -114,9 +108,6 @@ const styles = StyleSheet.create({
   },
   catAnimation: {
     width: '100%'
-  },
-  scrollViewContent: {
-    alignItems: 'center',
   },
   mainBtn: {
     ...Buttons.longSquare,

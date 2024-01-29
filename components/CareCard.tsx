@@ -75,10 +75,11 @@ const styles = StyleSheet.create({
     ...Spacing.fullScreenDown,
     backgroundColor: Colors.lightPink,
     ...Forms.card,
-    width: '90%',
+    width: '100%',
     height: 370,
     marginBottom: 40,
-    alignItems: 'center'
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   header: {
     width: '100%',
