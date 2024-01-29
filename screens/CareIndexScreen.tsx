@@ -1,16 +1,13 @@
 //npm modules
-import { useEffect, useState } from "react"
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { useEffect, useRef, useState } from "react"
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SectionList } from "react-native"
+import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 import { DrawerNavigationProp } from "@react-navigation/drawer"
 //components
 import CareCard from "../components/CareCard"
-import CareForm from "../components/CareForm"
-import ToggleableForm from "../components/ToggleableForm"
 //services & utils
 import { useCareContext } from "../context/CareContext"
-import { Care } from "../services/careService"
-import * as careService from '../services/careService'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -21,6 +18,52 @@ type CareIndexProps = {
 
 const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   const { careCards } = useCareContext()
+
+  const sectionListRef = useRef<SectionList>(null)
+
+  const daily = []
+  const weekly = []
+  const monthly = []
+  const yearly = []
+
+  careCards.forEach(care => {
+    switch (care.frequency) {
+      case 'Daily': 
+        daily.push(care)
+        break
+      case 'Weekly': 
+        weekly.push(care)
+        break
+      case 'Monthly': 
+        monthly.push(care)
+        break
+      case 'Yearly': 
+        yearly.push(care)
+        break
+    }
+  })
+
+  const careIndex = [
+    { title: 'Daily', data: daily },
+    { title: 'Weekly', data: weekly },
+    { title: 'Monthly', data: monthly },
+    { title: 'Yearly', data: yearly },
+  ]
+ 
+  const getItemLayout = sectionListGetItemLayout({
+     // The height of the row with rowData at the given sectionIndex and rowIndex
+    getItemHeight: (rowData, sectionIndex, rowIndex) => 420,
+    //optional
+    getSeparatorHeight: () => 0, 
+    getSectionHeaderHeight: () => 0,
+    getSectionFooterHeight: () => 0, 
+    listHeaderHeight: 0,
+  })
+
+  const handleHeaderPress = (sectionIdx: number) => {
+    console.log('section pressed', sectionIdx)
+    sectionListRef.current.scrollToLocation({ sectionIndex: sectionIdx, itemIndex: 0 })
+  }
 
   return (
     <View style={styles.container}>
@@ -34,19 +77,22 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
         <Text style={styles.btnText}>Add a tracker</Text>
       </TouchableOpacity>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContent}
-        // showsVerticalScrollIndicator={false}
-        scrollEventThrottle={200}
-        decelerationRate="fast" 
-      > 
-
-        {careCards.map((careCard, idx) => 
-          <CareCard key={careCard._id} care={careCard} navigation={navigation}/>
+      <View style={styles.listHeader}>
+        {careIndex.map((section, idx) => 
+          <TouchableOpacity key={idx} style={styles.subBtn} onPress={() => handleHeaderPress(idx)}>
+            <Text>{section.title}</Text>
+          </TouchableOpacity>
         )}
-        
-      </ScrollView>
+      </View>
+      <SectionList
+        ref={sectionListRef}
+        sections={careIndex}
+        keyExtractor={(item, index) => item + index}
+        renderItem={({ item }) => (
+          <CareCard key={item._id} care={item} navigation={navigation}/>
+        )}
+        getItemLayout={getItemLayout}
+      />
     </View>
   )
 }
@@ -76,8 +122,15 @@ const styles = StyleSheet.create({
     ...Buttons.longSquare,
     backgroundColor: Colors.pink,
   },
+  subBtn: {
+    ...Buttons.xxSmallRounded,
+    backgroundColor: Colors.green,
+  },
   btnText: {
     ...Buttons.buttonText
+  },
+  listHeader: {
+    ...Spacing.flexRow,
   },
 })
  

@@ -22,6 +22,11 @@ export const xSmall = {
   height: 40,
 }
 
+export const xxSmall = {
+  width: 70,
+  height: 30,
+}
+
 export const small = {
   width: 140,
   height: 50,
@@ -89,6 +94,13 @@ export const longRounded = {
   ...main,
   ...long,
   ...rounded,
+}
+
+export const xxSmallRounded = {
+  ...base,
+  ...main,
+  ...xxSmall,
+  ...rounded
 }
 
 export const buttonText = {

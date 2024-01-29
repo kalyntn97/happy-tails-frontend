@@ -48,7 +48,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
         <>
           {profile && 
             <View style={[styles.screen, { height: windowHeight }]}>
-              <CareFeed today={today} />
+              <CareFeed today={today} navigation={navigation}/>
             </View>
           }
         </>
