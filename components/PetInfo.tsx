@@ -1,8 +1,7 @@
-import { Image, ImageStyle, StyleSheet, Text, View } from "react-native"
+import { Image, StyleSheet, Text, View } from "react-native"
 import { Pet } from "../services/petService"
 import { getIconSource } from "../utils/petUtils"
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
-import { fullWH } from "../styles/spacing"
+import { Spacing, Forms, Typography, Colors } from '../styles'
 
 interface PetInfoProps {
   pet: Pet
@@ -16,9 +15,17 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
     <View style={styles.container}>
       <View style={size === 'expanded' ? styles.photoContainerExpanded : styles.photoContainerCompact}>
         {size === 'expanded' && 
-          <Image source={iconSource} style={styles.petIcon as ImageStyle} />
+          <Image source={iconSource} style={styles.petIcon } />
         }
-        <Image source={pet.photo ? {uri: pet.photo} : require('../assets/icons/pet-profile.png')} style={[styles.petPhoto as ImageStyle, size === 'expanded' ? {...Forms.smallPhoto} : size === 'compact' ? {...Forms.xSmallPhoto} : size === 'small' ? {...Forms.xxSmallPhoto} : {...Forms.tinyPhoto}]} />
+        <Image 
+          source={pet.photo ? {uri: pet.photo} : require('../assets/icons/pet-profile.png')} 
+          style={[
+            styles.petPhoto , 
+            size === 'expanded' ? {...Forms.smallPhoto} 
+            : size === 'compact' ? {...Forms.xSmallPhoto} 
+            : size === 'small' ? {...Forms.xxSmallPhoto} 
+            : {...Forms.tinyPhoto}
+          ]} />
         {(size === 'compact' || size === 'small' ) &&
           <Text style={styles.shortName}>{pet.name.split(' ')[0]}</Text>
         }

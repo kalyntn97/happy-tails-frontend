@@ -50,7 +50,7 @@ const SettingsScreen = ({ navigation, route }) => {
       <View style={styles.headerContainer}>
         <View style={styles.profileHeader}>
           {/* <Text style={styles.header}>{profile.name}</Text> */}
-          <Image source={profile.photo ? { uri: profile.photo } : randomProfile} style={styles.profilePhoto as ImageStyle}/>
+          <Image source={profile.photo ? { uri: profile.photo } : randomProfile} style={styles.profilePhoto }/>
         </View>
         
         <View style={styles.bioBox}>

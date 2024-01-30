@@ -4,25 +4,35 @@ import { Pet } from "../services/petService"
 //component
 import PetInfo from "./PetInfo"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Spacing } from '../styles'
 
 interface ScrollPetListProps {
   petArray: Pet[]
   size: 'compact' | 'small' | 'mini' // small < compact
-  horizontal: boolean
 }
 
-const ScrollPetList = ({ petArray, size }) => {
+const ScrollPetList: React.FC<ScrollPetListProps> = ({ petArray, size }) => {
   return (  
-    <View style={size === 'mini' ? { maxWidth: 225, height: 45 } : size === 'small' ? { maxWidth: 300, height: 100 } : { maxWidth: 450, height: 240 }}>
+    <View style={
+      size === 'mini' ? { maxWidth: 225, height: 45 } 
+      : size === 'small' ? { maxWidth: 300, height: 100 } 
+      : { maxWidth: 450, height: 240 }
+    }>
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
       >
-          {petArray.map((pet: Pet, idx: number) => 
-            <View style={size === 'mini' ? { width: 40, height: 40 } : size === 'small' ? { width: 60, height: 100 } : { width: 90, height: 120 }} key={idx}>
-              <PetInfo pet={pet} size={size} key={pet._id} />
-            </View>  
-          )}
+        {petArray.map((pet: Pet, idx: number) => 
+          <View 
+            key={idx}
+            style={
+              size === 'mini' ? { width: 40, height: 40 } 
+              : size === 'small' ? { width: 60, height: 100 } 
+              : { width: 90, height: 120 }
+            } 
+          >
+            <PetInfo pet={pet} size={size} key={pet._id} />
+          </View>  
+        )}
       </ScrollView>
     </View>
   )

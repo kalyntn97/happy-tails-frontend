@@ -20,8 +20,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   const { careCards } = useCareContext()
 
   const sectionListRef = useRef<SectionList>(null)
-  const { sectionIndex, itemIndex } = route.params ? route.params : { sectionIndex: 0, itemIndex: 0}
-
+  
   const daily = []
   const weekly = []
   const monthly = []
@@ -65,11 +64,13 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   }
 
   useEffect(() => {
-    const setInitialListPosition = () => {
-      console.log(route.params)
-      sectionListRef.current.scrollToLocation({ sectionIndex: sectionIndex, itemIndex: itemIndex + 1})
+    if (route.params && route.params.sectionIndex && route.params.itemIndex) {
+        const { sectionIndex, itemIndex } = route.params
+        const setInitialListPosition = () => {
+        sectionListRef.current.scrollToLocation({ sectionIndex: sectionIndex, itemIndex: itemIndex + 1})
+      }
+      setInitialListPosition()
     }
-    setInitialListPosition()
   }, [route.params])
   
   return (

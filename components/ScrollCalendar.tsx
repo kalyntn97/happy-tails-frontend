@@ -37,8 +37,8 @@ const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone }) 
           </Text>
           <Text style={[styles.dailyText, { color: i + 1 === today.date ? Colors.darkestPink : 'black', fontSize: 20 }]}>{i + 1}</Text>
           {i + 1 === index && tracker.done[index] === 1
-            ? <Image source={require('../assets/icons/heart-filled.png')} style={styles.heart as ImageStyle} />
-            : <Image source={require('../assets/icons/heart-gray.png')} style={styles.heart as ImageStyle} />
+            ? <Image source={require('../assets/icons/heart-filled.png')} style={styles.heart } />
+            : <Image source={require('../assets/icons/heart-gray.png')} style={styles.heart } />
           }
         </TouchableOpacity>
       )

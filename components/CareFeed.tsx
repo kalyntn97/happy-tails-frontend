@@ -48,25 +48,25 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
       <View style={styles.iconMenuContainer}>
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
           <Text style={styles.taskCount}>{daily.length}</Text>
-          <Image source={require('../assets/icons/day.png')} style={styles.icon as ImageStyle} />
+          <Image source={require('../assets/icons/day.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'day' ? styles.selected : {}]}>Today</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('week')}>
           <Text style={styles.taskCount}>{weekly.length}</Text>
-          <Image source={require('../assets/icons/week.png')} style={styles.icon as ImageStyle} />
+          <Image source={require('../assets/icons/week.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'week' ? styles.selected : {}]}>This Week</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('month')}>
           <Text style={styles.taskCount}>{monthly.length}</Text>
-          <Image source={require('../assets/icons/month.png')} style={styles.icon as ImageStyle} />
+          <Image source={require('../assets/icons/month.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'month' ? styles.selected : {}]}>This Month</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('year')}>
           <Text style={styles.taskCount}>{yearly.length}</Text>
-          <Image source={require('../assets/icons/year.png')} style={styles.icon as ImageStyle} />
+          <Image source={require('../assets/icons/year.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'year' ? styles.selected : {}]}>This Year</Text>
         </TouchableOpacity>
       </View>

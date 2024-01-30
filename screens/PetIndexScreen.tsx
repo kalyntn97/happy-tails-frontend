@@ -1,19 +1,17 @@
 //npm modules
-import { useState, useEffect, useRef } from 'react'
-import { View, StyleSheet, Text, Pressable, SafeAreaView, ScrollView, useWindowDimensions, FlatList } from "react-native"
-//services
-import { Pet } from '../services/petService'
-import * as petService from '../services/petService'
+import { useState, useRef } from 'react'
+import { View, StyleSheet, Text, Pressable, ScrollView, useWindowDimensions, FlatList, TouchableOpacity } from "react-native"
 //components
 import PetCard from '../components/PetCard'
 //context
 import { usePetContext } from '../context/PetContext'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Typography, Colors } from '../styles'
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
-  const scrollViewRef = useRef<ScrollView>(null)
   const { pets } = usePetContext()
+
+  const scrollViewRef = useRef<ScrollView>(null)
   const petCount: number = pets.length
   const [currCard, setCurrCard] = useState<number>(0)
 
@@ -49,7 +47,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   }
 
   return ( 
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {petCount > 0 ?
         <>    
           <View style={styles.btnContainer}>
@@ -102,13 +100,13 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
         <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
       }
 
-      <Pressable onPress={() => navigation.navigate('Create')} style={styles.addPetBtn}>
+      <TouchableOpacity onPress={() => navigation.navigate('Create')} style={styles.addPetBtn}>
         <Text style={styles.btnText}>Add a Pet</Text>
-      </Pressable>
-    </SafeAreaView>
+      </TouchableOpacity>
+    </View>
   )
 }
- 
+
 const styles = StyleSheet.create({
   container: {
     ...Spacing.centered,

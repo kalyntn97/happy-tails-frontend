@@ -6,6 +6,8 @@ import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, Scr
 import { Care } from "../services/careService"
 import * as careService from '../services/careService'
 import * as careUtils from '../utils/careUtils'
+//context
+import { useCareContext } from "../context/CareContext"
 //components
 import ScrollPetList from "../components/ScrollPetList"
 import DailyChart from "../components/DailyChart"
@@ -44,21 +46,21 @@ const CareDetailsScreen = ({ navigation, route }) => {
   })
 
   const { careId } = route.params
+  const { onDeleteCare } = useCareContext()
 
   const iconSource = careUtils.getIconSource(careCard.name)
 
   useEffect(() => {
     const fetchCareDetails = async () => {
       const data = await careService.show(careId)
-      console.log(data)
       setCareCard(data)
     }
     fetchCareDetails()
   }, [careId])
 
   const handleDeleteCareCard = async (careId: string) => {
-    const deletedCareCard = await careService.deleteCareCard(careId)
-    navigation.navigate('Index', { careId: deletedCareCard._id })
+    await onDeleteCare!(careId)
+    navigation.navigate('Index')
   }
 
   const showDeleteConfirmDialog = () => {
@@ -80,7 +82,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
       decelerationRate="fast" 
     >
       <View style={styles.headerContainer}>
-        {/* <Image source={iconSource} style={styles.icon as ImageStyle} /> */}
+        {/* <Image source={iconSource} style={styles.icon } /> */}
         <Text style={styles.header}>{careCard.name}</Text>
         <View style={styles.petContainer}>
           <ScrollPetList petArray={careCard.pets} size='small' />

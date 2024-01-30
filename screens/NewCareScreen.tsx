@@ -19,10 +19,9 @@ const NewCareScreen: React.FC = ({ navigation, route }) => {
 
   const handleSubmit = async (name: string, frequency: string, times: number, pets: string[]) => {
     try {
-      // const newCareCard = await careService.create(name, frequency, times, pets)
       const result = await onAddCare!(name, frequency, times, pets)
-
-      navigation.navigate('Index', /* { careId: newCareCard._id } */)
+      console.log('result adding care', result)
+      navigation.navigate('Index')
     } catch (error) {
       console.log('Error creating a care card', error)
       alert('Error creating tracker. Please try again.')

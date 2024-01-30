@@ -14,7 +14,7 @@ const ToggleableForm: React.FC<FormProps> = ({ title, content }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.mainBtn} onPress={() => setIsVisible(!isVisible)}>
-        <Image source={require('../assets/icons/dropdownRound.png')} style={styles.icon as ImageStyle} />
+        <Image source={require('../assets/icons/dropdownRound.png')} style={styles.icon } />
         <Text style={[styles.btnText, { color: isVisible ? Colors.darkPink : 'black' }]}>{title}</Text>
       </TouchableOpacity>
       {isVisible && content}

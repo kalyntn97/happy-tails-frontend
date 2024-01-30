@@ -1,10 +1,12 @@
-export const base = {
+import { ViewStyle, TextStyle } from "react-native"
+
+export const base: ViewStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   margin: 10
 }
 
-export const main = {
+export const main: ViewStyle = {
   elevation: 3,
   shadowColor: '#000',
   shadowOffset: { width: 0, height: 2 },
@@ -13,7 +15,7 @@ export const main = {
   backgroundColor: 'grey',
 }
 
-export const sub = {
+export const sub: ViewStyle = {
   borderBottomWidth: 2
 }
 
@@ -37,15 +39,15 @@ export const long = {
   height: 50
 }
 
-export const rounded = {
+export const rounded: ViewStyle = {
   borderRadius: 30
 }
 
-export const lessRounded = {
+export const lessRounded: ViewStyle= {
   borderRadius: 15
 }
 
-export const square = {
+export const square: ViewStyle = {
   borderRadius: 8
 }
 
@@ -103,7 +105,7 @@ export const xxSmallRounded = {
   ...rounded
 }
 
-export const buttonText = {
+export const buttonText: TextStyle = {
   fontSize: 16,
   lineHeight: 21,
   fontWeight: 'bold',

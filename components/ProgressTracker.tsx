@@ -11,7 +11,7 @@ const ProgressTracker = ({ times, done, size }) => {
           key={`done-${i}`}
           source={require('../assets/icons/heart-filled.png')} 
           style={[
-            styles.heart as ImageStyle,
+            styles.heart ,
             size === 'small' 
             ? { width: 40, height: 40 } 
             : size === 'xSmall' 
@@ -27,7 +27,7 @@ const ProgressTracker = ({ times, done, size }) => {
           key={`pending-${i}`} 
           source={require('../assets/icons/heart-gray.png')} 
           style={[
-            styles.heart as ImageStyle,
+            styles.heart ,
             size === 'small' 
             ? { width: 40, height: 40 } 
             : size === 'xSmall' 

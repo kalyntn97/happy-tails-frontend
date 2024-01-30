@@ -24,7 +24,6 @@ export const ProfileProvider = ({children}: any) => {
     const fetchProfile = async () => {
       const profileData = await profileService.show()
       setProfile(profileData)
-      console.log(profileData)
     }
     fetchProfile()
   }, [])

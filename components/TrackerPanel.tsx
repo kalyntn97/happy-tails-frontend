@@ -31,9 +31,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
 
   const checkDone = async (careId: string, trackerId: string, index: number) => {
     try {
-      console.log('before submit', careId, trackerId, index)
       const updatedTracker = await onCheckDone!(careId, trackerId, index)
-      console.log('after submit', updatedTracker)
       setTracker(updatedTracker)
     } catch (error) {
       console.log('Error checking done', error)
@@ -42,9 +40,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
 
   const uncheckDone = async (careId: string, trackerId: string, index: number) => {
     try {
-      console.log('before submit', careId, trackerId, index)
       const updatedTracker = await onUncheckDone!(careId, trackerId, index)
-      console.log('after submit', updatedTracker)
       setTracker(updatedTracker)
     } catch (error) {
       console.log('Error checking done', error)
@@ -53,7 +49,6 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
 
   useEffect(() => {
     // update as index (day, week) change, get the latest tracker
-    console.log('trackers', care.trackers)
     const updateIndex = () => {
       const updatedIdx = careUtils.getCurrentTrackerIndex(freq)
       setIndex(updatedIdx)
@@ -85,7 +80,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
               onPress={() => uncheckDone(careId, tracker._id, index)}
               disabled={tracker.done[index] == 0}
             >
-              <Image source={require('../assets/icons/minus.png')} style={styles.icon as ImageStyle} />
+              <Image source={require('../assets/icons/minus.png')} style={styles.icon } />
             </TouchableOpacity>
             <Text style={[styles.count, { color: times === tracker.done[index] ? Colors.green : Colors.red }]}>{tracker.done[index]} / {times}</Text>
 
@@ -97,7 +92,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
               onPress={() => checkDone(careId, tracker._id, index)}
               disabled={tracker.done[index] >= times}
             >
-              <Image source={require('../assets/icons/plus.png')} style={styles.icon as ImageStyle} />
+              <Image source={require('../assets/icons/plus.png')} style={styles.icon } />
             </TouchableOpacity>
             
           </View>

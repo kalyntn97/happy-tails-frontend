@@ -1,7 +1,6 @@
 //npm modules
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useIsFocused } from "@react-navigation/native"
-import { View, TextInput, Text, Pressable, StyleSheet, Image } from "react-native"
 //components
 import PetForm from "../components/PetForm"
 import { Pet } from "../services/petService"
@@ -26,12 +25,7 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
   }
 
   const handleEditPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null)  => {
-    const result = await onEditPet!(name, age, species, breed, photoData, pet._id)
-    console.log('result', result)
-
-    if (result && result.error) {
-      alert(result.msg)
-    }
+    await onEditPet!(name, age, species, breed, photoData, pet._id)
     navigation.navigate('Details', {petId: pet._id})
   }
 

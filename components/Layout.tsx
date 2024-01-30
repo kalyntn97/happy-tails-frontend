@@ -62,7 +62,7 @@ const Layout: React.FC = () => {
               icon = focused ? require('../assets/icons/login-active.png') : require('../assets/icons/login-inactive.png')
             }
 
-            return <Image source={icon} style={styles.icon as ImageStyle} />
+            return <Image source={icon} style={styles.icon } />
           },
           tabBarStyle: { padding : 10, height: 100, backgroundColor: Colors.lightestPink},
           headerStyle: {
@@ -93,7 +93,7 @@ const Layout: React.FC = () => {
                       return (
                         <View style={styles.header}>
                           <Pressable style={[styles.menuBtn, { left: 10 }]} onPress={() => navigation.openDrawer()}>
-                            <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon as ImageStyle} />
+                            <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon } />
                           </Pressable>
                         </View>
                       )
@@ -171,7 +171,7 @@ const Layout: React.FC = () => {
                         <View style={styles.header}>
                           <Text style={styles.headerText}>{profile?.name}</Text>
                           <Pressable style={[styles.menuBtn, { right: 10 }]} onPress={() => navigation.openDrawer()}>
-                            <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon as ImageStyle} />
+                            <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon } />
                           </Pressable>
                         </View>
                       )

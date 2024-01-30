@@ -21,7 +21,7 @@ export async function show(): Promise<Profile> {
     })
     return res.json()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -42,7 +42,7 @@ export async function addPhoto(photoData: any): Promise<any> {
     })
     return await res.json()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -68,6 +68,6 @@ export async function update(name: string, bio: string, photoData: { uri: string
       return await res.json()
     }
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
