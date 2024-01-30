@@ -34,7 +34,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ changePwOnly, setShowForm }) 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
-      <View style={[{ backgroundColor: changePwOnly ? Colors.lightPink : !changePwOnly ? Colors.lightPink : 'white' }]}>
+      <View style={[{ backgroundColor: changePwOnly ? Colors.lightPink : !changePwOnly ? Colors.lightPink : Colors.white }]}>
         <Text style={styles.errorMsg}>{errorMsg}</Text>
         <View style={styles.form}>
           {!changePwOnly && 

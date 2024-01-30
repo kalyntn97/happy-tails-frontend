@@ -10,6 +10,7 @@ import * as profileService from '../services/profileService'
 import * as tokenService from '../services/tokenService'
 //types
 import { Profile } from "../services/profileService"
+import { usePetContext } from "../context/PetContext"
 //components
 import PetInfo from "../components/PetInfo"
 //styles
@@ -18,7 +19,7 @@ import ScrollPetList from "../components/ScrollPetList"
 
 const SettingsScreen = ({ navigation, route }) => {
   const { profile } = useProfileContext()
-
+  const { pets } = usePetContext()
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
     require('../assets/icons/micon1.png'),
@@ -36,7 +37,7 @@ const SettingsScreen = ({ navigation, route }) => {
   }
 
   useEffect(() => {
-    if (!profile.photo) {
+    if (profile && !profile.photo) {
       const fetchProfilePhoto = async () => {
         changeRandomProfilePhoto()
       }
@@ -70,7 +71,7 @@ const SettingsScreen = ({ navigation, route }) => {
       </View>
 
       <Pressable onLongPress={() => navigation.navigate('Profile')}>
-        <ScrollPetList petArray={profile.pets} size='compact' />
+        <ScrollPetList petArray={pets} size='compact' />
       </Pressable>
 
     </View>
@@ -80,7 +81,6 @@ const SettingsScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
-    alignItems: 'center',
   },
   headerContainer: {
     width: '100%',
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: '15%',
     ...Spacing.flexRow,
-    alignItems: 'center'
+    justifyContent: 'center'
   },
   mainBtn : {
     ...Buttons.xSmallRounded

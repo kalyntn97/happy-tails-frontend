@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   base: {
     ...Forms.card,
     justifyContent: 'flex-start',
-    backgroundColor: Colors.lightestPink,
+    backgroundColor: '#FBFFFE',
     alignItems: 'center',
   },
   headerContainer: {
@@ -72,13 +72,11 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     ...Spacing.flexRow,
-    alignItems: 'center',
     width: '100%',
     justifyContent: 'space-between'
   },
   petInfo: {
     ...Spacing.flexRow,
-    alignItems: 'center',
   },
   body: {
     ...Typography.smallBody

@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     borderRightWidth: 3,
-    borderColor: 'white'
+    borderColor: Colors.white
   },
   dailyText: {
     fontWeight: 'bold'

@@ -1,5 +1,5 @@
 //npm
-import { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { useFocusEffect } from "@react-navigation/native"
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView } from "react-native"
 //services & utils
@@ -100,7 +100,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
         </View>
       </View>
       {careCard.trackers.map((tracker, idx) =>
-        <>
+        <React.Fragment key={`tracker-${idx}`}>
           {careCard.frequency === 'Daily' 
           ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={careCard.times} />
           : careCard.times === 1 && careCard.frequency !== 'Yearly'
@@ -109,7 +109,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
             ? <BarChart key={`${careCard.frequency}-${idx}`} tracker={tracker} frequency={careCard.frequency} times={careCard.times} />
             : <YearChart key={`Yearly-${idx}`} tracker={tracker} times={careCard.times} />
           }
-        </>
+        </React.Fragment>
       )}
 
     </ScrollView>

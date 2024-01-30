@@ -23,6 +23,7 @@ interface CareCardProps {
 const CareCard = ({ care, navigation }) => {
   const iconSource = careUtils.getIconSource(care.name)
   const [careCard, setCareCard] = useState<Care>(care)
+  console.log(careCard)
 
   const latestTracker = careCard.trackers[careCard.trackers.length - 1]
   const { isCurrent } = careUtils.getDateTimeFromTracker(latestTracker.name)
@@ -42,7 +43,15 @@ const CareCard = ({ care, navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.colorBox}>
+        <View style={[
+          styles.colorBox,
+          { backgroundColor: 
+            care.frequency === 'Daily' ? Colors.multiArray[0]
+            : care.frequency === 'Weekly' ? Colors.multiArray[1]
+            : care.frequency === 'Monthly' ? Colors.multiArray[2]
+            : Colors.multiArray[3]
+          }
+        ]}>
           <View style={styles.titleContainer}>
             <Image source={iconSource} style={styles.icon as ImageStyle} />
             <View style={styles.titleContent}>
@@ -72,12 +81,12 @@ const CareCard = ({ care, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
-    backgroundColor: Colors.lightPink,
+    backgroundColor: Colors.white,
     ...Forms.card,
     width: '90%',
     height: 370,
     marginBottom: 40,
-    alignItems: 'center'
+    alignSelf: 'center',
   },
   header: {
     width: '100%',
@@ -86,17 +95,16 @@ const styles = StyleSheet.create({
   },
   colorBox: {
     height: 70,
-    width: '80%',
-    backgroundColor: Colors.yellow,
-    borderWidth: 3,
-    borderColor: 'white',
-    marginTop: -40
+    width: '90%',
+    marginTop: -40,
+    borderRadius: 8,
+    ...Forms.boxShadow,
   },
   titleContainer: {
     height: 70,
     width: '100%',
     ...Spacing.flexRow,
-    alignItems: 'center',
+    justifyContent: 'space-around'
   },
   titleContent: {
     ...Spacing.flexColumn,

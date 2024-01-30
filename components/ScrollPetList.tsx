@@ -8,18 +8,18 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface ScrollPetListProps {
   petArray: Pet[]
-  size: 'compact' | 'small' // small < compact
+  size: 'compact' | 'small' | 'mini' // small < compact
   horizontal: boolean
 }
 
 const ScrollPetList = ({ petArray, size }) => {
   return (  
-    <View style={size === 'small' ? { maxWidth: 300, height: 100 } : { maxWidth: 450, height: 240 }}>
+    <View style={size === 'mini' ? { maxWidth: 225, height: 45 } : size === 'small' ? { maxWidth: 300, height: 100 } : { maxWidth: 450, height: 240 }}>
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
       >
           {petArray.map((pet: Pet, idx: number) => 
-            <View style={size === 'small' ? { width: 60, height: 100 } : { width: 90, height: 120 }} key={idx}>
+            <View style={size === 'mini' ? { width: 40, height: 40 } : size === 'small' ? { width: 60, height: 100 } : { width: 90, height: 120 }} key={idx}>
               <PetInfo pet={pet} size={size} key={pet._id} />
             </View>  
           )}

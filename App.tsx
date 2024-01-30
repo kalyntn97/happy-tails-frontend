@@ -7,15 +7,18 @@ import { PetProvider } from './context/PetContext'
 import { ProfileProvider } from './context/ProfileContext'
 //components
 import Layout from './components/Layout'
+import { CareProvider } from './context/CareContext'
 
 const App: React.FC = () => {
   
   return (
     <AuthProvider>
       <PetProvider>
-        <ProfileProvider>
-          <Layout></Layout>
-        </ProfileProvider>
+        <CareProvider>
+          <ProfileProvider>
+            <Layout />
+          </ProfileProvider>
+        </CareProvider>
       </PetProvider>
     </AuthProvider>
   )

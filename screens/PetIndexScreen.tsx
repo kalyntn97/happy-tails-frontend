@@ -112,7 +112,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.centered,
-    ...Spacing.fullScreenDown
+    ...Spacing.fullScreenDown,
   },
   emptyMsg: {
     ...Typography.xSmallHeader,
@@ -121,8 +121,7 @@ const styles = StyleSheet.create({
   btnContainer: {
     width: '90%',
     height: '6%',
-    flexDirection: 'row',
-    alignItems: 'center',
+    ...Spacing.flexRow,
     justifyContent: 'space-between',
     position: 'relative'
   },
@@ -144,6 +143,7 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     width: '90%',
     height: '10%',
+    justifyContent: 'center'
   },
   active: {
     fontSize: 50,

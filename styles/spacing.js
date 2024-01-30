@@ -9,7 +9,7 @@ export const centered = {
 
 export const flexRow = {
   flexDirection: 'row',
-  justifyContent: 'center'
+  alignItems: 'center',
 }
 
 export const flexColumn = {

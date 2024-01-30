@@ -139,3 +139,15 @@ export async function autoCreateTracker(careId: string) {
     console.log(error)
   }
 }
+
+export async function careFeed() {
+  try {
+    const token = await tokenService.getToken()
+    const res = await fetch(`${BASE_URL}/feed`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+    return res.json()
+  } catch (error) {
+    console.log(error)
+  }
+}

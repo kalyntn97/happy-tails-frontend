@@ -22,6 +22,10 @@ export async function checkTokenExpiration(): Promise<boolean> {
       console.log('Token is expired. Logging out')
       return true
     }
+    if (!expirationTime) {
+      console.log('Token error. Logging out.')
+      return true
+    }
     console.log('Token is not expired.')
     return false
   } catch (error) {

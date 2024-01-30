@@ -30,13 +30,13 @@ const FillChart = ({ tracker, frequency, times }) => {
 
       <View style={styles.chart}>
         {tracker.done.map((value, index) => 
-          <View style={[
+          <View key={index} style={[
             styles.square,
             { width: squareWidth, height: squareWidth,
               borderColor: 
               ( (currWeek === index + 1 && isCurrent && frequency === 'Weekly') 
                 || (currMonth === index + 1 && isCurrent && frequency === 'Monthly') 
-              ) ? Colors.darkPink : 'white',
+              ) ? Colors.darkPink : Colors.white,
               backgroundColor: careUtils.getColor(times, value, colorArray),
             }
         
@@ -46,7 +46,7 @@ const FillChart = ({ tracker, frequency, times }) => {
               // { color: 
               //   ( (currWeek === index + 1 && isCurrent && frequency === 'Weekly') 
               //     || (currMonth === index + 1 && isCurrent && frequency === 'Monthly') 
-              //   ) ? Colors.darkPink : 'white'
+              //   ) ? Colors.darkPink : Colors.white
               // }
             ]}>
               {frequency === 'Monthly' ? careUtils.getMonth(index + 1).slice(0, 3) : `Week ${index + 1}`}
@@ -80,17 +80,18 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: 'bold',
     width: 40,
-    textAlign: 'center'
+    textAlign: 'right',
   },
   chart: {
     width: '85%',
     height: '100%',
     ...Spacing.flexRow,
     flexWrap: 'wrap',
+    justifyContent: 'center'
   },
   value: {
     fontSize: 40,
-    color: 'white'
+    color: Colors.white
   },
   label: {
     fontSize: 20,

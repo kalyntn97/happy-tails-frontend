@@ -1,34 +1,77 @@
 //npm modules
-import { useEffect, useState } from "react"
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { useEffect, useRef, useState } from "react"
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SectionList } from "react-native"
+import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 import { DrawerNavigationProp } from "@react-navigation/drawer"
 //components
 import CareCard from "../components/CareCard"
-import CareForm from "../components/CareForm"
-import ToggleableForm from "../components/ToggleableForm"
 //services & utils
-import { Care } from "../services/careService"
-import * as careService from '../services/careService'
+import { useCareContext } from "../context/CareContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 type CareIndexProps = {
   navigation: DrawerNavigationProp<{}>
-  route: { params?: { careId?: string }}
+  route: { params?: { sectionIndex: number, itemIndex: number }}
 }
 
 const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
-  const [careCards, setCareCards] = useState<Care[]>([])
+  const { careCards } = useCareContext()
+
+  const sectionListRef = useRef<SectionList>(null)
+  const { sectionIndex, itemIndex } = route.params ? route.params : { sectionIndex: 0, itemIndex: 0}
+
+  const daily = []
+  const weekly = []
+  const monthly = []
+  const yearly = []
+
+  careCards.forEach(care => {
+    switch (care.frequency) {
+      case 'Daily': 
+        daily.push(care)
+        break
+      case 'Weekly': 
+        weekly.push(care)
+        break
+      case 'Monthly': 
+        monthly.push(care)
+        break
+      case 'Yearly': 
+        yearly.push(care)
+        break
+    }
+  })
+
+  const careIndex = [
+    { title: 'Daily', data: daily },
+    { title: 'Weekly', data: weekly },
+    { title: 'Monthly', data: monthly },
+    { title: 'Yearly', data: yearly },
+  ]
+ 
+  const getItemLayout = sectionListGetItemLayout({
+    getItemHeight: (rowData, sectionIndex, rowIndex) => 420,
+    //optional
+    getSeparatorHeight: () => 0, 
+    getSectionHeaderHeight: () => 0,
+    getSectionFooterHeight: () => 0, 
+    listHeaderHeight: 0,
+  })
+
+  const handleHeaderPress = (sectionIdx: number) => {
+    sectionListRef.current.scrollToLocation({ sectionIndex: sectionIdx, itemIndex: 0 })
+  }
 
   useEffect(() => {
-    const fetchCareCards = async () => {
-      const data = await careService.index()
-      setCareCards(data)
+    const setInitialListPosition = () => {
+      console.log(route.params)
+      sectionListRef.current.scrollToLocation({ sectionIndex: sectionIndex, itemIndex: itemIndex + 1})
     }
-    fetchCareCards()
-  }, [route.params?.careId])
-
+    setInitialListPosition()
+  }, [route.params])
+  
   return (
     <View style={styles.container}>
       {!careCards.length &&
@@ -41,19 +84,24 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
         <Text style={styles.btnText}>Add a tracker</Text>
       </TouchableOpacity>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContent}
-        // showsVerticalScrollIndicator={false}
-        scrollEventThrottle={200}
-        decelerationRate="fast" 
-      > 
-
-        {careCards.map((careCard, idx) => 
-          <CareCard key={careCard._id} care={careCard} navigation={navigation}/>
+      <View style={styles.listHeader}>
+        {careIndex.map((section, idx) => 
+          <TouchableOpacity key={idx} style={[styles.subBtn, { backgroundColor: Colors.multiArray[idx] }]} onPress={() => handleHeaderPress(idx)}>
+            <Text>{section.title}</Text>
+            <Text style={styles.headerCount}>{section.data.length}</Text>
+          </TouchableOpacity>
         )}
-        
-      </ScrollView>
+      </View>
+      <SectionList
+        ref={sectionListRef}
+        sections={careIndex}
+        keyExtractor={(item, index) => item + index}
+        renderItem={({ item }) => (
+          <CareCard key={item._id} care={item} navigation={navigation}/>
+        )}
+        getItemLayout={getItemLayout}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   )
 }
@@ -61,12 +109,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
-  },
-  scrollView: {
-    width: '100%',
-  },
-  empty: {
-    
+    ...Spacing.centered,
   },
   msg: {
     ...Typography.subHeader,
@@ -76,15 +119,27 @@ const styles = StyleSheet.create({
   catAnimation: {
     width: '100%'
   },
-  scrollViewContent: {
-    alignItems: 'center',
-  },
   mainBtn: {
     ...Buttons.longSquare,
     backgroundColor: Colors.pink,
   },
+  subBtn: {
+    ...Buttons.xxSmallRounded,
+    margin: 5,
+    width: 85,
+  },
   btnText: {
     ...Buttons.buttonText
+  },
+  listHeader: {
+    ...Spacing.flexRow,
+  },
+  headerCount: {
+    color: Colors.red,
+    fontWeight: 'bold',
+    position: 'absolute',
+    right: '10%',
+    top: '10%',
   },
 })
  
