@@ -99,7 +99,6 @@ const styles = StyleSheet.create({
     ...Forms.input,
     borderColor: Colors.pink,
     justifyContent: 'space-between',
-    alignItems: 'center',
     zIndex: 1
   },
   icon: {

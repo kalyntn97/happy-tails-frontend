@@ -228,7 +228,8 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    ...Spacing.flexRow
+    ...Spacing.flexRow,
+    justifyContent: 'center'
   },
   headerText: {
     ...Typography.xSmallHeader,

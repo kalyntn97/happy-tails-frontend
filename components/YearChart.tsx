@@ -28,12 +28,11 @@ const styles = StyleSheet.create({
   container: {
     width: '90%',
     ...Spacing.flexRow,
-    alignItems: 'center',
     borderWidth: 3,
     padding: 10,
     margin: 10,
     borderRadius: 8,
-    backgroundColor: 'white',
+    backgroundColor: Colors.white,
     ...Forms.boxShadow
   },
   header: {

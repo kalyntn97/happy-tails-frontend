@@ -28,7 +28,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   const { year: currYear, month: currMonth } = careUtils.getDateTimeFromTracker(tracker.name)
   const { month } = careUtils.getCurrentDate()
   const thisMonth = careUtils.getMonth(month)
-  console.log(currYear, currMonth)
+
   const checkDone = async (careId: string, trackerId: string, index: number) => {
     try {
       console.log('before submit', careId, trackerId, index)
@@ -87,13 +87,11 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
             >
               <Image source={require('../assets/icons/minus.png')} style={styles.icon as ImageStyle} />
             </TouchableOpacity>
-            <Text style={[styles.count, { color: Colors.red }]}>{times - tracker.done[index]}</Text>
+            <Text style={[styles.count, { color: times === tracker.done[index] ? Colors.green : Colors.red }]}>{tracker.done[index]} / {times}</Text>
 
-            <View style={styles.heartBtn}>
+            {/* <View style={styles.heartBtn}>
               <ProgressTracker done={tracker.done[index]} times={times} size={times > 5 ? 'xSmall' : 'small'} />
-            </View>
-
-            <Text style={[styles.count, { color: Colors.green }]}>{tracker.done[index]}</Text>
+            </View> */}
             <TouchableOpacity 
               style={styles.iconBtn} 
               onPress={() => checkDone(careId, tracker._id, index)}
@@ -125,7 +123,6 @@ const styles = StyleSheet.create({
   },
   countBox: {
     ...Spacing.flexRow,
-    alignItems: 'center',
     marginVertical: 10
   },
   status: {
@@ -143,7 +140,6 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.smallHeader,
     marginVertical: 10,
-    color: Colors.darkPink
   },
   dateContainer: {
     width: 50,

@@ -102,7 +102,6 @@ const styles = StyleSheet.create({
     height: 'auto',
     borderColor: Colors.pink,
     justifyContent: 'space-between',
-    alignItems: 'center',
     zIndex: 1
   },
   icon: {

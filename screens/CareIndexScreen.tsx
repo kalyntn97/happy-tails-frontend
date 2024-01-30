@@ -77,8 +77,9 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
 
       <View style={styles.listHeader}>
         {careIndex.map((section, idx) => 
-          <TouchableOpacity key={idx} style={styles.subBtn} onPress={() => handleHeaderPress(idx)}>
+          <TouchableOpacity key={idx} style={[styles.subBtn, { backgroundColor: Colors.multiArray[idx] }]} onPress={() => handleHeaderPress(idx)}>
             <Text>{section.title}</Text>
+            <Text style={styles.headerCount}>{section.data.length}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -115,13 +116,21 @@ const styles = StyleSheet.create({
   },
   subBtn: {
     ...Buttons.xxSmallRounded,
-    backgroundColor: Colors.green,
+    margin: 5,
+    width: 85,
   },
   btnText: {
     ...Buttons.buttonText
   },
   listHeader: {
     ...Spacing.flexRow,
+  },
+  headerCount: {
+    color: Colors.red,
+    fontWeight: 'bold',
+    position: 'absolute',
+    right: '10%',
+    top: '10%',
   },
 })
  

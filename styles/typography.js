@@ -45,6 +45,14 @@ export const xSmallHeader = {
   ...xSmall,
 }
 
+export const smallSubHeader = {
+  margin: 10,
+  textAlign: 'center',
+  letterSpacing: 1,
+  ...xSmall,
+  fontStyle: 'italic',
+}
+
 export const body = {
   padding: 10,
 }

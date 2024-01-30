@@ -10,6 +10,7 @@ import * as careService from '../services/careService'
 import { useCareContext } from "../context/CareContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import ScrollPetList from "./ScrollPetList"
 
 interface CareFeedProps {
   today: { currDate: number, currMonth: string, monthIdx: number, currYear: number, currWeek: number }
@@ -44,64 +45,92 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
 
   return (  
     <View style={styles.container}>
-      <Text style={{ height: '3%'}}>{today.currMonth} {today.currDate} {today.currYear}</Text>
       <View style={styles.iconMenuContainer}>
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
+          <Text style={styles.taskCount}>{daily.length}</Text>
           <Image source={require('../assets/icons/day.png')} style={styles.icon as ImageStyle} />
-          <Text style={styles.iconText}>Today</Text>
+          <Text style={[styles.iconText, selected === 'day' ? styles.selected : {}]}>Today</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('week')}>
+          <Text style={styles.taskCount}>{weekly.length}</Text>
           <Image source={require('../assets/icons/week.png')} style={styles.icon as ImageStyle} />
-          <Text style={styles.iconText}>This Week</Text>
+          <Text style={[styles.iconText, selected === 'week' ? styles.selected : {}]}>This Week</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('month')}>
+          <Text style={styles.taskCount}>{monthly.length}</Text>
           <Image source={require('../assets/icons/month.png')} style={styles.icon as ImageStyle} />
-          <Text style={styles.iconText}>This Month</Text>
+          <Text style={[styles.iconText, selected === 'month' ? styles.selected : {}]}>This Month</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('year')}>
+          <Text style={styles.taskCount}>{yearly.length}</Text>
           <Image source={require('../assets/icons/year.png')} style={styles.icon as ImageStyle} />
-          <Text style={styles.iconText}>This Year</Text>
+          <Text style={[styles.iconText, selected === 'year' ? styles.selected : {}]}>This Year</Text>
         </TouchableOpacity>
       </View>
       <ScrollView
         style={{ width: '100%', height: '90%' }}
         contentContainerStyle={styles.taskContainer}
       >
-        {selected === 'day' && daily.map((d, idx) => 
-          <Text key={`d-${idx}`}
-            style={d.trackers[d.trackers.length - 1].done[today.currDate - 1] === d.times ? styles.done : {}}
-          >
-            {d.name}
-          </Text>
+        {selected === 'day' && daily.map((d, idx) =>
+          <View style={styles.task}>
+            <Text key={`d-${idx}`}
+              style={[
+                d.trackers[d.trackers.length - 1].done[today.currDate - 1] === d.times ? styles.done : {}, 
+                styles.taskText
+              ]}
+            >
+              {d.name}
+            </Text>
+            <ScrollPetList petArray={d.pets} size='mini' />
+          </View>
         )}
 
-        {selected === 'week' && weekly.map((w, idx) => 
-          <Text key={`w-${idx}`}
-          style={w.trackers[w.trackers.length - 1].done[today.currWeek - 1] === w.times ? styles.done : {}}
-          >
-            {w.name}
-          </Text>
+        {selected === 'week' && weekly.map((w, idx) =>
+          <View style={styles.task}>
+            <Text key={`w-${idx}`}
+              style={[
+                w.trackers[w.trackers.length - 1].done[today.currWeek - 1] === w.times ? styles.done : {}, 
+                styles.taskText
+              ]}
+            >
+              {w.name}
+            </Text>
+            <ScrollPetList petArray={w.pets} size='mini' />
+          </View>
+
         )}
 
         
-        {selected === 'month' && monthly.map((m, idx) => 
-          <Text key={`m-${idx}`}
-            style={m.trackers[m.trackers.length - 1].done[today.monthIdx - 1] === m.times ? styles.done : {}}
-          >
-            {m.name}
-          </Text>
+        {selected === 'month' && monthly.map((m, idx) =>
+          <View style={styles.task}>
+            <Text key={`m-${idx}`}
+              style={[
+                m.trackers[m.trackers.length - 1].done[today.monthIdx - 1] === m.times ? styles.done : {}, 
+                styles.taskText
+              ]}
+            >
+              {m.name}
+            </Text>
+            <ScrollPetList petArray={m.pets} size='mini' />
+          </View> 
         )}
 
         
         {selected === 'year' && yearly.map((y, idx) => 
-          <Text key={`y-${idx}`}
-          style={y.trackers[y.trackers.length - 1].done === y.times ? styles.done : {}}
-          >
-            {y.name}
-          </Text>
+          <View style={styles.task}>
+            <Text key={`y-${idx}`}
+              style={[
+                y.trackers[y.trackers.length - 1].done === y.times ? styles.done : {}, 
+                styles.taskText
+              ]}
+            >
+              {y.name}
+            </Text>
+            <ScrollPetList petArray={y.pets} size='mini' />
+          </View>
         )}
         
         <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Care')}>
@@ -115,7 +144,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: '80%',
+    height: '75%',
     alignItems: 'center',
   },
   done: {
@@ -138,11 +167,33 @@ const styles = StyleSheet.create({
   iconText: {
 
   },
+  taskCount: {
+    color: Colors.red,
+    fontWeight: 'bold',
+    position: 'absolute',
+    right: '25%',
+    bottom: '25%',
+  },
+  selected: {
+    color: Colors.red,
+    fontWeight: 'bold',
+  },
   taskContainer: {
     ...Spacing.flexColumn,
     width: '100%',
     minHeight: '30%',
     marginVertical: 10,
+  },
+  task: {
+    ...Spacing.flexRow,
+    width: '90%',
+    height: 50,
+    justifyContent: 'space-around',
+    borderTopWidth: 1,
+    borderColor: 'lightgray'
+  },
+  taskText: {
+    fontSize: 15
   },
   mainBtn: {
     ...Buttons.smallRounded,

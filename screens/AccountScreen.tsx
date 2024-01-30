@@ -33,18 +33,18 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
         <View style={styles.btnContainer}>
           <TouchableOpacity 
             onPress={() => setChangePwOnly(true)} 
-            style={[styles.tabBtn, { backgroundColor: changePwOnly ? Colors.lightPink : 'white'}]}>
+            style={[styles.tabBtn, { backgroundColor: changePwOnly ? Colors.lightPink : Colors.white}]}>
             <Text style={[styles.btnText, { color: changePwOnly ? Colors.darkPink : 'black' }]}>Change Password</Text>
           </TouchableOpacity>
         
           <TouchableOpacity 
             onPress={() => setChangePwOnly(false)} 
-            style={[styles.tabBtn, { backgroundColor: !changePwOnly ? Colors.lightPink : 'white'}]}>
+            style={[styles.tabBtn, { backgroundColor: !changePwOnly ? Colors.lightPink : Colors.white}]}>
             <Text style={[styles.btnText, { color: !changePwOnly ? Colors.darkPink : 'black' }]}>Change Username</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.form, { backgroundColor: changePwOnly ? Colors.lightPink : !changePwOnly ? Colors.lightPink : 'white' }]}>
+        <View style={[styles.form, { backgroundColor: changePwOnly ? Colors.lightPink : !changePwOnly ? Colors.lightPink : Colors.white }]}>
           { changePwOnly
             ? <AccountForm changePwOnly={true} setShowForm={setShowForm} />
             : <AccountForm changePwOnly={false} setShowForm={setShowForm} />

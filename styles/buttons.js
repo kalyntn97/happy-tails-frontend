@@ -23,7 +23,7 @@ export const xSmall = {
 }
 
 export const xxSmall = {
-  width: 70,
+  width: 80,
   height: 30,
 }
 

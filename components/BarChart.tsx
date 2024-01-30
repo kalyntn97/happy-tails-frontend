@@ -91,6 +91,9 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
               styles.value, 
               { fontSize: frequency === 'Weekly' ? 15 : 10 }
             ]}>
+              {times === value && 
+                <Text style={{ fontSize: frequency === 'Weekly' ? 10 : 5, color: Colors.green }}>✔️</Text>
+              }
               {value}
             </Text>
           </View>
@@ -102,8 +105,8 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.flexRow,
-    backgroundColor: 'white',
+    flexDirection: 'row',
+    backgroundColor: Colors.white,
     marginVertical: 20,
     ...Forms.boxShadow,
     borderRadius: 8
@@ -126,7 +129,7 @@ header: {
   chart: {
     width: '85%',
     height: '80%',
-    ...Spacing.flexRow,
+    flexDirection: 'row',
     alignItems: 'flex-end',
   },
   column: {

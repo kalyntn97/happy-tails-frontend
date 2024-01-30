@@ -6,7 +6,7 @@ import { fullWH } from "../styles/spacing"
 
 interface PetInfoProps {
   pet: Pet
-  size: 'compact' | 'expanded' | 'small'
+  size: 'compact' | 'expanded' | 'small' | 'mini'
 }
 
 const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
@@ -18,7 +18,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
         {size === 'expanded' && 
           <Image source={iconSource} style={styles.petIcon as ImageStyle} />
         }
-        <Image source={pet.photo ? {uri: pet.photo} : require('../assets/icons/pet-profile.png')} style={[styles.petPhoto as ImageStyle, size === 'expanded' ? {...Forms.smallPhoto} : size === 'compact' ? {...Forms.xSmallPhoto} : {...Forms.tinyPhoto}]} />
+        <Image source={pet.photo ? {uri: pet.photo} : require('../assets/icons/pet-profile.png')} style={[styles.petPhoto as ImageStyle, size === 'expanded' ? {...Forms.smallPhoto} : size === 'compact' ? {...Forms.xSmallPhoto} : size === 'small' ? {...Forms.xxSmallPhoto} : {...Forms.tinyPhoto}]} />
         {(size === 'compact' || size === 'small' ) &&
           <Text style={styles.shortName}>{pet.name.split(' ')[0]}</Text>
         }

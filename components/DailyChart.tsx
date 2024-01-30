@@ -76,12 +76,12 @@ const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
                 backgroundColor: careUtils.getColor(times, value, colorArray),
                 width: squareWidth,
                 height: squareWidth,
-                borderColor: (currDate === idx + 1 && isCurrent) ? Colors.darkPink : 'white'
+                borderColor: (currDate === idx + 1 && isCurrent) ? Colors.darkPink : Colors.white
               }
             ]}>
               <Text style={styles.day}>{idx + 1}</Text>
               {value === times && 
-                <Text style={styles.dot}>{'✔︎'}</Text>
+                <Text style={styles.dot}>✔︎</Text>
               }
           </View>  
         )}
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   chartName: {
-    ...Spacing.flexRow,
+    flexDirection: 'row',
     height: 30,
     alignItems: 'flex-end',
     justifyContent: 'space-between',
@@ -133,11 +133,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'bold',
     marginTop: 5,
-    // color: 'white',
+    // color: Colors.white,
   },
   dot: {
-    color: 'white',
-    // fontSize: 15
+    color: Colors.white,
+    fontSize: 20
   },
 })
 

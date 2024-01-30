@@ -1,3 +1,11 @@
+export const boxShadow = {
+  elevation: 3,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.5,
+  shadowRadius: 2,
+}
+
 export const form = {
   alignItems: 'center',
   justifyContent: 'center'
@@ -11,7 +19,7 @@ export const input = {
   margin: 10,
   borderRadius: 8,
   borderWidth: 1,
-  backgroundColor: 'white'
+  backgroundColor: '#FBFFFE'
 }
 
 export const card = {
@@ -47,18 +55,16 @@ export const xSmallPhoto = {
   ...basePhoto
 }
 
-export const tinyPhoto ={
+export const xxSmallPhoto = {
   width: 50,
   height: 50,
   ...basePhoto
 }
 
-export const boxShadow = {
-  elevation: 3,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.5,
-  shadowRadius: 2,
+export const tinyPhoto = {
+  width: 30,
+  height: 30,
+  ...basePhoto
 }
 
 export const icon = {

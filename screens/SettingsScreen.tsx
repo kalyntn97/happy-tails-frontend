@@ -81,7 +81,6 @@ const SettingsScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
-    alignItems: 'center',
   },
   headerContainer: {
     width: '100%',
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: '15%',
     ...Spacing.flexRow,
-    alignItems: 'center'
+    justifyContent: 'center'
   },
   mainBtn : {
     ...Buttons.xSmallRounded

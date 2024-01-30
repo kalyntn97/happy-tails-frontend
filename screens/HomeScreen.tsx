@@ -16,7 +16,7 @@ import { usePetContext } from "../context/PetContext"
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
   const { profile } = useProfileContext()
-  const [today, setToday] = useState({})
+  const [today, setToday] = useState({ currDate: 1, currMonth: 'January', currYear: 2024, currWeek: 1 })
 
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
@@ -45,6 +45,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
           {profile && 
             <View style={[styles.screen, { minHeight: centerHeight }]}>
               <Image source={require('../assets/images/happy-tails-banner.png')} style={{ width: '100%', maxHeight: windowHeight * 0.2 }} />
+              <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{today.currMonth} {today.currDate} {today.currYear}</Text>
               <CareFeed today={today} navigation={navigation}/>
             </View>
           }
@@ -97,10 +98,13 @@ const styles = StyleSheet.create({
   screen: {
     width: '100%',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: Colors.white,
   },
   banner: {
     
+  },
+  date: {
+    ...Typography.smallSubHeader,
   },
   headers:{
     width: '80%',

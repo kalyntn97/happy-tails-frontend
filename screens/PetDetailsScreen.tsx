@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: '40%',
     ...Forms.card,
-    backgroundColor: Colors.lightestPink,
+    backgroundColor: Colors.white,
     justifyContent: 'flex-start'
   },
   petInfo: {
