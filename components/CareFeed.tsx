@@ -75,7 +75,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
         contentContainerStyle={styles.taskContainer}
       >
         {selected === 'day' && daily.map((d, idx) =>
-          <View style={styles.task}>
+          <TouchableOpacity style={styles.task} onPress={() => navigation.navigate('Care', { screen: 'Index', params: {sectionIndex: 0, itemIndex: idx } })}>
             <Text key={`d-${idx}`}
               style={[
                 d.trackers[d.trackers.length - 1].done[today.currDate - 1] === d.times ? styles.done : {}, 
@@ -85,11 +85,12 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
               {d.name}
             </Text>
             <ScrollPetList petArray={d.pets} size='mini' />
-          </View>
+          </TouchableOpacity>
         )}
 
         {selected === 'week' && weekly.map((w, idx) =>
-          <View style={styles.task}>
+          <TouchableOpacity style={styles.task} onPress={() => navigation.navigate('Care', { screen: 
+          'Index', params: {sectionIndex: 1, itemIndex: idx } })}>
             <Text key={`w-${idx}`}
               style={[
                 w.trackers[w.trackers.length - 1].done[today.currWeek - 1] === w.times ? styles.done : {}, 
@@ -99,13 +100,12 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
               {w.name}
             </Text>
             <ScrollPetList petArray={w.pets} size='mini' />
-          </View>
-
+          </TouchableOpacity>
         )}
 
-        
         {selected === 'month' && monthly.map((m, idx) =>
-          <View style={styles.task}>
+          <TouchableOpacity style={styles.task} onPress={() => navigation.navigate('Care', { screen: 
+            'Index', params: {sectionIndex: 2, itemIndex: idx } })}>
             <Text key={`m-${idx}`}
               style={[
                 m.trackers[m.trackers.length - 1].done[today.monthIdx - 1] === m.times ? styles.done : {}, 
@@ -115,12 +115,13 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
               {m.name}
             </Text>
             <ScrollPetList petArray={m.pets} size='mini' />
-          </View> 
+          </TouchableOpacity> 
         )}
 
         
         {selected === 'year' && yearly.map((y, idx) => 
-          <View style={styles.task}>
+          <TouchableOpacity style={styles.task} onPress={() => navigation.navigate('Care', { screen: 
+            'Index', params: {sectionIndex: 3, itemIndex: idx } })}>
             <Text key={`y-${idx}`}
               style={[
                 y.trackers[y.trackers.length - 1].done === y.times ? styles.done : {}, 
@@ -130,10 +131,18 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
               {y.name}
             </Text>
             <ScrollPetList petArray={y.pets} size='mini' />
-          </View>
+          </TouchableOpacity>
         )}
         
-        <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Care')}>
+        <TouchableOpacity style={styles.mainBtn} 
+          onPress={() => navigation.navigate('Care', { 
+            screen: 'Index', 
+            params: { 
+              sectionIndex: 
+                selected === 'day' ? 0 : selected === 'week' ? 1 : selected === 'month' ? 2 : 3,
+              itemIndex: 0 
+            } 
+          })}>
           <Text style={styles.btnText}>Manage Tasks</Text>
         </TouchableOpacity>
       </ScrollView>

@@ -13,13 +13,14 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 type CareIndexProps = {
   navigation: DrawerNavigationProp<{}>
-  route: { params?: { careId?: string }}
+  route: { params?: { sectionIndex: number, itemIndex: number }}
 }
 
 const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   const { careCards } = useCareContext()
 
   const sectionListRef = useRef<SectionList>(null)
+  const { sectionIndex, itemIndex } = route.params ? route.params : { sectionIndex: 0, itemIndex: 0}
 
   const daily = []
   const weekly = []
@@ -51,7 +52,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   ]
  
   const getItemLayout = sectionListGetItemLayout({
-    getItemHeight: (/* rowData, sectionIndex, rowIndex */) => 420,
+    getItemHeight: (rowData, sectionIndex, rowIndex) => 420,
     //optional
     getSeparatorHeight: () => 0, 
     getSectionHeaderHeight: () => 0,
@@ -63,6 +64,14 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
     sectionListRef.current.scrollToLocation({ sectionIndex: sectionIdx, itemIndex: 0 })
   }
 
+  useEffect(() => {
+    const setInitialListPosition = () => {
+      console.log(route.params)
+      sectionListRef.current.scrollToLocation({ sectionIndex: sectionIndex, itemIndex: itemIndex + 1})
+    }
+    setInitialListPosition()
+  }, [route.params])
+  
   return (
     <View style={styles.container}>
       {!careCards.length &&
