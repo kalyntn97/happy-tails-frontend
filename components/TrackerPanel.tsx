@@ -1,6 +1,6 @@
 //npm
-import { useLayoutEffect, useRef, useState, useEffect } from "react"
-import { Image, ImageStyle, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { useState, useEffect } from "react"
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 //services & utils
 import { Tracker } from "../services/careService"
 import { Care } from "../services/careService"
@@ -8,11 +8,10 @@ import * as careService from '../services/careService'
 import * as careUtils from "../utils/careUtils"
 //components
 import ScrollCalendar from "./ScrollCalendar"
-import ProgressTracker from "./ProgressTracker"
 //context
 import { useCareContext } from "../context/CareContext"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Spacing, Typography, Colors } from '../styles'
 
 interface CurrentTrackerProps {
   care: Care
@@ -30,21 +29,13 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   const thisMonth = careUtils.getMonth(month)
 
   const checkDone = async (careId: string, trackerId: string, index: number) => {
-    try {
-      const updatedTracker = await onCheckDone!(careId, trackerId, index)
-      setTracker(updatedTracker)
-    } catch (error) {
-      console.log('Error checking done', error)
-    }
+    const updatedTracker = await onCheckDone!(careId, trackerId, index)
+    setTracker(updatedTracker)
   }
 
   const uncheckDone = async (careId: string, trackerId: string, index: number) => {
-    try {
-      const updatedTracker = await onUncheckDone!(careId, trackerId, index)
-      setTracker(updatedTracker)
-    } catch (error) {
-      console.log('Error checking done', error)
-    }
+    const updatedTracker = await onUncheckDone!(careId, trackerId, index)
+    setTracker(updatedTracker)
   }
 
   useEffect(() => {
@@ -60,14 +51,21 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
     <View style={styles.container}>
 
       <Text style={styles.title}>
-        {freq === 'Daily' ? 'Today' : freq === 'Weekly' ? `Week ${index + 1}` : freq === 'Monthly' ? thisMonth : currYear}
+        {freq === 'Daily' ? 'Today' 
+          : freq === 'Weekly' ? `Week ${index + 1}` 
+          : freq === 'Monthly' ? thisMonth 
+          : currYear
+        }
       </Text>
       <Text style={[
-          styles.status, 
-          { color: times === tracker.done[index] ? Colors.green : Colors.red }
-        ]}>
-          {tracker.done[index] === times ? 'You did it!' : `Only ${times - tracker.done[index]} more to go!`}
-        </Text>
+        styles.status, 
+        { color: times === tracker.done[index] ? Colors.green : Colors.red }
+      ]}>
+        {tracker.done[index] === times ? 'You did it! ' : `Only ${times - tracker.done[index]} more to go! `}
+        {tracker.done[index] !== times && 
+          <Image source={require('../assets/icons/hand.png')} style={styles.scrollCalendarIcon} />
+        }
+      </Text>
       {freq === 'Daily' && times === 1 
         ? <>
           <View style={styles.scrollCalendar}>
@@ -82,11 +80,10 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
             >
               <Image source={require('../assets/icons/minus.png')} style={styles.icon } />
             </TouchableOpacity>
-            <Text style={[styles.count, { color: times === tracker.done[index] ? Colors.green : Colors.red }]}>{tracker.done[index]} / {times}</Text>
+            <Text style={[styles.count, { color: times === tracker.done[index] ? Colors.green : Colors.red }]}>
+              {tracker.done[index]} / {times}
+            </Text>
 
-            {/* <View style={styles.heartBtn}>
-              <ProgressTracker done={tracker.done[index]} times={times} size={times > 5 ? 'xSmall' : 'small'} />
-            </View> */}
             <TouchableOpacity 
               style={styles.iconBtn} 
               onPress={() => checkDone(careId, tracker._id, index)}
@@ -122,7 +119,8 @@ const styles = StyleSheet.create({
   },
   status: {
     fontSize: 15,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    lineHeight: 35,
   },
   heartBtn: {
     ...Spacing.flexRow,
@@ -150,17 +148,22 @@ const styles = StyleSheet.create({
   },
   scrollCalendar: {
     width: 275,
-    height: '50%',
+    height: '40%',
     borderRadius: 8,
     marginVertical: 10
   },
   icon: {
     width: 30,
-    height: 30
+    height: 30,
   },
   iconBtn: {
     marginHorizontal: 10
-  }
+  },
+  scrollCalendarIcon: {
+    width: 25,
+    height: 25,
+    transform: [{ rotate: '180deg' }]
+  },
 })
 
 export default TrackerPanel

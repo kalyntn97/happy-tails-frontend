@@ -13,14 +13,14 @@ interface PetFormProps {
 }
 
 const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
-  const [photo, setPhoto] = useState<string | null>(initialValues?.photo || null)
-  const [name, setName] = useState<string>(initialValues?.name || '')
-  const [age, setAge] = useState<number | ''>(initialValues?.age || '')
-  const [species, setSpecies] = useState<string>(initialValues?.species || '')
-  const [breed, setBreed] = useState<string>(initialValues?.breed || '')
+  const [photo, setPhoto] = useState<string | null>(initialValues?.photo ?? null)
+  const [name, setName] = useState<string>(initialValues?.name ?? '')
+  const [age, setAge] = useState<number | ''>(initialValues?.age ?? '')
+  const [species, setSpecies] = useState<string>(initialValues?.species ?? '')
+  const [breed, setBreed] = useState<string>(initialValues?.breed ?? '')
   const [errorMsg, setErrorMsg] = useState<string>('')
 
-  const petId: string | null = initialValues?.petId  ? initialValues?.petId : null
+  const petId: string | null = initialValues?.petId ?? null
 
   
   const addPhoto = async (): Promise<void> => {

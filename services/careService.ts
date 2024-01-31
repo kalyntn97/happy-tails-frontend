@@ -15,7 +15,7 @@ export interface Tracker {
 
 export interface Care {
   _id: string
-  pets: string[]
+  pets: Pet[]
   name: string
   times: number
   frequency: 'Daily' | 'Weekly' | 'Monthly' | 'Yearly'

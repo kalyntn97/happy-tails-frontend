@@ -1,6 +1,6 @@
 //npm
 import { useRef, useState, useEffect } from "react"
-import { ScrollView, StyleSheet, Text, View, Image, ImageStyle, TouchableOpacity } from "react-native"
+import { ScrollView, StyleSheet, Text, View, Image, ImageStyle, TouchableOpacity, Pressable } from "react-native"
 //utils
 import * as careUtils from "../utils/careUtils"
 import { Tracker } from "../services/careService"
@@ -13,12 +13,9 @@ const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone }) 
     ({ date: null, month: null, year: null, day: null, daysInMonth: null })
 
   const handleCheck = async (careId: string, tracker: Tracker, index: number) => {
-    const result = tracker.done[index] === 1
+    tracker.done[index] === 1
       ? await onUncheckDone(careId, tracker._id, index)
       : await onCheckDone(careId, tracker._id, index)
-    if (result && result.error) {
-      alert(result.status)
-    }
   }
 
   const scrollViewRef = useRef(null)
@@ -26,21 +23,19 @@ const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone }) 
   let dailyContainer = []
     for (let i = 0; i < today.daysInMonth; i++) {
       dailyContainer.push(
-        <TouchableOpacity 
+        <View
           style={styles.dailyBox} key={i}
-          disabled={i + 1 !== today.date}
-          onPress={() => handleCheck(careId, tracker, index)}
         >
           <Text 
             style={[styles.dailyText, { color: i + 1 === today.date ? Colors.darkPink : 'black'}]}>
               {careUtils.getDayOfWeek(new Date(today.year, today.month - 1, i + 1)).slice(0, 3)}
           </Text>
           <Text style={[styles.dailyText, { color: i + 1 === today.date ? Colors.darkestPink : 'black', fontSize: 20 }]}>{i + 1}</Text>
-          {i + 1 === index && tracker.done[index] === 1
+          {i === index && tracker.done[index] === 1
             ? <Image source={require('../assets/icons/heart-filled.png')} style={styles.heart } />
             : <Image source={require('../assets/icons/heart-gray.png')} style={styles.heart } />
           }
-        </TouchableOpacity>
+        </View>
       )
     }
 
@@ -53,21 +48,25 @@ const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone }) 
 
     useEffect(() => {
       const { date, month, year, day, daysInMonth } = careUtils.getCurrentDate()
-      setToday({ date, month, year, day, daysInMonth })
+      setToday({ date: date, month: month, year: year, day: day, daysInMonth: daysInMonth })
     }, [today.date])
 
-  return (  
-    <ScrollView 
-    ref={scrollViewRef}
-    horizontal
-    style={styles.dailyContainer}
-    onContentSizeChange={scrollToToday} // default position
-    onMomentumScrollEnd={scrollToToday}
-    scrollEventThrottle={200}
-    decelerationRate="fast"
-  >
-    {dailyContainer}
-  </ScrollView>
+  return (
+    <Pressable
+      onPress={() => handleCheck(careId, tracker, index)}
+    >
+      <ScrollView 
+        ref={scrollViewRef}
+        horizontal
+        style={styles.dailyContainer}
+        onContentSizeChange={scrollToToday} // default position
+        onMomentumScrollEnd={scrollToToday}
+        scrollEventThrottle={200}
+        decelerationRate="fast"
+      >
+        {dailyContainer}
+      </ScrollView>
+    </Pressable>
   )
 }
  
@@ -91,12 +90,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   heart: {
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     opacity: 0.5,
     position: 'absolute',
-    bottom: 5,
-    left: 10,
+    bottom: 0,
+    left: 8,
   },
 })
 
