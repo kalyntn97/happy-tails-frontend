@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react"
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
 //services & utils
-import { Tracker } from "../services/careService"
 import * as careUtils from '../utils/careUtils'
+import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -17,8 +17,8 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
   const [barWidth, setBarWidth] = useState<number>(0)
   const [barHeightUnit, setBarHeightUnit] = useState<number>(0)
 
-  const { month, year, currMonth, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
-  const { week: currWeek } = careUtils.getCurrentDate()
+  const { trackerMonthName, trackerYear, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
+  const { currWeek, monthIdx } = useCurrentDayInfo()
 
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
@@ -46,7 +46,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
             ? { fontSize: 15, width: chartHeight * 0.3 }
             : { fontSize: 30, width: chartHeight}
           ]}>
-            {year}
+            {trackerYear}
           </Text>
         </View>
         <View style={[styles.header, { height: '70%' }]}>
@@ -55,7 +55,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
             { color: isCurrent ? Colors.darkPink : 'black' },
             { fontSize: 20, width: chartHeight * 0.7 }
           ]}>
-            {month}
+            {trackerMonthName}
           </Text>
         </View>
       </View>
@@ -77,7 +77,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
               frequency === 'Monthly' ? { bottom: -40, left: -55 } : { bottom: -50, left: -45 },
               ( 
                 (currWeek === idx + 1 && isCurrent && frequency === 'Weekly') 
-                || (currMonth === idx + 1 && isCurrent && frequency === 'Monthly') 
+                || (monthIdx === idx + 1 && isCurrent && frequency === 'Monthly') 
               ) ? { color: Colors.darkPink, fontWeight: 'bold' } 
               : {}
             ]}>
@@ -86,7 +86,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
                   : careUtils.getMonth(idx + 1).slice(0, 3)
                 }
             </Text>
-           
+
             <Text style={[
               styles.value, 
               { fontSize: frequency === 'Weekly' ? 15 : 10 }

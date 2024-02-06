@@ -1,49 +1,32 @@
 import * as SecureStore from 'expo-secure-store'
-import JWT from 'expo-jwt'
+import base64 from 'base-64'
+import utf8 from 'utf8'
 
-const TOKEN_KEY = 'my-jwt'
+const TOKEN_KEY = 'happy-tails'
 
 export async function getToken(): Promise<string | null> {
   let token: string = await SecureStore.getItemAsync(TOKEN_KEY)
+  if (!token) {
+    console.log('No token stored. Logging out...')
+    return null
+  }
+  if (!tokenIsValid(token)) {
+    console.log('Token is expired or invalid. Logging out...')
+    return null
+  }
   return token
 }
 
-export async function checkTokenExpiration(): Promise<boolean> {
+export function tokenIsValid(token: string): boolean {
   try {
-    const storedToken = await getToken()
-    console.log('stored', storedToken)
-    if (!storedToken) {
-      console.log('No Token found.')
-      return true
-    }
-    const expirationTime = getExpirationTime(storedToken)
-    console.log('exp time', expirationTime)
-    if (new Date(expirationTime) < new Date()) {
-      console.log('Token is expired. Logging out')
-      return true
-    }
+    const expirationTime = JSON.parse(base64.decode(token.split('.')[1])).exp * 1000
     if (!expirationTime) {
-      console.log('Token error. Logging out.')
-      return true
+      console.error('Invalid token structure.')
+      return false
     }
-    console.log('Token is not expired.')
+    return new Date(expirationTime) > new Date()
+  } catch (error) {
+    console.error('Error decoding token: ', error)
     return false
-  } catch (error) {
-    console.log('Error checking token expiration', error)
-  }
-
-}
-
-export function getExpirationTime(token: string): number {
-  try {
-    const decoded = JWT.decode<Record<string, number>>(token, TOKEN_KEY)
-    if (decoded) {
-      console.log('decoded tokenService', decoded)
-      return decoded.exp * 1000 //s to ms
-    } else {
-      console.log('Invalid token structure', decoded)
-    }
-  } catch (error) {
-    console.log('Error decoding token', error)
   }
 }

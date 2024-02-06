@@ -9,11 +9,12 @@ interface AuthProps {
   onRegister?: (name: string, username: string, password: string) => Promise<any>
   onLogin?: (username: string, password: string) => Promise<any>
   onLogout?: () => Promise<any>
+  onChangePassword?: (username: string, newPassword: string) => Promise<any>
+  onChangeUsername?: (newUsername: string, password: string) => Promise<any>
 }
 
-const TOKEN_KEY = 'my-jwt'
+const TOKEN_KEY = 'happy-tails'
 export const BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL
-// export const API_URL='https://api.developbetterapps.com'
 const AuthContext = createContext<AuthProps>({})
 
 export const useAuth = () => {
@@ -27,80 +28,85 @@ export const AuthProvider = ({children}: any) => {
   })
 
   useEffect(() => {
-    let isMounted = true
     const loadToken = async () => {
-      const isExpired = await tokenService.checkTokenExpiration()
-      console.log('Token is expired', isExpired)
-      if (isMounted && !isExpired) {
-        const token = await SecureStore.getItemAsync(TOKEN_KEY)
-        console.log('file: AuthContext.tsx:32 ~ load token ~ token:', token)
-        if (token) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-          setAuthState({
-            token: token, authenticated: true
-          })
-        }
-      } else if (isMounted) {
-        await SecureStore.deleteItemAsync(TOKEN_KEY)
-        axios.defaults.headers.common['Authorization'] = ''
+      const token: string| null = await tokenService.getToken()
+      console.log('file: AuthContext.tsx:31 ~ load token ~ token:', token)
+      if (token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         setAuthState({
-        token: null, authenticated: false
-      })
+          token: token, authenticated: true
+        })
       }
     }
     loadToken()
-    return () => {
-      isMounted = false
-    }
   }, [])
 
   const register = async (name: string, username: string, password: string) => {
     try {
       return await axios.post(`${BASE_URL}/signup`, { name, username, password })
     } catch (error) {
-      console.error('Register Error:', error);
-      return { error: true, msg: (error as any).response?.data || 'An error occurred'}
+      console.error('Register Error:', error)
     }
   }
 
   const login = async (username: string, password: string) => {
     try {
-      const result = await axios.post(
-        `${BASE_URL}/login`, 
-        { username, password }
-      )
-      console.log('file: AuthContext.tsx:41 ~ login ~ result:', result)
+      const result = await axios.post(`${BASE_URL}/login`, { username, password })
+      console.log('file: AuthContext.tsx:58 ~ login ~ result:', result)
+
+      axios.defaults.headers.common['Authorization'] = `Bearer ${result.data.token}`
       setAuthState({
         token: result.data.token, authenticated: true
       })
-      axios.defaults.headers.common['Authorization'] = `Bearer ${result.data.token}`
       await SecureStore.setItemAsync(TOKEN_KEY, result.data.token)
       return result
     } catch (error) {
-      console.error('Login Error:', error);
-      return { error: true, msg: (error as any).response?.data || 'An error occurred' }
+      console.error('Login Error:', error)
     }
   }
 
   const logout = async () => {
     try {
       const result = await axios.post(`${BASE_URL}/logout`)
-      console.log('file: AuthContext.tsx:41 ~ logout ~ result:', result)
+      console.log('file: AuthContext.tsx:74 ~ logout ~ result:', result)
+
       await SecureStore.deleteItemAsync(TOKEN_KEY)
       axios.defaults.headers.common['Authorization'] = ''
       setAuthState({
         token: null, authenticated: false
       })
     } catch (error) {
-      console.error('Logout Error:', error);
-      return { error: true, msg: (error as any).response?.data || 'An error occurred' }
+      console.error('Logout Error:', error)
     }
   }
+
+  const changePassword = async (username: string, newPassword: string) => {
+    try {
+      const result = await axios.patch(`${BASE_URL}/change-password`, { username, newPassword })
+      console.log('file: AuthContext.tsx:84 ~ changePassword ~ result:', result)
+      return result
+    } catch (error) {
+      console.error('Change Password Error: ', error)
+    }
+  }
+
+  const changeUsername = async (newUsername: string, password: string) => {
+    try {
+      const result = await axios.patch(`${BASE_URL}/change-username`, { newUsername, password })
+      console.log('file: AuthContext.tsx:95 ~ changePassword ~ result:', result)
+      return result
+    } catch (error) {
+      console.error('Change Username Error: ', error)
+    }
+  }
+
 
   const value = { 
     onRegister: register,
     onLogin: login,
     onLogout: logout,
+    onChangePassword: changePassword,
+    onChangeUsername: changeUsername,
     authState,
   }
 

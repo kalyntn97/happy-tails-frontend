@@ -4,19 +4,19 @@ import { View, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimension
 import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from "../context/AuthContext"
-import { useProfileContext } from "../context/ProfileContext"
+import { useCareContext } from "../context/CareContext"
 //components
 import CareFeed from "../components/CareFeed"
 //utils & services
 import * as careUtils from '../utils/careUtils'
+import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
-import { usePetContext } from "../context/PetContext"
+import { Buttons, Typography, Colors, Forms, Spacing } from '../styles'
 
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
-  const { profile } = useProfileContext()
-  const [today, setToday] = useState({ currDate: 1, currMonth: 'January', currYear: 2024, currWeek: 1 })
+  const { careCards } = useCareContext()
+  const today = useCurrentDayInfo()
 
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
@@ -29,26 +29,26 @@ const HomeScreen: React.FC = ({ navigation }) => {
     }
   }
 
-  useEffect(() => {
-    const fetchToday = () => {
-      const { date, month, year, week } = careUtils.getCurrentDate()
-      const currMonth = careUtils.getMonth(month)
-      setToday({ currDate: date, currMonth: currMonth, monthIdx: month, currYear: year, currWeek: week })
-    }
-    fetchToday()
-  }, [authState, profile])
-
   return ( 
     <>
-      {authState?.authenticated ? (
+      {authState.authenticated ? (
         <>
-          {profile && 
-            <View style={[styles.screen, { minHeight: centerHeight }]}>
-              <Image source={require('../assets/images/happy-tails-banner.png')} style={{ width: '100%', maxHeight: windowHeight * 0.2 }} />
-              <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{today.currMonth} {today.currDate} {today.currYear}</Text>
-              <CareFeed today={today} navigation={navigation}/>
-            </View>
-          }
+          <View style={[styles.screen, { minHeight: centerHeight }]}>
+            <Image source={require('../assets/images/happy-tails-banner.png')} style={{ width: '100%', maxHeight: windowHeight * 0.2 }} />
+            <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{today.currMonth} {today.currDate} {today.currYear}</Text>
+        
+            {careCards.length ?
+              <CareFeed today={today} navigation={navigation} careCards={careCards}/>
+              : 
+                <View style={styles.emptyMsgContainer}> 
+                  <Text style={styles.msg}>No tasks to manage.</Text>
+                  <TouchableOpacity style={styles.emptyMsgBtn} onPress={() => navigation.navigate('Care', { screen: 'Create' })}>
+                    <Text style={[styles.msg, { color: Colors.darkPink, textDecorationLine: 'underline' }]}>Start by adding task to stay organized.</Text>
+                    <Image source={require('../assets/icons/hand.png')} style={styles.msgIcon} />
+                  </TouchableOpacity>
+                </View>
+            }
+          </View>
         </>
       ) : (
         <ScrollView
@@ -133,9 +133,25 @@ const styles = StyleSheet.create({
     marginTop: 10,
     
   },
+  emptyMsgBtn: {
+    ...Spacing.flexRow,
+  },
   btnText: {
     ...Buttons.buttonText,
     fontSize: 20,
+  },
+  msgIcon: {
+    ...Forms.smallIcon,
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    transform: [{rotate: '-30deg'}]
+  },
+  msg: {
+    ...Typography.xSmallHeader,
+  },
+  emptyMsgContainer: {
+    ...Spacing.flexColumn,
   },
   link: {
     ...Buttons.base,

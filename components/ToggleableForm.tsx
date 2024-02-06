@@ -4,20 +4,22 @@ import { useState } from "react"
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface FormProps {
+  visible: string
   title: string
   content: any
 }
 
-const ToggleableForm: React.FC<FormProps> = ({ title, content }) => {
-  const [isVisible, setIsVisible] = useState(false)
+const ToggleableForm: React.FC<FormProps> = ({ visible, title, content }) => {
   
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.mainBtn} onPress={() => setIsVisible(!isVisible)}>
+      <View style={styles.mainBtn}>
         <Image source={require('../assets/icons/dropdownRound.png')} style={styles.icon } />
-        <Text style={[styles.btnText, { color: isVisible ? Colors.darkPink : 'black' }]}>{title}</Text>
-      </TouchableOpacity>
-      {isVisible && content}
+        <Text style={[styles.btnText, { color: visible === title ? Colors.darkPink : 'black' }]}>
+          {title}
+        </Text>
+      </View>
+      {visible === title && content}
     </View>
   )
 }
@@ -31,7 +33,8 @@ const styles = StyleSheet.create({
   },
   mainBtn: {
     ...Spacing.flexRow,
-    margin: 5
+    margin: 5,
+    alignSelf: 'flex-start',
   },
   btnText: {
     ...Typography.xSmallHeader,

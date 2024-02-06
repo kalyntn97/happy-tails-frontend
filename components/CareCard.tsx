@@ -26,13 +26,11 @@ const CareCard = ({ care, navigation }) => {
 
   const latestTracker = careCard.trackers[careCard.trackers.length - 1]
   const { isCurrent } = careUtils.getDateTimeFromTracker(latestTracker.name)
-  !isCurrent && console.log('new month or year has passed...', isCurrent)
   
   useEffect(() => {
     const autoUpdateCareCard = async () => {
       if ( !isCurrent ) {
         const data = await careService.autoCreateTracker(careCard._id)
-        console.log('updated CareCard data', data)
         setCareCard(data)
       }
     }

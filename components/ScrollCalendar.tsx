@@ -3,82 +3,105 @@ import { useRef, useState, useEffect } from "react"
 import { ScrollView, StyleSheet, Text, View, Image, ImageStyle, TouchableOpacity, Pressable } from "react-native"
 //utils
 import * as careUtils from "../utils/careUtils"
+import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 import { Tracker } from "../services/careService"
 //styles
 import { Colors, Forms } from '../styles'
 
-const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone }) => {
-  const [today, setToday] = useState
-    <{date: number, month: number, year: number, day: string, daysInMonth: number }>
-    ({ date: null, month: null, year: null, day: null, daysInMonth: null })
+const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone, frequency }) => {
+  const { currDate, currYear, monthIdx, currWeek, daysInMonth, weeksInMonth } = useCurrentDayInfo()
 
-  const handleCheck = async (careId: string, tracker: Tracker, index: number) => {
+  const handleCheck = async () => {
     tracker.done[index] === 1
-      ? await onUncheckDone(careId, tracker._id, index)
-      : await onCheckDone(careId, tracker._id, index)
+      ? await onUncheckDone!(careId, tracker._id, index)
+      : await onCheckDone!(careId, tracker._id, index)
   }
 
   const scrollViewRef = useRef(null)
+  
+  let containerNumber: number, currContainer: number
 
-  let dailyContainer = []
-    for (let i = 0; i < today.daysInMonth; i++) {
-      dailyContainer.push(
-        <View
-          style={styles.dailyBox} key={i}
+  switch (frequency) {
+    case 'Daily':
+      containerNumber = daysInMonth
+      currContainer = currDate
+      break
+    case 'Weekly':
+      containerNumber = weeksInMonth
+      currContainer = currWeek
+      break
+    case 'Monthly':
+      containerNumber = 12
+      currContainer = monthIdx
+      break
+    default: 
+      break
+  }
+
+  let wrapper = []
+    for (let i = 0; i < containerNumber; i++) {
+      wrapper.push(
+        <TouchableOpacity
+          style={styles.square} key={i}
+          disabled={i + 1 !== currContainer}
+          onPress={handleCheck}
         >
-          <Text 
-            style={[styles.dailyText, { color: i + 1 === today.date ? Colors.darkPink : 'black'}]}>
-              {careUtils.getDayOfWeek(new Date(today.year, today.month - 1, i + 1)).slice(0, 3)}
-          </Text>
-          <Text style={[styles.dailyText, { color: i + 1 === today.date ? Colors.darkestPink : 'black', fontSize: 20 }]}>{i + 1}</Text>
+          {frequency === 'Daily' ?
+            <>
+              <Text style={[styles.text, { color: i + 1 === currDate ? Colors.darkPink : 'black'}]}>
+                {careUtils.getDayOfWeek(new Date(currYear, monthIdx - 1, i + 1)).slice(0, 3)}
+              </Text>
+              <Text style={[styles.text, { color: i + 1 === currDate ? Colors.darkestPink : 'black', fontSize: 20, zIndex: 2 }]}>{i + 1}</Text>
+            </>
+          : frequency === 'Weekly' ? 
+            <Text style={[styles.text, styles.topText, { color: i + 1 === currWeek ? Colors.darkPink : 'black' }]}>W{i + 1}</Text>
+          : 
+            <Text style={[styles.text, styles.topText, { color: i + 1 === monthIdx ? Colors.darkPink : 'black'}]}>
+              {careUtils.getMonth(i + 1).slice(0, 3)}
+            </Text>
+          }
+
           {i === index && tracker.done[index] === 1
-            ? <Image source={require('../assets/icons/heart-filled.png')} style={styles.heart } />
+            ? <Image source={require('../assets/icons/heart-filled.png')} 
+                style={[styles.heart, { opacity: frequency === 'Daily' ? 0.5 : 1 }]} 
+              />
             : <Image source={require('../assets/icons/heart-gray.png')} style={styles.heart } />
           }
-        </View>
+        </TouchableOpacity>
       )
     }
 
     const scrollToToday = () => {
       if (scrollViewRef.current) {
-        const offset = today.date * 55 - 165 //daily-box width
+        const offset = currDate * 55 - 165 //daily-box width
         scrollViewRef.current.scrollTo({ x: offset, animated: true })
       }
     }
 
-    useEffect(() => {
-      const { date, month, year, day, daysInMonth } = careUtils.getCurrentDate()
-      setToday({ date: date, month: month, year: year, day: day, daysInMonth: daysInMonth })
-    }, [today.date])
-
   return (
-    <Pressable
-      onPress={() => handleCheck(careId, tracker, index)}
+    <ScrollView 
+      ref={scrollViewRef}
+      horizontal
+      style={styles.wrapper}
+      onContentSizeChange={scrollToToday} // default position
+      onMomentumScrollEnd={scrollToToday}
+      scrollEventThrottle={200}
+      decelerationRate="fast"
     >
-      <ScrollView 
-        ref={scrollViewRef}
-        horizontal
-        style={styles.dailyContainer}
-        onContentSizeChange={scrollToToday} // default position
-        onMomentumScrollEnd={scrollToToday}
-        scrollEventThrottle={200}
-        decelerationRate="fast"
-      >
-        {dailyContainer}
-      </ScrollView>
-    </Pressable>
+      {wrapper}
+    </ScrollView>
   )
 }
  
 const styles = StyleSheet.create({
-  dailyContainer: {
+  wrapper: {
     height: '100%',
     borderRadius: 8,
     borderWidth: 2,
     borderColor: Colors.pink,
     backgroundColor: Colors.lightestPink
   },
-  dailyBox: {
+  square: {
     width: 55,
     height: '100%',
     alignItems: 'center',
@@ -86,13 +109,16 @@ const styles = StyleSheet.create({
     borderRightWidth: 3,
     borderColor: Colors.white
   },
-  dailyText: {
+  text: {
     fontWeight: 'bold'
+  },
+  topText: {
+    position: 'absolute',
+    top: 5,
   },
   heart: {
     width: 35,
     height: 35,
-    opacity: 0.5,
     position: 'absolute',
     bottom: 0,
     left: 8,

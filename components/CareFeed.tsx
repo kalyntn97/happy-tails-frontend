@@ -1,5 +1,5 @@
 //npm
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native"
 //context
 import { useCareContext } from "../context/CareContext"
@@ -13,12 +13,12 @@ import { Buttons, Spacing, Forms, Colors } from '../styles'
 interface CareFeedProps {
   today: { currDate: number, currMonth: string, monthIdx: number, currYear: number, currWeek: number }
   navigation: any
+  careCards: Care[]
 }
 
-const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
+const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => {
   const [selected, setSelected] = useState<string>('day')
-  const { careCards } = useCareContext()
-  
+
   const sortedCareCards: { [key: string]: Care[] } = careCards.reduce((result, careCard) => {
     const { frequency } = careCard
     result[frequency] = result[frequency] || []
@@ -121,7 +121,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
             <ScrollPetList petArray={y.pets} size='mini' />
           </TouchableOpacity>
         )}
-        
+  
         <TouchableOpacity style={styles.mainBtn} 
           onPress={() => navigation.navigate('Care', { 
             screen: 'Index', 
@@ -130,7 +130,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
                 selected === 'day' ? 0 : selected === 'week' ? 1 : selected === 'month' ? 2 : 3,
               itemIndex: 0 
             } 
-          })}>
+        })}>
           <Text style={styles.btnText}>Manage Tasks</Text>
         </TouchableOpacity>
       </ScrollView>

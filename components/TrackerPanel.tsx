@@ -4,7 +4,6 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 //services & utils
 import { Tracker } from "../services/careService"
 import { Care } from "../services/careService"
-import * as careService from '../services/careService'
 import * as careUtils from "../utils/careUtils"
 //components
 import ScrollCalendar from "./ScrollCalendar"
@@ -12,6 +11,7 @@ import ScrollCalendar from "./ScrollCalendar"
 import { useCareContext } from "../context/CareContext"
 //styles
 import { Spacing, Typography, Colors } from '../styles'
+import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 
 interface CurrentTrackerProps {
   care: Care
@@ -23,11 +23,10 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
 
   const {frequency: freq, times, _id: careId } = care
   const {onCheckDone, onUncheckDone } = useCareContext()
-  // get month and year of current tracker from name
-  const { year: currYear, month: currMonth } = careUtils.getDateTimeFromTracker(tracker.name)
-  const { month } = careUtils.getCurrentDate()
-  const thisMonth = careUtils.getMonth(month)
 
+  // get month and year of current tracker from name
+  const { currMonth, currYear } = useCurrentDayInfo()
+  
   const checkDone = async (careId: string, trackerId: string, index: number) => {
     const updatedTracker = await onCheckDone!(careId, trackerId, index)
     setTracker(updatedTracker)
@@ -53,7 +52,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
       <Text style={styles.title}>
         {freq === 'Daily' ? 'Today' 
           : freq === 'Weekly' ? `Week ${index + 1}` 
-          : freq === 'Monthly' ? thisMonth 
+          : freq === 'Monthly' ? currMonth
           : currYear
         }
       </Text>
@@ -66,10 +65,10 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
           <Image source={require('../assets/icons/hand.png')} style={styles.scrollCalendarIcon} />
         }
       </Text>
-      {freq === 'Daily' && times === 1 
+      {times === 1 && freq !== 'Yearly'
         ? <>
           <View style={styles.scrollCalendar}>
-            <ScrollCalendar careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone}/>
+            <ScrollCalendar careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone} frequency={freq} />
           </View>
         </> : <>
           <View style={styles.countBox}>
@@ -80,6 +79,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
             >
               <Image source={require('../assets/icons/minus.png')} style={styles.icon } />
             </TouchableOpacity>
+
             <Text style={[styles.count, { color: times === tracker.done[index] ? Colors.green : Colors.red }]}>
               {tracker.done[index]} / {times}
             </Text>
