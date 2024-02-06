@@ -44,7 +44,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={[styles.container, { backgroundColor: showForm === 'password' ? Colors.lightPink : Colors.white }]}>
+      <View style={[styles.container, { backgroundColor: showForm === 'password' ? Colors.lightPink : showForm !== 'password' ? Colors.lightPink : Colors.white }]}>
         <Text style={styles.errorMsg}>{errorMsg}</Text>
         <View style={styles.form}>
           <TextInput 
