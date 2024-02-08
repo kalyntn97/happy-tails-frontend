@@ -1,6 +1,6 @@
 //npm modules
 import { useState } from "react"
-import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from "react-native"
+import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert } from "react-native"
 //component
 import AccountForm from "../components/AccountForm"
 import ToggleableForm from "../components/ToggleableForm"
@@ -15,7 +15,7 @@ interface AccountProps {
 }
 
 const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
-  const { onLogout, onChangePassword, onChangeUsername } = useAuth()
+  const { onLogout, onChangePassword, onChangeUsername, onDeleteAccount } = useAuth()
   const [visible, setVisible] = useState<string>('')
 
   const titleData = ['Update account information', 'Delete account and all pet profiles', 'Log out of account']
@@ -26,6 +26,31 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
     if (result && result.error) {
       alert(result.status)
     }
+  }
+
+  
+
+  const DeleteAccountForm = () => {
+    const deleteProfile = async (username: string, password: string) => {
+      await onDeleteAccount!(username, password)
+    }
+
+    const showDeleteConfirmDialog = (username: string, password: string) => {
+      return Alert.alert(
+        'Are you sure?',
+        `Delete your account? This is irreversible.`, 
+        [
+          { text: 'Yes', onPress: () => { deleteProfile(username, password) }},
+          { text: 'No' }
+        ]
+      )
+    }
+
+    return (
+      <View style={styles.deleteForm}>
+        <AccountForm showForm="delete" onSubmit={showDeleteConfirmDialog}/>
+      </View>
+    )
   }
 
   const UpdateAccountForm = () => {
@@ -39,7 +64,7 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
     }
 
     return (
-      <View style={styles.formContainer}>
+      <View style={styles.updateForm}>
         <View style={styles.btnContainer}>
           <TouchableOpacity 
             onPress={() => setShowForm('password')} 
@@ -80,10 +105,14 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
         <ToggleableForm
           visible={visible}
           title={titleData[1]}
-          content={ 
-            <TouchableOpacity style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.red }]}>
-              <Text style={styles.btnText}>Delete account</Text>
-            </TouchableOpacity>
+          content={
+            <DeleteAccountForm />
+            // <TouchableOpacity 
+            //   style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.red }]}
+            //   onPress={showDeleteConfirmDialog}
+            // >
+            //   <Text style={styles.btnText}>Delete account</Text>
+            // </TouchableOpacity>
           }
         />
       </Pressable>
@@ -117,11 +146,16 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  formContainer: {
+  updateForm: {
+    width: '90%',
+    height: 400,
+    alignItems: 'center',
+  },
+  deleteForm: {
     width: '90%',
     height: 350,
-    alignItems: 'center',
-  }, 
+    justifyContent: 'center'
+  },
   btnText: {
     ...Typography.xSmallHeader,
     margin: 0,

@@ -11,6 +11,7 @@ interface AuthProps {
   onLogout?: () => Promise<any>
   onChangePassword?: (username: string, newPassword: string) => Promise<any>
   onChangeUsername?: (newUsername: string, password: string) => Promise<any>
+  onDeleteAccount?: (username: string, password: string) => Promise<any>
 }
 
 const TOKEN_KEY = 'happy-tails'
@@ -100,6 +101,21 @@ export const AuthProvider = ({children}: any) => {
     }
   }
 
+  const deleteAccount = async (username:string, password: string) => {
+    try {
+      const result = await axios.post(`${BASE_URL}/delete-account`, { username, password })
+      console.log('file: AuthContext.tsx:106 ~ deleteAccount ~ result:', result)
+      await SecureStore.deleteItemAsync(TOKEN_KEY)
+      axios.defaults.headers.common['Authorization'] = ''
+      setAuthState({
+        token: null, authenticated: false
+      })
+      return result
+    } catch (error) {
+      console.error('Delete Account Error: ', error)
+    }
+  }
+
 
   const value = { 
     onRegister: register,
@@ -107,6 +123,7 @@ export const AuthProvider = ({children}: any) => {
     onLogout: logout,
     onChangePassword: changePassword,
     onChangeUsername: changeUsername,
+    onDeleteAccount: deleteAccount,
     authState,
   }
 

@@ -30,25 +30,25 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
     <View style={styles.container}>
       <View style={styles.iconMenuContainer}>
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
-          <Text style={styles.taskCount}>{sortedCareCards['Daily'].length}</Text>
+          <Text style={styles.taskCount}>{sortedCareCards['Daily']?.length ?? 0}</Text>
           <Image source={require('../assets/icons/day.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'day' && styles.selected]}>Today</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('week')}>
-          <Text style={styles.taskCount}>{sortedCareCards['Weekly'].length}</Text>
+          <Text style={styles.taskCount}>{sortedCareCards['Weekly']?.length ?? 0}</Text>
           <Image source={require('../assets/icons/week.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'week' && styles.selected]}>This Week</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('month')}>
-          <Text style={styles.taskCount}>{sortedCareCards['Monthly'].length}</Text>
+          <Text style={styles.taskCount}>{sortedCareCards['Monthly']?.length ?? 0}</Text>
           <Image source={require('../assets/icons/month.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'month' && styles.selected]}>This Month</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('year')}>
-          <Text style={styles.taskCount}>{sortedCareCards['Yearly'].length}</Text>
+          <Text style={styles.taskCount}>{sortedCareCards['Yearly']?.length ?? 0}</Text>
           <Image source={require('../assets/icons/year.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'year' && styles.selected]}>This Year</Text>
         </TouchableOpacity>
@@ -57,7 +57,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
         style={{ width: '100%', height: '90%' }}
         contentContainerStyle={styles.taskContainer}
       >
-        {selected === 'day' && sortedCareCards['Daily'].map((d, idx) =>
+        {selected === 'day' && sortedCareCards['Daily']?.map((d, idx) =>
           <TouchableOpacity style={styles.task} key={`d-${idx}`}
             onPress={() => navigation.navigate('Care', { 
               screen: 'Index', params: {sectionIndex: 0, itemIndex: idx } 
@@ -73,7 +73,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
           </TouchableOpacity>
         )}
 
-        {selected === 'week' && sortedCareCards['Weekly'].map((w, idx) =>
+        {selected === 'week' && sortedCareCards['Weekly']?.map((w, idx) =>
           <TouchableOpacity style={styles.task} key={`w-${idx}`}
             onPress={() => navigation.navigate('Care', { 
               screen: 'Index', params: {sectionIndex: 1, itemIndex: idx } 
@@ -89,7 +89,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
           </TouchableOpacity>
         )}
 
-        {selected === 'month' && sortedCareCards['Monthly'].map((m, idx) =>
+        {selected === 'month' && sortedCareCards['Monthly']?.map((m, idx) =>
           <TouchableOpacity style={styles.task} key={`m-${idx}`}
             onPress={() => navigation.navigate('Care', { 
               screen: 'Index', params: {sectionIndex: 2, itemIndex: idx } 
@@ -106,7 +106,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
         )}
 
         
-        {selected === 'year' && sortedCareCards['Yearly'].map((y, idx) => 
+        {selected === 'year' && sortedCareCards['Yearly']?.map((y, idx) => 
           <TouchableOpacity style={styles.task} key={`y-${idx}`}
             onPress={() => navigation.navigate('Care', { 
               screen: 'Index', params: {sectionIndex: 3, itemIndex: idx } 

@@ -5,6 +5,7 @@ import { Keyboard, StyleSheet, View, Text, TextInput, TouchableOpacity, Touchabl
 import { useAuth } from "../context/AuthContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { show } from "../services/petService"
 
 interface AccountFormProps {
   showForm: string
@@ -49,7 +50,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
         <View style={styles.form}>
           <TextInput 
             style={styles.input}
-            placeholder={showForm === 'password' ? 'Current Username' : 'New Username'}
+            placeholder={showForm === 'username' ? 'New Username' : 'Current Username'}
             onChangeText={(text: string) => setUsername(text)}
             value={username}
             autoComplete="off"
@@ -80,7 +81,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
           />
           <View style={styles.btnContainer}>
             <TouchableOpacity style={styles.mainBtn} onPress={handleSubmit}>
-              <Text style={styles.btnText}>Save</Text>
+              <Text style={styles.btnText}>Submit</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -102,12 +103,11 @@ const styles = StyleSheet.create({
     color: Colors.red,
     fontWeight: 'bold',
     margin: 5,
-    height: '5%'
   },
   form: {
     ...Forms.form,
     width: '100%',
-    height: '85%'
+    height: '90%'
   },
   input: {
     ...Forms.input,

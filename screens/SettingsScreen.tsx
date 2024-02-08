@@ -64,9 +64,6 @@ const SettingsScreen = ({ navigation, route }) => {
           >
             <Text style={styles.btnText}>Edit</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} >
-            <Text style={styles.btnText}>Delete</Text>
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -118,7 +115,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   mainBtn : {
-    ...Buttons.xSmallRounded
+    ...Buttons.xSmallRounded,
   },
   btnText: {
     ...Buttons.buttonText
