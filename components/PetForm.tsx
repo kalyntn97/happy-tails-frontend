@@ -30,8 +30,6 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
       aspect: [4,3],
       quality: 1,
     })
-    console.log(JSON.stringify(_image))
-
     if (!_image.canceled) {
       setPhoto(_image.assets[0].uri)
     }

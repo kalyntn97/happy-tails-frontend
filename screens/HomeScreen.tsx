@@ -1,6 +1,6 @@
 //npm modules
 import { useRef, useState, useEffect } from "react"
-import { View, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimensions, ScrollView, Image, ImageStyle } from "react-native"
+import { View, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimensions, ScrollView, Image, ImageStyle, SafeAreaView, StatusBar } from "react-native"
 import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from "../context/AuthContext"
@@ -30,9 +30,10 @@ const HomeScreen: React.FC = ({ navigation }) => {
   }
 
   return ( 
-    <>
+    <SafeAreaView>
       {authState.authenticated ? (
         <>
+          <StatusBar barStyle="dark-content" />
           <View style={[styles.screen, { minHeight: centerHeight }]}>
             <Image source={require('../assets/images/happy-tails-banner.png')} style={{ width: '100%', maxHeight: windowHeight * 0.2 }} />
             <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{today.currMonth} {today.currDate} {today.currYear}</Text>
@@ -90,7 +91,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
           </View>
         </ScrollView>
       )}
-    </>
+    </SafeAreaView>
   )
 }
 

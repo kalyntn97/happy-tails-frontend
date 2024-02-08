@@ -71,9 +71,9 @@ const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone, fr
       )
     }
 
-    const scrollToToday = () => {
+    const scrollToPos = () => {
       if (scrollViewRef.current) {
-        const offset = currDate * 55 - 165 //daily-box width
+        const offset = (frequency === 'Daily' ? currDate : frequency === 'Weekly' ? currWeek : monthIdx) * 55 - 165 //daily-box width
         scrollViewRef.current.scrollTo({ x: offset, animated: true })
       }
     }
@@ -83,8 +83,8 @@ const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone, fr
       ref={scrollViewRef}
       horizontal
       style={styles.wrapper}
-      onContentSizeChange={scrollToToday} // default position
-      onMomentumScrollEnd={scrollToToday}
+      onContentSizeChange={scrollToPos} // default position
+      onMomentumScrollEnd={scrollToPos}
       scrollEventThrottle={200}
       decelerationRate="fast"
     >

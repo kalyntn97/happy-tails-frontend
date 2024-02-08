@@ -68,13 +68,13 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
         <View style={styles.btnContainer}>
           <TouchableOpacity 
             onPress={() => setShowForm('password')} 
-            style={[styles.tabBtn, { backgroundColor: showForm === 'password' ? Colors.lightPink : Colors.white}]}>
+            style={[styles.tabBtn, { backgroundColor: showForm === 'password' ? Colors.white : Colors.lightestPink}]}>
             <Text style={[styles.btnText, { color: showForm === 'password' ? Colors.darkPink : 'black' }]}>Change Password</Text>
           </TouchableOpacity>
         
           <TouchableOpacity 
             onPress={() => setShowForm('username')} 
-            style={[styles.tabBtn, { backgroundColor: showForm === 'username' ? Colors.lightPink : Colors.white}]}>
+            style={[styles.tabBtn, { backgroundColor: showForm === 'username' ? Colors.white : Colors.lightestPink}]}>
             <Text style={[styles.btnText, { color: showForm === 'username' ? Colors.darkPink : 'black' }]}>Change Username</Text>
           </TouchableOpacity>
         </View>
@@ -105,15 +105,7 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
         <ToggleableForm
           visible={visible}
           title={titleData[1]}
-          content={
-            <DeleteAccountForm />
-            // <TouchableOpacity 
-            //   style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.red }]}
-            //   onPress={showDeleteConfirmDialog}
-            // >
-            //   <Text style={styles.btnText}>Delete account</Text>
-            // </TouchableOpacity>
-          }
+          content={ <DeleteAccountForm /> }
         />
       </Pressable>
 
@@ -137,6 +129,7 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   scrollView: {
     width: '100%',
+    backgroundColor: Colors.lightestPink,
   },
   scrollViewContent: {
     alignItems: 'center',
@@ -154,7 +147,7 @@ const styles = StyleSheet.create({
   deleteForm: {
     width: '90%',
     height: 350,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   btnText: {
     ...Typography.xSmallHeader,

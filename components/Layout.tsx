@@ -64,13 +64,14 @@ const Layout: React.FC = () => {
 
             return <Image source={icon} style={styles.icon } />
           },
-          tabBarStyle: { padding : 10, height: 100, backgroundColor: Colors.lightestPink},
+          tabBarStyle: { padding : 10, height: 100, backgroundColor: Colors.lightPink},
           headerStyle: {
-            backgroundColor: Colors.pink,
+            backgroundColor: Colors.lightPink,
           },
-          headerTintColor: Colors.lightestPink,
+          headerTintColor: Colors.darkPink,
           headerTitleStyle: {
-            fontSize: 20
+            fontSize: 20,
+            fontWeight: 'bold',
           }
         })}
       >
@@ -103,7 +104,10 @@ const Layout: React.FC = () => {
                   <HomeDrawer.Screen name='Welcome' component={HomeScreen} options={{ title: 'Welcome' }} />
                   <HomeDrawer.Screen name='Care' options={{ title: 'Pet Care' }}>
                     {() => (
-                      <CareStack.Navigator screenOptions={{ headerShown: false }}>
+                      <CareStack.Navigator screenOptions={{ 
+                        headerShown: false,
+                        contentStyle: { backgroundColor: Colors.lightestPink }
+                      }}>
                         <CareStack.Screen name='Index' component={CareIndexScreen} options={{ title: 'All Pet Care' }}/>
                         <CareStack.Screen name='Create' component={NewCareScreen} options={{ title: 'Add Tracker' }}/>
                         <CareStack.Screen name='Details' component={CareDetailsScreen} options={{ title: 'Care Details' }}/>
@@ -126,7 +130,9 @@ const Layout: React.FC = () => {
               // listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
             >
               {() => (
-                <PetStack.Navigator>
+                <PetStack.Navigator
+                  screenOptions={{ contentStyle: { backgroundColor: Colors.lightestPink }}}
+                >
                   <PetStack.Screen name='Index' component={PetIndexScreen} options={{ title: 'All Pets', headerShown: false }}/>
                   <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }}
                   />
@@ -165,7 +171,7 @@ const Layout: React.FC = () => {
                     drawerLabelStyle: styles.focusedText,
                     drawerActiveTintColor: Colors.darkPink,
                     drawerActiveBackgroundColor: Colors.lightPink,
-                    drawerStyle: { backgroundColor: Colors.lightestPink, width: '50%', height: '50%' },
+                    drawerStyle: { backgroundColor: Colors.lightestPink, width: '50%' },
                     header: ({ navigation }) => {
                       return (
                         <View style={styles.header}>
@@ -180,7 +186,9 @@ const Layout: React.FC = () => {
                 >
                   <AccountDrawer.Screen name='Settings' options={{ title: 'Profile' }}>
                     {() => (
-                      <SettingsStack.Navigator>
+                      <SettingsStack.Navigator
+                        screenOptions={{ contentStyle: { backgroundColor: Colors.lightestPink }}}
+                      >
                         <SettingsStack.Screen
                           name='Profile'
                           component={SettingsScreen}
@@ -229,7 +237,8 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     ...Spacing.flexRow,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: Colors.lightestPink,
   },
   headerText: {
     ...Typography.xSmallHeader,

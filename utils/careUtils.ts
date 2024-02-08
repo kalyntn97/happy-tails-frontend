@@ -79,7 +79,6 @@ export const careData = ['Teeth Brushing', 'Nail Clipping', 'Walk', 'Grooming', 
 
 export const getCurrentTrackerIndex = (frequency: string): number => {
   const { date, week, month } = getCurrentDate()
-  console.log(date, week ,month)
   switch (frequency) {
     case 'Daily':
       return date - 1 //current date, all 0-index
