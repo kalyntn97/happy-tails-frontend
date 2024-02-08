@@ -6,6 +6,8 @@ import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, Scr
 import { Care } from "../services/careService"
 import * as careService from '../services/careService'
 import * as careUtils from '../utils/careUtils'
+//context
+import { useCareContext } from "../context/CareContext"
 //components
 import ScrollPetList from "../components/ScrollPetList"
 import DailyChart from "../components/DailyChart"
@@ -20,19 +22,6 @@ interface CareDetailsProps {
   route: { params: { careId: string }}
 }
 
-export const testCare = {
-  _id: '1', name: 'Nail Clipping', frequency: 'Weekly', times: 3, 
-  pets: [
-    {_id: "65989b22aab8137117ea79e2", age: 3, breed: "Ragdoll", name: "Luna Stella Reyes-Nguyen", photo: "https://res.cloudinary.com/davz8l292/image/upload/v1704500003/happy-tails/zl1mn2rhuqa1x5keabda.jpg", species: "Cat",}, 
-    {_id: "65989b998504f2bca8d477ac", age: 3, breed: "British Shorthair", name: "Levi Milo Reyes-Nguyen", photo: "https://res.cloudinary.com/davz8l292/image/upload/v1704500133/happy-tails/vce2esffuxeqtxhsvcnt.jpg", species: "Cat",}
-  ],
-  trackers: [
-    {_id: '1', name: '12-2023', done: [2, 1, 0, 3, 0], total: 5 },
-    {_id: '2', name: '1-2024', done: [1,0,0,0,0], total: 5 },
-  ]
-  
-}
-
 const CareDetailsScreen = ({ navigation, route }) => {
   const [careCard, setCareCard] = useState<Care>({
     _id: '',
@@ -44,21 +33,21 @@ const CareDetailsScreen = ({ navigation, route }) => {
   })
 
   const { careId } = route.params
+  const { onDeleteCare } = useCareContext()
 
   const iconSource = careUtils.getIconSource(careCard.name)
 
   useEffect(() => {
     const fetchCareDetails = async () => {
       const data = await careService.show(careId)
-      console.log(data)
       setCareCard(data)
     }
     fetchCareDetails()
   }, [careId])
 
   const handleDeleteCareCard = async (careId: string) => {
-    const deletedCareCard = await careService.deleteCareCard(careId)
-    navigation.navigate('Index', { careId: deletedCareCard._id })
+    await onDeleteCare!(careId)
+    navigation.navigate('Index')
   }
 
   const showDeleteConfirmDialog = () => {
@@ -80,15 +69,23 @@ const CareDetailsScreen = ({ navigation, route }) => {
       decelerationRate="fast" 
     >
       <View style={styles.headerContainer}>
-        {/* <Image source={iconSource} style={styles.icon as ImageStyle} /> */}
         <Text style={styles.header}>{careCard.name}</Text>
-        <View style={styles.petContainer}>
-          <ScrollPetList petArray={careCard.pets} size='small' />
-
+        <View style={styles.careInfo}>
+          <Image source={iconSource} style={styles.careIcon} />
+          <Text style={styles.freq}>
+            {careCard.times} times / {
+              careCard.frequency === 'Daily' ? 'day' 
+              : careCard.frequency === 'Weekly' ? 'week' 
+              : careCard.frequency === 'Monthly' ? 'month' 
+              : 'year'
+            }
+          </Text>
           <TouchableOpacity style={styles.subBtn} onPress={() => navigation.goBack()}>
             <Text style={styles.btnText}>Go back</Text>
           </TouchableOpacity>
         </View>
+      
+        <ScrollPetList petArray={careCard.pets} size='small' />
 
         <View style={styles.btnContainer}>
           <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} onPress={() => navigation.navigate('Edit', { care: careCard })}>
@@ -126,15 +123,20 @@ const styles = StyleSheet.create({
   headerContainer: {
     ...Spacing.flexColumn,
     width: '100%',
-    // height: '20%'
   },
   header: {
     ...Typography.subHeader,
     color: Colors.darkPink,
   },
-  petContainer: {
-    ...Spacing.flexColumn,
-    width: "100%",
+  careInfo: {
+    ...Spacing.flexRow,
+    width: '80%',
+  },
+  careIcon: {
+    ...Forms.smallIcon,
+  },
+  freq: {
+    ...Typography.smallSubHeader,
   },
   btnContainer: {
     ...Spacing.flexRow,
@@ -145,6 +147,7 @@ const styles = StyleSheet.create({
   },
   subBtn: {
     ...Buttons.smallSub,
+    marginLeft: 'auto',
   },
   btnText: {
     ...Buttons.buttonText

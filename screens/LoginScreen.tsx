@@ -10,13 +10,15 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 const LoginScreen: React.FC = ({ navigation }) => {
   const [username, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [errorMsg, setErrorMsg] = useState<string>('')
   const { onLogin } = useAuth()
 
   const login = async () => {
     const result = await onLogin!(username, password)
     if (result && result.error) {
-      alert(result.status)
+      setErrorMsg(`Login error: ${result.error}. Please try again!`)
     }
+    navigation.navigate('Home', { screen: 'Welcome' })
   }
 
   return (
@@ -24,6 +26,7 @@ const LoginScreen: React.FC = ({ navigation }) => {
       <LottieView source={require('../assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
       <Text style={styles.header}>Sign in</Text>
       <View style={styles.form}>
+        <Text style={styles.errorMsg}>{errorMsg}</Text>
         <TextInput 
           style={styles.input} 
           placeholder='Username' 
@@ -64,6 +67,10 @@ const styles = StyleSheet.create({
   },
   form: {
     ...Forms.form,
+  },
+  errorMsg: {
+    color: Colors.red,
+    fontWeight: 'bold'
   },
   input: {
     ...Forms.input,

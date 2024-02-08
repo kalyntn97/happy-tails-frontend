@@ -23,17 +23,14 @@ interface CareCardProps {
 const CareCard = ({ care, navigation }) => {
   const iconSource = careUtils.getIconSource(care.name)
   const [careCard, setCareCard] = useState<Care>(care)
-  console.log(careCard)
 
   const latestTracker = careCard.trackers[careCard.trackers.length - 1]
   const { isCurrent } = careUtils.getDateTimeFromTracker(latestTracker.name)
-  console.log('checking if new month or year has passed...', !isCurrent)
   
   useEffect(() => {
     const autoUpdateCareCard = async () => {
       if ( !isCurrent ) {
         const data = await careService.autoCreateTracker(careCard._id)
-        console.log('updated CareCard data', data)
         setCareCard(data)
       }
     }
@@ -53,7 +50,7 @@ const CareCard = ({ care, navigation }) => {
           }
         ]}>
           <View style={styles.titleContainer}>
-            <Image source={iconSource} style={styles.icon as ImageStyle} />
+            <Image source={iconSource} style={styles.icon } />
             <View style={styles.titleContent}>
               <Text style={styles.title}>{care.name}</Text>
               <Text style={styles.freq}>

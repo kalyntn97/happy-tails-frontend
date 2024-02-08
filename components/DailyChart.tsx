@@ -1,8 +1,8 @@
 //npm
 import { useWindowDimensions, StyleSheet, Text, View } from "react-native"
 //services & utils
-import { Tracker } from "../services/careService"
 import * as careUtils from '../utils/careUtils'
+import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -13,20 +13,14 @@ interface DailyChartProps {
 }
 
 const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
-  // const { date: currDate, month: currMonth, year: currYear } = careUtils.getCurrentDate()
-  // const splitName = tracker.name.split('-') // output month & year
-  // const month = careUtils.getMonth(Number(splitName[0]))
-  // const year = Number(splitName[1])
-  // const isCurrent = currMonth == Number(splitName[0]) && currYear == year
-  const { month, year, currDate, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
+  const { trackerMonthName, trackerYear, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
+  const { currDate } = useCurrentDayInfo()
 
   const colorArray = careUtils.getColorArray()
 
   const windowWidth = useWindowDimensions().width
   const chartWidth = windowWidth * 0.9
   const squareWidth = chartWidth / 7
-
-  console.log(tracker)
 
   const CalendarHeader = () => {
     const header = []
@@ -48,7 +42,6 @@ const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
 
   const CalendarFiller = () => {
     const fillers = []
-    console.log(tracker.firstDay, 'first day')
     for (let i = 0; i < tracker.firstDay; i++) {
       fillers.push(
         <View style={{ width: squareWidth, height: squareWidth }} key={i}></View>
@@ -63,8 +56,8 @@ const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
   return (  
     <View style={[styles.container, { width: chartWidth, height: chartWidth + 45 }]}>
       <View style={styles.chartName}>
-        <Text style={styles.year}>{year}</Text>
-        <Text style={styles.month}>{month}</Text>
+        <Text style={styles.year}>{trackerYear}</Text>
+        <Text style={styles.month}>{trackerMonthName}</Text>
       </View>
       <CalendarHeader />
       <View style={[styles.calendar, { width: chartWidth, height: 'auto' }]}>

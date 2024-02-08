@@ -20,8 +20,8 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
   const { onEditProfile } = useProfileContext()
 
   const [name, setName] = useState<string>(profile.name)
-  const [bio, setBio] = useState<string>(profile.bio ? profile.bio : '')
-  const [photo, setPhoto] = useState<string | null>(profile.photo ? profile.photo : null)
+  const [bio, setBio] = useState<string>(profile.bio ?? '')
+  const [photo, setPhoto] = useState<string | null>(profile.photo ?? null)
 
   const [errorMsg, setErrorMsg] = useState<string>('')
 
@@ -66,11 +66,11 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View style={styles.photoUpload}>
-            <Image source={{ uri: photo ? photo : null }} style={styles.image as ImageStyle} />
+            <Image source={{ uri: photo ?? null }} style={styles.image as ImageStyle} />
             <View style={styles.uploadBtnContainer}>
               <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
                 <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
-                <Image source={require('../assets/icons/camera.png')} style={styles.cameraIcon as ImageStyle} />
+                <Image source={require('../assets/icons/camera.png')} style={styles.cameraIcon } />
               </TouchableOpacity>
             </View>
           </View>

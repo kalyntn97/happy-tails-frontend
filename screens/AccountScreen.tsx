@@ -1,6 +1,6 @@
 //npm modules
 import { useState } from "react"
-import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native"
+import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert } from "react-native"
 //component
 import AccountForm from "../components/AccountForm"
 import ToggleableForm from "../components/ToggleableForm"
@@ -15,7 +15,11 @@ interface AccountProps {
 }
 
 const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
-  const { onLogout } = useAuth()
+  const { onLogout, onChangePassword, onChangeUsername, onDeleteAccount } = useAuth()
+  const [visible, setVisible] = useState<string>('')
+
+  const titleData = ['Update account information', 'Delete account and all pet profiles', 'Log out of account']
+
 
   const logout = async () => {
     const result = await onLogout!()
@@ -24,32 +28,59 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
     }
   }
 
-  const UpdateAccountForm = () => {
-    const [changePwOnly, setChangePwOnly] = useState(false)
-    const [showForm, setShowForm] = useState(false)
-    
+  
+
+  const DeleteAccountForm = () => {
+    const deleteProfile = async (username: string, password: string) => {
+      await onDeleteAccount!(username, password)
+    }
+
+    const showDeleteConfirmDialog = (username: string, password: string) => {
+      return Alert.alert(
+        'Are you sure?',
+        `Delete your account? This is irreversible.`, 
+        [
+          { text: 'Yes', onPress: () => { deleteProfile(username, password) }},
+          { text: 'No' }
+        ]
+      )
+    }
+
     return (
-      <View style={styles.formContainer}>
+      <View style={styles.deleteForm}>
+        <AccountForm showForm="delete" onSubmit={showDeleteConfirmDialog}/>
+      </View>
+    )
+  }
+
+  const UpdateAccountForm = () => {
+    const [showForm, setShowForm] = useState<string>('password')
+    
+    const handleUpdateAccount = async (username: string, password: string) => {
+      showForm === 'password'
+        ? await onChangePassword!(username, password)
+        : await onChangeUsername!(username, password)
+      navigation.navigate('Settings')
+    }
+
+    return (
+      <View style={styles.updateForm}>
         <View style={styles.btnContainer}>
           <TouchableOpacity 
-            onPress={() => setChangePwOnly(true)} 
-            style={[styles.tabBtn, { backgroundColor: changePwOnly ? Colors.lightPink : Colors.white}]}>
-            <Text style={[styles.btnText, { color: changePwOnly ? Colors.darkPink : 'black' }]}>Change Password</Text>
+            onPress={() => setShowForm('password')} 
+            style={[styles.tabBtn, { backgroundColor: showForm === 'password' ? Colors.white : Colors.lightestPink}]}>
+            <Text style={[styles.btnText, { color: showForm === 'password' ? Colors.darkPink : 'black' }]}>Change Password</Text>
           </TouchableOpacity>
         
           <TouchableOpacity 
-            onPress={() => setChangePwOnly(false)} 
-            style={[styles.tabBtn, { backgroundColor: !changePwOnly ? Colors.lightPink : Colors.white}]}>
-            <Text style={[styles.btnText, { color: !changePwOnly ? Colors.darkPink : 'black' }]}>Change Username</Text>
+            onPress={() => setShowForm('username')} 
+            style={[styles.tabBtn, { backgroundColor: showForm === 'username' ? Colors.white : Colors.lightestPink}]}>
+            <Text style={[styles.btnText, { color: showForm === 'username' ? Colors.darkPink : 'black' }]}>Change Username</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.form, { backgroundColor: changePwOnly ? Colors.lightPink : !changePwOnly ? Colors.lightPink : Colors.white }]}>
-          { changePwOnly
-            ? <AccountForm changePwOnly={true} setShowForm={setShowForm} />
-            : <AccountForm changePwOnly={false} setShowForm={setShowForm} />
-          }
-        </View>
+        <AccountForm showForm={showForm} onSubmit={handleUpdateAccount}/>
+        
       </View>
     )
   }
@@ -62,28 +93,34 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
       decelerationRate="fast"
       pagingEnabled
     >
-      <ToggleableForm 
-        title='Update account information' 
-        content={ <UpdateAccountForm /> } 
-      />
-      
-      <ToggleableForm 
-        title='Delete account and all pet profiles'
-        content={ 
-          <TouchableOpacity style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.red }]}>
-            <Text style={styles.btnText}>Delete account</Text>
-          </TouchableOpacity>
-        }
-      />
+      <Pressable style={styles.headingBtn} onPress={() => setVisible(visible === titleData[0] ? '' : titleData[0])}>
+        <ToggleableForm
+          visible={visible}
+          title={titleData[0]}
+          content={ <UpdateAccountForm /> } 
+        />
+      </Pressable>
 
-      <ToggleableForm
-        title='Log out of account'
-        content={
-          <TouchableOpacity onPress={logout} style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.darkPink }]}>
-            <Text style={styles.btnText}>Logout</Text>
-          </TouchableOpacity>
-        }
-      />
+      <Pressable style={styles.headingBtn} onPress={() => setVisible(visible === titleData[1] ? '' : titleData[1])}>
+        <ToggleableForm
+          visible={visible}
+          title={titleData[1]}
+          content={ <DeleteAccountForm /> }
+        />
+      </Pressable>
+
+      <Pressable style={styles.headingBtn} onPress={() => setVisible(visible === titleData[2] ? '' : titleData[2])}>
+        <ToggleableForm
+          visible={visible}
+          title={titleData[2]}
+          content={
+            <TouchableOpacity onPress={logout} style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.darkPink }]}>
+              <Text style={styles.btnText}>Logout</Text>
+            </TouchableOpacity>
+          }
+        />
+      </Pressable>
+      
 
     </ScrollView>
   )
@@ -92,14 +129,26 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   scrollView: {
     width: '100%',
+    backgroundColor: Colors.lightestPink,
   },
   scrollViewContent: {
-    alignItems: 'center'
+    alignItems: 'center',
+    width: '100%',
   },
-  formContainer: {
+  headingBtn: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  updateForm: {
+    width: '90%',
+    height: 400,
+    alignItems: 'center',
+  },
+  deleteForm: {
     width: '90%',
     height: 350,
-  }, 
+    justifyContent: 'center',
+  },
   btnText: {
     ...Typography.xSmallHeader,
     margin: 0,
@@ -110,13 +159,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '20%',
     ...Spacing.flexRow,
-  },
-  form: {
-    height: '80%',
-    width: '100%',
-    ...Spacing.centered,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10
   },
   tabBtn: {
     width: '50%',

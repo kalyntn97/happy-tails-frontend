@@ -1,30 +1,26 @@
 //npm modules
 import { useState } from "react"
-import { View, Text, StyleSheet, Pressable, TextInput, Image, TouchableOpacity, Button, TouchableWithoutFeedback, Keyboard, Alert, ImageStyle} from "react-native"
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ImageStyle } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
-//types & services & utils
-import { Pet } from "../services/petService"
-import * as petService from '../services/petService'
-import * as petUtils from '../utils/petUtils'
 //components
 import Dropdown from "./Dropdown"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Colors } from '../styles'
 
 interface PetFormProps {
-  onSubmit: (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
+  onSubmit: (name: string, age: number | '', species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
   initialValues?: { name?: string, age?: number, species?: string, breed?: string, photo?: string | null, petId?: string }
 }
 
 const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
-  const [photo, setPhoto] = useState<string | null>(initialValues?.photo || null)
-  const [name, setName] = useState<string>(initialValues?.name || '')
-  const [age, setAge] = useState<number | ''>(initialValues?.age || '')
-  const [species, setSpecies] = useState<string>(initialValues?.species || '')
-  const [breed, setBreed] = useState<string>(initialValues?.breed || '')
+  const [photo, setPhoto] = useState<string | null>(initialValues?.photo ?? null)
+  const [name, setName] = useState<string>(initialValues?.name ?? '')
+  const [age, setAge] = useState<number | ''>(initialValues?.age ?? '')
+  const [species, setSpecies] = useState<string>(initialValues?.species ?? '')
+  const [breed, setBreed] = useState<string>(initialValues?.breed ?? '')
   const [errorMsg, setErrorMsg] = useState<string>('')
 
-  const petId: string | null = initialValues?.petId  ? initialValues?.petId : null
+  const petId: string | null = initialValues?.petId ?? null
 
   
   const addPhoto = async (): Promise<void> => {
@@ -34,8 +30,6 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
       aspect: [4,3],
       quality: 1,
     })
-    console.log(JSON.stringify(_image))
-
     if (!_image.canceled) {
       setPhoto(_image.assets[0].uri)
     }
@@ -44,17 +38,11 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
   const handleSubmit = async () => {    
     const photoData: { uri: string, name: string, type: string } | null 
       = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
-    console.log('before submit', name, age, species, breed, photoData, petId)
     if (!name || !species) {
       setErrorMsg('Please enter name and type.')
     } else {
       setErrorMsg('')
-      const result = await onSubmit(name, age, species, breed, photoData, petId)
-      console.log('result', result)
-  
-      if (result && result.error) {
-        alert(result.msg)
-      }
+      await onSubmit(name, age, species, breed, photoData, petId)
     }
   }
 
@@ -67,7 +55,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
           <View style={styles.uploadBtnContainer}>
             <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
               <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
-              <Image source={require('../assets/icons/camera.png')} style={styles.cameraIcon as ImageStyle} />
+              <Image source={require('../assets/icons/camera.png')} style={styles.cameraIcon } />
             </TouchableOpacity>
           </View>
         </View>
@@ -88,16 +76,43 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
             keyboardType="numeric"
           />
           {!!species && <Text>Select Type</Text>}
-          <Dropdown label={species ? species : 'Select Type'} dataType='species' onSelect={setSpecies} />
+          <Dropdown 
+            label={species ? species : 'Select Type'} 
+            dataType='species' 
+            onSelect={setSpecies} 
+          />
 
-          {!!breed && species !== 'Others' && <Text>{species === 'Dog' || species === 'Cat' ? 'Select Breed' : 'Select Species'}</Text>}
-          {species === 'Dog' && <Dropdown label={breed ? breed : 'Select Breed'} dataType='dogBreed' onSelect={setBreed} />}
-          
-          {species === 'Cat' && <Dropdown label={breed ? breed : 'Select Breed'} dataType='catBreed' onSelect={setBreed} />}
-          
-          {species === 'Bird' && <Dropdown label={breed ? breed : 'Select Species'} dataType='birdSpecies' onSelect={setBreed} />}
-          
-          {species === 'Fish' && <Dropdown label={breed ? breed : 'Select Species'} dataType='fishSpecies' onSelect={setBreed} />}
+          {!!breed && species !== 'Others' && 
+            <Text>{species === 'Dog' || species === 'Cat' ? 'Select Breed' : 'Select Species'}</Text>
+          }
+          {species === 'Dog' && 
+            <Dropdown 
+              label={breed ? breed : 'Select Breed'} 
+              dataType='dogBreed' 
+              onSelect={setBreed} 
+            />
+          }
+          {species === 'Cat' && 
+            <Dropdown 
+              label={breed ? breed : 'Select Breed'} 
+              dataType='catBreed' 
+              onSelect={setBreed} 
+            />
+          }
+          {species === 'Bird' && 
+            <Dropdown 
+              label={breed ? breed : 'Select Species'} 
+              dataType='birdSpecies' 
+              onSelect={setBreed} 
+            />
+          }
+          {species === 'Fish' && 
+            <Dropdown 
+              label={breed ? breed : 'Select Species'} 
+              dataType='fishSpecies' 
+              onSelect={setBreed} 
+            />
+          }
 
           <TouchableOpacity onPress={handleSubmit} style={styles.mainButton}>
             <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Add Pet'}</Text>

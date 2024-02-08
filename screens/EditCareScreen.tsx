@@ -24,21 +24,14 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   const petData = care.pets.map(pet => pet._id)
 
   const initialValues: {
-    name: string, frequency: string, times: number, pets: string[]
+    name: string, frequency: string, times: number, pets: string[], careId: string
   } = {
-    name: care.name, frequency: care.frequency, times: care.times, pets: petData
+    name: care.name, frequency: care.frequency, times: care.times, pets: petData, careId: care._id
   }
 
   const handleSubmit = async (name: string, frequency: string, times: number, pets: string[], careId: string) => {
-    try {
-      // const updatedCareCard = await careService.update(name, frequency, times, pets, careId)
-      const result = await onEditCare!(name, frequency, times, pets, careId)
-      console.log(result)
-      navigation.navigate('Details', { careId: result._id })
-    } catch (error) {
-      console.log('Error updating a care card', error)
-      alert('Error updating tracker. Please try again.')
-    }
+    const updatedCareCard = await onEditCare!(name, frequency, times, pets, careId)
+    navigation.navigate('Details', { careId: updatedCareCard._id })
   }
 
   useEffect(() => {
@@ -49,9 +42,9 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
 
   return (  
     <View style={styles.container}>
-      <CareForm onSubmit={handleSubmit} initialValues={initialValues} careId={care._id} />
+      <CareForm onSubmit={handleSubmit} initialValues={initialValues} />
       <TouchableOpacity style={styles.subBtn} onPress={() => navigation.goBack()}>
-            <Text style={styles.buttonText}>Cancel</Text>
+        <Text style={styles.buttonText}>Cancel</Text>
       </TouchableOpacity>
     </View>
   )

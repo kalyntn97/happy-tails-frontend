@@ -15,7 +15,7 @@ export interface Tracker {
 
 export interface Care {
   _id: string
-  pets: string[]
+  pets: Pet[]
   name: string
   times: number
   frequency: 'Daily' | 'Weekly' | 'Monthly' | 'Yearly'
@@ -30,7 +30,7 @@ export async function index(): Promise<Care[]> {
     })
     return res.json()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -47,7 +47,7 @@ export async function create(name: string, frequency: string, times: number, pet
     })
     return res.json()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -64,7 +64,7 @@ export async function update(name: string, frequency: string, times: number, pet
     })
     return res.json()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -76,7 +76,7 @@ export async function show(careId: string) {
     })
     return res.json()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -89,7 +89,7 @@ export async function deleteCareCard(careId: string) {
     })
     return res.json()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -106,7 +106,7 @@ export async function checkDone(careId: string, trackerId: string, index: number
     })
     return res.json()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -123,7 +123,7 @@ export async function uncheckDone(careId: string, trackerId: string, index: numb
     })
     return res.json()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -136,7 +136,7 @@ export async function autoCreateTracker(careId: string) {
     })
     return res.json()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -148,6 +148,6 @@ export async function careFeed() {
     })
     return res.json()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }

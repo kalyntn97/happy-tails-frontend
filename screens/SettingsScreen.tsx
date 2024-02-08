@@ -50,7 +50,7 @@ const SettingsScreen = ({ navigation, route }) => {
       <View style={styles.headerContainer}>
         <View style={styles.profileHeader}>
           {/* <Text style={styles.header}>{profile.name}</Text> */}
-          <Image source={profile.photo ? { uri: profile.photo } : randomProfile} style={styles.profilePhoto as ImageStyle}/>
+          <Image source={profile.photo ? { uri: profile.photo } : randomProfile} style={styles.profilePhoto }/>
         </View>
         
         <View style={styles.bioBox}>
@@ -63,9 +63,6 @@ const SettingsScreen = ({ navigation, route }) => {
             onPress={() => navigation.navigate('Edit', { profile : profile })}
           >
             <Text style={styles.btnText}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} >
-            <Text style={styles.btnText}>Delete</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -118,7 +115,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   mainBtn : {
-    ...Buttons.xSmallRounded
+    ...Buttons.xSmallRounded,
   },
   btnText: {
     ...Buttons.buttonText

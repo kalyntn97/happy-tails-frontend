@@ -1,6 +1,5 @@
 //npm modules
-import { useEffect } from "react"
-import { StyleSheet, Text, View, Image, TouchableOpacity, ImageSourcePropType, ImageStyle } from "react-native"
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native"
 //types & utils
 import { Pet } from "../services/petService"
 import { getIconSource } from "../utils/petUtils"
@@ -22,7 +21,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth, naviga
     width: cardWidth,
     height: cardWidth * 1.1, 
     transform: [{ scale }],
-    
   }
 
   const iconSource = getIconSource(pet.species)
@@ -40,14 +38,22 @@ const PetCard: React.FC<PetCardProps> = ({ pet, currCard, idx, cardWidth, naviga
 
           <View style={styles.petInfo}>
             <Image style={{ width: 30, height: 30 }} source={require('../assets/icons/birthday.png')} />
-            <Text style={styles.body}>{pet.age ? pet.age : 'Unknown'} {pet.age && (pet.age <= 1 ? 'year' : 'years')}</Text>
+            <Text style={styles.body}>
+              {pet.age ? pet.age : 'Unknown'} {pet.age && (pet.age <= 1 ? 'year' : 'years')}
+            </Text>
           </View>
         </View>
       </View>
 
-      <Image source={pet.photo ? {uri: pet.photo} : require('../assets/icons/pet-profile.png')} style={styles.petPhoto as ImageStyle} />
+      <Image 
+        source={pet.photo ? {uri: pet.photo} : require('../assets/icons/pet-profile.png')} 
+        style={styles.petPhoto } 
+      />
       
-      <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Details', { petId: pet._id })}>
+      <TouchableOpacity 
+        style={styles.mainBtn} 
+        onPress={() => navigation.navigate('Details', { petId: pet._id })}
+      >
         <Text style={styles.btnText}>Details</Text>
       </TouchableOpacity>
 

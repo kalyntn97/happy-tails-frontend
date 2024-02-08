@@ -10,16 +10,15 @@ import { usePetContext } from "../context/PetContext"
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface CareFormProps {
-  onSubmit: (name: string, frequency: string, times: number, pets: string[], careId?: string) => Promise<any>
-  initialValues?: { name?: string, frequency?: string, times?: number, pets?: string[] }
-  careId: string
+  onSubmit: (name: string, frequency: string, times: number, pets: string[], careId: string | null) => Promise<any>
+  initialValues?: { name?: string, frequency?: string, times?: number, pets?: string[], careId?: string }
 }
 
-const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, careId }) => {
-  const [name, setName] = useState<string>(initialValues?.name || '')
-  const [frequency, setFrequency] = useState<string>(initialValues?.frequency || '')
-  const [times, setTimes] = useState<number | ''>(initialValues?.times || '')
-  const [petData, setPetData] = useState<string[]>(initialValues?.pets || [])
+const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
+  const [name, setName] = useState<string>(initialValues?.name ?? '')
+  const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? '')
+  const [times, setTimes] = useState<number | ''>(initialValues?.times ?? '')
+  const [petData, setPetData] = useState<string[]>(initialValues?.pets ?? [])
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
 
@@ -30,6 +29,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, careId }) 
     return pet.name
   })
   
+  const careId: string | null = initialValues?.careId ?? null
 
   const handleSelectName = (selected: string) => {
     setName(() => {
@@ -58,13 +58,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, careId }) 
       setErrorMsg('Please enter all fields.')
     } else {
       setErrorMsg('')
-      const result = initialValues?.name
-      ? await onSubmit(name, frequency, times, petData, careId)
-      : await onSubmit(name, frequency, times, petData)
-      // console.log('result', result)
-      // if (result && result.error) {
-      //   alert(result.msg)
-      // }
+      await onSubmit(name, frequency, times, petData, careId)
     }
   }
 

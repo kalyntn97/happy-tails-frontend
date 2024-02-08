@@ -1,26 +1,28 @@
-export const header = {
+import { TextStyle } from "react-native"
+
+export const header: TextStyle = {
   margin: 20,
   fontWeight: 'bold',
   letterSpacing: 1,
   textAlign: 'center'
 }
 
-export const large = {
+export const large: TextStyle = {
   fontSize: 40,
   lineHeight: 55,
 }
 
-export const medium = {
+export const medium: TextStyle = {
   fontSize: 25,
   lineHeight: 40,
 }
 
-export const small = {
+export const small: TextStyle = {
   fontSize: 20,
   lineHeight: 30,
 }
 
-export const xSmall = {
+export const xSmall: TextStyle = {
   fontSize: 15,
   lineHeight: 25,
 }
@@ -45,7 +47,7 @@ export const xSmallHeader = {
   ...xSmall,
 }
 
-export const smallSubHeader = {
+export const smallSubHeader: TextStyle = {
   margin: 10,
   textAlign: 'center',
   letterSpacing: 1,
@@ -53,7 +55,7 @@ export const smallSubHeader = {
   fontStyle: 'italic',
 }
 
-export const body = {
+export const body: TextStyle = {
   padding: 10,
 }
 

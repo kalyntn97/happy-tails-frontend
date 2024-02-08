@@ -10,7 +10,7 @@ import PetInfo from "../components/PetInfo"
 //services
 import * as petService from '../services/petService'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Colors } from '../styles'
 
 interface PetDetailsProps {
   navigation: any
@@ -30,12 +30,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   const { onDeletePet } = usePetContext()
   
   const handleDeletePet = async (petId: string) => {
-    const result = await onDeletePet!(petId)
-    console.log('result', result)
-
-    if (result && result.error) {
-      alert(result.msg)
-    }
+    await onDeletePet!(petId)
     navigation.navigate('Index')
   }
   
@@ -69,7 +64,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
         <View style={styles.btnContainer}>
           <TouchableOpacity 
             style={{...styles.mainBtn, backgroundColor: Colors.yellow}}
-            onPress={() => navigation.navigate('Edit', {pet})}
+            onPress={() => navigation.navigate('Edit', { pet: pet })}
           >
             <Text style={styles.btnText}>Edit</Text>
           </TouchableOpacity>

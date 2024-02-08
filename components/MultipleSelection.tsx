@@ -88,7 +88,7 @@ const MultipleSelection: React.FC<MultipleSelectionProps> = ({ label, dataType, 
       </View>
     : <Text>{label}</Text>
     }
-    <Image source={require('../assets/icons/dropdown.png')} style={styles.icon as ImageStyle} />
+    <Image source={require('../assets/icons/dropdown.png')} style={styles.icon } />
   </TouchableOpacity>
   )
 

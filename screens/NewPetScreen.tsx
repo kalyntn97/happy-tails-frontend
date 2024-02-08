@@ -14,12 +14,7 @@ const NewPetScreen = ({ navigation }) => {
   const isFocused = useIsFocused()
 
   const handleAddPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null) => {
-    const result = await onAddPet!(name, age, species, breed, photoData)
-    console.log('result', result)
-
-    if (result && result.error) {
-      alert(result.msg)
-    }
+    await onAddPet!(name, age, species, breed, photoData)
     navigation.navigate('Index')
   }
 

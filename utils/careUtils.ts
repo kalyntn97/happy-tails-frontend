@@ -57,6 +57,7 @@ export const getCurrentDate = () => {
   const month =today.getMonth() + 1 //0-index 
   const year = today.getFullYear()
   const day = getDayOfWeek(today)
+  const monthName = getMonth(month)
 
   const firstDayOfMonth = new Date(year, month - 1, 1)
   const lastDayOfMonth = new Date(year, month, 0)
@@ -69,7 +70,7 @@ export const getCurrentDate = () => {
   const week = weeksPassed + 1
   
   
-  return { date, month, year, day, week, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
+  return { date, month, monthName, year, day, week, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
 }
 
 export const frequencyData = ['Daily', 'Weekly', 'Monthly', 'Yearly']
@@ -78,7 +79,6 @@ export const careData = ['Teeth Brushing', 'Nail Clipping', 'Walk', 'Grooming', 
 
 export const getCurrentTrackerIndex = (frequency: string): number => {
   const { date, week, month } = getCurrentDate()
-  console.log(date, week ,month)
   switch (frequency) {
     case 'Daily':
       return date - 1 //current date, all 0-index
@@ -92,17 +92,18 @@ export const getCurrentTrackerIndex = (frequency: string): number => {
 }
 
 export const getDateTimeFromTracker = (trackerName: string) => {
-  let month: any, year: number, isCurrent: boolean
-  const { date: currDate, month: currMonth, year: currYear, week: currWeek } = getCurrentDate()
+  let trackerMonth: number, trackerMonthName: string, trackerYear: number, isCurrent: boolean
+  const { month: currMonth, year: currYear } = getCurrentDate()
   // tracker name: 'mm-yyyy'
   if (trackerName.includes('-')) { // tracker is monthly-based, new tracker every month
     const splitName = trackerName.split('-') // output 'mm' & 'yyyy'
-    month = getMonth(Number(splitName[0])) // get full month name
-    year = Number(splitName[1])
-    isCurrent = currMonth === Number(splitName[0]) && currYear === year
+    trackerMonth = Number(splitName[0])
+    trackerMonthName = getMonth(trackerMonth) // get full month name
+    trackerYear = Number(splitName[1])
+    isCurrent = currMonth === trackerMonth && currYear === trackerYear
   } else { // tracker is yearly-based, new tracker every year
-    year = Number(trackerName)
-    isCurrent = year === currYear
+    trackerYear = Number(trackerName)
+    isCurrent = trackerYear === currYear
   }
-  return { month, year, currDate, currMonth, currWeek, isCurrent }
+  return { trackerMonth, trackerMonthName, trackerYear, isCurrent }
 }

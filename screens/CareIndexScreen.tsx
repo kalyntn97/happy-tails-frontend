@@ -1,55 +1,45 @@
 //npm modules
-import { useEffect, useRef, useState } from "react"
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SectionList } from "react-native"
+import { useEffect, useRef } from "react"
+import { StyleSheet, Text, TouchableOpacity, View, SectionList } from "react-native"
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
-import { DrawerNavigationProp } from "@react-navigation/drawer"
 //components
 import CareCard from "../components/CareCard"
 //services & utils
 import { useCareContext } from "../context/CareContext"
+import { Care } from "../services/careService"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Typography, Colors } from '../styles'
 
 type CareIndexProps = {
-  navigation: DrawerNavigationProp<{}>
-  route: { params?: { sectionIndex: number, itemIndex: number }}
+  navigation: any
+  route: { params?: { sectionIndex?: number, itemIndex?: number }}
 }
 
 const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   const { careCards } = useCareContext()
 
   const sectionListRef = useRef<SectionList>(null)
-  const { sectionIndex, itemIndex } = route.params ? route.params : { sectionIndex: 0, itemIndex: 0}
+  
+  const careIndex: Array<{ title: string, data: Care[] }> = Object.values(
+    careCards.reduce((result, careCard) => {
+      const { frequency } = careCard
+      result[frequency] = result[frequency] || { title: frequency, data: [] }
+      result[frequency].data.push(careCard)
+      return result
+    }, {})
+  )
 
-  const daily = []
-  const weekly = []
-  const monthly = []
-  const yearly = []
-
-  careCards.forEach(care => {
-    switch (care.frequency) {
-      case 'Daily': 
-        daily.push(care)
-        break
-      case 'Weekly': 
-        weekly.push(care)
-        break
-      case 'Monthly': 
-        monthly.push(care)
-        break
-      case 'Yearly': 
-        yearly.push(care)
-        break
-    }
-  })
-
-  const careIndex = [
-    { title: 'Daily', data: daily },
-    { title: 'Weekly', data: weekly },
-    { title: 'Monthly', data: monthly },
-    { title: 'Yearly', data: yearly },
-  ]
+  // another method that uses for.. of loop and IIFE
+  // const careIndex: Array<{ title: string, data: Care[] }> = (() => {
+  //   const result = Object.create(null)
+  //   for (const careCard of careCards) {
+  //     const { frequency } = careCard
+  //     result[frequency] = result[frequency] || { title: frequency, data: [] }
+  //     result[frequency].data.push(careCard)
+  //   }
+  //   return Object.values(result)
+  // })()
  
   const getItemLayout = sectionListGetItemLayout({
     getItemHeight: (rowData, sectionIndex, rowIndex) => 420,
@@ -65,11 +55,13 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   }
 
   useEffect(() => {
-    const setInitialListPosition = () => {
-      console.log(route.params)
-      sectionListRef.current.scrollToLocation({ sectionIndex: sectionIndex, itemIndex: itemIndex + 1})
+    if (route.params) {
+      const { sectionIndex, itemIndex } = route.params
+      const setInitialListPosition = () => {
+        sectionListRef.current.scrollToLocation({ sectionIndex: sectionIndex, itemIndex: itemIndex + 1})
+      }
+      setInitialListPosition()
     }
-    setInitialListPosition()
   }, [route.params])
   
   return (
@@ -86,7 +78,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
 
       <View style={styles.listHeader}>
         {careIndex.map((section, idx) => 
-          <TouchableOpacity key={idx} style={[styles.subBtn, { backgroundColor: Colors.multiArray[idx] }]} onPress={() => handleHeaderPress(idx)}>
+          <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn, { backgroundColor: Colors.multiArray[idx] }]} onPress={() => handleHeaderPress(idx)}>
             <Text>{section.title}</Text>
             <Text style={styles.headerCount}>{section.data.length}</Text>
           </TouchableOpacity>
@@ -102,7 +94,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
         getItemLayout={getItemLayout}
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </View> 
   )
 }
 
