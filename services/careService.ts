@@ -127,6 +127,40 @@ export async function uncheckDone(careId: string, trackerId: string, index: numb
   }
 }
 
+export async function checkAllDone(careId: string, trackerId: string, index: number) {
+  try {
+    const token = await tokenService.getToken()
+    const res = await fetch(`${BASE_URL}/${careId}/${trackerId}/check-all`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ index })
+    })
+    return res.json()
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export async function uncheckAllDone(careId: string, trackerId: string, index: number) {
+  try {
+    const token = await tokenService.getToken()
+    const res = await fetch(`${BASE_URL}/${careId}/${trackerId}/uncheck-all`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ index })
+    })
+    return res.json()
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export async function autoCreateTracker(careId: string) {
   try {
     const token = await tokenService.getToken()

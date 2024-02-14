@@ -17,15 +17,21 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface CareCardProps {
   care: Care
+  onNavigate?: (value: React.SetStateAction<boolean>) => void
   navigation: any
 }
 
-const CareCard = ({ care, navigation }) => {
+const CareCard = ({ care, navigation, onNavigate }) => {
   const iconSource = careUtils.getIconSource(care.name)
   const [careCard, setCareCard] = useState<Care>(care)
 
   const latestTracker = careCard.trackers[careCard.trackers.length - 1]
   const { isCurrent } = careUtils.getDateTimeFromTracker(latestTracker.name)
+
+  const handleNavigate = () => {
+    onNavigate && onNavigate()
+    navigation.navigate('Care', { screen: 'Details' , params : { careId: care._id } })
+  }
   
   useEffect(() => {
     const autoUpdateCareCard = async () => {
@@ -35,7 +41,7 @@ const CareCard = ({ care, navigation }) => {
       }
     }
     autoUpdateCareCard()
-  }, [isCurrent, careCard._id])
+  }, [isCurrent, latestTracker])
 
   return (
     <View style={styles.container}>
@@ -62,7 +68,7 @@ const CareCard = ({ care, navigation }) => {
         <View style={styles.currentTracker}>
           <TrackerPanel care={care} />
         </View>
-        <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Details', { careId: care._id })}>
+        <TouchableOpacity style={styles.mainBtn} onPress={handleNavigate}>
           <Text style={styles.btnText}>View History</Text>
         </TouchableOpacity>
       </View>

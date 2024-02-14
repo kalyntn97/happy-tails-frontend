@@ -1,16 +1,19 @@
 //npm modules
 import { useEffect, useRef } from "react"
-import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView } from "react-native"
+import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView, Image } from "react-native"
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 //components
 import CareCard from "../components/CareCard"
-import { AddButton } from "../styles/buttonComponent"
+import { AddButton } from "../components/buttonComponent"
+import ScrollPetList from "../components/ScrollPetList"
 //services & utils
 import { useCareContext } from "../context/CareContext"
 import { Care } from "../services/careService"
 //styles
-import { Buttons, Spacing, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Typography, Colors, Forms } from '../styles'
+import useCurrentDayInfo from "../utils/useCurrentDayInfo"
+import * as careUtils from "../utils/careUtils"
 
 type CareIndexProps = {
   navigation: any
@@ -19,28 +22,34 @@ type CareIndexProps = {
 
 const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   const { careCards } = useCareContext()
+  const sortedCareCards = careUtils.sortByFrequency(careCards)
 
-  const sectionListRef = useRef<SectionList>(null)
+  // custom sort function by section
+  const sortOrder = ['Daily', 'Weekly', 'Monthly', 'Yearly']
   
-  const careIndex: Array<{ title: string, data: Care[] }> = Object.values(
-    careCards.reduce((result, careCard) => {
-      const { frequency } = careCard
-      result[frequency] = result[frequency] || { title: frequency, data: [] }
-      result[frequency].data.push(careCard)
-      return result
-    }, {})
-  )
-  // custom sort function
-  let ordering = {}
-  const sortOrder = ['daily', 'weekly', 'monthly', 'yearly']
-  for (let i = 0; i < sortOrder.length; i++) {
-    ordering[sortOrder[i]] = i
+  const careIndex = sortOrder.map(sectionTitle => ({
+    title: sectionTitle,
+    data: sortedCareCards[sectionTitle] || []
+  }))
+
+  const CareItem = ({ care }) => {
+    const iconSource = careUtils.getIconSource(care.name)
+  
+    return (
+      <TouchableOpacity 
+        onPress={() => navigation.navigate('Details', { careId: care._id })}
+        style={[styles.itemContainer,
+        { backgroundColor: careUtils.getTaskBackgroundColor(care.frequency) }
+      ]}>
+        <View style={styles.itemLeft}>
+          <Image source={iconSource} style={styles.itemIcon} />
+          <Text>{care.name}</Text>
+          {/* <ScrollPetList petArray={care.pets} size='mini' /> */}
+        </View>
+        <Image source={require('../assets/icons/next2.png')} style={{...Forms.smallIcon, marginRight: 10 }} />
+      </TouchableOpacity>
+    )
   }
-  careIndex.sort((a, b) => {
-    const nameA = a.title.toLowerCase()
-    const nameB = b.title.toLowerCase()
-    return ordering[nameA] - ordering[nameB] || nameA.localeCompare(nameB)
-  })
 
   // another method that uses for.. of loop and IIFE
   // const careIndex: Array<{ title: string, data: Care[] }> = (() => {
@@ -52,7 +61,9 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   //   }
   //   return Object.values(result)
   // })()
- 
+
+  const sectionListRef = useRef<SectionList>(null)
+
   const getItemLayout = sectionListGetItemLayout({
     getItemHeight: (rowData, sectionIndex, rowIndex) => 420,
     //optional
@@ -78,15 +89,13 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   
   return (
     <View style={styles.container}>
-      {!careCards.length &&
+      {!sortedCareCards &&
         <View style={styles.empty}>
           <LottieView source={require('../assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
           <Text style={styles.msg}>Start managing your pet's health</Text>
         </View>
       }
-      {/* <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Create')}>
-        <Text style={styles.btnText}>Add a tracker</Text>
-      </TouchableOpacity> */}
+
       <AddButton onPress={() => navigation.navigate('Create')} />
 
       <ScrollView 
@@ -101,15 +110,17 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
           </TouchableOpacity>
         )}
       </ScrollView>
+
       <SectionList
         ref={sectionListRef}
         sections={careIndex}
         keyExtractor={(item, index) => item + index}
         renderItem={({ item }) => (
-          <CareCard key={item._id} care={item} navigation={navigation}/>
+          <CareItem care={item} />
         )}
         getItemLayout={getItemLayout}
         showsVerticalScrollIndicator={false}
+        style={{ width: '90%' }}
       />
     </View> 
   )
@@ -141,9 +152,8 @@ const styles = StyleSheet.create({
     ...Buttons.buttonText
   },
   listHeader: {
-    marginVertical: 10,
-    marginLeft: 50,
-    height: 50,
+    marginTop: 50,
+    height: 0,
   },
   headerCount: {
     color: Colors.red,
@@ -151,6 +161,25 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: '10%',
     top: '10%',
+  },
+  itemContainer: {
+    ...Spacing.flexRow,
+    justifyContent: 'space-between',
+    width: '100%',
+    marginVertical: 5,
+    borderRadius: 15,
+    height: 60,
+  },
+  itemLeft: {
+    ...Spacing.flexRow,
+    justifyContent: 'space-evenly'
+  },
+  itemIcon: {
+    ...Forms.icon,
+    marginHorizontal: 10,
+  },
+  itemBtn: {
+    marginLeft: 'auto'
   },
 })
  

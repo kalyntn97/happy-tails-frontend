@@ -40,6 +40,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   useEffect(() => {
     // update as index (day, week) change, get the latest tracker
     const updateIndex = () => {
+      
       const updatedIdx = careUtils.getCurrentTrackerIndex(freq)
       setIndex(updatedIdx)
     }

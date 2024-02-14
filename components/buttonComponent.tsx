@@ -1,5 +1,5 @@
-import { Text, TouchableOpacity, View, ViewStyle } from "react-native"
-import { Buttons, Colors, Spacing } from "."
+import { Image, Text, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Buttons, Colors, Spacing } from "../styles"
 
 export const AddButton = ({ onPress }) => ( 
   <TouchableOpacity onPress={onPress} style={{
@@ -40,6 +40,19 @@ export const SquareButton = ({title, onPress}) => (
     }}>
       {title}
     </Text>
+  </TouchableOpacity>
+)
+
+export const CloseButton = ({ onPress }) => (
+  <TouchableOpacity onPress={onPress} style={{
+    width: 60,
+    height: 60,
+  }}>
+    <Image source={require('../assets/icons/close.png')} style={{
+      width: 40,
+      height: 40,
+      margin: 10
+    }} />
   </TouchableOpacity>
 )
 

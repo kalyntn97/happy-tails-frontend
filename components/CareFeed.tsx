@@ -1,6 +1,6 @@
 //npm
 import { useEffect, useState } from "react"
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList } from "react-native"
+import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Modal, TouchableWithoutFeedback, Pressable } from "react-native"
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 //context
 import { useCareContext } from "../context/CareContext"
@@ -10,63 +10,29 @@ import * as careUtils from '../utils/careUtils'
 import { getTaskStatus } from "../utils/careUtils"
 //components
 import ScrollPetList from "./ScrollPetList"
-import { AddButton } from "../styles/buttonComponent"
-import { SquareButton } from "../styles/buttonComponent"
+import TaskItem from "./TaskItem"
+import { AddButton, CloseButton } from "./buttonComponent"
+import { SquareButton } from "./buttonComponent"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '../styles'
+import CareCard from "./CareCard"
 
 interface CareFeedProps {
   today: { currDate: number, currMonth: string, monthIdx: number, currYear: number, currWeek: number }
   navigation: any
-  careCards: Care[]
 }
 
-const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => {
+const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
+  const {careCards } = useCareContext()
+  const sortedCareCards: {[key: string]: Care[]} = careUtils.sortByFrequency(careCards)
+
   const [selected, setSelected] = useState<string>('day')
+  const [modalVisible, setModalVisible] = useState(false)
+  const [clickedTask, setClickedTask] = useState<Care>({})
 
-
-  const sortedCareCards: { [key: string]: Care[] } = careCards.reduce((result, careCard) => {
-    const { frequency } = careCard
-    result[frequency] = result[frequency] || []
-    result[frequency].push(careCard)
-    return result
-  }, {})
-
-  const TaskItem = ({ task, index }) => {
-    const done = careUtils.getTaskStatus(task.frequency, today)
-
-    const rightSwipeActions = () => (
-      <View style={styles.squareBtnContainer}>
-        <SquareButton title='Edit' onPress={() => navigation.navigate('Care', { screen: 'Edit', params: { care: task } })} />
-        <SquareButton title='More' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { careId: task._id } })} />
-      </View>
-    )
-  
-    return (
-      <Swipeable
-        renderRightActions={() => rightSwipeActions()}
-      >
-        <TouchableOpacity 
-          key={task._id}
-          style={[
-            styles.task, 
-            { backgroundColor: careUtils.getTaskBackgroundColor(task.frequency) }
-          ]} 
-          onPress={() => navigation.navigate('Care', { 
-            screen: 'Index', params: {sectionIndex: 0, itemIndex: index } 
-          })}
-        >
-          <Text style={[
-            done === task.times && styles.done, 
-            styles.taskText
-          ]}>
-            {task.name}
-          </Text>
-          <Text>{done}/{task.times}</Text>
-          <ScrollPetList petArray={task.pets} size='mini' />
-        </TouchableOpacity>
-      </Swipeable>
-    )
+  const handleClickTask = (task: Care) => {
+    setClickedTask(task)
+    setModalVisible(true)
   }
 
   const ManageTaskButton = () => (
@@ -120,9 +86,12 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
         {selected === 'day' && 
           <FlatList
             data={sortedCareCards['Daily']}
+            extraData={sortedCareCards['Daily']}
             keyExtractor={(item, index) => item + index.toString()}
-            renderItem={({ item, index }) => 
-              <TaskItem key={`d-${index}`} task={item} index={index} />
+            renderItem={({ item }) => 
+              <TaskItem key={item._id} task={item} today={today} navigation={navigation} 
+                onPress={() => handleClickTask(item)}
+              />
             }
             ListFooterComponent={<ManageTaskButton />}
             ListEmptyComponent={<EmptyList />}
@@ -133,8 +102,10 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
           <FlatList
             data={sortedCareCards['Weekly']}
             keyExtractor={(item, index) => item + index.toString()}
-            renderItem={({ item, index }) => 
-              <TaskItem key={`w-${index}`} task={item} index={index} />
+            renderItem={({ item }) => 
+              <TaskItem key={item._id} task={item} today={today} navigation={navigation} 
+                onPress={() => handleClickTask(item)}
+              />
             }
           />
         }
@@ -143,8 +114,10 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
           <FlatList
             data={sortedCareCards['Monthly']}
             keyExtractor={(item, index) => item + index.toString()}
-            renderItem={({ item, index }) => 
-              <TaskItem key={`m-${index}`} task={item} index={index} />
+            renderItem={({ item }) => 
+              <TaskItem key={item._id} task={item} today={today} navigation={navigation} 
+                onPress={() => handleClickTask(item)}
+              />
             }
           />
         }
@@ -153,14 +126,30 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
           <FlatList
             data={sortedCareCards['Yearly']}
             keyExtractor={(item, index) => item + index.toString()}
-            renderItem={({ item, index }) => 
-              <TaskItem key={`y-${index}`} task={item} index={index} />
+            renderItem={({ item }) => 
+              <TaskItem key={item._id} task={item} today={today} navigation={navigation} 
+                onPress={() => handleClickTask(item)}
+              />
             }
             ListEmptyComponent={<EmptyList />}
           />
         }
       </View>
 
+      <Modal
+        animationType="slide"
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(!modalVisible)}
+        onDismiss={() => setClickedTask({})}
+      >
+        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={styles.modalContainer}> 
+          <View style={styles.detailContainer}>
+            <CloseButton onPress={() => setModalVisible(false)} />
+            <CareCard care={clickedTask} navigation={navigation} onNavigate={() => setModalVisible(false)}/>
+          </View>
+        </Pressable>
+      </Modal> 
+    
     </View>
   )
 }
@@ -206,18 +195,6 @@ const styles = StyleSheet.create({
     width: '90%',
     height: '95%',
   },
-  task: {
-    ...Spacing.flexRow,
-    width: '100%',
-    height: 60,
-    justifyContent: 'space-around',
-    borderRadius: 15,
-    marginVertical: 5
-  },
-  taskText: {
-    fontSize: 15,
-    fontWeight: 'bold',
-  },
   taskIcon: {
     ...Forms.smallIcon,
   },
@@ -225,16 +202,22 @@ const styles = StyleSheet.create({
     ...Buttons.smallRounded,
     backgroundColor: Colors.pink,
     marginTop: 50
-
   },
   btnText: {
     ...Buttons.buttonText,
   },
-  squareBtnContainer: {
-    ...Spacing.flexRow,
-    height: 70,
-    marginLeft: 10
-
+  modalContainer: {
+    ...Spacing.fullWH,
+    ...Spacing.centered,
+    position: 'relative',
+    backgroundColor: Colors.lightestPink,
+  },
+  detailContainer: {
+    width: '100%',
+    height: '60%',
+    position: 'absolute',
+    alignItems: 'center',
+    bottom: 0,
   },
 })
  

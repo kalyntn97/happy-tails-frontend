@@ -15,7 +15,6 @@ import { Buttons, Typography, Colors, Forms, Spacing } from '../styles'
 
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
-  const { careCards } = useCareContext()
   const today = useCurrentDayInfo()
 
   const windowWidth = useWindowDimensions().width
@@ -38,17 +37,15 @@ const HomeScreen: React.FC = ({ navigation }) => {
             <Image source={require('../assets/images/happy-tails-banner.png')} style={{ width: '100%', maxHeight: windowHeight * 0.2 }} />
             <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{today.currMonth} {today.currDate} {today.currYear}</Text>
         
-            {careCards.length ?
-              <CareFeed today={today} navigation={navigation} careCards={careCards}/>
-              : 
-                <View style={styles.emptyMsgContainer}> 
+            <CareFeed today={today} navigation={navigation} />
+                {/* <View style={styles.emptyMsgContainer}> 
                   <Text style={styles.msg}>No tasks to manage.</Text>
                   <TouchableOpacity style={styles.emptyMsgBtn} onPress={() => navigation.navigate('Care', { screen: 'Create' })}>
                     <Text style={[styles.msg, { color: Colors.darkPink, textDecorationLine: 'underline' }]}>Start by adding task to stay organized.</Text>
                     <Image source={require('../assets/icons/hand.png')} style={styles.msgIcon} />
                   </TouchableOpacity>
-                </View>
-            }
+                </View> */}
+            
           </View>
         </>
       ) : (

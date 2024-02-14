@@ -110,16 +110,16 @@ export const getDateTimeFromTracker = (trackerName: string) => {
 }
 
 export const getTaskStatus = (task: Care, today: { currDate: number, currMonth: string, monthIdx: number, currYear: number, currWeek: number }) => {
+  const { currDate, currWeek, monthIdx } = today
   switch (task.frequency) {
     case 'Daily': 
-      return task.trackers[task.trackers.length - 1].done[today.currDate - 1]
+      return task.trackers[task.trackers.length - 1].done[currDate - 1]
     case 'Weekly': 
-      return task.trackers[task.trackers.length - 1].done[today.currWeek - 1]
+      return task.trackers[task.trackers.length - 1].done[currWeek - 1]
     case 'Monthly':
-      return task.trackers[task.trackers.length - 1].done[today.monthIdx - 1]
+      return task.trackers[task.trackers.length - 1].done[monthIdx - 1]
     case 'Yearly':
       return task.trackers[task.trackers.length - 1].done
-    default: return 0
   }
 }
 
@@ -130,4 +130,14 @@ export const getTaskBackgroundColor = (frequency: string) => {
     case 'Monthly': return Colors.multiArray[2]
     default: return Colors.multiArray[3]
   }
+}
+
+export const sortByFrequency: (careArray: Care[]) => {[key: string]: Care[]} = (careArray: Care[]) => {
+  const sorted = careArray.reduce((result, careCard) => {
+    const { frequency } = careCard
+    result[frequency] = result[frequency] || []
+    result[frequency].push(careCard)
+    return result
+  }, {})
+  return sorted
 }

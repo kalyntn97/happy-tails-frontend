@@ -9,6 +9,8 @@ interface CareProps {
   onDeleteCare?: (careId: string) => Promise<any>
   onCheckDone?: (careId: string, trackerId: string, index: number) => Promise<any>
   onUncheckDone?: (careId: string, trackerId: string, index: number) => Promise<any>
+  onCheckAllDone?: (careId: string, trackerId: string, index: number) => Promise<any>
+  onUncheckAllDone?: (careId: string, trackerId: string, index: number) => Promise<any>
 }
 
 interface CareProviderProps {
@@ -65,6 +67,32 @@ export const CareProvider: React.FC<CareProviderProps> = ({ children }) => {
     return updatedTracker
   }
 
+  const checkAllDone = async (careId: string, trackerId: string, index: number) => {
+    const updatedTracker = await careService.checkAllDone(careId, trackerId, index)
+    setCareCards(prev => 
+      prev.map(c => c._id === careId 
+        ? {...c, trackers: c.trackers.map(t =>
+            t._id === trackerId ? updatedTracker : t
+          )}
+        : c
+      )
+    )
+    return updatedTracker
+  }
+
+  const uncheckAllDone = async (careId: string, trackerId: string, index: number) => {
+    const updatedTracker = await careService.uncheckAllDone(careId, trackerId, index)
+    setCareCards(prev => 
+      prev.map(c => c._id === careId 
+        ? {...c, trackers: c.trackers.map(t =>
+            t._id === trackerId ? updatedTracker : t
+          )}
+        : c
+      )
+    )
+    return updatedTracker
+  }
+
   useEffect(() => {
     const fetchCareCards = async () => {
       const data = await careService.index()
@@ -80,6 +108,8 @@ export const CareProvider: React.FC<CareProviderProps> = ({ children }) => {
     onDeleteCare: deleteCare,
     onCheckDone: checkDone,
     onUncheckDone: uncheckDone,
+    onCheckAllDone: checkAllDone,
+    onUncheckAllDone: uncheckAllDone,
   }
 
   return (

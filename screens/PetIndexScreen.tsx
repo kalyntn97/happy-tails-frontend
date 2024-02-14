@@ -3,7 +3,7 @@ import { useState, useRef } from 'react'
 import { View, StyleSheet, Text, Pressable, ScrollView, useWindowDimensions, FlatList, TouchableOpacity, Image } from "react-native"
 //components
 import PetCard from '../components/PetCard'
-import { AddButton } from '../styles/buttonComponent'
+import { AddButton } from '../components/buttonComponent'
 //context
 import { usePetContext } from '../context/PetContext'
 //styles
