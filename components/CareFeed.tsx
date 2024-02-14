@@ -9,6 +9,7 @@ import { Care } from "../services/careService"
 import ScrollPetList from "./ScrollPetList"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '../styles'
+import { AddButton } from "../styles/buttonComponent"
 
 interface CareFeedProps {
   today: { currDate: number, currMonth: string, monthIdx: number, currYear: number, currWeek: number }
@@ -53,8 +54,9 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
           <Text style={[styles.iconText, selected === 'year' && styles.selected]}>This Year</Text>
         </TouchableOpacity>
       </View>
+
       <ScrollView
-        style={{ width: '100%', height: '90%' }}
+        style={{ width: '100%', height: '95%' }}
         contentContainerStyle={styles.taskContainer}
       >
         {selected === 'day' && sortedCareCards['Daily']?.map((d, idx) =>
@@ -105,7 +107,6 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
           </TouchableOpacity> 
         )}
 
-        
         {selected === 'year' && sortedCareCards['Yearly']?.map((y, idx) => 
           <TouchableOpacity style={styles.task} key={`y-${idx}`}
             onPress={() => navigation.navigate('Care', { 
@@ -121,7 +122,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
             <ScrollPetList petArray={y.pets} size='mini' />
           </TouchableOpacity>
         )}
-  
+
         <TouchableOpacity style={styles.mainBtn} 
           onPress={() => navigation.navigate('Care', { 
             screen: 'Index', 
@@ -133,6 +134,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
         })}>
           <Text style={styles.btnText}>Manage Tasks</Text>
         </TouchableOpacity>
+
       </ScrollView>
     </View>
   )
@@ -178,19 +180,21 @@ const styles = StyleSheet.create({
   taskContainer: {
     ...Spacing.flexColumn,
     width: '100%',
-    minHeight: '30%',
     marginVertical: 10,
   },
   task: {
     ...Spacing.flexRow,
     width: '90%',
-    height: 50,
+    height: 60,
     justifyContent: 'space-around',
-    borderTopWidth: 1,
-    borderColor: 'lightgray'
+    borderWidth: 1,
+    borderColor: 'lightgray',
+    borderRadius: 15,
+    marginVertical: 5
   },
   taskText: {
-    fontSize: 15
+    fontSize: 15,
+    fontWeight: 'bold',
   },
   taskIcon: {
     ...Forms.smallIcon,
@@ -198,7 +202,8 @@ const styles = StyleSheet.create({
   mainBtn: {
     ...Buttons.smallRounded,
     backgroundColor: Colors.pink,
-    marginTop: 'auto',
+    marginTop: 50
+
   },
   btnText: {
     ...Buttons.buttonText,

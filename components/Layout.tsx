@@ -48,7 +48,17 @@ const Layout: React.FC = () => {
       <Tab.Navigator
         initialRouteName='Home'
         screenOptions={({ route }) => ({
-          tabBarShowLabel: false,
+          tabBarLabel: ({ focused }) => {
+            let name: string
+            switch (route.name) {
+              case 'Home': name = 'Home'; break
+              case 'Pets': name = 'Pets'; break
+              case 'Account': name = 'Profile'; break
+              case 'User': name = 'Account'; break
+              default: name = 'Home'
+            }
+            return <Text style={[styles.iconLabel, { color: focused ? Colors.darkPink : 'black'}]}>{name}</Text>
+          },
           tabBarIcon: ({ focused }) => {
             let icon:any
 
@@ -64,7 +74,7 @@ const Layout: React.FC = () => {
 
             return <Image source={icon} style={styles.icon } />
           },
-          tabBarStyle: { padding : 10, height: 100, backgroundColor: Colors.lightPink},
+          tabBarStyle: { padding : 10, height: 100, backgroundColor: Colors.white},
           headerStyle: {
             backgroundColor: Colors.lightPink,
           },
@@ -262,6 +272,9 @@ const styles = StyleSheet.create({
   },
   icon: {
     ...Forms.icon
+  },
+  iconLabel: {
+    fontWeight: 'bold'
   },
   smallIcon: {
     ...Forms.smallIcon

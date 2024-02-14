@@ -1,10 +1,11 @@
 //npm modules
 import { useEffect, useRef } from "react"
-import { StyleSheet, Text, TouchableOpacity, View, SectionList } from "react-native"
+import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView } from "react-native"
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 //components
 import CareCard from "../components/CareCard"
+import { AddButton } from "../styles/buttonComponent"
 //services & utils
 import { useCareContext } from "../context/CareContext"
 import { Care } from "../services/careService"
@@ -29,6 +30,17 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
       return result
     }, {})
   )
+  // custom sort function
+  let ordering = {}
+  const sortOrder = ['daily', 'weekly', 'monthly', 'yearly']
+  for (let i = 0; i < sortOrder.length; i++) {
+    ordering[sortOrder[i]] = i
+  }
+  careIndex.sort((a, b) => {
+    const nameA = a.title.toLowerCase()
+    const nameB = b.title.toLowerCase()
+    return ordering[nameA] - ordering[nameB] || nameA.localeCompare(nameB)
+  })
 
   // another method that uses for.. of loop and IIFE
   // const careIndex: Array<{ title: string, data: Care[] }> = (() => {
@@ -72,18 +84,23 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
           <Text style={styles.msg}>Start managing your pet's health</Text>
         </View>
       }
-      <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Create')}>
+      {/* <TouchableOpacity style={styles.mainBtn} onPress={() => navigation.navigate('Create')}>
         <Text style={styles.btnText}>Add a tracker</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+      <AddButton onPress={() => navigation.navigate('Create')} />
 
-      <View style={styles.listHeader}>
+      <ScrollView 
+        horizontal
+        style={styles.listHeader}
+        showsHorizontalScrollIndicator={false}
+      >
         {careIndex.map((section, idx) => 
           <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn, { backgroundColor: Colors.multiArray[idx] }]} onPress={() => handleHeaderPress(idx)}>
             <Text>{section.title}</Text>
             <Text style={styles.headerCount}>{section.data.length}</Text>
           </TouchableOpacity>
         )}
-      </View>
+      </ScrollView>
       <SectionList
         ref={sectionListRef}
         sections={careIndex}
@@ -124,7 +141,9 @@ const styles = StyleSheet.create({
     ...Buttons.buttonText
   },
   listHeader: {
-    ...Spacing.flexRow,
+    marginVertical: 10,
+    marginLeft: 50,
+    height: 50,
   },
   headerCount: {
     color: Colors.red,

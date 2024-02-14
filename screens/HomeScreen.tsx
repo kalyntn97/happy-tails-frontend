@@ -30,10 +30,10 @@ const HomeScreen: React.FC = ({ navigation }) => {
   }
 
   return ( 
-    <SafeAreaView>
+    <View>
+      <StatusBar barStyle="dark-content" />
       {authState.authenticated ? (
         <>
-          <StatusBar barStyle="dark-content" />
           <View style={[styles.screen, { minHeight: centerHeight }]}>
             <Image source={require('../assets/images/happy-tails-banner.png')} style={{ width: '100%', maxHeight: windowHeight * 0.2 }} />
             <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{today.currMonth} {today.currDate} {today.currYear}</Text>
@@ -91,7 +91,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
           </View>
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   )
 }
 

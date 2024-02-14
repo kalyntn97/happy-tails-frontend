@@ -1,8 +1,9 @@
 //npm modules
 import { useState, useRef } from 'react'
-import { View, StyleSheet, Text, Pressable, ScrollView, useWindowDimensions, FlatList, TouchableOpacity } from "react-native"
+import { View, StyleSheet, Text, Pressable, ScrollView, useWindowDimensions, FlatList, TouchableOpacity, Image } from "react-native"
 //components
 import PetCard from '../components/PetCard'
+import { AddButton } from '../styles/buttonComponent'
 //context
 import { usePetContext } from '../context/PetContext'
 //styles
@@ -53,18 +54,18 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
           <View style={styles.btnContainer}>
             <Pressable 
               onPress={handleClickPrev} 
-              style={() => [styles.prevBtn, currCard == 0 && styles.disabled]}
+              style={[styles.prevBtn, currCard == 0 && styles.disabled]}
               disabled={currCard == 0}
             >
-              <Text>Prev</Text>  
+              <Image source={require('../assets/icons/prev2.png')} style={{ width: 30, height: 30 }}/> 
             </Pressable>
             
             <Pressable 
               onPress={handleClickNext} 
-              style={()=> [styles.nextBtn, currCard == petCount - 1  && styles.disabled]}
+              style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled]}
               disabled={currCard == petCount - 1}
             >
-              <Text>Next</Text>  
+              <Image source={require('../assets/icons/next2.png')} style={{ width: 30, height: 30 }}/> 
             </Pressable>
           </View>
           
@@ -100,9 +101,10 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
         <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
       }
 
-      <TouchableOpacity onPress={() => navigation.navigate('Create')} style={styles.addPetBtn}>
+      {/* <TouchableOpacity onPress={() => navigation.navigate('Create')} style={styles.addPetBtn}>
         <Text style={styles.btnText}>Add a Pet</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+      <AddButton onPress={() => navigation.navigate('Create')} />
     </View>
   )
 }
@@ -124,12 +126,10 @@ const styles = StyleSheet.create({
     position: 'relative'
   },
   nextBtn: {
-    ...Buttons.smallSub,
     position: 'absolute',
     right: 0
   },
   prevBtn: {
-    ...Buttons.smallSub,
     position: 'absolute',
     left: 0
   },
