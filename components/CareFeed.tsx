@@ -1,15 +1,17 @@
 //npm
 import { useEffect, useState } from "react"
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native"
+import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList } from "react-native"
+import Swipeable from 'react-native-gesture-handler/Swipeable'
 //context
 import { useCareContext } from "../context/CareContext"
 //utils & services
 import { Care } from "../services/careService"
 //components
 import ScrollPetList from "./ScrollPetList"
+import { AddButton } from "../styles/buttonComponent"
+import { SquareButton } from "../styles/buttonComponent"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '../styles'
-import { AddButton } from "../styles/buttonComponent"
 
 interface CareFeedProps {
   today: { currDate: number, currMonth: string, monthIdx: number, currYear: number, currWeek: number }
@@ -26,6 +28,56 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
     result[frequency].push(careCard)
     return result
   }, {})
+
+  const rightSwipeActions = ({ task }) => (
+    <View style={styles.squareBtnContainer}>
+      <SquareButton title='Edit' onPress={() => navigation.navigate('Care', { screen: 'Edit', params: { care: task } })} />
+      <SquareButton title='More' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { careId: task._id } })} />
+    </View>
+  )
+  
+
+  const TaskItem = ({ task, index }) => (
+    <Swipeable
+      renderRightActions={() => rightSwipeActions({ task })}
+    >
+      <TouchableOpacity style={styles.task} key={task._id}
+        onPress={() => navigation.navigate('Care', { 
+          screen: 'Index', params: {sectionIndex: 0, itemIndex: index } 
+        })}
+      >
+        <Text style={[
+          task.trackers[task.trackers.length - 1].done[today.currDate - 1] === task.times && styles.done, 
+          styles.taskText
+        ]}>
+          {task.name}
+        </Text>
+        <ScrollPetList petArray={task.pets} size='mini' />
+      </TouchableOpacity>
+    </Swipeable>
+  )
+
+  const ManageTaskButton = () => (
+    <TouchableOpacity style={styles.mainBtn} 
+      onPress={() => navigation.navigate('Care', { 
+        screen: 'Index', 
+        params: { 
+          sectionIndex: 
+            selected === 'day' ? 0 : selected === 'week' ? 1 : selected === 'month' ? 2 : 3,
+          itemIndex: 0 
+        } 
+    })}>
+      <Text style={styles.btnText}>Manage Tasks</Text>
+    </TouchableOpacity>
+  )
+  
+
+  const EmptyList  = () => (
+    <View>
+      <Text>Nothing yet to manage.</Text>
+    </View>
+  )
+    
 
   return (  
     <View style={styles.container}>
@@ -54,88 +106,51 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
           <Text style={[styles.iconText, selected === 'year' && styles.selected]}>This Year</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.taskListContainer}>
+        {selected === 'day' && 
+          <FlatList
+            data={sortedCareCards['Daily']}
+            keyExtractor={(item, index) => item + index.toString()}
+            renderItem={({ item, index }) => 
+              <TaskItem key={`d-${index}`} task={item} index={index} />
+            }
+            ListFooterComponent={<ManageTaskButton />}
+            ListEmptyComponent={<EmptyList />}
+          />
+        }
+        
+        {selected === 'week' && 
+          <FlatList
+            data={sortedCareCards['Weekly']}
+            keyExtractor={(item, index) => item + index.toString()}
+            renderItem={({ item, index }) => 
+              <TaskItem key={`w-${index}`} task={item} index={index} />
+            }
+          />
+        }
 
-      <ScrollView
-        style={{ width: '100%', height: '95%' }}
-        contentContainerStyle={styles.taskContainer}
-      >
-        {selected === 'day' && sortedCareCards['Daily']?.map((d, idx) =>
-          <TouchableOpacity style={styles.task} key={`d-${idx}`}
-            onPress={() => navigation.navigate('Care', { 
-              screen: 'Index', params: {sectionIndex: 0, itemIndex: idx } 
-            })}
-          >
-            <Text style={[
-              d.trackers[d.trackers.length - 1].done[today.currDate - 1] === d.times && styles.done, 
-              styles.taskText
-            ]}>
-              {d.name}
-            </Text>
-            <ScrollPetList petArray={d.pets} size='mini' />
-          </TouchableOpacity>
-        )}
+        {selected === 'month' && 
+          <FlatList
+            data={sortedCareCards['Monthly']}
+            keyExtractor={(item, index) => item + index.toString()}
+            renderItem={({ item, index }) => 
+              <TaskItem key={`m-${index}`} task={item} index={index} />
+            }
+          />
+        }
 
-        {selected === 'week' && sortedCareCards['Weekly']?.map((w, idx) =>
-          <TouchableOpacity style={styles.task} key={`w-${idx}`}
-            onPress={() => navigation.navigate('Care', { 
-              screen: 'Index', params: {sectionIndex: 1, itemIndex: idx } 
-            })}
-          >
-            <Text style={[
-              w.trackers[w.trackers.length - 1].done[today.currWeek - 1] === w.times && styles.done, 
-              styles.taskText
-            ]}>
-              {w.name}
-            </Text>
-            <ScrollPetList petArray={w.pets} size='mini' />
-          </TouchableOpacity>
-        )}
+        {selected === 'year' && 
+          <FlatList
+            data={sortedCareCards['Yearly']}
+            keyExtractor={(item, index) => item + index.toString()}
+            renderItem={({ item, index }) => 
+              <TaskItem key={`y-${index}`} task={item} index={index} />
+            }
+            ListEmptyComponent={<EmptyList />}
+          />
+        }
+      </View>
 
-        {selected === 'month' && sortedCareCards['Monthly']?.map((m, idx) =>
-          <TouchableOpacity style={styles.task} key={`m-${idx}`}
-            onPress={() => navigation.navigate('Care', { 
-              screen: 'Index', params: {sectionIndex: 2, itemIndex: idx } 
-            })}
-          >
-            <Text style={[
-              m.trackers[m.trackers.length - 1].done[today.monthIdx - 1] === m.times && styles.done, 
-              styles.taskText
-            ]}>
-              {m.name}
-            </Text>
-            <ScrollPetList petArray={m.pets} size='mini' />
-          </TouchableOpacity> 
-        )}
-
-        {selected === 'year' && sortedCareCards['Yearly']?.map((y, idx) => 
-          <TouchableOpacity style={styles.task} key={`y-${idx}`}
-            onPress={() => navigation.navigate('Care', { 
-              screen: 'Index', params: {sectionIndex: 3, itemIndex: idx } 
-            })}
-          >
-            <Text style={[
-              y.trackers[y.trackers.length - 1].done[0] === y.times && styles.done, 
-              styles.taskText
-            ]}>
-              {y.name}
-            </Text>
-            <ScrollPetList petArray={y.pets} size='mini' />
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity style={styles.mainBtn} 
-          onPress={() => navigation.navigate('Care', { 
-            screen: 'Index', 
-            params: { 
-              sectionIndex: 
-                selected === 'day' ? 0 : selected === 'week' ? 1 : selected === 'month' ? 2 : 3,
-              itemIndex: 0 
-            } 
-        })}>
-          <Text style={styles.btnText}>Manage Tasks</Text>
-        </TouchableOpacity>
-
-      </ScrollView>
     </View>
   )
 }
@@ -177,14 +192,13 @@ const styles = StyleSheet.create({
     color: Colors.red,
     fontWeight: 'bold',
   },
-  taskContainer: {
-    ...Spacing.flexColumn,
-    width: '100%',
-    marginVertical: 10,
+  taskListContainer : {
+    width: '90%',
+    height: '95%',
   },
   task: {
     ...Spacing.flexRow,
-    width: '90%',
+    width: '100%',
     height: 60,
     justifyContent: 'space-around',
     borderWidth: 1,
@@ -207,6 +221,12 @@ const styles = StyleSheet.create({
   },
   btnText: {
     ...Buttons.buttonText,
+  },
+  squareBtnContainer: {
+    ...Spacing.flexRow,
+    height: 70,
+    marginLeft: 10
+
   },
 })
  
