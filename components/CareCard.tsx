@@ -42,12 +42,7 @@ const CareCard = ({ care, navigation }) => {
       <View style={styles.header}>
         <View style={[
           styles.colorBox,
-          { backgroundColor: 
-            care.frequency === 'Daily' ? Colors.multiArray[0]
-            : care.frequency === 'Weekly' ? Colors.multiArray[1]
-            : care.frequency === 'Monthly' ? Colors.multiArray[2]
-            : Colors.multiArray[3]
-          }
+          { backgroundColor: careUtils.getTaskBackgroundColor(care.frequency) }
         ]}>
           <View style={styles.titleContainer}>
             <Image source={iconSource} style={styles.icon } />

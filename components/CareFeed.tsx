@@ -6,6 +6,8 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useCareContext } from "../context/CareContext"
 //utils & services
 import { Care } from "../services/careService"
+import * as careUtils from '../utils/careUtils'
+import { getTaskStatus } from "../utils/careUtils"
 //components
 import ScrollPetList from "./ScrollPetList"
 import { AddButton } from "../styles/buttonComponent"
@@ -22,6 +24,7 @@ interface CareFeedProps {
 const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => {
   const [selected, setSelected] = useState<string>('day')
 
+
   const sortedCareCards: { [key: string]: Care[] } = careCards.reduce((result, careCard) => {
     const { frequency } = careCard
     result[frequency] = result[frequency] || []
@@ -29,33 +32,42 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
     return result
   }, {})
 
-  const rightSwipeActions = ({ task }) => (
-    <View style={styles.squareBtnContainer}>
-      <SquareButton title='Edit' onPress={() => navigation.navigate('Care', { screen: 'Edit', params: { care: task } })} />
-      <SquareButton title='More' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { careId: task._id } })} />
-    </View>
-  )
-  
+  const TaskItem = ({ task, index }) => {
+    const done = careUtils.getTaskStatus(task.frequency, today)
 
-  const TaskItem = ({ task, index }) => (
-    <Swipeable
-      renderRightActions={() => rightSwipeActions({ task })}
-    >
-      <TouchableOpacity style={styles.task} key={task._id}
-        onPress={() => navigation.navigate('Care', { 
-          screen: 'Index', params: {sectionIndex: 0, itemIndex: index } 
-        })}
+    const rightSwipeActions = () => (
+      <View style={styles.squareBtnContainer}>
+        <SquareButton title='Edit' onPress={() => navigation.navigate('Care', { screen: 'Edit', params: { care: task } })} />
+        <SquareButton title='More' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { careId: task._id } })} />
+      </View>
+    )
+  
+    return (
+      <Swipeable
+        renderRightActions={() => rightSwipeActions()}
       >
-        <Text style={[
-          task.trackers[task.trackers.length - 1].done[today.currDate - 1] === task.times && styles.done, 
-          styles.taskText
-        ]}>
-          {task.name}
-        </Text>
-        <ScrollPetList petArray={task.pets} size='mini' />
-      </TouchableOpacity>
-    </Swipeable>
-  )
+        <TouchableOpacity 
+          key={task._id}
+          style={[
+            styles.task, 
+            { backgroundColor: careUtils.getTaskBackgroundColor(task.frequency) }
+          ]} 
+          onPress={() => navigation.navigate('Care', { 
+            screen: 'Index', params: {sectionIndex: 0, itemIndex: index } 
+          })}
+        >
+          <Text style={[
+            done === task.times && styles.done, 
+            styles.taskText
+          ]}>
+            {task.name}
+          </Text>
+          <Text>{done}/{task.times}</Text>
+          <ScrollPetList petArray={task.pets} size='mini' />
+        </TouchableOpacity>
+      </Swipeable>
+    )
+  }
 
   const ManageTaskButton = () => (
     <TouchableOpacity style={styles.mainBtn} 
@@ -71,14 +83,12 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation, careCards }) => 
     </TouchableOpacity>
   )
   
-
   const EmptyList  = () => (
     <View>
       <Text>Nothing yet to manage.</Text>
     </View>
   )
     
-
   return (  
     <View style={styles.container}>
       <View style={styles.iconMenuContainer}>
@@ -201,8 +211,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 60,
     justifyContent: 'space-around',
-    borderWidth: 1,
-    borderColor: 'lightgray',
     borderRadius: 15,
     marginVertical: 5
   },

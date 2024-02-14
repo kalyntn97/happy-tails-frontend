@@ -1,6 +1,7 @@
 import { ImageSourcePropType } from "react-native"
 import { usePetContext } from "../context/PetContext"
 import { Colors } from "../styles"
+import { Care } from "../services/careService"
 
 export const getIconSource  = (name: string): ImageSourcePropType => {
   switch (name) {
@@ -106,4 +107,27 @@ export const getDateTimeFromTracker = (trackerName: string) => {
     isCurrent = trackerYear === currYear
   }
   return { trackerMonth, trackerMonthName, trackerYear, isCurrent }
+}
+
+export const getTaskStatus = (task: Care, today: { currDate: number, currMonth: string, monthIdx: number, currYear: number, currWeek: number }) => {
+  switch (task.frequency) {
+    case 'Daily': 
+      return task.trackers[task.trackers.length - 1].done[today.currDate - 1]
+    case 'Weekly': 
+      return task.trackers[task.trackers.length - 1].done[today.currWeek - 1]
+    case 'Monthly':
+      return task.trackers[task.trackers.length - 1].done[today.monthIdx - 1]
+    case 'Yearly':
+      return task.trackers[task.trackers.length - 1].done
+    default: return 0
+  }
+}
+
+export const getTaskBackgroundColor = (frequency: string) => {
+  switch (frequency) {
+    case 'Daily': return Colors.multiArray[0]
+    case 'Weekly': return Colors.multiArray[1]
+    case 'Monthly': return Colors.multiArray[2]
+    default: return Colors.multiArray[3]
+  }
 }

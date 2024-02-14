@@ -27,8 +27,8 @@ export const AddButton = ({ onPress }) => (
 
 export const SquareButton = ({title, onPress}) => (
   <TouchableOpacity onPress={onPress} style={{
-    width: 55,
-    height: 55,
+    width: 60,
+    height: 60,
     borderRadius: 10,
     marginHorizontal: 2,
     backgroundColor: title === 'Edit' ? Colors.yellow : title === 'Delete' ? Colors.red : Colors.green,
