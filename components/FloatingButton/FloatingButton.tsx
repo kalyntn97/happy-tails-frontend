@@ -11,6 +11,7 @@ const FloatingButton = ({ children }) => {
   const [opened, setOpened] = useState(false)
  
   const { width, height } = useWindowDimensions()
+
   const subBtn_tap_event = 'subBtn_tap_event'
   // initial position
   const positionX = useSharedValue(0)
@@ -39,13 +40,17 @@ const FloatingButton = ({ children }) => {
       setOpened(false)
     }, 300)
   }
-
+  // tap animation 
   const _onTapHandlerStateChange = ({ nativeEvent }) => {
     if (nativeEvent.state === State.END) {
       opened ? _close() : _open()
     }
   }
 
+  //calculate the distances to corners
+  const snapThreshold = ButtonStyles.width + ButtonStyles.margin * 2
+
+  // drag animation
   const _onPanHandlerStateChange = useAnimatedGestureHandler({
     onStart: (_, ctx: {startX: number, startY: number }) => {
       ctx.startX = positionX.value
@@ -56,12 +61,17 @@ const FloatingButton = ({ children }) => {
       positionY.value = ctx.startY + event.translationY
     },
     onEnd: _ => {
-      if (positionX.value > -width / 2) {
+      console.log(positionX.value, positionY.value)
+      
+      if (positionX.value > -width / 2 + snapThreshold) {
         positionX.value = withSpring(Animation.starting_position)
-        positionY.value = withSpring(Animation.starting_position)
-      } else {
+      } else if (positionX.value < -width + snapThreshold) {
         positionX.value = withSpring(-width + ButtonStyles.width + ButtonStyles.margin * 2)
+      }
+      if (positionY.value > -height / 4 + snapThreshold) {
         positionY.value = withSpring(Animation.starting_position)
+      } else if (positionY.value < -height + snapThreshold + 150) {
+        positionY.value = withSpring(-height + ButtonStyles.width + ButtonStyles.margin * 2 + 150)
       }
     }
   })

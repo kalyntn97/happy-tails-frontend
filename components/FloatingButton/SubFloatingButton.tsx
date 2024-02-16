@@ -8,7 +8,7 @@ import { Spacing, Colors } from "../../styles"
 
 const SubFloatingButton = ({ onPress, label, index}) => {
   const buttonOpacity = useSharedValue(1)
-  
+ 
   const _onTapHandlerStateChange = ({ nativeEvent }) => {
     switch (nativeEvent.state) {
       case State.BEGAN: buttonOpacity.value = 0.5; break
@@ -32,7 +32,11 @@ const SubFloatingButton = ({ onPress, label, index}) => {
 
   return (
     <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
-      <Animated.View style={[styles.button, { backgroundColor: Colors.multiArray2[index] },animatedStyles]}>
+      <Animated.View style={[
+        styles.button, 
+        { backgroundColor: Colors.multiArray2[index] }, 
+        animatedStyles
+      ]}>
         <Text style={styles.plus}>+</Text>
         <Text style={styles.label}>{label}</Text>
       </Animated.View>

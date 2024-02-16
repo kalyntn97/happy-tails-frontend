@@ -21,13 +21,13 @@ export const Animation = {
   starting_position: 0,
   rotation_open: 225,
   children_opacity_open: 1,
-  children_position_Y_open: 0,
+  children_position_Y_open: 1,
   plus_translate_Y_open: -3
 }
 
 export const ChildrenAnimation = {
   children_opacity_close: 0,
-  children_position_y_close: 60,
+  children_position_y_close: 100,
   rotation_close: 0,
   plus_translate_y_close: -2,
 }
