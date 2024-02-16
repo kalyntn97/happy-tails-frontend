@@ -3,8 +3,7 @@ import { StyleSheet, Text, View } from "react-native"
 //components
 import ProgressTracker from "./ProgressTracker"
 //services & utils
-import { getDateTimeFromTracker } from "../utils/careUtils"
-import useCurrentDayInfo from "../utils/useCurrentDayInfo"
+import * as careUtils from "../utils/careUtils"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -14,11 +13,10 @@ interface YearChartProps {
 }
 
 const YearChart: React.FC<YearChartProps> = ({ tracker, times }) => {
-  const { isCurrent } = getDateTimeFromTracker(tracker.name)
-  const { currYear } = useCurrentDayInfo()
-
+  const { isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
+  const { year: currYear } = careUtils.getCurrentDate()
   return (  
-    <View style={[styles.container, isCurrent ? { borderColor: Colors.darkPink } : {}]}>
+    <View style={styles.container}>
       <Text style={[styles.header,isCurrent ? { color: Colors.darkPink } : {}]}>{currYear}</Text>
       <ProgressTracker times={times} done={tracker.done[0]} size={times > 6 ? 'small' : 'large'} />
     </View>
@@ -29,7 +27,6 @@ const styles = StyleSheet.create({
   container: {
     width: '90%',
     ...Spacing.flexRow,
-    borderWidth: 3,
     padding: 10,
     margin: 10,
     borderRadius: 8,

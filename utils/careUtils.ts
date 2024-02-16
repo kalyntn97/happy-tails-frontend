@@ -109,8 +109,8 @@ export const getDateTimeFromTracker = (trackerName: string) => {
   return { trackerMonth, trackerMonthName, trackerYear, isCurrent }
 }
 
-export const getTaskStatus = (task: Care, today: { currDate: number, currMonth: string, monthIdx: number, currYear: number, currWeek: number }) => {
-  const { currDate, currWeek, monthIdx } = today
+export const getTaskStatus = (task: Care) => {
+  const { date: currDate, week: currWeek, month: monthIdx } = getCurrentDate()
   switch (task.frequency) {
     case 'Daily': 
       return task.trackers[task.trackers.length - 1].done[currDate - 1]

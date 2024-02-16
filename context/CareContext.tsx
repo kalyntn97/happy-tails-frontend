@@ -28,7 +28,8 @@ export const CareProvider: React.FC<CareProviderProps> = ({ children }) => {
 
   const editCare = async (name: string, frequency: string, times: number, pets: string[], careId: string) => {
     const updatedCareCard = await careService.update(name, frequency, times, pets, careId)
-    setCareCards(careCards.map(care => care._id === updatedCareCard._id ? updatedCareCard : care))
+    setCareCards(prev => prev.map(care => care._id === updatedCareCard._id ? updatedCareCard : care))
+    return updatedCareCard
   }
 
   const addCare = async (name: string, frequency: string, times: number, pets: string[]) => {

@@ -64,6 +64,12 @@ const SettingsScreen = ({ navigation, route }) => {
           >
             <Text style={styles.btnText}>Edit</Text>
           </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.mainBtn, { backgroundColor: Colors.red }]}
+            onPress={() => navigation.navigate('Config', { profile : profile })}
+          >
+            <Text style={styles.btnText}>Manage</Text>
+          </TouchableOpacity>
         </View>
       </View>
 

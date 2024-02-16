@@ -2,7 +2,6 @@
 import { useWindowDimensions, StyleSheet, Text, View } from "react-native"
 //services & utils
 import * as careUtils from '../utils/careUtils'
-import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -14,7 +13,7 @@ interface DailyChartProps {
 
 const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
   const { trackerMonthName, trackerYear, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
-  const { currDate } = useCurrentDayInfo()
+  const { date: currDate } = careUtils.getCurrentDate()
 
   const colorArray = careUtils.getColorArray()
 

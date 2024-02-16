@@ -26,10 +26,9 @@ import EditCareScreen from '../screens/EditCareScreen'
 import HealthIndexScreen from '../screens/HealthIndexScreen'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
-import { header } from '../styles/typography'
 
 const Layout: React.FC = () => {
-  const { authState, onLogout } = useAuth()
+  const { authState } = useAuth()
   const { profile } = useProfileContext()
   //tabs
   const Tab = createBottomTabNavigator()
@@ -37,8 +36,10 @@ const Layout: React.FC = () => {
   const PetStack = createNativeStackNavigator()
   const LoginStack = createNativeStackNavigator()
   const SettingsStack = createNativeStackNavigator()
+  const HomeStack = createNativeStackNavigator()
   const CareStack = createNativeStackNavigator()
   const HealthStack = createNativeStackNavigator()
+  const ProfileStack = createNativeStackNavigator()
   //drawers
   const AccountDrawer = createDrawerNavigator()
   const HomeDrawer = createDrawerNavigator()
@@ -57,7 +58,7 @@ const Layout: React.FC = () => {
               case 'User': name = 'Account'; break
               default: name = 'Home'
             }
-            return <Text style={[styles.iconLabel, { color: focused ? Colors.darkPink : 'black'}]}>{name}</Text>
+            return <Text style={[styles.iconLabel, { color: focused ? Colors.darkink : 'black'}]}>{name}</Text>
           },
           tabBarIcon: ({ focused }) => {
             let icon:any
@@ -88,31 +89,12 @@ const Layout: React.FC = () => {
         {authState.authenticated ? (
           <Tab.Group>
             <Tab.Screen name='Home' 
-              options={{ title: 'Welcome', /* unmountOnBlur: true */ }}
-              // listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
+              options={{ title: 'Welcome' }}
             >
               {() => (
-                <HomeDrawer.Navigator
-                  screenOptions={({ route }) =>({
-                    drawerType: 'front',
-                    // drawerIcon: (),
-                    drawerLabelStyle: styles.focusedText,
-                    drawerActiveTintColor: Colors.darkPink,
-                    drawerActiveBackgroundColor: Colors.lightPink,
-                    drawerStyle: { backgroundColor: Colors.lightestPink, width: '50%' },
-                    header: ({ navigation }) => {
-                      return (
-                        <View style={styles.header}>
-                          <Pressable style={[styles.menuBtn, { left: 10 }]} onPress={() => navigation.openDrawer()}>
-                            <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon } />
-                          </Pressable>
-                        </View>
-                      )
-                    }
-                  })}
-                >
-                  <HomeDrawer.Screen name='Welcome' component={HomeScreen} options={{ title: 'Welcome' }} />
-                  <HomeDrawer.Screen name='Care' options={{ title: 'Pet Care' }}>
+                <HomeStack.Navigator>
+                  <HomeStack.Screen name='Main' component={HomeScreen} options={{ headerShown: false }} />
+                  <HomeStack.Screen name='Care' options={{ title: 'Care' }}>
                     {() => (
                       <CareStack.Navigator screenOptions={{ 
                         headerShown: false,
@@ -122,22 +104,56 @@ const Layout: React.FC = () => {
                         <CareStack.Screen name='Create' component={NewCareScreen} options={{ title: 'Add Tracker' }}/>
                         <CareStack.Screen name='Details' component={CareDetailsScreen} options={{ title: 'Care Details' }}/>
                         <CareStack.Screen name='Edit' component={EditCareScreen} options={{ title: 'Edit Pet Care' }}/>
-                    </CareStack.Navigator>
+                      </CareStack.Navigator>
                     )}
-                  </HomeDrawer.Screen>
-                  <HomeDrawer.Screen name='Health' options={{ title: 'Pet Health' }}>
-                    {() => (
-                      <HealthStack.Navigator>
-                        <HealthStack.Screen name='Index' component={HealthIndexScreen} options={{ title: 'All Health Care' }}/>
-                      </HealthStack.Navigator>
-                    )}
-                  </HomeDrawer.Screen>
-                </HomeDrawer.Navigator>
+                  </HomeStack.Screen>
+          
+                </HomeStack.Navigator>
+                // <HomeDrawer.Navigator
+                //   screenOptions={({ route }) =>({
+                //     drawerType: 'front',
+                //     // drawerIcon: (),
+                //     drawerLabelStyle: styles.focusedText,
+                //     drawerActiveTintColor: Colors.darkPink,
+                //     drawerActiveBackgroundColor: Colors.lightPink,
+                //     drawerStyle: { backgroundColor: Colors.lightestPink, width: '50%' },
+                //     header: ({ navigation }) => {
+                //       return (
+                //         <View style={styles.header}>
+                //           <Pressable style={[styles.menuBtn, { left: 10 }]} onPress={() => navigation.openDrawer()}>
+                //             <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon } />
+                //           </Pressable>
+                //         </View>
+                //       )
+                //     }
+                //   })}
+                // >
+                //   <HomeDrawer.Screen name='Welcome' component={HomeScreen} options={{ title: 'Welcome' }} />
+                //   <HomeDrawer.Screen name='Care' options={{ title: 'Pet Care' }}>
+                //     {() => (
+                //       <CareStack.Navigator screenOptions={{ 
+                //         headerShown: false,
+                //         contentStyle: { backgroundColor: Colors.lightestPink }
+                //       }}>
+                //         <CareStack.Screen name='Index' component={CareIndexScreen} options={{ title: 'All Pet Care' }}/>
+                //         <CareStack.Screen name='Create' component={NewCareScreen} options={{ title: 'Add Tracker' }}/>
+                //         <CareStack.Screen name='Details' component={CareDetailsScreen} options={{ title: 'Care Details' }}/>
+                //         <CareStack.Screen name='Edit' component={EditCareScreen} options={{ title: 'Edit Pet Care' }}/>
+                //     </CareStack.Navigator>
+                //     )}
+                //   </HomeDrawer.Screen>
+                //   <HomeDrawer.Screen name='Health' options={{ title: 'Pet Health' }}>
+                //     {() => (
+                //       <HealthStack.Navigator>
+                //         <HealthStack.Screen name='Index' component={HealthIndexScreen} options={{ title: 'All Health Care' }}/>
+                //       </HealthStack.Navigator>
+                //     )}
+                //   </HomeDrawer.Screen>
+                // </HomeDrawer.Navigator>
               )}
             </Tab.Screen>
             <Tab.Screen name='Pets' 
               options={{ title: 'All Pets' }}
-              // listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
             >
               {() => (
                 <PetStack.Navigator
@@ -156,45 +172,8 @@ const Layout: React.FC = () => {
               listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
             >
               {() => (
-                <AccountDrawer.Navigator
-                  initialRouteName='My Profile'
-                  drawerContent={(props) => {
-                    return (
-                      <DrawerContentScrollView {...props} contentContainerStyle={styles.scrollView}>
-                        <DrawerItemList {...props} />
-                        {/* <DrawerItem
-                          label={() => 
-                            <TouchableOpacity onPress={logout} style={styles.logoutBtn}>
-                              <Text style={styles.btnText}>Logout</Text>
-                            </TouchableOpacity>
-                          }
-                          onPress={logout}
-                          style={{ marginTop: 'auto', width: '100%'}}
-                        /> */}
-                      </DrawerContentScrollView>
-                    )
-                  }}
-                  screenOptions={({ route }) =>({
-                    drawerType: 'front',
-                    drawerPosition: 'right',
-                    // drawerIcon: (),
-                    drawerLabelStyle: styles.focusedText,
-                    drawerActiveTintColor: Colors.darkPink,
-                    drawerActiveBackgroundColor: Colors.lightPink,
-                    drawerStyle: { backgroundColor: Colors.lightestPink, width: '50%' },
-                    header: ({ navigation }) => {
-                      return (
-                        <View style={styles.header}>
-                          <Text style={styles.headerText}>{profile?.name}</Text>
-                          <Pressable style={[styles.menuBtn, { right: 10 }]} onPress={() => navigation.openDrawer()}>
-                            <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon } />
-                          </Pressable>
-                        </View>
-                      )
-                    }
-                  })}
-                >
-                  <AccountDrawer.Screen name='Settings' options={{ title: 'Profile' }}>
+                <ProfileStack.Navigator>
+                  <ProfileStack.Screen name='Settings' options={{ title: 'Profile' }}>
                     {() => (
                       <SettingsStack.Navigator
                         screenOptions={{ contentStyle: { backgroundColor: Colors.lightestPink }}}
@@ -211,12 +190,72 @@ const Layout: React.FC = () => {
                         />
                       </SettingsStack.Navigator>
                     )}
-                  </AccountDrawer.Screen>
+                  </ProfileStack.Screen>
 
-                  <AccountDrawer.Screen name='Config' component={AccountScreen} options={{ title: 'Manage Account' }}
-                  />
+                  <ProfileStack.Screen name='Config' component={AccountScreen} options={{ title: 'Manage Account' }} />
+                
+                </ProfileStack.Navigator>
+                // <AccountDrawer.Navigator
+                //   initialRouteName='My Profile'
+                //   drawerContent={(props) => {
+                //     return (
+                //       <DrawerContentScrollView {...props} contentContainerStyle={styles.scrollView}>
+                //         <DrawerItemList {...props} />
+                //         {/* <DrawerItem
+                //           label={() => 
+                //             <TouchableOpacity onPress={logout} style={styles.logoutBtn}>
+                //               <Text style={styles.btnText}>Logout</Text>
+                //             </TouchableOpacity>
+                //           }
+                //           onPress={logout}
+                //           style={{ marginTop: 'auto', width: '100%'}}
+                //         /> */}
+                //       </DrawerContentScrollView>
+                //     )
+                //   }}
+                //   screenOptions={({ route }) =>({
+                //     drawerType: 'front',
+                //     drawerPosition: 'right',
+                //     // drawerIcon: (),
+                //     drawerLabelStyle: styles.focusedText,
+                //     drawerActiveTintColor: Colors.darkPink,
+                //     drawerActiveBackgroundColor: Colors.lightPink,
+                //     drawerStyle: { backgroundColor: Colors.lightestPink, width: '50%' },
+                //     header: ({ navigation }) => {
+                //       return (
+                //         <View style={styles.header}>
+                //           <Text style={styles.headerText}>{profile?.name}</Text>
+                //           <Pressable style={[styles.menuBtn, { right: 10 }]} onPress={() => navigation.openDrawer()}>
+                //             <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon } />
+                //           </Pressable>
+                //         </View>
+                //       )
+                //     }
+                //   })}
+                // >
+                //   <AccountDrawer.Screen name='Settings' options={{ title: 'Profile' }}>
+                //     {() => (
+                //       <SettingsStack.Navigator
+                //         screenOptions={{ contentStyle: { backgroundColor: Colors.lightestPink }}}
+                //       >
+                //         <SettingsStack.Screen
+                //           name='Profile'
+                //           component={SettingsScreen}
+                //           options={{ title: 'Profile', headerShown: false }}
+                //         />
+                //         <SettingsStack.Screen
+                //           name='Edit'
+                //           component={EditProfileScreen}
+                //           options={{ title: 'Edit Profile' }}
+                //         />
+                //       </SettingsStack.Navigator>
+                //     )}
+                //   </AccountDrawer.Screen>
+
+                //   <AccountDrawer.Screen name='Config' component={AccountScreen} options={{ title: 'Manage Account' }}
+                //   />
                   
-                </AccountDrawer.Navigator>
+                // </AccountDrawer.Navigator>
               )}
             </Tab.Screen>
           </Tab.Group>

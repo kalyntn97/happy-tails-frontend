@@ -11,7 +11,6 @@ import ScrollCalendar from "./ScrollCalendar"
 import { useCareContext } from "../context/CareContext"
 //styles
 import { Spacing, Typography, Colors } from '../styles'
-import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 
 interface CurrentTrackerProps {
   care: Care
@@ -25,7 +24,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   const {onCheckDone, onUncheckDone } = useCareContext()
 
   // get month and year of current tracker from name
-  const { currMonth, currYear } = useCurrentDayInfo()
+  const { monthName: currMonth, year: currYear } = careUtils.getCurrentDate()
   
   const checkDone = async (careId: string, trackerId: string, index: number) => {
     const updatedTracker = await onCheckDone!(careId, trackerId, index)

@@ -30,7 +30,7 @@ const CareCard = ({ care, navigation, onNavigate }) => {
 
   const handleNavigate = () => {
     onNavigate && onNavigate()
-    navigation.navigate('Care', { screen: 'Details' , params : { careId: care._id } })
+    navigation.navigate('Care', { screen: 'Details' , params : { care: care } })
   }
   
   useEffect(() => {

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
 //services & utils
 import * as careUtils from '../utils/careUtils'
-import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -18,8 +17,8 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
   const [barHeightUnit, setBarHeightUnit] = useState<number>(0)
 
   const { trackerMonthName, trackerYear, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
-  const { currWeek, monthIdx } = useCurrentDayInfo()
-
+  const { week: currWeek, month: monthIdx } = careUtils.getCurrentDate()
+  
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
   const chartWidth = windowWidth * 0.9

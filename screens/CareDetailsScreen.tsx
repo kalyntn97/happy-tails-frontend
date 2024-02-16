@@ -1,10 +1,8 @@
 //npm
-import React, { useCallback, useEffect, useState } from "react"
-import { useFocusEffect } from "@react-navigation/native"
+import React from "react"
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView } from "react-native"
 //services & utils
 import { Care } from "../services/careService"
-import * as careService from '../services/careService'
 import * as careUtils from '../utils/careUtils'
 //context
 import { useCareContext } from "../context/CareContext"
@@ -12,38 +10,23 @@ import { useCareContext } from "../context/CareContext"
 import ScrollPetList from "../components/ScrollPetList"
 import DailyChart from "../components/DailyChart"
 import BarChart from "../components/BarChart"
-//styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 import YearChart from "../components/YearChart"
 import FillChart from "../components/FillChart"
+//styles
+import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
 interface CareDetailsProps {
   navigation: any
-  route: { params: { careId: string }}
+  route: { params: { care: Care }}
 }
 
 const CareDetailsScreen = ({ navigation, route }) => {
-  const [careCard, setCareCard] = useState<Care>({
-    _id: '',
-    name: '',
-    frequency: 'Daily',
-    times: 0,
-    pets: [],
-    trackers: []
-  })
 
-  const { careId } = route.params
+  const { care: careCard } = route.params
+  
   const { onDeleteCare } = useCareContext()
 
   const iconSource = careUtils.getIconSource(careCard.name)
-
-  useEffect(() => {
-    const fetchCareDetails = async () => {
-      const data = await careService.show(careId)
-      setCareCard(data)
-    }
-    fetchCareDetails()
-  }, [careId])
 
   const handleDeleteCareCard = async (careId: string) => {
     await onDeleteCare!(careId)
@@ -55,7 +38,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
       'Are you sure?',
       `Remove ${careCard.name} Tracker ?`, 
       [
-        { text: 'Yes', onPress: () => { handleDeleteCareCard(careId) }},
+        { text: 'Yes', onPress: () => { handleDeleteCareCard(careCard._id) }},
         { text: 'No' }
       ]
     )
@@ -109,7 +92,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
         </React.Fragment>
       )}
 
-    </ScrollView>
+    </ScrollView> 
   )
 }
 

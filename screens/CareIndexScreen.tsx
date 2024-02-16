@@ -5,14 +5,13 @@ import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 //components
 import CareCard from "../components/CareCard"
-import { AddButton } from "../components/buttonComponent"
+import { AddButton } from "../components/ButtonComponent"
 import ScrollPetList from "../components/ScrollPetList"
 //services & utils
 import { useCareContext } from "../context/CareContext"
 import { Care } from "../services/careService"
 //styles
 import { Buttons, Spacing, Typography, Colors, Forms } from '../styles'
-import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 import * as careUtils from "../utils/careUtils"
 
 type CareIndexProps = {
@@ -37,7 +36,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   
     return (
       <TouchableOpacity 
-        onPress={() => navigation.navigate('Details', { careId: care._id })}
+        onPress={() => navigation.navigate('Details', { care: care })}
         style={[styles.itemContainer,
         { backgroundColor: careUtils.getTaskBackgroundColor(care.frequency) }
       ]}>

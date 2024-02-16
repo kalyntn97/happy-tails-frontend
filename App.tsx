@@ -1,4 +1,4 @@
-import 'react-native-gesture-handler'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 //npm modules
 import * as React from 'react'
 //context
@@ -16,7 +16,9 @@ const App: React.FC = () => {
       <PetProvider>
         <CareProvider>
           <ProfileProvider>
-            <Layout />
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <Layout />
+            </GestureHandlerRootView>
           </ProfileProvider>
         </CareProvider>
       </PetProvider>

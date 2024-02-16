@@ -7,24 +7,22 @@ import { useCareContext } from "../context/CareContext"
 //utils & services
 import { Care } from "../services/careService"
 import * as careUtils from '../utils/careUtils'
-import { getTaskStatus } from "../utils/careUtils"
 //components
-import ScrollPetList from "./ScrollPetList"
+import CareCard from "./CareCard"
 import TaskItem from "./TaskItem"
-import { AddButton, CloseButton } from "./buttonComponent"
-import { SquareButton } from "./buttonComponent"
+import { AddButton, CloseButton } from "./ButtonComponent"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '../styles'
-import CareCard from "./CareCard"
+import FloatingButton from "./FloatingButton/FloatingButton"
 
 interface CareFeedProps {
-  today: { currDate: number, currMonth: string, monthIdx: number, currYear: number, currWeek: number }
   navigation: any
 }
 
-const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
+const CareFeed: React.FC<CareFeedProps> = ({ navigation }) => {
   const {careCards } = useCareContext()
-  const sortedCareCards: {[key: string]: Care[]} = careUtils.sortByFrequency(careCards)
+  console.log(careCards)
+  const sortedCareCards: {[key: string]: Care[]} = careCards ? careUtils.sortByFrequency(careCards) : {}
 
   const [selected, setSelected] = useState<string>('day')
   const [modalVisible, setModalVisible] = useState(false)
@@ -57,6 +55,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
     
   return (  
     <View style={styles.container}>
+
       <View style={styles.iconMenuContainer}>
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
           <Text style={styles.taskCount}>{sortedCareCards['Daily']?.length ?? 0}</Text>
@@ -89,7 +88,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
             extraData={sortedCareCards['Daily']}
             keyExtractor={(item, index) => item + index.toString()}
             renderItem={({ item }) => 
-              <TaskItem key={item._id} task={item} today={today} navigation={navigation} 
+              <TaskItem key={item._id} task={item} navigation={navigation} 
                 onPress={() => handleClickTask(item)}
               />
             }
@@ -103,7 +102,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
             data={sortedCareCards['Weekly']}
             keyExtractor={(item, index) => item + index.toString()}
             renderItem={({ item }) => 
-              <TaskItem key={item._id} task={item} today={today} navigation={navigation} 
+              <TaskItem key={item._id} task={item} navigation={navigation} 
                 onPress={() => handleClickTask(item)}
               />
             }
@@ -115,7 +114,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
             data={sortedCareCards['Monthly']}
             keyExtractor={(item, index) => item + index.toString()}
             renderItem={({ item }) => 
-              <TaskItem key={item._id} task={item} today={today} navigation={navigation} 
+              <TaskItem key={item._id} task={item} navigation={navigation} 
                 onPress={() => handleClickTask(item)}
               />
             }
@@ -127,7 +126,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
             data={sortedCareCards['Yearly']}
             keyExtractor={(item, index) => item + index.toString()}
             renderItem={({ item }) => 
-              <TaskItem key={item._id} task={item} today={today} navigation={navigation} 
+              <TaskItem key={item._id} task={item} navigation={navigation} 
                 onPress={() => handleClickTask(item)}
               />
             }
@@ -149,7 +148,8 @@ const CareFeed: React.FC<CareFeedProps> = ({ today, navigation }) => {
           </View>
         </Pressable>
       </Modal> 
-    
+      
+
     </View>
   )
 }
@@ -159,6 +159,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '75%',
     alignItems: 'center',
+    position: 'relative',
   },
   done: {
     textDecorationLine: 'line-through',
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     position: 'absolute',
     right: '25%',
-    bottom: '25%',
+    top: '15%',
   },
   selected: {
     color: Colors.red,

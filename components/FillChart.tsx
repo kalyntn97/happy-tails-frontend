@@ -2,7 +2,6 @@
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
 //services & utils
 import * as careUtils from '../utils/careUtils'
-import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
@@ -14,7 +13,7 @@ const FillChart = ({ tracker, frequency, times }) => {
   const squareWidth = frequency === 'Weekly' ? chartWidth * 0.9 / 3.2 : chartWidth * 0.9 / 4
 
   const { trackerMonthName, trackerYear, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
-  const { currMonth, currWeek } = useCurrentDayInfo()
+  const { monthName: currMonth, week: currWeek } = careUtils.getCurrentDate()
 
   const colorArray = careUtils.getColorArray()
 

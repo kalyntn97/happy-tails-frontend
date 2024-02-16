@@ -31,6 +31,7 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
 
   const handleSubmit = async (name: string, frequency: string, times: number, pets: string[], careId: string) => {
     const updatedCareCard = await onEditCare!(name, frequency, times, pets, careId)
+  
     navigation.navigate('Details', { careId: updatedCareCard._id })
   }
 

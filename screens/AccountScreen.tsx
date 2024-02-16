@@ -69,7 +69,7 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
           <TouchableOpacity 
             onPress={() => setShowForm('password')} 
             style={[styles.tabBtn, { backgroundColor: showForm === 'password' ? Colors.white : Colors.lightestPink}]}>
-            <Text style={[styles.btnText, { color: showForm === 'password' ? Colors.darkPink : 'black' }]}>Change Password</Text>
+            <Text style={[styles.btnText, { color: showForm === 'password' ? Colors.darkPink : 'black' }]}>Change {'\n'}Password</Text>
           </TouchableOpacity>
         
           <TouchableOpacity 

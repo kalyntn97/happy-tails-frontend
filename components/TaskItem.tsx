@@ -1,21 +1,22 @@
 //npm
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
-import { Swipeable } from 'react-native-gesture-handler'
+import Swipeable from 'react-native-gesture-handler/Swipeable'
 //services & utils
 import * as careUtils from '../utils/careUtils'
 //components
-import { SquareButton } from './buttonComponent'
+import { SquareButton } from './ButtonComponent'
 import ScrollPetList from './ScrollPetList'
 //styles
 import { Spacing } from '../styles'
 
-const TaskItem = ({ task, today, navigation, onPress }) => {
+const TaskItem = ({ task, navigation, onPress }) => {
  
-  const done = careUtils.getTaskStatus(task, today)
+  const done = careUtils.getTaskStatus(task)
+
   const rightSwipeActions = () => (
     <View style={styles.squareBtnContainer}>
       <SquareButton title='Edit' onPress={() => navigation.navigate('Care', { screen: 'Edit', params: { care: task } })} />
-      <SquareButton title='More' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { careId: task._id } })} />
+      <SquareButton title='More' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { care: task } })} />
     </View>
   )
 

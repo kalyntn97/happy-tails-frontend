@@ -3,13 +3,12 @@ import { useRef, useState, useEffect } from "react"
 import { ScrollView, StyleSheet, Text, View, Image, ImageStyle, TouchableOpacity, Pressable } from "react-native"
 //utils
 import * as careUtils from "../utils/careUtils"
-import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 import { Tracker } from "../services/careService"
 //styles
 import { Colors, Forms } from '../styles'
 
 const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone, frequency }) => {
-  const { currDate, currYear, monthIdx, currWeek, daysInMonth, weeksInMonth } = useCurrentDayInfo()
+  const { date: currDate, year: currYear, month: monthIdx, week: currWeek, daysInMonth, weeksInMonth } = careUtils.getCurrentDate()
 
   const handleCheck = async () => {
     tracker.done[index] === 1
