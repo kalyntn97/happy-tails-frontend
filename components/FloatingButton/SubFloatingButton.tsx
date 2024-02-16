@@ -1,12 +1,17 @@
 // npm
-import { Text, View, StyleSheet, DeviceEventEmitter } from "react-native"
+import { useEffect, useState } from "react"
+import { Text, View, StyleSheet, DeviceEventEmitter, useWindowDimensions } from "react-native"
 import { State, TapGestureHandler } from "react-native-gesture-handler"
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated"
 // styles
 import { ButtonStyles, Button, subBtn_tap_event } from "./constants"
 import { Spacing, Colors } from "../../styles"
 
-const SubFloatingButton = ({ onPress, label, index}) => {
+
+const SubFloatingButton = ({ onPress, label, index, x }) => {
+  const [labelSide, setLabelSide] = useState('left')
+  const { width } = useWindowDimensions()
+
   const buttonOpacity = useSharedValue(1)
  
   const _onTapHandlerStateChange = ({ nativeEvent }) => {
@@ -29,6 +34,11 @@ const SubFloatingButton = ({ onPress, label, index}) => {
       opacity: buttonOpacity.value
     }
   })
+  console.log('x: ', x)
+
+  // useEffect(() => {
+  //   console.log('x: ', x)
+  // }, [x])
 
   return (
     <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
@@ -38,7 +48,14 @@ const SubFloatingButton = ({ onPress, label, index}) => {
         animatedStyles
       ]}>
         <Text style={styles.plus}>+</Text>
-        <Text style={styles.label}>{label}</Text>
+        <Text style={[
+          styles.label,
+          x > -width / 2 
+          ? { right: ButtonStyles.width + 10, textAlign: 'right' } 
+          : { left: ButtonStyles.width + 10, textAlign: 'left' }
+        ]}>
+          {label}
+        </Text>
       </Animated.View>
     </TapGestureHandler>
   )
@@ -58,7 +75,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: ButtonStyles.width + 10,
     fontWeight: 'bold',
-    textAlign: 'right',
     color: Colors.darkPink,
     fontSize: 15,
   }

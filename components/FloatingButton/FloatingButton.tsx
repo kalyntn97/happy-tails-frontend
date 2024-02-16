@@ -1,15 +1,16 @@
 // npm
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { StyleSheet, View, Text, useWindowDimensions, DeviceEventEmitter } from "react-native"
 import { PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler"
 import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
 // styles
 import { Colors, Buttons, Spacing } from "../../styles"
 import { Button, ButtonStyles, Animation, ChildrenAnimation } from "./constants"
+import SubFloatingButton from "./SubFloatingButton"
 
 const FloatingButton = ({ children }) => {
   const [opened, setOpened] = useState(false)
- 
+
   const { width, height } = useWindowDimensions()
 
   const subBtn_tap_event = 'subBtn_tap_event'
@@ -61,17 +62,15 @@ const FloatingButton = ({ children }) => {
       positionY.value = ctx.startY + event.translationY
     },
     onEnd: _ => {
-      console.log(positionX.value, positionY.value)
-      
       if (positionX.value > -width / 2 + snapThreshold) {
         positionX.value = withSpring(Animation.starting_position)
       } else if (positionX.value < -width + snapThreshold) {
-        positionX.value = withSpring(-width + ButtonStyles.width + ButtonStyles.margin * 2)
+        positionX.value = withSpring(-width + snapThreshold)
       }
       if (positionY.value > -height / 4 + snapThreshold) {
         positionY.value = withSpring(Animation.starting_position)
       } else if (positionY.value < -height + snapThreshold + 150) {
-        positionY.value = withSpring(-height + ButtonStyles.width + ButtonStyles.margin * 2 + 150)
+        positionY.value = withSpring(-height + snapThreshold + 150)
       }
     }
   })
@@ -107,13 +106,17 @@ const FloatingButton = ({ children }) => {
   useEffect(() => {
     let listener = DeviceEventEmitter.addListener(subBtn_tap_event, () => _close())
     return () => listener.remove()
-  }, [])
+  }, [positionX.value])
 
   return (
     <PanGestureHandler onHandlerStateChange={_onPanHandlerStateChange}>
       <Animated.View style={[styles.buttonContainer, { bottom: height * 0.4 }, animatedRootStyles]}>
         {opened && 
-          <Animated.View style={[styles.children, animatedChildrenStyles]}>{children}</Animated.View>
+          <Animated.View style={[styles.children, animatedChildrenStyles]}>
+            <SubFloatingButton label='Add a Task' index={0} onPress={() => Alert.alert('Pressed 1!')} x={positionX.value} />
+            <SubFloatingButton label='Add a Vet Visit' index={1} onPress={() => Alert.alert('Pressed 2!')} x={positionX.value} />
+            <SubFloatingButton label='Add a Pet' index={2} onPress={() => Alert.alert('Pressed 3!')} x={positionX.value} />
+          </Animated.View>
         }
       <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
         <Animated.View style={[styles.button, animatedBtnStyles]}>
