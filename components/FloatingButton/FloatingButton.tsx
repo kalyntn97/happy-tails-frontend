@@ -1,6 +1,6 @@
 // npm
 import React, { useEffect, useState } from "react"
-import { StyleSheet, View, Text, useWindowDimensions, DeviceEventEmitter } from "react-native"
+import { StyleSheet, View, Text, useWindowDimensions, DeviceEventEmitter, Alert, TouchableWithoutFeedback } from "react-native"
 import { PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler"
 import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
 // styles
@@ -8,12 +8,14 @@ import { Colors, Buttons, Spacing } from "../../styles"
 import { Button, ButtonStyles, Animation, ChildrenAnimation } from "./constants"
 import SubFloatingButton from "./SubFloatingButton"
 
-const FloatingButton = ({ children }) => {
+const FloatingButton = ({ navigation }) => {
   const [opened, setOpened] = useState(false)
 
   const { width, height } = useWindowDimensions()
+  const snapThreshold = ButtonStyles.width + ButtonStyles.margin * 2
 
   const subBtn_tap_event = 'subBtn_tap_event'
+
   // initial position
   const positionX = useSharedValue(0)
   const positionY = useSharedValue(0)
@@ -25,9 +27,10 @@ const FloatingButton = ({ children }) => {
   const childrenOpacity = useSharedValue(ChildrenAnimation.children_opacity_close)
 
   const _open = () => {
+    const children_position_Y_open = positionY.value > -height / 2 ? 1 : (ButtonStyles.width * 4 + 40)
     setOpened(true)
     childrenOpacity.value = withTiming(Animation.children_opacity_open, { duration: 300})
-    childrenYPosition.value = withTiming(Animation.children_position_Y_open, { duration: 200})
+    childrenYPosition.value = withTiming(children_position_Y_open, { duration: 200})
     rotation.value = withSpring(Animation.rotation_open)
     plusTranslateY.value = withSpring(Animation.plus_translate_Y_open)
   }
@@ -49,7 +52,6 @@ const FloatingButton = ({ children }) => {
   }
 
   //calculate the distances to corners
-  const snapThreshold = ButtonStyles.width + ButtonStyles.margin * 2
 
   // drag animation
   const _onPanHandlerStateChange = useAnimatedGestureHandler({
@@ -109,22 +111,35 @@ const FloatingButton = ({ children }) => {
   }, [positionX.value])
 
   return (
-    <PanGestureHandler onHandlerStateChange={_onPanHandlerStateChange}>
-      <Animated.View style={[styles.buttonContainer, { bottom: height * 0.4 }, animatedRootStyles]}>
-        {opened && 
-          <Animated.View style={[styles.children, animatedChildrenStyles]}>
-            <SubFloatingButton label='Add a Task' index={0} onPress={() => Alert.alert('Pressed 1!')} x={positionX.value} />
-            <SubFloatingButton label='Add a Vet Visit' index={1} onPress={() => Alert.alert('Pressed 2!')} x={positionX.value} />
-            <SubFloatingButton label='Add a Pet' index={2} onPress={() => Alert.alert('Pressed 3!')} x={positionX.value} />
-          </Animated.View>
-        }
-      <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
-        <Animated.View style={[styles.button, animatedBtnStyles]}>
-          <Animated.Text style={[styles.text, animatedText]}>+</Animated.Text>
+    <>
+      {opened && 
+        <TouchableWithoutFeedback  onPress={() => _close()}>
+          <View style={[styles.overlay, { width: width, height: height}]} />
+        </TouchableWithoutFeedback> 
+      }
+      <PanGestureHandler onHandlerStateChange={_onPanHandlerStateChange}>
+        <Animated.View style={[styles.buttonContainer, { bottom: height * 0.4 }, animatedRootStyles]}>
+          {opened &&
+            <Animated.View style={[styles.children, animatedChildrenStyles]}>
+              <SubFloatingButton label='Add a Task' index={0} x={positionX.value} 
+                onPress={() => navigation.navigate('Care', { screen: 'Create' })} 
+              />
+              <SubFloatingButton label='Add a Vet Visit' index={1} x={positionX.value} 
+                onPress={() => Alert.alert('Pressed 2!')} 
+              />
+              <SubFloatingButton label='Add a Pet' index={2} x={positionX.value} 
+                onPress={() => navigation.navigate('Pets', { screen: 'Create' })} 
+              />
+            </Animated.View>
+          }
+          <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
+            <Animated.View style={[styles.button, animatedBtnStyles]}>
+              <Animated.Text style={[styles.text, animatedText]}>+</Animated.Text>
+            </Animated.View>
+          </TapGestureHandler>
         </Animated.View>
-      </TapGestureHandler>
-      </Animated.View>
-    </PanGestureHandler>
+      </PanGestureHandler>
+    </>
   )
 }
 
@@ -143,6 +158,10 @@ const styles = StyleSheet.create({
   children: {
     width: ButtonStyles.width,
     marginBottom: 10,
+  },
+  overlay: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    position: 'absolute',
   }
 })
 

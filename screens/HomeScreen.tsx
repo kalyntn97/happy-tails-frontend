@@ -40,7 +40,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
             <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{currMonth} {currDate} {currYear}</Text>
 
             <CareFeed navigation={navigation} />
-            <FloatingButton />
+            <FloatingButton navigation={navigation} />
               {/* <SubFloatingButton label='Add a Task' index={0} onPress={() => Alert.alert('Pressed 1!')} />
               <SubFloatingButton label='Add a Vet Visit' index={1} onPress={() => Alert.alert('Pressed 2!')} />
               <SubFloatingButton label='Add a Pet' index={2} onPress={() => Alert.alert('Pressed 3!')} /> */}

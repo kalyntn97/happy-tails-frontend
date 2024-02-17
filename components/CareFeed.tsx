@@ -33,20 +33,6 @@ const CareFeed: React.FC<CareFeedProps> = ({ navigation }) => {
     setModalVisible(true)
   }
 
-  const ManageTaskButton = () => (
-    <TouchableOpacity style={styles.mainBtn} 
-      onPress={() => navigation.navigate('Care', { 
-        screen: 'Index', 
-        params: { 
-          sectionIndex: 
-            selected === 'day' ? 0 : selected === 'week' ? 1 : selected === 'month' ? 2 : 3,
-          itemIndex: 0 
-        } 
-    })}>
-      <Text style={styles.btnText}>Manage Tasks</Text>
-    </TouchableOpacity>
-  )
-  
   const EmptyList  = () => (
     <View>
       <Text>Nothing yet to manage.</Text>
@@ -92,7 +78,6 @@ const CareFeed: React.FC<CareFeedProps> = ({ navigation }) => {
                 onPress={() => handleClickTask(item)}
               />
             }
-            ListFooterComponent={<ManageTaskButton />}
             ListEmptyComponent={<EmptyList />}
           />
         }

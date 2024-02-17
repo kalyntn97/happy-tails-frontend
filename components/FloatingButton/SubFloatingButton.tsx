@@ -1,16 +1,18 @@
 // npm
 import { useEffect, useState } from "react"
-import { Text, View, StyleSheet, DeviceEventEmitter, useWindowDimensions } from "react-native"
+import { Text, View, StyleSheet, DeviceEventEmitter, useWindowDimensions, Image, ImageStyle } from "react-native"
 import { State, TapGestureHandler } from "react-native-gesture-handler"
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated"
 // styles
 import { ButtonStyles, Button, subBtn_tap_event } from "./constants"
-import { Spacing, Colors } from "../../styles"
+import { Spacing, Colors, Forms } from "../../styles"
+import { getIconSource } from "../../utils/careUtils"
 
 
 const SubFloatingButton = ({ onPress, label, index, x }) => {
-  const [labelSide, setLabelSide] = useState('left')
   const { width } = useWindowDimensions()
+ 
+  const iconSource = getIconSource(label)
 
   const buttonOpacity = useSharedValue(1)
  
@@ -34,11 +36,6 @@ const SubFloatingButton = ({ onPress, label, index, x }) => {
       opacity: buttonOpacity.value
     }
   })
-  console.log('x: ', x)
-
-  // useEffect(() => {
-  //   console.log('x: ', x)
-  // }, [x])
 
   return (
     <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
@@ -47,6 +44,7 @@ const SubFloatingButton = ({ onPress, label, index, x }) => {
         { backgroundColor: Colors.multiArray2[index] }, 
         animatedStyles
       ]}>
+        <Image style={styles.icon as ImageStyle} source={iconSource} />
         <Text style={styles.plus}>+</Text>
         <Text style={[
           styles.label,
@@ -68,15 +66,24 @@ const styles = StyleSheet.create({
   },
   plus: {
     color: ButtonStyles.textColor,
-    fontSize: 30,
+    fontSize: 25,
+    position: 'absolute',
+    top: 5,
+    right: 10,
   },
   label: {
     width: ButtonStyles.width * 2,
     position: 'absolute',
     right: ButtonStyles.width + 10,
     fontWeight: 'bold',
-    color: Colors.darkPink,
+    color: Colors.darkestPink,
     fontSize: 15,
+  },
+  icon: {
+   ...Forms.smallIcon,
+   position: 'absolute',
+   bottom: 10,
+   left: 10
   }
 })
 

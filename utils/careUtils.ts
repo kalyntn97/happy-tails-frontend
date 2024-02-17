@@ -17,7 +17,13 @@ export const getIconSource  = (name: string): ImageSourcePropType => {
       return require('../assets/icons/grooming.png')
     case 'Litter Box Cleaning':
       return require('../assets/icons/litter-box.png')
-
+    //buttons
+    case 'Add a Task': 
+      return require('../assets/icons/care-filled.png')
+    case 'Add a Vet Visit': 
+      return require('../assets/icons/vet-filled.png')
+    case 'Add a Pet': 
+      return require('../assets/icons/pet-filled.png')
   }
 }
 
