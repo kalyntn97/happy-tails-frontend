@@ -118,17 +118,17 @@ const FloatingButton = ({ navigation }) => {
         </TouchableWithoutFeedback> 
       }
       <PanGestureHandler onHandlerStateChange={_onPanHandlerStateChange}>
-        <Animated.View style={[styles.buttonContainer, { bottom: height * 0.4 }, animatedRootStyles]}>
+        <Animated.View style={[styles.buttonContainer, { bottom: height * 0.3 }, animatedRootStyles]}>
           {opened &&
             <Animated.View style={[styles.children, animatedChildrenStyles]}>
-              <SubFloatingButton label='Add a Task' index={0} x={positionX.value} 
-                onPress={() => navigation.navigate('Care', { screen: 'Create' })} 
+              <SubFloatingButton label='Add a Pet' index={2} x={positionX.value} 
+                onPress={() => navigation.navigate('Pets', { screen: 'Create' })} 
               />
               <SubFloatingButton label='Add a Vet Visit' index={1} x={positionX.value} 
                 onPress={() => Alert.alert('Pressed 2!')} 
               />
-              <SubFloatingButton label='Add a Pet' index={2} x={positionX.value} 
-                onPress={() => navigation.navigate('Pets', { screen: 'Create' })} 
+              <SubFloatingButton label='Add a Task' index={0} x={positionX.value} 
+                onPress={() => navigation.navigate('Care', { screen: 'Create' })} 
               />
             </Animated.View>
           }

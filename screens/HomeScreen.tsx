@@ -36,15 +36,11 @@ const HomeScreen: React.FC = ({ navigation }) => {
       {authState.authenticated ? (
         <>
           <View style={[styles.screen, { minHeight: centerHeight }]}>
-            <Image source={require('../assets/images/happy-tails-banner.png')} style={{ width: '100%', maxHeight: windowHeight * 0.2 }} />
+            <Image source={require('../assets/images/happy-tails-banner-large.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.3 }]} />
             <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{currMonth} {currDate} {currYear}</Text>
 
             <CareFeed navigation={navigation} />
             <FloatingButton navigation={navigation} />
-              {/* <SubFloatingButton label='Add a Task' index={0} onPress={() => Alert.alert('Pressed 1!')} />
-              <SubFloatingButton label='Add a Vet Visit' index={1} onPress={() => Alert.alert('Pressed 2!')} />
-              <SubFloatingButton label='Add a Pet' index={2} onPress={() => Alert.alert('Pressed 3!')} /> */}
-            
 
           </View>
         </>
@@ -99,7 +95,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   banner: {
-    
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20,
   },
   date: {
     ...Typography.smallSubHeader,

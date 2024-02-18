@@ -8,43 +8,63 @@ import { AddButton } from '../components/ButtonComponent'
 import { usePetContext } from '../context/PetContext'
 //styles
 import { Buttons, Spacing, Typography, Colors } from '../styles'
+import Animated, { interpolate, useAnimatedReaction, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
-  const { pets } = usePetContext()
-
-  const scrollViewRef = useRef<ScrollView>(null)
-  const petCount: number = pets.length
   const [currCard, setCurrCard] = useState<number>(0)
+  const { pets } = usePetContext()
+  const petCount: number = pets.length
 
-  const windowWidth = useWindowDimensions().width
-  const cardWidth = windowWidth * 0.85
+  const { width } = useWindowDimensions()
+  const scrollX = useSharedValue(0)
+  const FlatListRef = useRef<FlatList>(null)
+
+  const onScrollHandler = useAnimatedScrollHandler((event) => {
+    scrollX.value = event.contentOffset.x
+  })
+
+  const onScrollEnd = () => {
+    const currentIndex = scrollX.value / width
+    setCurrCard(currentIndex)
+  }
 
   const handleClickNext = () => {
     const nextCard = Math.min(currCard + 1, petCount - 1)
-    const scrollPos = nextCard * ( cardWidth + 20 )
-    setCurrCard(nextCard)
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ x: scrollPos, animated: true })
+    if (FlatListRef.current) {
+      FlatListRef.current.scrollToIndex({ index: nextCard })
     }
   }
   const handleClickPrev = () => {
     const prevCard = Math.max(currCard - 1, 0)
-    const scrollPos = prevCard * ( cardWidth + 20 )
-    setCurrCard(prevCard)
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ x: scrollPos, animated: true })
+    if (FlatListRef.current) {
+      FlatListRef.current.scrollToIndex({ index: prevCard })
     }
   }
 
-  const getCurrCard = (offset: number, cardWidth: number, petCount: number) => {
-    const currentIndex = Math.floor(offset / cardWidth)
-    return Math.min(currentIndex, petCount - 1)
-  }
+  const DotNav = ({ index }) => {
+    const animatedDot = useAnimatedStyle(() => {
+      const color = interpolate(
+        scrollX.value,
+        [(index - 1) * width, index * width, (index + 1) * width],
+        [0, 1, 0],
+        'clamp'
+      )
+      return {
+        color: color === 1 ? Colors.pink : 'black',
+        transform: [
+          { scale: interpolate(
+            scrollX.value,
+            [(index - 1) * width, index * width, (index + 1) * width],
+            [1, 1.5, 1],
+            'clamp'
+          )},
+        ]
+      }    
+    })
 
-  const handleScroll = (event) => {
-    const offsetX = event.nativeEvent.contentOffset.x
-    const newCurrCard = getCurrCard(offsetX, cardWidth, petCount)
-    setCurrCard(newCurrCard)
+    return (
+      <Animated.Text style={[styles.dot, animatedDot]}>•</Animated.Text>
+    )
   }
 
   return ( 
@@ -70,30 +90,24 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
           </View>
           
           <View style={styles.carousel}>
-            <ScrollView
-              ref={scrollViewRef}
-              horizontal={true}
-              contentContainerStyle={{ width: `${100 * petCount}%` }}
+            <Animated.FlatList 
+              ref={FlatListRef}
+              horizontal
               showsHorizontalScrollIndicator={false}
-              scrollEventThrottle={1}
-              decelerationRate="fast"
-              pagingEnabled
-              onScroll={handleScroll}
-            >
-              {pets.map((pet, i) =>
-                <PetCard key={pet._id} pet={pet} idx={i} currCard={currCard} cardWidth={cardWidth} navigation={navigation}/>
-              )}
-            </ScrollView>
+              onScroll={onScrollHandler}
+              onMomentumScrollEnd={onScrollEnd}
+              data={pets}
+              keyExtractor={item => item._id}
+              pagingEnabled={true}
+              renderItem={({ item, index }) => {
+                return <PetCard pet={item} index={index} scrollX={scrollX} navigation={navigation}/>
+              }}
+            />
           </View>
 
           <View style={styles.dotNav}>
-            {pets.map((pet, i) => 
-              <Text 
-                key={i}
-                style={currCard === i ? styles.active : styles.inactive } 
-              >
-                •
-              </Text>
+            {pets.map((pet, index) => 
+              <DotNav key={index} index={index}/>
             )}
           </View>
         </>
@@ -101,9 +115,6 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
         <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
       }
 
-      {/* <TouchableOpacity onPress={() => navigation.navigate('Create')} style={styles.addPetBtn}>
-        <Text style={styles.btnText}>Add a Pet</Text>
-      </TouchableOpacity> */}
       <AddButton onPress={() => navigation.navigate('Create')} />
     </View>
   )
@@ -134,25 +145,19 @@ const styles = StyleSheet.create({
     left: 0
   },
   carousel: {
-    width: '90%',
+    width: '100%',
     height: '65%',
   },
   dotNav: {
     ...Spacing.flexRow,
     width: '90%',
     height: '10%',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
-  active: {
-    fontSize: 50,
-    margin: 8,
-    lineHeight: 60,
-    color: Colors.pink
-  },
-  inactive: {
-    fontSize: 30,
+  dot: {
     margin: 10,
-    lineHeight: 60,
+    fontSize: 30,
   },
   addPetBtn: {
     ...Buttons.smallRounded,

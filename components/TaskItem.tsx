@@ -1,22 +1,35 @@
 //npm
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
+import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 //services & utils
+import { Care } from '../services/careService'
 import * as careUtils from '../utils/careUtils'
+// context
+import { useCareContext } from '../context/CareContext'
 //components
 import { SquareButton } from './ButtonComponent'
 import ScrollPetList from './ScrollPetList'
 //styles
-import { Spacing } from '../styles'
+import { Spacing, Forms } from '../styles'
 
 const TaskItem = ({ task, navigation, onPress }) => {
- 
+  const { onCheckAllDone, onUncheckAllDone} = useCareContext()
   const done = careUtils.getTaskStatus(task)
+
+  const checkAllDone = async (task: Care) => {
+    const trackerId = task.trackers[task.trackers.length - 1]._id
+    const index = careUtils.getCurrentTrackerIndex(task.frequency)
+
+    done === task.times
+      ? await onUncheckAllDone!(task._id, trackerId, index)
+      : await onCheckAllDone!(task._id, trackerId, index)
+  }
 
   const rightSwipeActions = () => (
     <View style={styles.squareBtnContainer}>
       <SquareButton title='Edit' onPress={() => navigation.navigate('Care', { screen: 'Edit', params: { care: task } })} />
-      <SquareButton title='More' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { care: task } })} />
+      <SquareButton title='Details' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { care: task } })} />
+      <SquareButton title='Delete' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { care: task } })} />
     </View>
   )
 
@@ -43,8 +56,10 @@ const TaskItem = ({ task, navigation, onPress }) => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.bulletBtn}>
-          <Text style={styles.bulletBtnText}>{done === task.times ? '●' : '○'}</Text>
+        <TouchableOpacity style={styles.bulletBtn} onPress={() => checkAllDone(task)}>
+          {done === task.times 
+          ? <Image source={require('../assets/icons/check.png')} style={styles.check}/>
+          : <Text style={styles.bulletBtnText}>○</Text> }
         </TouchableOpacity>
 
       </TouchableOpacity>
@@ -73,7 +88,8 @@ const styles = StyleSheet.create({
     flex: 3
   },
   taskStatus: {
-    flex: 1
+    flex: 1,
+    fontSize: 12,
   },
   taskPetList: {
     flex: 2
@@ -82,7 +98,8 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   bulletBtnText: {
-    fontSize: 20,
+    fontSize: 25,
+    fontWeight: '100'
   },
   done: {
     textDecorationLine: 'line-through',
@@ -93,6 +110,10 @@ const styles = StyleSheet.create({
     height: 70,
     marginLeft: 10
   },
+  check: {
+    width: 25,
+    height: 25,
+  }
 })
 
 export default TaskItem

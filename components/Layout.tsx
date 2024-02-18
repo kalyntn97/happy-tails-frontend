@@ -1,5 +1,5 @@
 //npm modules
-import { Image, Pressable, Text, View, TouchableOpacity, StyleSheet, ImageStyle } from 'react-native'
+import { Image, Pressable, Text, View, TouchableOpacity, StyleSheet, ImageStyle, useWindowDimensions } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import {NativeStackNavigationOptions, createNativeStackNavigator} from '@react-navigation/native-stack'
@@ -42,7 +42,6 @@ const Layout: React.FC = () => {
   const ProfileStack = createNativeStackNavigator()
   //drawers
   const AccountDrawer = createDrawerNavigator()
-  const HomeDrawer = createDrawerNavigator()
 
   return ( 
     <NavigationContainer>
@@ -58,7 +57,7 @@ const Layout: React.FC = () => {
               case 'User': name = 'Account'; break
               default: name = 'Home'
             }
-            return <Text style={[styles.iconLabel, { color: focused ? Colors.darkink : 'black'}]}>{name}</Text>
+            return <Text style={[styles.iconLabel, { color: focused ? Colors.darkPink : 'black'}]}>{name}</Text>
           },
           tabBarIcon: ({ focused }) => {
             let icon:any
@@ -83,16 +82,27 @@ const Layout: React.FC = () => {
           headerTitleStyle: {
             fontSize: 20,
             fontWeight: 'bold',
-          }
+          },
         })}
       >
         {authState.authenticated ? (
           <Tab.Group>
             <Tab.Screen name='Home' 
-              options={{ title: 'Welcome' }}
+              options={({ route }) => ({ headerShown: false })}
             >
               {() => (
-                <HomeStack.Navigator>
+                <HomeStack.Navigator
+                  screenOptions={({ route }) => ({
+                    headerStyle: {
+                      backgroundColor: Colors.lightPink,
+                    },
+                    headerTintColor: Colors.darkPink,
+                    headerTitleStyle: {
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                    },
+                  })}
+                >
                   <HomeStack.Screen name='Main' component={HomeScreen} options={{ headerShown: false }} />
                   <HomeStack.Screen name='Care' options={{ title: 'Care' }}>
                     {() => (
@@ -109,47 +119,6 @@ const Layout: React.FC = () => {
                   </HomeStack.Screen>
           
                 </HomeStack.Navigator>
-                // <HomeDrawer.Navigator
-                //   screenOptions={({ route }) =>({
-                //     drawerType: 'front',
-                //     // drawerIcon: (),
-                //     drawerLabelStyle: styles.focusedText,
-                //     drawerActiveTintColor: Colors.darkPink,
-                //     drawerActiveBackgroundColor: Colors.lightPink,
-                //     drawerStyle: { backgroundColor: Colors.lightestPink, width: '50%' },
-                //     header: ({ navigation }) => {
-                //       return (
-                //         <View style={styles.header}>
-                //           <Pressable style={[styles.menuBtn, { left: 10 }]} onPress={() => navigation.openDrawer()}>
-                //             <Image source={require('../assets/icons/menu.png')} style={styles.smallIcon } />
-                //           </Pressable>
-                //         </View>
-                //       )
-                //     }
-                //   })}
-                // >
-                //   <HomeDrawer.Screen name='Welcome' component={HomeScreen} options={{ title: 'Welcome' }} />
-                //   <HomeDrawer.Screen name='Care' options={{ title: 'Pet Care' }}>
-                //     {() => (
-                //       <CareStack.Navigator screenOptions={{ 
-                //         headerShown: false,
-                //         contentStyle: { backgroundColor: Colors.lightestPink }
-                //       }}>
-                //         <CareStack.Screen name='Index' component={CareIndexScreen} options={{ title: 'All Pet Care' }}/>
-                //         <CareStack.Screen name='Create' component={NewCareScreen} options={{ title: 'Add Tracker' }}/>
-                //         <CareStack.Screen name='Details' component={CareDetailsScreen} options={{ title: 'Care Details' }}/>
-                //         <CareStack.Screen name='Edit' component={EditCareScreen} options={{ title: 'Edit Pet Care' }}/>
-                //     </CareStack.Navigator>
-                //     )}
-                //   </HomeDrawer.Screen>
-                //   <HomeDrawer.Screen name='Health' options={{ title: 'Pet Health' }}>
-                //     {() => (
-                //       <HealthStack.Navigator>
-                //         <HealthStack.Screen name='Index' component={HealthIndexScreen} options={{ title: 'All Health Care' }}/>
-                //       </HealthStack.Navigator>
-                //     )}
-                //   </HomeDrawer.Screen>
-                // </HomeDrawer.Navigator>
               )}
             </Tab.Screen>
             <Tab.Screen name='Pets' 
@@ -172,7 +141,7 @@ const Layout: React.FC = () => {
               listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }
             >
               {() => (
-                <ProfileStack.Navigator>
+                <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
                   <ProfileStack.Screen name='Settings' options={{ title: 'Profile' }}>
                     {() => (
                       <SettingsStack.Navigator
@@ -317,7 +286,7 @@ const styles = StyleSheet.create({
   },
   smallIcon: {
     ...Forms.smallIcon
-  }
+  },
 })
 
 export default Layout

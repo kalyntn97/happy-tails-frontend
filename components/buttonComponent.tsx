@@ -1,5 +1,5 @@
 import { Image, Text, TouchableOpacity, View, ViewStyle } from "react-native"
-import { Buttons, Colors, Spacing } from "../styles"
+import { Buttons, Colors, Spacing, Forms } from "../styles"
 
 export const AddButton = ({ onPress }) => ( 
   <TouchableOpacity onPress={onPress} style={{
@@ -27,19 +27,23 @@ export const AddButton = ({ onPress }) => (
 
 export const SquareButton = ({title, onPress}) => (
   <TouchableOpacity onPress={onPress} style={{
-    width: 60,
+    width: 40,
     height: 60,
     borderRadius: 10,
     marginHorizontal: 2,
-    backgroundColor: title === 'Edit' ? Colors.yellow : title === 'Delete' ? Colors.red : Colors.green,
+    backgroundColor: title === 'Edit' ? Colors.yellowArray[2] : title === 'Delete' ? Colors.redArray[1] : Colors.greenArray[2],
     alignItems: 'center',
     justifyContent: 'center'
   }}>
-    <Text style={{
-      
-    }}>
-      {title}
-    </Text>
+    <Image
+      source={
+        title === 'Edit' ? require('../assets/icons/edit.png')
+        : title === 'Delete' ? require('../assets/icons/delete.png')
+        : title === 'Details' ? require('../assets/icons/details.png')
+        : ''
+      }
+      style={{...Forms.smallIcon}}
+    />
   </TouchableOpacity>
 )
 

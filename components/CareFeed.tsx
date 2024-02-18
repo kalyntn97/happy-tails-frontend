@@ -21,7 +21,6 @@ interface CareFeedProps {
 
 const CareFeed: React.FC<CareFeedProps> = ({ navigation }) => {
   const {careCards } = useCareContext()
-  console.log(careCards)
   const sortedCareCards: {[key: string]: Care[]} = careCards ? careUtils.sortByFrequency(careCards) : {}
 
   const [selected, setSelected] = useState<string>('day')
@@ -35,7 +34,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ navigation }) => {
 
   const EmptyList  = () => (
     <View>
-      <Text>Nothing yet to manage.</Text>
+      <Text>No tasks.</Text>
     </View>
   )
     
