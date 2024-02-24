@@ -24,7 +24,6 @@ export const AddButton = ({ onPress }) => (
   </TouchableOpacity>
 )
 
-
 export const SquareButton = ({title, onPress}) => (
   <TouchableOpacity onPress={onPress} style={{
     width: 40,
@@ -60,4 +59,34 @@ export const CloseButton = ({ onPress }) => (
   </TouchableOpacity>
 )
 
+export const MainButton = ({ onPress, title, top, bottom }) => (
+  <TouchableOpacity onPress={onPress} style={[
+    {
+      ...Buttons.smallRounded,
+      backgroundColor: Colors.pink,
+    },
+    top && { marginTop: top },
+    bottom && { marginBottom: bottom },
+  ]}>
+    <Text style={{
+      ...Buttons.buttonText,
+    }}>
+      {title}
+    </Text>
+  </TouchableOpacity>
+)
 
+export const SubButton = ({ onPress, title, top, bottom }) => (
+  <TouchableOpacity onPress={onPress} style={[
+    { ...Buttons.smallSub },
+    top && { marginTop: top },
+    bottom && { marginBottom: bottom },
+  ]}>
+    <Text style={{
+      ...Buttons.buttonText,
+      color: Colors.darkestPink
+    }}>
+      {title}
+    </Text>
+  </TouchableOpacity>
+)

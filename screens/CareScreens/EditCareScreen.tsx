@@ -9,6 +9,7 @@ import { useCareContext } from "../../context/CareContext"
 import { Care } from "../../services/careService"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import { SubButton } from "../../components/ButtonComponent"
 
 interface EditCareProps {
   navigation: any
@@ -41,10 +42,7 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
 
   return (  
     <View style={styles.container}>
-      <CareForm onSubmit={handleSubmit} initialValues={initialValues} />
-      <TouchableOpacity style={styles.subBtn} onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>Cancel</Text>
-      </TouchableOpacity>
+      <CareForm onSubmit={handleSubmit} initialValues={initialValues} navigation={navigation} />
     </View>
   )
 }
@@ -52,14 +50,7 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
-  },
-  buttonText: {
-    ...Buttons.buttonText,
-    color: Colors.darkestPink
-  },
-  subBtn: {
-    ...Buttons.smallSub,
-  },
+  }
 })
 
 export default EditCareScreen

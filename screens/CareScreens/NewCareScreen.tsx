@@ -9,6 +9,7 @@ import CareForm from "../../components/CareComponents/CareForm"
 import { useCareContext } from "../../context/CareContext"
 //styles
 import { Buttons, Spacing, Typography, Colors } from '../../styles'
+import { SubButton } from "../../components/ButtonComponent"
 
 const NewCareScreen: React.FC = ({ navigation }) => {
   const isFocused = useIsFocused()
@@ -27,10 +28,7 @@ const NewCareScreen: React.FC = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <CareForm onSubmit={handleSubmit} />
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.subBtn}>
-        <Text style={styles.buttonText}>Cancel</Text>
-      </TouchableOpacity>
+      <CareForm onSubmit={handleSubmit} navigation={navigation} />
     </View>  
   )
 }
@@ -39,14 +37,7 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
     ...Spacing.centered
-  },
-  buttonText: {
-    ...Buttons.buttonText,
-    color: Colors.darkestPink
-  },
-  subBtn: {
-    ...Buttons.smallSub
-  },
+  }
 })
 
 export default NewCareScreen

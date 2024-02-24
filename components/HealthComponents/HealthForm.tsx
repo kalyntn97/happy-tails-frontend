@@ -1,21 +1,22 @@
 //npm
 import { useState } from "react"
 import { Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
-import DateTimePicker from '@react-native-community/datetimepicker'
+import RNDateTimePicker from "@react-native-community/datetimepicker"
 //context
 import { usePetContext } from "../../context/PetContext"
 //components
 import Dropdown from "../Dropdown"
+import { MainButton, SubButton } from "../ButtonComponent"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
-import RNDateTimePicker from "@react-native-community/datetimepicker"
 
 interface HealthFormProps {
   onSubmit: (name: string, vaccine: string, type: string, times: number, frequency: string, lastDone: Date, nextDue: Date, pet: string) => Promise<any>
   initialValues?: {name?: string, vaccine?: string, type?: string, times?: number, frequency?: string, lastDone?: Date, nextDue?: Date, pet?: string, vetId?: string}
+  navigation: any
 }
 
-const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues }) => {
+const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, navigation }) => {
   const [pet, setPet] = useState<string>(initialValues?.pet ?? '')
   const [name, setName] = useState<string>(initialValues?.name ?? '')
   const [vaccine, setVaccine] = useState<string>(initialValues?.vaccine ?? '')
@@ -139,9 +140,8 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues }) => {
       {allowManualDueDate &&
         <RNDateTimePicker value={nextDue ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue(selectedDate) }}/>
       } */}
-        <TouchableOpacity onPress={handleSubmit} style={styles.mainButton}>
-          <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Create'}</Text>
-        </TouchableOpacity>
+        <MainButton onPress={handleSubmit} title={initialValues?.name ? 'Save' : 'Create'} top={50} bottom={10} />
+        <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
 
       </ScrollView>
     </TouchableWithoutFeedback>
@@ -163,15 +163,6 @@ const styles = StyleSheet.create({
   input: {
     ...Forms.input,
     borderColor: Colors.pink,
-  },
-  mainButton: {
-    ...Buttons.smallRounded,
-    marginTop: 50,
-    backgroundColor: Colors.pink
-  },
-  buttonText: {
-    ...Buttons.buttonText,
-    color: Colors.darkestPink
   },
   rowContainer: {
     ...Spacing.flexRow,

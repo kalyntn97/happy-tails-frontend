@@ -1,9 +1,11 @@
 //npm modules
 import { useEffect } from "react"
+import { View } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 //components
 import PetForm from "../../components/PetComponents/PetForm"
 import { Pet } from "../../services/petService"
+import { SubButton } from "../../components/ButtonComponent"
 //context
 import { usePetContext } from "../../context/PetContext"
 
@@ -35,8 +37,10 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
     }
   }, [navigation, isFocused])
 
-  return ( 
-    <PetForm onSubmit={handleEditPet} initialValues={initialValues} />
+  return (
+    <View style={{flex: 1}}>
+      <PetForm onSubmit={handleEditPet} initialValues={initialValues} navigation={navigation} />
+    </View>
   )
 }
 

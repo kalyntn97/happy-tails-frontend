@@ -3,6 +3,7 @@ import { useState } from "react"
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ImageStyle } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 //components
+import { MainButton, SubButton } from "../ButtonComponent"
 import Dropdown from "../Dropdown"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '../../styles'
@@ -10,9 +11,10 @@ import { Buttons, Spacing, Forms, Colors } from '../../styles'
 interface PetFormProps {
   onSubmit: (name: string, age: number | '', species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
   initialValues?: { name?: string, age?: number, species?: string, breed?: string, photo?: string | null, petId?: string }
+  navigation: any
 }
 
-const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
+const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation }) => {
   const [photo, setPhoto] = useState<string | null>(initialValues?.photo ?? null)
   const [name, setName] = useState<string>(initialValues?.name ?? '')
   const [age, setAge] = useState<number | ''>(initialValues?.age ?? '')
@@ -60,64 +62,63 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
           </View>
         </View>
         <Text style={{ color: Colors.red, fontWeight: 'bold' }}>{errorMsg}</Text>
-        <View style={styles.form}>
-          <TextInput 
-            style={styles.input} 
-            placeholder='Pet Name' 
-            onChangeText={(text: string) => setName(text)} 
-            value={name} 
-            autoCapitalize="words"
-          />
-          <TextInput 
-            style={styles.input} 
-            placeholder='Age' 
-            onChangeText={(text: string) => setAge(text !== '' ? Number(text) : '')} 
-            value={age !== '' ? age.toString() : ''} 
-            keyboardType="numeric"
-          />
-          {!!species && <Text>Select Type</Text>}
+      
+        <TextInput 
+          style={styles.input} 
+          placeholder='Pet Name' 
+          onChangeText={(text: string) => setName(text)} 
+          value={name} 
+          autoCapitalize="words"
+        />
+        <TextInput 
+          style={styles.input} 
+          placeholder='Age' 
+          onChangeText={(text: string) => setAge(text !== '' ? Number(text) : '')} 
+          value={age !== '' ? age.toString() : ''} 
+          keyboardType="numeric"
+        />
+        {!!species && <Text>Select Type</Text>}
+        <Dropdown 
+          label={species ? species : 'Select Type'} 
+          dataType='species' 
+          onSelect={setSpecies} 
+        />
+
+        {!!breed && species !== 'Others' && 
+          <Text>{species === 'Dog' || species === 'Cat' ? 'Select Breed' : 'Select Species'}</Text>
+        }
+        {species === 'Dog' && 
           <Dropdown 
-            label={species ? species : 'Select Type'} 
-            dataType='species' 
-            onSelect={setSpecies} 
+            label={breed ? breed : 'Select Breed'} 
+            dataType='dogBreed' 
+            onSelect={setBreed} 
           />
+        }
+        {species === 'Cat' && 
+          <Dropdown 
+            label={breed ? breed : 'Select Breed'} 
+            dataType='catBreed' 
+            onSelect={setBreed} 
+          />
+        }
+        {species === 'Bird' && 
+          <Dropdown 
+            label={breed ? breed : 'Select Species'} 
+            dataType='birdSpecies' 
+            onSelect={setBreed} 
+          />
+        }
+        {species === 'Fish' && 
+          <Dropdown 
+            label={breed ? breed : 'Select Species'} 
+            dataType='fishSpecies' 
+            onSelect={setBreed} 
+          />
+        }
+      
+        <MainButton onPress={handleSubmit} title={initialValues?.name ? 'Save' : 'Add Pet'} top={50} bottom={10} />
+        <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
 
-          {!!breed && species !== 'Others' && 
-            <Text>{species === 'Dog' || species === 'Cat' ? 'Select Breed' : 'Select Species'}</Text>
-          }
-          {species === 'Dog' && 
-            <Dropdown 
-              label={breed ? breed : 'Select Breed'} 
-              dataType='dogBreed' 
-              onSelect={setBreed} 
-            />
-          }
-          {species === 'Cat' && 
-            <Dropdown 
-              label={breed ? breed : 'Select Breed'} 
-              dataType='catBreed' 
-              onSelect={setBreed} 
-            />
-          }
-          {species === 'Bird' && 
-            <Dropdown 
-              label={breed ? breed : 'Select Species'} 
-              dataType='birdSpecies' 
-              onSelect={setBreed} 
-            />
-          }
-          {species === 'Fish' && 
-            <Dropdown 
-              label={breed ? breed : 'Select Species'} 
-              dataType='fishSpecies' 
-              onSelect={setBreed} 
-            />
-          }
-
-          <TouchableOpacity onPress={handleSubmit} style={styles.mainButton}>
-            <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Add Pet'}</Text>
-          </TouchableOpacity>
-        </View>
       </View>
 
     </TouchableWithoutFeedback>
@@ -126,7 +127,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown
+    ...Forms.form,
   },
   photoUpload: {
     ...Forms.photo,
@@ -136,23 +137,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightPink,
     elevation: 2,
   },
-  form: {
-    ...Forms.form,
-    height: '60%',
-    margin: 10
-  },
   input: {
     ...Forms.input,
     borderColor: Colors.pink,
-  },
-  mainButton: {
-    ...Buttons.smallRounded,
-    marginTop: 50,
-    backgroundColor: Colors.pink
-  },
-  buttonText: {
-    ...Buttons.buttonText,
-    color: Colors.darkestPink
   },
   image: {
     ...Spacing.fullWH,

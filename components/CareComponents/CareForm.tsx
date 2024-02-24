@@ -4,6 +4,7 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, TouchableWithoutFe
 //components
 import Dropdown from "../Dropdown"
 import MultipleSelection from "../MultipleSelection"
+import { MainButton, SubButton } from "../ButtonComponent"
 //context
 import { usePetContext } from "../../context/PetContext"
 //styles
@@ -12,9 +13,10 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 interface CareFormProps {
   onSubmit: (name: string, frequency: string, times: number, pets: string[], careId: string | null) => Promise<any>
   initialValues?: { name?: string, frequency?: string, times?: number, pets?: string[], careId?: string }
+  navigation: any
 }
 
-const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
+const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation }) => {
   const [name, setName] = useState<string>(initialValues?.name ?? '')
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? '')
   const [times, setTimes] = useState<number | ''>(initialValues?.times ?? '')
@@ -91,9 +93,9 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues }) => {
           keyboardType="numeric"
         />
         <MultipleSelection label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialPetNames} />
-        <TouchableOpacity onPress={handleSubmit} style={styles.mainButton}>
-          <Text style={styles.buttonText}>{initialValues?.name ? 'Save' : 'Create'}</Text>
-        </TouchableOpacity>
+        <MainButton onPress={handleSubmit} title={initialValues?.name ? 'Save' : 'Create'} top={50} bottom={10} />
+        <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
+
       </View>
     </TouchableWithoutFeedback>  
   )
@@ -110,15 +112,6 @@ const styles = StyleSheet.create({
   input: {
     ...Forms.input,
     borderColor: Colors.pink,
-  },
-  mainButton: {
-    ...Buttons.smallRounded,
-    marginTop: 50,
-    backgroundColor: Colors.pink
-  },
-  buttonText: {
-    ...Buttons.buttonText,
-    color: Colors.darkestPink
   },
   subBtn: {
     ...Buttons.smallSub

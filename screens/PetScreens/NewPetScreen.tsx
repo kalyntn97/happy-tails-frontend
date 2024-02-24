@@ -1,12 +1,14 @@
-
 //npm modules
 import { useEffect } from "react"
-import { View } from "react-native"
+import { StyleSheet, View } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 //context
 import { usePetContext } from "../../context/PetContext"
 //components
 import PetForm from "../../components/PetComponents/PetForm"
+import { SubButton } from "../../components/ButtonComponent"
+//styles
+import { Spacing } from "../../styles"
 
 const NewPetScreen = ({ navigation }) => {
   const { onAddPet } = usePetContext()
@@ -25,10 +27,17 @@ const NewPetScreen = ({ navigation }) => {
   }, [navigation, isFocused])
 
   return ( 
-    <View style={{flex: 1}}>
-      <PetForm onSubmit={handleAddPet}/>   
+    <View style={styles.container}>
+      <PetForm onSubmit={handleAddPet} navigation={navigation} />
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    ...Spacing.fullScreenDown,
+    ...Spacing.centered
+  }
+})
 
 export default NewPetScreen
