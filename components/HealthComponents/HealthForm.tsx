@@ -11,8 +11,8 @@ import { MainButton, SubButton } from "../ButtonComponent"
 import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 
 interface HealthFormProps {
-  onSubmit: (name: string, vaccine: string, type: string, times: number, frequency: string, lastDone: Date, nextDue: Date, pet: string) => Promise<any>
-  initialValues?: {name?: string, vaccine?: string, type?: string, times?: number, frequency?: string, lastDone?: Date, nextDue?: Date, pet?: string, vetId?: string}
+  onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Date, nextDue: Date, vetId: string) => Promise<any>
+  initialValues?: {pet?: string, type?: string, name?: string, vaccine?: string, times?: number, frequency?: string, lastDone?: Date, nextDue?: Date, vetId?: string}
   navigation: any
 }
 
@@ -87,7 +87,9 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.container}
+      >
         <Text style={styles.header}>{initialValues?.name ? 'Edit' : 'Add'} a Vet Record</Text>
 
         {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
@@ -112,14 +114,14 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
           <Dropdown label='Select Vaccine Name' dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={setVaccine} />
         }
 
+        <View style={styles.rowContainer}>
+          <Text style={styles.label}>Last Done</Text>
+          <RNDateTimePicker value={lastDone ?? new Date()} maximumDate={new Date()} onChange={(event, selectedDate) => { setLastDone(selectedDate) }} accentColor={Colors.darkPink} />
+        </View>
 
-        <Text style={styles.label}>Last Done</Text>
-        <RNDateTimePicker value={lastDone ?? new Date()} maximumDate={new Date()} onChange={(event, selectedDate) => { setLastDone(selectedDate) }} accentColor={Colors.darkPink} />
-
-        <Text style={styles.label}>Next Due</Text>
         {!allowManualDueDate && 
           <View style={styles.rowContainer}>
-            <Text>In</Text>
+            <Text style={styles.label}>Due In</Text>
             <TextInput
               style={[styles.input, { width: 50 }]}
               placeholder='1' 
@@ -140,7 +142,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       {allowManualDueDate &&
         <RNDateTimePicker value={nextDue ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue(selectedDate) }}/>
       } */}
-        <MainButton onPress={handleSubmit} title={initialValues?.name ? 'Save' : 'Create'} top={50} bottom={10} />
+        <MainButton onPress={handleSubmit} title={initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
         <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
 
       </ScrollView>
@@ -167,10 +169,10 @@ const styles = StyleSheet.create({
   rowContainer: {
     ...Spacing.flexRow,
     justifyContent: 'space-between',
+    width: 270,
+    marginVertical: 15,
   },
   label: {
-    marginBottom: 10,
-    marginTop: 20,
     fontSize: 15,
   },
   checkbox: {

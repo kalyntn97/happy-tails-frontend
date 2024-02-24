@@ -113,9 +113,6 @@ const styles = StyleSheet.create({
     ...Forms.input,
     borderColor: Colors.pink,
   },
-  subBtn: {
-    ...Buttons.smallSub
-  },
   error: {
     color: Colors.red,
     fontWeight: 'bold'

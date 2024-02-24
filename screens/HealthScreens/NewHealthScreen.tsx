@@ -11,7 +11,7 @@ const NewHealthScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <VetForm navigation={navigation}/>
+      <VetForm navigation={navigation} />
     </View>
   )
 }
