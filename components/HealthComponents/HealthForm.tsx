@@ -3,19 +3,19 @@ import { useState } from "react"
 import { Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 import DateTimePicker from '@react-native-community/datetimepicker'
 //context
-import { usePetContext } from "../context/PetContext"
+import { usePetContext } from "../../context/PetContext"
 //components
-import Dropdown from "./Dropdown"
+import Dropdown from "../Dropdown"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 
-interface VetFormProps {
+interface HealthFormProps {
   onSubmit: (name: string, vaccine: string, type: string, times: number, frequency: string, lastDone: Date, nextDue: Date, pet: string) => Promise<any>
   initialValues?: {name?: string, vaccine?: string, type?: string, times?: number, frequency?: string, lastDone?: Date, nextDue?: Date, pet?: string, vetId?: string}
 }
 
-const VetForm = ({ onSubmit, initialValues }) => {
+const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues }) => {
   const [pet, setPet] = useState<string>(initialValues?.pet ?? '')
   const [name, setName] = useState<string>(initialValues?.name ?? '')
   const [vaccine, setVaccine] = useState<string>(initialValues?.vaccine ?? '')
@@ -198,4 +198,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default VetForm
+export default HealthForm

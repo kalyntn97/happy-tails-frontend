@@ -2,9 +2,9 @@
 import { useEffect, useState } from "react"
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
 //services & utils
-import * as careUtils from '../utils/careUtils'
+import * as careUtils from '../../utils/careUtils'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 
 interface BarChartProps {
   tracker: any

@@ -2,15 +2,15 @@
 import { useState, useEffect } from "react"
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 //services & utils
-import { Tracker } from "../services/careService"
-import { Care } from "../services/careService"
-import * as careUtils from "../utils/careUtils"
+import { Tracker } from "../../services/careService"
+import { Care } from "../../services/careService"
+import * as careUtils from "../../utils/careUtils"
 //components
-import ScrollCalendar from "./ScrollCalendar"
+import ScrollCalendar from "../Charts/ScrollCalendar"
 //context
-import { useCareContext } from "../context/CareContext"
+import { useCareContext } from "../../context/CareContext"
 //styles
-import { Spacing, Typography, Colors } from '../styles'
+import { Spacing, Typography, Colors } from '../../styles'
 
 interface CurrentTrackerProps {
   care: Care
@@ -62,7 +62,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
       ]}>
         {tracker.done[index] === times ? 'You did it! ' : `Only ${times - tracker.done[index]} more to go! `}
         {tracker.done[index] !== times && 
-          <Image source={require('../assets/icons/hand.png')} style={styles.scrollCalendarIcon} />
+          <Image source={require('../../assets/icons/hand.png')} style={styles.scrollCalendarIcon} />
         }
       </Text>
       {times === 1 && freq !== 'Yearly'
@@ -77,7 +77,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
               onPress={() => uncheckDone(careId, tracker._id, index)}
               disabled={tracker.done[index] == 0}
             >
-              <Image source={require('../assets/icons/minus.png')} style={styles.icon } />
+              <Image source={require('../../assets/icons/minus.png')} style={styles.icon } />
             </TouchableOpacity>
 
             <Text style={[styles.count, { color: times === tracker.done[index] ? Colors.green : Colors.red }]}>
@@ -89,7 +89,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
               onPress={() => checkDone(careId, tracker._id, index)}
               disabled={tracker.done[index] >= times}
             >
-              <Image source={require('../assets/icons/plus.png')} style={styles.icon } />
+              <Image source={require('../../assets/icons/plus.png')} style={styles.icon } />
             </TouchableOpacity>
             
           </View>

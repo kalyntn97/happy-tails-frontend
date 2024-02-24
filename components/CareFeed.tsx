@@ -8,7 +8,7 @@ import { useCareContext } from "../context/CareContext"
 import { Care } from "../services/careService"
 import * as careUtils from '../utils/careUtils'
 //components
-import CareCard from "./CareCard"
+import CareCard from "./CareComponents/CareCard"
 import TaskItem from "./TaskItem"
 import { AddButton, CloseButton } from "./ButtonComponent"
 //styles

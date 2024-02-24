@@ -3,9 +3,9 @@ import { StyleSheet, Text, View } from "react-native"
 //components
 import ProgressTracker from "./ProgressTracker"
 //services & utils
-import * as careUtils from "../utils/careUtils"
+import * as careUtils from "../../utils/careUtils"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 
 interface YearChartProps {
   tracker: any

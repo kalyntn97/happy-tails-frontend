@@ -2,17 +2,17 @@
 import { useState, useEffect } from "react"
 import { View, StyleSheet, Text, Image, ImageStyle, ScrollView, TouchableOpacity } from "react-native"
 //types
-import { Pet } from "../services/petService"
-import { Care } from "../services/careService"
+import { Pet } from "../../services/petService"
+import { Care } from "../../services/careService"
 //utils & services
-import * as careUtils from "../utils/careUtils"
-import * as careService from '../services/careService'
+import * as careUtils from "../../utils/careUtils"
+import * as careService from '../../services/careService'
 //components
-import PetInfo from "./PetInfo"
-import ScrollPetList from "./ScrollPetList"
+import PetInfo from "../PetInfo"
+import ScrollPetList from "../ScrollPetList"
 import TrackerPanel from "./TrackerPanel"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 
 
 interface CareCardProps {

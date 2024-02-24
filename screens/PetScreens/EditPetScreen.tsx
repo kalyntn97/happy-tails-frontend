@@ -2,7 +2,7 @@
 import { useEffect } from "react"
 import { useIsFocused } from "@react-navigation/native"
 //components
-import PetForm from "../../components/PetForm"
+import PetForm from "../../components/PetComponents/PetForm"
 import { Pet } from "../../services/petService"
 //context
 import { usePetContext } from "../../context/PetContext"

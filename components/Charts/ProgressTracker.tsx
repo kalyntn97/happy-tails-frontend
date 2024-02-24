@@ -1,7 +1,7 @@
 //npm
 import { Image, ImageStyle, StyleSheet, View } from "react-native"
 //styles
-import { Spacing } from "../styles"
+import { Spacing } from "../../styles"
 
 const ProgressTracker = ({ times, done, size }) => {
   const progressContainer = []
@@ -9,7 +9,7 @@ const ProgressTracker = ({ times, done, size }) => {
       progressContainer.push(
         <Image 
           key={`done-${i}`}
-          source={require('../assets/icons/heart-filled.png')} 
+          source={require('../../assets/icons/heart-filled.png')} 
           style={[
             styles.heart ,
             size === 'small' 
@@ -25,7 +25,7 @@ const ProgressTracker = ({ times, done, size }) => {
       progressContainer.push(
         <Image 
           key={`pending-${i}`} 
-          source={require('../assets/icons/heart-gray.png')} 
+          source={require('../../assets/icons/heart-gray.png')} 
           style={[
             styles.heart ,
             size === 'small' 

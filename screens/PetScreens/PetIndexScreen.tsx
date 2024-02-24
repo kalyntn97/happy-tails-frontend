@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react'
 import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image } from "react-native"
 //components
-import PetCard from '../../components/PetCard'
+import PetCard from '../../components/PetComponents/PetCard'
 import { AddButton } from '../../components/ButtonComponent'
 //context
 import { usePetContext } from '../../context/PetContext'

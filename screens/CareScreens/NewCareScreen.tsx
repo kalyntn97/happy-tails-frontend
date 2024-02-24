@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { useIsFocused } from "@react-navigation/native"
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native"
 //components
-import CareForm from "../../components/CareForm"
+import CareForm from "../../components/CareComponents/CareForm"
 //services
 import { useCareContext } from "../../context/CareContext"
 //styles

@@ -6,7 +6,7 @@ import { useIsFocused } from "@react-navigation/native"
 //context
 import { usePetContext } from "../../context/PetContext"
 //components
-import PetForm from "../../components/PetForm"
+import PetForm from "../../components/PetComponents/PetForm"
 
 const NewPetScreen = ({ navigation }) => {
   const { onAddPet } = usePetContext()

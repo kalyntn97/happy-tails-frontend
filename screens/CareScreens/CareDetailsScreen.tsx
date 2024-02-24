@@ -8,10 +8,10 @@ import * as careUtils from '../../utils/careUtils'
 import { useCareContext } from "../../context/CareContext"
 //components
 import ScrollPetList from "../../components/ScrollPetList"
-import DailyChart from "../../components/DailyChart"
-import BarChart from "../../components/BarChart"
-import YearChart from "../../components/YearChart"
-import FillChart from "../../components/FillChart"
+import DailyChart from "../../components/Charts/DailyChart"
+import BarChart from "../../components/Charts/BarChart"
+import YearChart from "../../components/Charts/YearChart"
+import FillChart from "../../components/Charts/FillChart"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 

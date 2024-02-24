@@ -1,10 +1,10 @@
 //npm modules
 import { StyleSheet, Text, View, Image, TouchableOpacity, useWindowDimensions } from "react-native"
 //types & utils
-import { Pet } from "../services/petService"
-import { getIconSource } from "../utils/petUtils"
+import { Pet } from "../../services/petService"
+import { getIconSource } from "../../utils/petUtils"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated"
 interface PetCardProps {
   pet: Pet
@@ -50,7 +50,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
             </View>
 
             <View style={styles.petInfo}>
-              <Image style={{ width: 30, height: 30 }} source={require('../assets/icons/birthday.png')} />
+              <Image style={{ width: 30, height: 30 }} source={require('../../assets/icons/birthday.png')} />
               <Text style={styles.body}>
                 {pet.age ? pet.age : 'Unknown'} {pet.age && (pet.age <= 1 ? 'year' : 'years')}
               </Text>
@@ -59,7 +59,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
         </View>
 
         <Image 
-          source={pet.photo ? {uri: pet.photo} : require('../assets/icons/pet-profile.png')} 
+          source={pet.photo ? {uri: pet.photo} : require('../../assets/icons/pet-profile.png')} 
           style={styles.petPhoto } 
         />
         

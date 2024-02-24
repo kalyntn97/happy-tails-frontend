@@ -1,7 +1,7 @@
 //npm
 import { View, Text } from "react-native"
 //components
-import VetForm from "../../components/VetForm"
+import VetForm from "../../components/HealthComponents/HealthForm"
 
 
 const NewHealthScreen = () => {

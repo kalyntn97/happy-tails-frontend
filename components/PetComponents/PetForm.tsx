@@ -3,9 +3,9 @@ import { useState } from "react"
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ImageStyle } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 //components
-import Dropdown from "./Dropdown"
+import Dropdown from "../Dropdown"
 //styles
-import { Buttons, Spacing, Forms, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Colors } from '../../styles'
 
 interface PetFormProps {
   onSubmit: (name: string, age: number | '', species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
@@ -55,7 +55,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues }) => {
           <View style={styles.uploadBtnContainer}>
             <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
               <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
-              <Image source={require('../assets/icons/camera.png')} style={styles.cameraIcon } />
+              <Image source={require('../../assets/icons/camera.png')} style={styles.cameraIcon } />
             </TouchableOpacity>
           </View>
         </View>

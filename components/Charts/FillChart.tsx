@@ -1,9 +1,9 @@
 //npm
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
 //services & utils
-import * as careUtils from '../utils/careUtils'
+import * as careUtils from '../../utils/careUtils'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 
 const FillChart = ({ tracker, frequency, times }) => {
   const windowWidth = useWindowDimensions().width

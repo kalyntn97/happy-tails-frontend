@@ -2,12 +2,12 @@
 import { useState } from "react"
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from "react-native"
 //components
-import Dropdown from "./Dropdown"
-import MultipleSelection from "./MultipleSelection"
+import Dropdown from "../Dropdown"
+import MultipleSelection from "../MultipleSelection"
 //context
-import { usePetContext } from "../context/PetContext"
+import { usePetContext } from "../../context/PetContext"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 
 interface CareFormProps {
   onSubmit: (name: string, frequency: string, times: number, pets: string[], careId: string | null) => Promise<any>
