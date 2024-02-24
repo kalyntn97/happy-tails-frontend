@@ -3,31 +3,24 @@ import { useEffect, useState } from "react"
 import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
 import { createDrawerNavigator } from "@react-navigation/drawer"
 //context
-import { useProfileContext } from "../context/ProfileContext"
-import { useAuth } from "../context/AuthContext"
-//services
-import * as profileService from '../services/profileService'
-import * as tokenService from '../services/tokenService'
+import { useProfileContext } from "../../context/ProfileContext"
 //types
-import { Profile } from "../services/profileService"
-import { usePetContext } from "../context/PetContext"
-//components
-import PetInfo from "../components/PetInfo"
+import { usePetContext } from "../../context/PetContext"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
-import ScrollPetList from "../components/ScrollPetList"
+import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import ScrollPetList from "../../components/ScrollPetList"
 
 const SettingsScreen = ({ navigation, route }) => {
   const { profile } = useProfileContext()
   const { pets } = usePetContext()
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
-    require('../assets/icons/micon1.png'),
-    require('../assets/icons/micon2.png'),
-    require('../assets/icons/micon3.png'),
-    require('../assets/icons/ficon1.png'),
-    require('../assets/icons/ficon2.png'),
-    require('../assets/icons/ficon3.png'),
+    require('../../assets/icons/micon1.png'),
+    require('../../assets/icons/micon2.png'),
+    require('../../assets/icons/micon3.png'),
+    require('../../assets/icons/ficon1.png'),
+    require('../../assets/icons/ficon2.png'),
+    require('../../assets/icons/ficon3.png'),
   ]
 
   const [randomProfile, setRandomProfile] = useState(randomProfilePhotos[0])

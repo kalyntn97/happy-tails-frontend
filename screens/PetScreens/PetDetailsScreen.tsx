@@ -3,14 +3,14 @@ import { useCallback, useState } from "react"
 import { useFocusEffect } from "@react-navigation/native"
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native"
 //types & context
-import { Pet } from "../services/petService"
-import { usePetContext } from "../context/PetContext"
+import { Pet } from "../../services/petService"
+import { usePetContext } from "../../context/PetContext"
 //components
-import PetInfo from "../components/PetInfo"
+import PetInfo from "../../components/PetInfo"
 //services
-import * as petService from '../services/petService'
+import * as petService from '../../services/petService'
 //styles
-import { Buttons, Spacing, Forms, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Colors } from '../../styles'
 
 interface PetDetailsProps {
   navigation: any

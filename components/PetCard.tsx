@@ -1,5 +1,5 @@
 //npm modules
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, useWindowDimensions } from "react-native"
+import { StyleSheet, Text, View, Image, TouchableOpacity, useWindowDimensions } from "react-native"
 //types & utils
 import { Pet } from "../services/petService"
 import { getIconSource } from "../utils/petUtils"

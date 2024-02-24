@@ -1,13 +1,13 @@
 //npm modules
 import { useState, useRef } from 'react'
-import { View, StyleSheet, Text, Pressable, ScrollView, useWindowDimensions, FlatList, TouchableOpacity, Image } from "react-native"
+import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image } from "react-native"
 //components
-import PetCard from '../components/PetCard'
-import { AddButton } from '../components/ButtonComponent'
+import PetCard from '../../components/PetCard'
+import { AddButton } from '../../components/ButtonComponent'
 //context
-import { usePetContext } from '../context/PetContext'
+import { usePetContext } from '../../context/PetContext'
 //styles
-import { Buttons, Spacing, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Typography, Colors } from '../../styles'
 import Animated, { interpolate, useAnimatedReaction, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
@@ -77,7 +77,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
               style={[styles.prevBtn, currCard == 0 && styles.disabled]}
               disabled={currCard == 0}
             >
-              <Image source={require('../assets/icons/prev2.png')} style={{ width: 30, height: 30 }}/> 
+              <Image source={require('../../assets/icons/prev2.png')} style={{ width: 30, height: 30 }}/> 
             </Pressable>
             
             <Pressable 
@@ -85,7 +85,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
               style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled]}
               disabled={currCard == petCount - 1}
             >
-              <Image source={require('../assets/icons/next2.png')} style={{ width: 30, height: 30 }}/> 
+              <Image source={require('../../assets/icons/next2.png')} style={{ width: 30, height: 30 }}/> 
             </Pressable>
           </View>
           

@@ -4,11 +4,11 @@ import { useEffect } from "react"
 import { useIsFocused } from "@react-navigation/native"
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native"
 //components
-import CareForm from "../components/CareForm"
+import CareForm from "../../components/CareForm"
 //services
-import { useCareContext } from "../context/CareContext"
+import { useCareContext } from "../../context/CareContext"
 //styles
-import { Buttons, Spacing, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Typography, Colors } from '../../styles'
 
 const NewCareScreen: React.FC = ({ navigation }) => {
   const isFocused = useIsFocused()

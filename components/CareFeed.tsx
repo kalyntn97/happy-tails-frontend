@@ -21,7 +21,7 @@ interface CareFeedProps {
 
 const CareFeed: React.FC<CareFeedProps> = ({ navigation }) => {
   const {careCards } = useCareContext()
-  const sortedCareCards: {[key: string]: Care[]} = careCards ? careUtils.sortByFrequency(careCards) : {}
+  const sortedCareCards: {[key: string]: Care[]} = careCards.length ? careUtils.sortByFrequency(careCards) : {}
 
   const [selected, setSelected] = useState<string>('day')
   const [modalVisible, setModalVisible] = useState(false)

@@ -8,7 +8,6 @@ import { useCareContext } from "../context/CareContext"
 //components
 import CareFeed from "../components/CareFeed"
 import FloatingButton from "../components/FloatingButton/FloatingButton"
-import SubFloatingButton from "../components/FloatingButton/SubFloatingButton"
 //utils & services
 import * as careUtils from '../utils/careUtils'
 //styles

@@ -4,15 +4,12 @@ import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView, Imag
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 //components
-import CareCard from "../components/CareCard"
-import { AddButton } from "../components/ButtonComponent"
-import ScrollPetList from "../components/ScrollPetList"
+import { AddButton } from "../../components/ButtonComponent"
 //services & utils
-import { useCareContext } from "../context/CareContext"
-import { Care } from "../services/careService"
+import { useCareContext } from "../../context/CareContext"
 //styles
-import { Buttons, Spacing, Typography, Colors, Forms } from '../styles'
-import * as careUtils from "../utils/careUtils"
+import { Buttons, Spacing, Typography, Colors, Forms } from '../../styles'
+import * as careUtils from "../../utils/careUtils"
 
 type CareIndexProps = {
   navigation: any
@@ -43,9 +40,8 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
         <View style={styles.itemLeft}>
           <Image source={iconSource} style={styles.itemIcon} />
           <Text>{care.name}</Text>
-          {/* <ScrollPetList petArray={care.pets} size='mini' /> */}
         </View>
-        <Image source={require('../assets/icons/next2.png')} style={{...Forms.smallIcon, marginRight: 10 }} />
+        <Image source={require('../../assets/icons/next2.png')} style={{...Forms.smallIcon, marginRight: 10 }} />
       </TouchableOpacity>
     )
   }
@@ -90,7 +86,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
     <View style={styles.container}>
       {!sortedCareCards &&
         <View style={styles.empty}>
-          <LottieView source={require('../assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
+          <LottieView source={require('../../assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
           <Text style={styles.msg}>Start managing your pet's health</Text>
         </View>
       }

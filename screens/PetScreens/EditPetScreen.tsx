@@ -2,10 +2,10 @@
 import { useEffect } from "react"
 import { useIsFocused } from "@react-navigation/native"
 //components
-import PetForm from "../components/PetForm"
-import { Pet } from "../services/petService"
+import PetForm from "../../components/PetForm"
+import { Pet } from "../../services/petService"
 //context
-import { usePetContext } from "../context/PetContext"
+import { usePetContext } from "../../context/PetContext"
 
 interface EditPetProps {
   navigation: any

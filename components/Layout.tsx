@@ -10,22 +10,23 @@ import { useAuth } from '../context/AuthContext'
 import { useProfileContext } from '../context/ProfileContext'
 //screens
 import HomeScreen from '../screens/HomeScreen'
-import SettingsScreen from '../screens/SettingsScreen'
-import EditProfileScreen from '../screens/EditProfileScreen'
-import PetIndexScreen from '../screens/PetIndexScreen'
-import NewPetScreen from '../screens/NewPetScreen'
-import EditPetScreen from '../screens/EditPetScreen'
-import PetDetailsScreen from '../screens/PetDetailsScreen'
+import SettingsScreen from '../screens/ProfileScreens/SettingsScreen'
+import EditProfileScreen from '../screens/ProfileScreens/EditProfileScreen'
+import PetIndexScreen from '../screens/PetScreens/PetIndexScreen'
+import NewPetScreen from '../screens/PetScreens/NewPetScreen'
+import EditPetScreen from '../screens/PetScreens/EditPetScreen'
+import PetDetailsScreen from '../screens/PetScreens/PetDetailsScreen'
 import LoginScreen from '../screens/LoginScreen'
 import RegisterScreen from '../screens/RegisterScreen'
-import AccountScreen from '../screens/AccountScreen'
-import CareIndexScreen from '../screens/CareIndexScreen'
-import NewCareScreen from '../screens/NewCareScreen'
-import CareDetailsScreen from '../screens/CareDetailsScreen'
-import EditCareScreen from '../screens/EditCareScreen'
-import HealthIndexScreen from '../screens/HealthIndexScreen'
+import AccountScreen from '../screens/ProfileScreens/AccountScreen'
+import CareIndexScreen from '../screens/CareScreens/CareIndexScreen'
+import NewCareScreen from '../screens/CareScreens/NewCareScreen'
+import CareDetailsScreen from '../screens/CareScreens/CareDetailsScreen'
+import EditCareScreen from '../screens/CareScreens/EditCareScreen'
+import HealthIndexScreen from '../screens/HealthScreens/HealthIndexScreen'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import NewHealthScreen from '../screens/HealthScreens/NewHealthScreen'
 
 const Layout: React.FC = () => {
   const { authState } = useAuth()
@@ -41,7 +42,6 @@ const Layout: React.FC = () => {
   const HealthStack = createNativeStackNavigator()
   const ProfileStack = createNativeStackNavigator()
   //drawers
-  const AccountDrawer = createDrawerNavigator()
 
   return ( 
     <NavigationContainer>
@@ -101,10 +101,11 @@ const Layout: React.FC = () => {
                       fontSize: 20,
                       fontWeight: 'bold',
                     },
+                    headerTitle: ''
                   })}
                 >
                   <HomeStack.Screen name='Main' component={HomeScreen} options={{ headerShown: false }} />
-                  <HomeStack.Screen name='Care' options={{ title: 'Care' }}>
+                  <HomeStack.Screen name='Care'>
                     {() => (
                       <CareStack.Navigator screenOptions={{ 
                         headerShown: false,
@@ -117,6 +118,18 @@ const Layout: React.FC = () => {
                       </CareStack.Navigator>
                     )}
                   </HomeStack.Screen>
+
+                <HomeStack.Screen name='Health'>
+                  {() => (
+                    <HealthStack.Navigator screenOptions={{ 
+                      headerShown: false,
+                      contentStyle: { backgroundColor: Colors.lightestPink }
+                    }}>
+                      <HealthStack.Screen name='Index' component={HealthIndexScreen} options={{ title: 'All Pet Health'}} />
+                      <HealthStack.Screen name='Create' component={NewHealthScreen} options={{ title: 'New Pet Card'}} />
+                    </HealthStack.Navigator>
+                  )}
+                </HomeStack.Screen>
           
                 </HomeStack.Navigator>
               )}

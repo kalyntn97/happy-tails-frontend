@@ -4,9 +4,9 @@ import { useEffect } from "react"
 import { View } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 //context
-import { usePetContext } from "../context/PetContext"
+import { usePetContext } from "../../context/PetContext"
 //components
-import PetForm from "../components/PetForm"
+import PetForm from "../../components/PetForm"
 
 const NewPetScreen = ({ navigation }) => {
   const { onAddPet } = usePetContext()
