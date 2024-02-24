@@ -1,4 +1,5 @@
 import { ViewStyle, TextStyle } from "react-native"
+import Colors from "./colors"
 
 export const base: ViewStyle = {
   alignItems: 'center',
@@ -112,3 +113,8 @@ export const buttonText: TextStyle = {
   letterSpacing: 0.25,
 }
 
+export const roundButton = {
+  width: 60,
+  height: 60,
+  borderRadius: '50%'
+}

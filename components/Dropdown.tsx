@@ -6,14 +6,17 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 //utils 
 import * as petUtils from '../utils/petUtils'
 import * as careUtils from '../utils/careUtils'
+import * as healthUtils from '../utils/healthUtils'
+import { usePetContext } from "../context/PetContext"
 
 interface DropdownProps {
   label: string
-  dataType: 'fishSpecies' | 'birdSpecies' | 'catBreed' | 'dogBreed' | 'species' | 'frequency' | 'care'
+  dataType: string
   onSelect: (item: string ) => void
+  width?: number
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
+const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width }) => {
   const [visible, setVisible] = useState(false)
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(
@@ -40,26 +43,28 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
     setVisible(false)
   }
 
+  const { pets } = usePetContext()
+  const petNames = pets.map(pet => pet.name)
+  
   //populate data
   useEffect(() => {
     const fetchData = async (dataType: string) => {
       let result: string[]
-      if (dataType === 'species') {
-        result = petUtils.speciesData
-      } else if (dataType === 'dogBreed') {
-        result = await petUtils.getDogBreedData()
-      } else if (dataType === 'catBreed') {
-        result = await petUtils.getCatBreedData()
-      } else if (dataType === 'birdSpecies') {
-        result = await petUtils.getBirdSpeciesData()
-      } else if (dataType === 'fishSpecies') {
-        result = petUtils.petFishData
-      } else if (dataType === 'frequency') {
-        result = careUtils.frequencyData
-      } else if (dataType === 'care') {
-        result = careUtils.careData
-      } else if (dataType === 'petNames') {
-        result = getPetNames()
+      switch (dataType) {
+        case 'species': result = petUtils.speciesData; break
+        case 'dogBreed': result = await petUtils.getDogBreedData(); break
+        case 'catBreed': result = await petUtils.getCatBreedData(); break
+        case 'birdSpecies': result = await petUtils.getBirdSpeciesData(); break
+        case 'fishSpecies': result = petUtils.petFishData; break
+        case 'frequency': result = careUtils.frequencyData; break
+        case 'care': result = careUtils.careData; break
+        case 'health': result = healthUtils.healthData; break
+        case 'petNames': result = petNames; break
+        case 'healthFrequency': result = healthUtils.healthFrequency; break
+        case 'healthTypes': result = healthUtils.healthTypes; break
+        case 'dogVaccines': result = healthUtils.dogVaccines; break
+        case 'catVaccines': result = healthUtils.catVaccines; break
+        default: result = []
       }
       setData(result)
     }
@@ -67,7 +72,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect }) => {
   }, [])
 
   return (
-    <TouchableOpacity style={styles.dropDownBtn} onPress={toggleDropdown} ref={DropdownBtn}>
+    <TouchableOpacity style={[styles.dropDownBtn, width && { width: width }]} onPress={toggleDropdown} ref={DropdownBtn}>
       {visible && (
         <Modal visible={visible} transparent animationType="none">
           <TouchableOpacity style={styles.overlay} onPress={() => setVisible(false)}>
@@ -119,7 +124,7 @@ const styles = StyleSheet.create({
     ...Forms.boxShadow
   },
   label: {
-    
+    maxWidth: 180,
   },
   item: {
     padding: 10,

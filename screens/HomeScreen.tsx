@@ -1,23 +1,23 @@
 //npm modules
 import { useRef, useState, useEffect } from "react"
-import { View, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimensions, ScrollView, Image, ImageStyle, SafeAreaView, StatusBar } from "react-native"
+import { View, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimensions, ScrollView, Image, ImageStyle, SafeAreaView, StatusBar, Alert } from "react-native"
 import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from "../context/AuthContext"
 import { useCareContext } from "../context/CareContext"
 //components
 import CareFeed from "../components/CareFeed"
+import FloatingButton from "../components/FloatingButton/FloatingButton"
 //utils & services
 import * as careUtils from '../utils/careUtils'
-import useCurrentDayInfo from "../utils/useCurrentDayInfo"
 //styles
 import { Buttons, Typography, Colors, Forms, Spacing } from '../styles'
 
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
-  const { careCards } = useCareContext()
-  const today = useCurrentDayInfo()
 
+  const {date: currDate, monthName: currMonth, year: currYear } = careUtils.getCurrentDate()
+  
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
   const centerHeight = windowHeight - 191
@@ -35,20 +35,12 @@ const HomeScreen: React.FC = ({ navigation }) => {
       {authState.authenticated ? (
         <>
           <View style={[styles.screen, { minHeight: centerHeight }]}>
-            <Image source={require('../assets/images/happy-tails-banner.png')} style={{ width: '100%', maxHeight: windowHeight * 0.2 }} />
-            <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{today.currMonth} {today.currDate} {today.currYear}</Text>
-        
-            {careCards.length ?
-              <CareFeed today={today} navigation={navigation} careCards={careCards}/>
-              : 
-                <View style={styles.emptyMsgContainer}> 
-                  <Text style={styles.msg}>No tasks to manage.</Text>
-                  <TouchableOpacity style={styles.emptyMsgBtn} onPress={() => navigation.navigate('Care', { screen: 'Create' })}>
-                    <Text style={[styles.msg, { color: Colors.darkPink, textDecorationLine: 'underline' }]}>Start by adding task to stay organized.</Text>
-                    <Image source={require('../assets/icons/hand.png')} style={styles.msgIcon} />
-                  </TouchableOpacity>
-                </View>
-            }
+            <Image source={require('../assets/images/happy-tails-banner-large.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.3 }]} />
+            <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{currMonth} {currDate} {currYear}</Text>
+
+            <CareFeed navigation={navigation} />
+            <FloatingButton navigation={navigation} />
+
           </View>
         </>
       ) : (
@@ -102,7 +94,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   banner: {
-    
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20,
   },
   date: {
     ...Typography.smallSubHeader,

@@ -16,6 +16,7 @@ const Colors = {
   purpleArray: ['rgb(160, 143, 204)', 'rgba(160, 143, 204, 0.6)', 'rgba(160, 143, 204, 0.2)'],
   redArray: ['rgb(231, 120, 116)', 'rgba(231, 120, 116, 0.6)', 'rgba(231, 120, 116, 0.2)'],
   multiArray: ['#d3e4ff', '#ffe8ce', '#d6eac7', '#e8dbff', '#FED7D7'],
+  multiArray2: ['#81FBFF', '#FFED24', '#89EB9B', '#9F7AFD', '#81FFDC'],
 }
 
 export default Colors

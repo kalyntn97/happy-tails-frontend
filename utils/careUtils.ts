@@ -1,6 +1,7 @@
 import { ImageSourcePropType } from "react-native"
 import { usePetContext } from "../context/PetContext"
 import { Colors } from "../styles"
+import { Care } from "../services/careService"
 
 export const getIconSource  = (name: string): ImageSourcePropType => {
   switch (name) {
@@ -16,7 +17,13 @@ export const getIconSource  = (name: string): ImageSourcePropType => {
       return require('../assets/icons/grooming.png')
     case 'Litter Box Cleaning':
       return require('../assets/icons/litter-box.png')
-
+    //buttons
+    case 'Add a Task': 
+      return require('../assets/icons/care-filled.png')
+    case 'Add a Vet Visit': 
+      return require('../assets/icons/vet-filled.png')
+    case 'Add a Pet': 
+      return require('../assets/icons/pet-filled.png')
   }
 }
 
@@ -106,4 +113,37 @@ export const getDateTimeFromTracker = (trackerName: string) => {
     isCurrent = trackerYear === currYear
   }
   return { trackerMonth, trackerMonthName, trackerYear, isCurrent }
+}
+
+export const getTaskStatus = (task: Care) => {
+  const { date: currDate, week: currWeek, month: monthIdx } = getCurrentDate()
+  switch (task.frequency) {
+    case 'Daily': 
+      return task.trackers[task.trackers.length - 1].done[currDate - 1]
+    case 'Weekly': 
+      return task.trackers[task.trackers.length - 1].done[currWeek - 1]
+    case 'Monthly':
+      return task.trackers[task.trackers.length - 1].done[monthIdx - 1]
+    case 'Yearly':
+      return task.trackers[task.trackers.length - 1].done
+  }
+}
+
+export const getTaskBackgroundColor = (frequency: string) => {
+  switch (frequency) {
+    case 'Daily': return Colors.multiArray[0]
+    case 'Weekly': return Colors.multiArray[1]
+    case 'Monthly': return Colors.multiArray[2]
+    default: return Colors.multiArray[3]
+  }
+}
+
+export const sortByFrequency: (careArray: Care[]) => {[key: string]: Care[]} = (careArray: Care[]) => {
+  const sorted = careArray.reduce((result, careCard) => {
+    const { frequency } = careCard
+    result[frequency] = result[frequency] || []
+    result[frequency].push(careCard)
+    return result
+  }, {})
+  return sorted
 }
