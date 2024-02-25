@@ -7,7 +7,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer'
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer'
 //context
 import { useAuth } from '../context/AuthContext'
-import { useProfileContext } from '../context/ProfileContext'
+import { useProfile, useProfileContext } from '../context/ProfileContext'
 //screens
 import HomeScreen from '../screens/HomeScreen'
 import SettingsScreen from '../screens/ProfileScreens/SettingsScreen'
@@ -30,7 +30,7 @@ import NewHealthScreen from '../screens/HealthScreens/NewHealthScreen'
 
 const Layout: React.FC = () => {
   const { authState } = useAuth()
-  const { profile } = useProfileContext()
+  const { profile } = useProfile()
   //tabs
   const Tab = createBottomTabNavigator()
   //stacks

@@ -58,10 +58,8 @@ export async function update(name: string, bio: string, photoData: { uri: string
       body: JSON.stringify({ name, bio })
     })
     if (photoData) {
-      console.log('rawPhotoData bf submit', photoData)
       const jsonRes = await res.json()
       const urlRes = await addPhoto(photoData)
-      console.log('res data', urlRes)
       jsonRes.photo = urlRes.url
       return jsonRes
     } else {

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
 import { createDrawerNavigator } from "@react-navigation/drawer"
 //context
-import { useProfileContext } from "../../context/ProfileContext"
+import { useProfile, useProfileContext } from "../../context/ProfileContext"
 //types
 import { usePetContext } from "../../context/PetContext"
 //styles
@@ -11,7 +11,7 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 import ScrollPetList from "../../components/ScrollPetList"
 
 const SettingsScreen = ({ navigation, route }) => {
-  const { profile } = useProfileContext()
+  const { profile } = useProfile()
   const { pets } = usePetContext()
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [

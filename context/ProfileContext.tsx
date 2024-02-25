@@ -1,48 +1,92 @@
 //npm
-import { createContext, useContext, useEffect, useState} from "react"
+import { FC, ReactNode, createContext, useContext, useEffect, useReducer } from "react"
 //types
 import { Profile } from "../services/profileService"
 //services
 import * as profileService from '../services/profileService'
-import { usePetContext } from "./PetContext"
-
-interface ProfileProps {
-  profile?: Profile | null
-  onEditProfile?: (name: string, bio: string, photoData: { uri: string, name: string, type: string } | null) => Promise<Profile>
+interface State {
+  profile: Profile | {}
 }
-
-const ProfileContext = createContext<ProfileProps>({})
-
-export const useProfileContext = () => {
-  return useContext(ProfileContext)
+interface ProfileContextValue extends State {
+  updateProfile: (name: string, bio: string, photoData: { uri: string, name: string, type: string } | null) => Promise<void>
 }
+interface ProfileProviderProps {
+  children: ReactNode
+}
+type InitializeAction = {
+  type: 'INITIALIZE'
+  payload: { profile: Profile | {} }
+}
+type UpdateAction = {
+  type: 'UPDATE'
+  payload: { profile: Profile }
+}
+type Action = InitializeAction | UpdateAction
 
-export const ProfileProvider = ({children}: any) => {
-  const [profile, setProfile] = useState<Profile | null>(null)
-  
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const profileData = await profileService.show()
-      setProfile(profileData)
+const initialState: State = { profile: {} }
+const handlers: Record<string, (state: State, action: Action) => State> = {
+  INITIALIZE: (state: State, action: InitializeAction): State => {
+    const { profile } = action.payload
+    return { 
+      ...state, 
+      profile 
     }
-    fetchProfile()
+  },
+  UPDATE: (state: State, action: UpdateAction): State => {
+    const { profile } = action.payload
+    return {
+      ...state,
+      profile
+    }
+  }
+}
+const reducer = (state: State, action: Action): State => (
+  handlers[action.type ] ? handlers[action.type](state, action) : state
+)
+
+export const ProfileContext = createContext<ProfileContextValue>({
+  ...initialState,
+  updateProfile: () => Promise.resolve()
+})
+
+export const useProfile = () => useContext(ProfileContext)
+
+export const ProfileProvider: FC<ProfileProviderProps> = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, initialState)
+
+  useEffect(() => {
+    const initialize = async (): Promise<void> => {
+      try {
+        const profile = await profileService.show()
+        dispatch({
+          type: 'INITIALIZE',
+          payload: { profile: profile }
+        })
+      } catch (error) {
+        console.error(error)
+        dispatch({
+          type: 'INITIALIZE',
+          payload: { profile: {} }
+        })
+      }
+    }
+    initialize()
   }, [])
-  
-  const editProfile = async (name: string, bio: string, photoData: { uri: string, name: string, type: string } | null) => {
+
+  const updateProfile = async (name: string, bio: string, photoData: { uri: string, name: string, type: string } | null): Promise<void> => {
     const updatedProfile = await profileService.update(name, bio, photoData)
-    setProfile(updatedProfile)
-    return updatedProfile
+    dispatch({
+      type: 'UPDATE',
+      payload: { profile: updatedProfile }
+    })
   }
 
-  const value = { 
-    profile,
-    onEditProfile: editProfile
+  const value = {
+    ...state,
+    updateProfile,
   }
 
-  return ( 
-    <ProfileContext.Provider value={value}>
-      { children }
-    </ProfileContext.Provider>
+  return (
+    <ProfileContext.Provider value={value}>{ children }</ProfileContext.Provider>
   )
 }
-

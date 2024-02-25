@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, ImageStyle, TextInput,
 import * as ImagePicker from 'expo-image-picker'
 //types & context
 import { Profile } from "../../services/profileService"
-import { useProfileContext } from "../../context/ProfileContext"
+import { useProfile, useProfileContext } from "../../context/ProfileContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
 
@@ -15,7 +15,7 @@ interface EditProfileProps {
 
 const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) => {
   const { profile } = route.params
-  const { onEditProfile } = useProfileContext()
+  const { updateProfile } = useProfile()
 
   const [name, setName] = useState<string>(profile.name)
   const [bio, setBio] = useState<string>(profile.bio ?? '')
@@ -45,16 +45,8 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
     } else {
       setErrorMsg('')
 
-      try {
-        const result = await onEditProfile!(name, bio, photoData)
-        console.log('result', result)
-
-        if (result && result.error) {
-          alert(result.msg)
-        }
-      } catch (error) {
-        console.log('Error during edit profile: ', error)
-      }
+      await updateProfile(name, bio, photoData)
+      
       navigation.navigate('Profile', { profileId: profile._id })
     }
   }
