@@ -1,135 +1,177 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { FC, ReactNode, createContext, useContext, useEffect, useReducer, useState } from "react"
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
 //types & services
 import * as tokenService from '../services/tokenService'
+import * as authService from '../services/authService'
+import { User } from "../services/authService"
 
-interface AuthProps {
-  authState?: { token: string | null, authenticated: boolean | null }
-  onRegister?: (name: string, username: string, password: string) => Promise<any>
-  onLogin?: (username: string, password: string) => Promise<any>
-  onLogout?: () => Promise<any>
-  onChangePassword?: (username: string, newPassword: string) => Promise<any>
-  onChangeUsername?: (newUsername: string, password: string) => Promise<any>
-  onDeleteAccount?: (username: string, password: string) => Promise<any>
+interface State {
+  authState: { token: string | null, authenticated: boolean | null }
 }
+interface AuthContextValue extends State {
+  onRegister: (name: string, username: string, password: string) => Promise<any>
+  onLogin: (username: string, password: string) => Promise<any>
+  onLogout: () => Promise<any>
+  onDeleteAccount: (username: string, password: string) => Promise<any>
+}
+interface AuthProviderProps { children: ReactNode }
+type InitializeAction = {
+  type: 'INITIALIZE'
+  payload: { token: string | null }
+}
+type RegisterAction = {
+  type: 'REGISTER'
+  payload: { token: string | null }
+}
+type LoginAction = {
+  type: 'LOGIN'
+  payload: { token: string | null }
+}
+type LogoutAction = {
+  type: 'LOGOUT'
+}
+type DeleteAccountAction = {
+  type: 'DELETE'
+}
+type Action = InitializeAction | RegisterAction | LoginAction | LogoutAction | DeleteAccountAction
+
+const initialState: State = {
+  authState: { token: null, authenticated: false }
+}
+
+const handlers: Record<string, (state: State, action: Action) => State> = {
+  INITIALIZE: (state: State, action: InitializeAction): State => {
+    const { token } = action.payload
+    return {
+      ...state,
+      authState: { token: token, authenticated: true }
+    }
+  },
+  REGISTER: (state: State, action: RegisterAction): State => {
+    const { token } = action.payload
+    return {
+      ...state,
+      authState: { token: token, authenticated: true }
+    }
+  },
+  LOGIN: (state: State, action: LoginAction): State => {
+    const { token } = action.payload
+    return {
+      ...state,
+      authState: { token: token, authenticated: true }
+    }
+  },
+  LOGOUT: (state: State, action: LogoutAction): State => {
+    return {
+      ...state,
+      authState: { token: null, authenticated: false }
+    }
+  },
+  DELETE: (state: State, action: DeleteAccountAction): State => {
+    return {
+      ...state,
+      authState: { token: null, authenticated: false }
+    }
+  },
+}
+
+const reducer = (state: State, action: Action): State => (
+  handlers[action.type] ? handlers[action.type](state, action) : state
+)
 
 const TOKEN_KEY = 'happy-tails'
 export const BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL
-const AuthContext = createContext<AuthProps>({})
+
+const AuthContext = createContext<AuthContextValue>({
+  ...initialState,
+  onRegister: () => Promise.resolve(),
+  onLogin: () => Promise.resolve(),
+  onLogout: () => Promise.resolve(),
+  onDeleteAccount: () => Promise.resolve(),
+})
 
 export const useAuth = () => {
-  return useContext(AuthContext)
+  const context = useContext(AuthContext)
+  if (context === undefined ) throw new Error('useAuth must be used within a ProfileProvider')
+  return context
 }
 
-export const AuthProvider = ({children}: any) => {
-  const [authState, setAuthState] = useState<{
-    token: string | null, authenticated: boolean | null}>({
-    token: null, authenticated: null
-  })
+export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {
-    const loadToken = async () => {
-      const token: string| null = await tokenService.getToken()
-      console.log('file: AuthContext.tsx:31 ~ load token ~ token:', token)
+    const initialize = async (): Promise<void> => {
+      const token: string | null = await tokenService.getToken()
+      console.log('file: AuthContext.tsx:138 ~ load token ~ token:', token)
       if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-        setAuthState({
-          token: token, authenticated: true
+        dispatch({
+          type: 'INITIALIZE',
+          payload: { token: token }
         })
       }
     }
-    loadToken()
+    initialize()
   }, [])
 
   const register = async (name: string, username: string, password: string) => {
-    try {
-      return await axios.post(`${BASE_URL}/signup`, { name, username, password })
-    } catch (error) {
-      console.error('Register Error:', error)
+    const { status, token, error } = await authService.register(name, username, password)
+    console.log('file: AuthContext.tsx:148 ~ register ~ result:', status ?? error)
+    if (token) {
+      dispatch({
+        type: 'REGISTER',
+        payload: { token: token }
+      })
     }
+    return { status, error }
   }
 
   const login = async (username: string, password: string) => {
-    try {
-      const result = await axios.post(`${BASE_URL}/login`, { username, password })
-      console.log('file: AuthContext.tsx:58 ~ login ~ result:', result)
-
-      axios.defaults.headers.common['Authorization'] = `Bearer ${result.data.token}`
-      setAuthState({
-        token: result.data.token, authenticated: true
+    const { status, token, error } = await authService.login(username, password)
+    console.log('file: AuthContext.tsx:162 ~ login ~ result:', status ?? error)
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      await SecureStore.setItemAsync(TOKEN_KEY, token)
+      dispatch({
+        type: 'LOGIN',
+        payload: { token: token }
       })
-      await SecureStore.setItemAsync(TOKEN_KEY, result.data.token)
-      return result
-    } catch (error) {
-      console.error('Login Error:', error)
     }
+    return { status, error }
   }
 
   const logout = async () => {
-    try {
-      const result = await axios.post(`${BASE_URL}/logout`)
-      console.log('file: AuthContext.tsx:74 ~ logout ~ result:', result)
-
+    const { status, error } = await authService.logout()
+    console.log('file: AuthContext.tsx:178 ~ logout ~ result:', status ?? error)
+    if (!error) {
       await SecureStore.deleteItemAsync(TOKEN_KEY)
       axios.defaults.headers.common['Authorization'] = ''
-      setAuthState({
-        token: null, authenticated: false
-      })
-    } catch (error) {
-      console.error('Logout Error:', error)
+      dispatch({ type: 'LOGOUT' })
     }
-  }
-
-  const changePassword = async (username: string, newPassword: string) => {
-    try {
-      const result = await axios.patch(`${BASE_URL}/change-password`, { username, newPassword })
-      console.log('file: AuthContext.tsx:84 ~ changePassword ~ result:', result)
-      return result
-    } catch (error) {
-      console.error('Change Password Error: ', error)
-    }
-  }
-
-  const changeUsername = async (newUsername: string, password: string) => {
-    try {
-      const result = await axios.patch(`${BASE_URL}/change-username`, { newUsername, password })
-      console.log('file: AuthContext.tsx:95 ~ changePassword ~ result:', result)
-      return result
-    } catch (error) {
-      console.error('Change Username Error: ', error)
-    }
+    return { status, error }
   }
 
   const deleteAccount = async (username:string, password: string) => {
-    try {
-      const result = await axios.post(`${BASE_URL}/delete-account`, { username, password })
-      console.log('file: AuthContext.tsx:106 ~ deleteAccount ~ result:', result)
+    const { status, error } = await authService.deleteAccount(username, password)
+    console.log('file: AuthContext.tsx:106 ~ deleteAccount ~ result:', status ?? error)
+    if (!error) {
       await SecureStore.deleteItemAsync(TOKEN_KEY)
       axios.defaults.headers.common['Authorization'] = ''
-      setAuthState({
-        token: null, authenticated: false
-      })
-      return result
-    } catch (error) {
-      console.error('Delete Account Error: ', error)
+      dispatch({ type: 'DELETE' })
     }
+    return { status, error }
   }
 
-
   const value = { 
+    ...state,
     onRegister: register,
     onLogin: login,
     onLogout: logout,
-    onChangePassword: changePassword,
-    onChangeUsername: changeUsername,
     onDeleteAccount: deleteAccount,
-    authState,
   }
 
   return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{ children }</AuthContext.Provider>
   )
 } 

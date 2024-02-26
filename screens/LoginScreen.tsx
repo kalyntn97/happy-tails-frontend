@@ -1,24 +1,28 @@
 //npm modules
-import React, { useState } from 'react'
-import { View, StyleSheet, TextInput, Pressable, Text } from 'react-native'
+import { FC, useState } from 'react'
+import { View, StyleSheet, TextInput, Pressable, Text, Alert } from 'react-native'
 import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from '../context/AuthContext'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
-const LoginScreen: React.FC = ({ navigation }) => {
+const LoginScreen: FC = ({ navigation }) => {
   const [username, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [errorMsg, setErrorMsg] = useState<string>('')
   const { onLogin } = useAuth()
 
   const login = async () => {
-    const result = await onLogin!(username, password)
-    if (result && result.error) {
-      setErrorMsg(`Login error: ${result.error}. Please try again!`)
-    }
+    const { status, error } = await onLogin!(username, password)
+    console.log(status)
     navigation.navigate('Home', { screen: 'Welcome' })
+    
+    return Alert.alert(
+      'Alert',
+      status ?? error,
+      [{ text: 'OK' }]
+    )
   }
 
   return (

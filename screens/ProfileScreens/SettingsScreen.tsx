@@ -22,28 +22,14 @@ const SettingsScreen = ({ navigation, route }) => {
     require('../../assets/icons/ficon2.png'),
     require('../../assets/icons/ficon3.png'),
   ]
-
-  const [randomProfile, setRandomProfile] = useState(randomProfilePhotos[0])
-  const changeRandomProfilePhoto = () => {
-    const randomIdx = Math.floor(Math.random() * randomProfilePhotos.length)
-    setRandomProfile(randomProfilePhotos[randomIdx])
-  }
-
-  useEffect(() => {
-    if (profile && !profile.photo) {
-      const fetchProfilePhoto = async () => {
-        changeRandomProfilePhoto()
-      }
-      fetchProfilePhoto()
-    }
-  }, [route.params?.profileId])
+  const randomIdx = Math.floor(Math.random() * randomProfilePhotos.length)
 
   return ( 
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.profileHeader}>
-          {/* <Text style={styles.header}>{profile.name}</Text> */}
-          <Image source={profile.photo ? { uri: profile.photo } : randomProfile} style={styles.profilePhoto }/>
+          <Text style={styles.header}>{profile.name}</Text>
+          <Image source={{ uri: profile.photo ?? randomProfilePhotos[randomIdx] }} style={styles.profilePhoto }/>
         </View>
         
         <View style={styles.bioBox}>

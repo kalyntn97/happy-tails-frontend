@@ -15,17 +15,20 @@ interface AccountProps {
 }
 
 const AccountScreen: React.FC<AccountProps> = ({ navigation, route }) => {
-  const { onLogout, onChangePassword, onChangeUsername, onDeleteAccount } = useAuth()
+  const { onLogout, onDeleteAccount } = useAuth()
   const [visible, setVisible] = useState<string>('')
 
   const titleData = ['Update account information', 'Delete account and all pet profiles', 'Log out of account']
 
 
   const logout = async () => {
-    const result = await onLogout!()
-    if (result && result.error) {
-      alert(result.status)
-    }
+    const { status, error } = await onLogout!()
+    console.log(status)
+    return Alert.alert(
+      'Alert',
+      status ?? error,
+      [{ text: 'OK' }]
+    )
   }
 
   const DeleteAccountForm = () => {

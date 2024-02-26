@@ -4,8 +4,10 @@ import { FC, ReactNode, createContext, useContext, useEffect, useReducer } from 
 import { Profile } from "../services/profileService"
 //services
 import * as profileService from '../services/profileService'
+//context
+import { useAuth } from "./AuthContext"
 interface State {
-  profile: Profile | {}
+  profile: Profile | null
 }
 interface ProfileContextValue extends State {
   updateProfile: (name: string, bio: string, photoData: { uri: string, name: string, type: string } | null) => Promise<void>
@@ -15,7 +17,7 @@ interface ProfileProviderProps {
 }
 type InitializeAction = {
   type: 'INITIALIZE'
-  payload: { profile: Profile | {} }
+  payload: { profile: Profile | null }
 }
 type UpdateAction = {
   type: 'UPDATE'
@@ -23,7 +25,8 @@ type UpdateAction = {
 }
 type Action = InitializeAction | UpdateAction
 
-const initialState: State = { profile: {} }
+const initialState: State = { profile: null }
+
 const handlers: Record<string, (state: State, action: Action) => State> = {
   INITIALIZE: (state: State, action: InitializeAction): State => {
     const { profile } = action.payload
@@ -49,29 +52,27 @@ export const ProfileContext = createContext<ProfileContextValue>({
   updateProfile: () => Promise.resolve()
 })
 
-export const useProfile = () => useContext(ProfileContext)
-
+export const useProfile = () => {
+  const context = useContext(ProfileContext)
+  if (context === undefined ) throw new Error('useProfile must be used within a ProfileProvider')
+  return context
+}
 export const ProfileProvider: FC<ProfileProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-
+  const { authState } = useAuth()
+  
   useEffect(() => {
     const initialize = async (): Promise<void> => {
-      try {
+      if (authState.authenticated) {
         const profile = await profileService.show()
         dispatch({
           type: 'INITIALIZE',
           payload: { profile: profile }
-        })
-      } catch (error) {
-        console.error(error)
-        dispatch({
-          type: 'INITIALIZE',
-          payload: { profile: {} }
-        })
+        }) 
       }
     }
     initialize()
-  }, [])
+  }, [authState.authenticated])
 
   const updateProfile = async (name: string, bio: string, photoData: { uri: string, name: string, type: string } | null): Promise<void> => {
     const updatedProfile = await profileService.update(name, bio, photoData)

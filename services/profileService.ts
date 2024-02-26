@@ -1,3 +1,4 @@
+import axios from 'axios'
 import * as tokenService from './tokenService'
 import { Pet } from './petService'
 import { Care } from './careService'
@@ -15,11 +16,8 @@ export interface Profile {
 
 export async function show(): Promise<Profile> {
   try {
-    const token = await tokenService.getToken()
-    const res = await fetch(BASE_URL, {
-      headers: { 'Authorization': `Bearer ${token}` },
-    })
-    return res.json()
+    const result = await axios.get(BASE_URL)
+    return result.data
   } catch (error) {
     console.error(error)
   }
@@ -27,20 +25,12 @@ export async function show(): Promise<Profile> {
 
 export async function addPhoto(photoData: any): Promise<any> {
   try {
-    const token = await tokenService.getToken()
+    // const token = await tokenService.getToken()
     const photoFormData = new FormData()
     photoFormData.append('file', photoData)
 
-    console.log('photoFormData sent', photoFormData)
-
-    const res = await fetch(`${BASE_URL}/add-photo`, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-      body: photoFormData,
-    })
-    return await res.json()
+    const result = await axios.patch(`${BASE_URL}/add-photo`, photoFormData)
+    return result.data.url
   } catch (error) {
     console.error(error)
   }
@@ -48,23 +38,13 @@ export async function addPhoto(photoData: any): Promise<any> {
 
 export async function update(name: string, bio: string, photoData: { uri: string, name: string, type: string } | null): Promise<Profile> {
   try {
-    const token = await tokenService.getToken()
-    const res = await fetch(`${BASE_URL}/update`, {
-      method: 'PUT',
-      headers: { 
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name, bio })
-    })
+    const result = await axios.put(`${BASE_URL}/update`, { name, bio, photoData })
+
     if (photoData) {
-      const jsonRes = await res.json()
-      const urlRes = await addPhoto(photoData)
-      jsonRes.photo = urlRes.url
-      return jsonRes
-    } else {
-      return await res.json()
+      const url = await addPhoto(photoData)
+      result.data.photo = url
     }
+    return result.data
   } catch (error) {
     console.error(error)
   }
