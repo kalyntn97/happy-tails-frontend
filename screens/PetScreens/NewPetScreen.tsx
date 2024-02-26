@@ -3,7 +3,7 @@ import { useEffect } from "react"
 import { StyleSheet, View } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 //context
-import { usePetContext } from "../../context/PetContext"
+import { usePet } from "../../context/PetContext"
 //components
 import PetForm from "../../components/PetComponents/PetForm"
 import { SubButton } from "../../components/ButtonComponent"
@@ -11,7 +11,7 @@ import { SubButton } from "../../components/ButtonComponent"
 import { Spacing } from "../../styles"
 
 const NewPetScreen = ({ navigation }) => {
-  const { onAddPet } = usePetContext()
+  const { onAddPet } = usePet()
 
   const isFocused = useIsFocused()
 

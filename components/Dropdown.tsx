@@ -7,7 +7,8 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 import * as petUtils from '../utils/petUtils'
 import * as careUtils from '../utils/careUtils'
 import * as healthUtils from '../utils/healthUtils'
-import { usePetContext } from "../context/PetContext"
+import { usePet } from "../context/PetContext"
+import { Pet } from "../services/petService"
 
 interface DropdownProps {
   label: string
@@ -43,8 +44,8 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width })
     setVisible(false)
   }
 
-  const { pets } = usePetContext()
-  const petNames = pets.map(pet => pet.name)
+  const { pets } = usePet()
+  const petNames: string[] = pets.map((pet: Pet) => pet.name)
   
   //populate data
   useEffect(() => {

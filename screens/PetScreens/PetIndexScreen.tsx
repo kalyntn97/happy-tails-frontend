@@ -5,14 +5,14 @@ import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image
 import PetCard from '../../components/PetComponents/PetCard'
 import { AddButton } from '../../components/ButtonComponent'
 //context
-import { usePetContext } from '../../context/PetContext'
+import { usePet } from '../../context/PetContext'
 //styles
 import { Buttons, Spacing, Typography, Colors } from '../../styles'
 import Animated, { interpolate, useAnimatedReaction, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
   const [currCard, setCurrCard] = useState<number>(0)
-  const { pets } = usePetContext()
+  const { pets } = usePet()
   const petCount: number = pets.length
 
   const { width } = useWindowDimensions()

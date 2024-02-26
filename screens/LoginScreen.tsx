@@ -15,9 +15,8 @@ const LoginScreen: FC = ({ navigation }) => {
 
   const login = async () => {
     const { status, error } = await onLogin!(username, password)
-    console.log(status)
     navigation.navigate('Home', { screen: 'Welcome' })
-    
+
     return Alert.alert(
       'Alert',
       status ?? error,

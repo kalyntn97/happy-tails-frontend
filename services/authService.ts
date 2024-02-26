@@ -26,6 +26,7 @@ export async function login(username: string, password: string) {
     return result.data
   } catch (error) {
     console.error('Login Error:', error)
+    return { error }
   }
 }
 
@@ -35,6 +36,7 @@ export async function logout() {
     return result.data
   } catch (error) {
     console.error('Logout Error:', error)
+    return { error }
   }
 }
 
@@ -44,6 +46,7 @@ export async function changePassword(username: string, newPassword: string) {
     return result.data
   } catch (error) {
     console.error('Change Password Error: ', error)
+    return { error }
   }
 }
 
@@ -53,6 +56,7 @@ export async function changeUsername(newUsername: string, password: string) {
     return result.data
   } catch (error) {
     console.error('Change Username Error: ', error)
+    return { error }
   }
 }
 
@@ -62,5 +66,6 @@ export async function deleteAccount(username:string, password: string) {
     return result.data
   } catch (error) {
     console.error('Delete Account Error: ', error)
+    return { error }
   }
 }

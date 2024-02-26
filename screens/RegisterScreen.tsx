@@ -1,31 +1,30 @@
 //npm modules
 import React, { useState } from 'react'
-import { View, StyleSheet, TextInput, Pressable, Text } from 'react-native'
+import { View, StyleSheet, TextInput, Pressable, Text, Alert } from 'react-native'
 import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from '../context/AuthContext'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState<string>('')
   const [username, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [passwordConf, setPasswordConf] = useState<string>('')
-  const { onLogin, onRegister } = useAuth()
+  const { onRegister } = useAuth()
 
   const register = async () => {
     if (password === passwordConf) {
-      const result = await onRegister!(name, username, password)
-      console.log(result)
-      if (result && result.error) {
-        alert(result.msg)
-      } else {
-        const next = await onLogin!(username, password)
-        if (next && next.error) {
-          alert(next.status)
-        }
-      }
+      const { status, error } = await onRegister!(name, username, password)
+      
+      navigation.navigate('Home', { screen: 'Welcome' })
+
+      return Alert.alert(
+        'Alert',
+        status ?? error,
+        [{ text: 'OK' }]
+      )
     } else {
       alert('Passwords do not match!')
     }

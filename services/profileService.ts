@@ -25,12 +25,11 @@ export async function show(): Promise<Profile> {
 
 export async function addPhoto(photoData: any): Promise<any> {
   try {
-    // const token = await tokenService.getToken()
     const photoFormData = new FormData()
     photoFormData.append('file', photoData)
 
     const result = await axios.patch(`${BASE_URL}/add-photo`, photoFormData)
-    return result.data.url
+    return result.data
   } catch (error) {
     console.error(error)
   }
@@ -38,7 +37,7 @@ export async function addPhoto(photoData: any): Promise<any> {
 
 export async function update(name: string, bio: string, photoData: { uri: string, name: string, type: string } | null): Promise<Profile> {
   try {
-    const result = await axios.put(`${BASE_URL}/update`, { name, bio, photoData })
+    const result = await axios.put(`${BASE_URL}/update`, { name, bio })
 
     if (photoData) {
       const url = await addPhoto(photoData)

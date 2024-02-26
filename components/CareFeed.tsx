@@ -20,7 +20,7 @@ interface CareFeedProps {
 }
 
 const CareFeed: React.FC<CareFeedProps> = ({ navigation }) => {
-  const {careCards } = useCareContext()
+  const { careCards } = useCareContext()
   const sortedCareCards: {[key: string]: Care[]} = careCards.length ? careUtils.sortByFrequency(careCards) : {}
 
   const [selected, setSelected] = useState<string>('day')
@@ -33,10 +33,12 @@ const CareFeed: React.FC<CareFeedProps> = ({ navigation }) => {
   }
 
   const EmptyList  = () => (
-    <View>
-      <Text>No tasks.</Text>
-    </View>
+    <Text style={styles.empty}>No tasks to manage.</Text>
   )
+
+  useEffect(() => {
+
+  }, [careCards.length])
     
   return (  
     <View style={styles.container}>
@@ -90,6 +92,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ navigation }) => {
                 onPress={() => handleClickTask(item)}
               />
             }
+            ListEmptyComponent={<EmptyList />}
           />
         }
 
@@ -102,6 +105,7 @@ const CareFeed: React.FC<CareFeedProps> = ({ navigation }) => {
                 onPress={() => handleClickTask(item)}
               />
             }
+            ListEmptyComponent={<EmptyList />}
           />
         }
 
@@ -204,6 +208,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     bottom: 0,
   },
+  empty: {
+    marginTop: 100,
+    fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'center'
+  }
 })
  
 export default CareFeed

@@ -4,7 +4,7 @@ import { useFocusEffect } from "@react-navigation/native"
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native"
 //types & context
 import { Pet } from "../../services/petService"
-import { usePetContext } from "../../context/PetContext"
+import { usePet } from "../../context/PetContext"
 //components
 import PetInfo from "../../components/PetInfo"
 //services
@@ -27,7 +27,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
     photo: '',
   })
   const { petId } = route.params
-  const { onDeletePet } = usePetContext()
+  const { onDeletePet } = usePet()
   
   const handleDeletePet = async (petId: string) => {
     await onDeletePet!(petId)

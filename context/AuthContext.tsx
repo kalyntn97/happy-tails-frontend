@@ -4,7 +4,6 @@ import * as SecureStore from 'expo-secure-store'
 //types & services
 import * as tokenService from '../services/tokenService'
 import * as authService from '../services/authService'
-import { User } from "../services/authService"
 
 interface State {
   authState: { token: string | null, authenticated: boolean | null }
@@ -93,7 +92,7 @@ const AuthContext = createContext<AuthContextValue>({
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
-  if (context === undefined ) throw new Error('useAuth must be used within a ProfileProvider')
+  if (context === undefined ) throw new Error('useAuth must be used within an AuthProvider')
   return context
 }
 
@@ -129,7 +128,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (username: string, password: string) => {
     const { status, token, error } = await authService.login(username, password)
-    console.log('file: AuthContext.tsx:162 ~ login ~ result:', status ?? error)
+    console.log('file: AuthContext.tsx:162 ~ login ~ result:', error)
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
       await SecureStore.setItemAsync(TOKEN_KEY, token)
