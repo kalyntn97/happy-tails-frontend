@@ -1,29 +1,29 @@
 import { ImageSourcePropType } from "react-native"
-import { usePetContext } from "../context/PetContext"
-import { Colors } from "../styles"
-import { Care } from "../services/careService"
+import { usePetContext } from "@context/PetContext"
+import { Colors } from "@styles/index"
+import { Care } from "@customTypes/CareInterface"
 
 export const getIconSource  = (name: string): ImageSourcePropType => {
   switch (name) {
     default: 
-      return require('../assets/icons/paw.png')
+      return require('@assets/icons/paw.png')
     case 'Teeth Brushing':
-      return require('../assets/icons/toothbrush.png')
+      return require('@assets/icons/toothbrush.png')
     case 'Nail Clipping':
-      return require('../assets/icons/clippers.png')
+      return require('@assets/icons/clippers.png')
     case 'Walk':
-      return require('../assets/icons/leash-walk.png')
+      return require('@assets/icons/leash-walk.png')
     case 'Grooming':
-      return require('../assets/icons/grooming.png')
+      return require('@assets/icons/grooming.png')
     case 'Litter Box Cleaning':
-      return require('../assets/icons/litter-box.png')
+      return require('@assets/icons/litter-box.png')
     //buttons
     case 'Add a Task': 
-      return require('../assets/icons/care-filled.png')
+      return require('@assets/icons/care-filled.png')
     case 'Add a Vet Visit': 
-      return require('../assets/icons/vet-filled.png')
+      return require('@assets/icons/vet-filled.png')
     case 'Add a Pet': 
-      return require('../assets/icons/pet-filled.png')
+      return require('@assets/icons/pet-filled.png')
   }
 }
 

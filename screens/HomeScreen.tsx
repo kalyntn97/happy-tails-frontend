@@ -3,15 +3,15 @@ import { useRef, useState, useEffect } from "react"
 import { View, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimensions, ScrollView, Image, ImageStyle, SafeAreaView, StatusBar, Alert } from "react-native"
 import LottieView from 'lottie-react-native'
 //context
-import { useAuth } from "../context/AuthContext"
-import { useCareContext } from "../context/CareContext"
+import { useAuth } from "@context/AuthContext"
+import { useCareContext } from "@context/CareContext"
 //components
-import CareFeed from "../components/CareFeed"
-import FloatingButton from "../components/FloatingButton/FloatingButton"
+import CareFeed from "@components/CareFeed"
+import FloatingButton from "@components/FloatingButton/FloatingButton"
 //utils & services
 import * as careUtils from '../utils/careUtils'
 //styles
-import { Buttons, Typography, Colors, Forms, Spacing } from '../styles'
+import { Buttons, Typography, Colors, Forms, Spacing } from '@styles/index'
 
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
@@ -35,7 +35,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
       {authState.authenticated ? (
         <>
           <View style={[styles.screen, { minHeight: centerHeight }]}>
-            <Image source={require('../assets/images/happy-tails-banner-large.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.3 }]} />
+            <Image source={require('@assets/images/happy-tails-banner-large.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.3 }]} />
             <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{currMonth} {currDate} {currYear}</Text>
 
             <CareFeed navigation={navigation} />
@@ -53,7 +53,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
           style={{ width: windowWidth }}
         >
           <View style={[styles.screen, { height: windowHeight }]}>
-            <LottieView source={require('../assets/animations/happy.json')} autoPlay loop style={styles.happyAnimation} />
+            <LottieView source={require('@assets/animations/happy.json')} autoPlay loop style={styles.happyAnimation} />
             <View style={styles.headers}>
                 <Text style={styles.mainHeader}>
                   <Text style={{ color: Colors.blue }}>Care.</Text>{'\n'}
@@ -66,19 +66,19 @@ const HomeScreen: React.FC = ({ navigation }) => {
               <Text style={[styles.btnText, { color: Colors.lightestPink }]}>Get Started</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.link} onPress={() => scrollToNext(1)}>
-              <LottieView source={require('../assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
+              <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
             </TouchableOpacity>
           </View>
 
           <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.lightPink }]}>
             <TouchableOpacity style={styles.link} onPress={() => scrollToNext(2)}>
-              <LottieView source={require('../assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
+              <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
             </TouchableOpacity>
           </View>
 
           <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.yellow }]}>
             <TouchableOpacity style={styles.link} onPress={() => scrollToNext(0)}>
-              <LottieView source={require('../assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
+              <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
             </TouchableOpacity>
           </View>
         </ScrollView>

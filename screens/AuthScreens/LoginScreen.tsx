@@ -1,11 +1,12 @@
 //npm modules
 import { FC, useState } from 'react'
-import { View, StyleSheet, TextInput, Pressable, Text, Alert } from 'react-native'
+import { View, StyleSheet, TextInput, Text, Alert, SafeAreaView } from 'react-native'
 import LottieView from 'lottie-react-native'
 //context
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '@context/AuthContext'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponent'
 
 const LoginScreen: FC = ({ navigation }) => {
   const [username, setUserName] = useState<string>('')
@@ -25,8 +26,9 @@ const LoginScreen: FC = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <LottieView source={require('../assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
+    <SafeAreaView style={styles.container}>
+      <GoBackButton top={50} onPress={() => navigation.goBack()}/>
+      <LottieView source={require('@assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
       <Text style={styles.header}>Sign in</Text>
       <View style={styles.form}>
         <Text style={styles.errorMsg}>{errorMsg}</Text>
@@ -44,14 +46,10 @@ const LoginScreen: FC = ({ navigation }) => {
           value={password} 
           secureTextEntry={true}
         />
-        <Pressable onPress={login} style={styles.mainButton}>
-          <Text style={styles.buttonText}>Sign in</Text>
-        </Pressable>
-        <Pressable onPress={() => navigation.navigate('Register')} style ={styles.subButton}>
-          <Text style={styles.buttonText}>Create Account</Text>
-        </Pressable>
+        <MainButton title='Submit' onPress={login} top={40} bottom={0} />
+        <SubButton title='Create Account' onPress={() => navigation.navigate('Register')} top={0} bottom={0} />
       </View>
-    </View>
+    </SafeAreaView>
   )
 }
 
@@ -79,19 +77,6 @@ const styles = StyleSheet.create({
     ...Forms.input,
     borderColor: Colors.pink,
   },
-  mainButton: {
-    ...Buttons.smallRounded,
-    marginTop: 40,
-    backgroundColor: Colors.pink
-  },
-  subButton: {
-    ...Buttons.smallSub,
-    borderColor: Colors.darkestPink
-  },
-  buttonText: {
-    ...Buttons.buttonText,
-    color: Colors.darkestPink
-  }
 })
 
 export default LoginScreen

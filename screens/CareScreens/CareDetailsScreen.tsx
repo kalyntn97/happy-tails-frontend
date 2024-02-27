@@ -2,18 +2,18 @@
 import React from "react"
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView } from "react-native"
 //services & utils
-import { Care } from "../../services/careService"
+import { Care } from "@services/careService"
 import * as careUtils from '../../utils/careUtils'
 //context
-import { useCareContext } from "../../context/CareContext"
+import { useCareContext } from "@context/CareContext"
 //components
-import ScrollPetList from "../../components/ScrollPetList"
-import DailyChart from "../../components/Charts/DailyChart"
-import BarChart from "../../components/Charts/BarChart"
-import YearChart from "../../components/Charts/YearChart"
-import FillChart from "../../components/Charts/FillChart"
+import ScrollPetList from "@components/ScrollPetList"
+import DailyChart from "@components/Charts/DailyChart"
+import BarChart from "@components/Charts/BarChart"
+import YearChart from "@components/Charts/YearChart"
+import FillChart from "@components/Charts/FillChart"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface CareDetailsProps {
   navigation: any

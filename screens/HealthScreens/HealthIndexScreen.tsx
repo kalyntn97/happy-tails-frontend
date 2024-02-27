@@ -1,7 +1,7 @@
 //npm modules
 import { StyleSheet, Text, View } from "react-native"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 const HealthIndexScreen = () => {
   return (  

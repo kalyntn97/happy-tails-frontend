@@ -3,10 +3,10 @@ import { useState } from "react"
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageStyle, TextInput, TouchableWithoutFeedback, Keyboard } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 //types & context
-import { Profile } from "../../services/profileService"
-import { useProfile, useProfileContext } from "../../context/ProfileContext"
+import { Profile } from "@customTypes/ProfileInterface"
+import { useProfile, useProfileContext } from "@context/ProfileContext"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface EditProfileProps {
   navigation: any
@@ -60,7 +60,7 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
             <View style={styles.uploadBtnContainer}>
               <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
                 <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
-                <Image source={require('../../assets/icons/camera.png')} style={styles.cameraIcon } />
+                <Image source={require('@assets/icons/camera.png')} style={styles.cameraIcon } />
               </TouchableOpacity>
             </View>
           </View>

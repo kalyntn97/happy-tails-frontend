@@ -1,14 +1,17 @@
 //npm modules
 import { ReactElement, useEffect, useRef, useState } from "react"
 import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, FlatList } from "react-native"
+import { useShallow } from 'zustand/react/shallow'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 //utils 
 import * as petUtils from '../utils/petUtils'
 import * as careUtils from '../utils/careUtils'
 import * as healthUtils from '../utils/healthUtils'
-import { usePet } from "../context/PetContext"
-import { Pet } from "../services/petService"
+import { usePet } from "@context/PetContext"
+import { Pet } from "@customTypes/PetInterface"
+import { useGetAllPets } from "../queries/petQueries"
+import { usePetStore, usePets } from "../store/PetStore"
 
 interface DropdownProps {
   label: string
@@ -44,8 +47,10 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width })
     setVisible(false)
   }
 
-  const { pets } = usePet()
-  const petNames: string[] = pets.map((pet: Pet) => pet.name)
+  const petNames = () => {
+    const names = usePets().map(pet => pet.name)
+    return names
+  }
   
   //populate data
   useEffect(() => {
@@ -94,7 +99,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width })
         </Modal>
       )}
       <Text style={styles.label}>{selected ? selected : label}</Text>
-      <Image source={require('../assets/icons/dropdown.png')} style={styles.icon} />
+      <Image source={require('@assets/icons/dropdown.png')} style={styles.icon} />
     </TouchableOpacity>
   )
 }

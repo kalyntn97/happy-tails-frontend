@@ -1,20 +1,24 @@
 //npm modules
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image } from "react-native"
 //components
-import PetCard from '../../components/PetComponents/PetCard'
-import { AddButton } from '../../components/ButtonComponent'
+import PetCard from '@components/PetComponents/PetCard'
+import { AddButton } from '@components/ButtonComponent'
 //context
-import { usePet } from '../../context/PetContext'
+import { usePet } from '@context/PetContext'
 //styles
-import { Buttons, Spacing, Typography, Colors } from '../../styles'
+import { Buttons, Spacing, Typography, Colors } from '@styles/index'
 import Animated, { interpolate, useAnimatedReaction, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
+import { useGetAllPets } from '../../queries/petQueries'
+import { usePetActions, usePetStore, usePets } from '../../store/PetStore'
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
   const [currCard, setCurrCard] = useState<number>(0)
-  const { pets } = usePet()
-  const petCount: number = pets.length
-
+  // const { pets } = usePet()
+  const pets = usePets()
+  const { setPets } = usePetActions()
+  const { data, isLoading, isSuccess, isError } = useGetAllPets()
+  
   const { width } = useWindowDimensions()
   const scrollX = useSharedValue(0)
   const FlatListRef = useRef<FlatList>(null)
@@ -22,6 +26,8 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   const onScrollHandler = useAnimatedScrollHandler((event) => {
     scrollX.value = event.contentOffset.x
   })
+
+  const petCount = pets?.length ?? 0
 
   const onScrollEnd = () => {
     const currentIndex = scrollX.value / width
@@ -67,17 +73,23 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     )
   }
 
+  useEffect(() => {
+    if (data) {
+      setPets(data)
+    }
+  }, [data])
+
   return ( 
     <View style={styles.container}>
-      {petCount > 0 ?
-        <>    
+      { isSuccess && 
+        <>
           <View style={styles.btnContainer}>
             <Pressable 
               onPress={handleClickPrev} 
               style={[styles.prevBtn, currCard == 0 && styles.disabled]}
               disabled={currCard == 0}
             >
-              <Image source={require('../../assets/icons/prev2.png')} style={{ width: 30, height: 30 }}/> 
+              <Image source={require('@assets/icons/prev2.png')} style={{ width: 30, height: 30 }}/> 
             </Pressable>
             
             <Pressable 
@@ -85,7 +97,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
               style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled]}
               disabled={currCard == petCount - 1}
             >
-              <Image source={require('../../assets/icons/next2.png')} style={{ width: 30, height: 30 }}/> 
+              <Image source={require('@assets/icons/next2.png')} style={{ width: 30, height: 30 }}/> 
             </Pressable>
           </View>
           
@@ -102,7 +114,11 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
               renderItem={({ item, index }) => {
                 return <PetCard pet={item} index={index} scrollX={scrollX} navigation={navigation}/>
               }}
+              ListEmptyComponent={
+                <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
+              }
             />
+            
           </View>
 
           <View style={styles.dotNav}>
@@ -111,9 +127,9 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
             )}
           </View>
         </>
-      :
-        <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
       }
+
+      {isLoading && <Text>Fetching data...</Text>}
 
       <AddButton onPress={() => navigation.navigate('Create')} />
     </View>

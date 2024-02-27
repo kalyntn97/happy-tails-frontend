@@ -3,12 +3,12 @@ import { useState } from "react"
 import { Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 //context
-import { usePetContext } from "../../context/PetContext"
+import { usePetContext } from "@context/PetContext"
 //components
 import Dropdown from "../Dropdown"
 import { MainButton, SubButton } from "../ButtonComponent"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface HealthFormProps {
   onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Date, nextDue: Date, vetId: string) => Promise<any>

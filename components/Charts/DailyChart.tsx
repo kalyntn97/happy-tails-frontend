@@ -3,7 +3,7 @@ import { useWindowDimensions, StyleSheet, Text, View } from "react-native"
 //services & utils
 import * as careUtils from '../../utils/careUtils'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface DailyChartProps {
   // tracker: Tracker

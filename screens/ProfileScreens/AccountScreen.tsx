@@ -2,12 +2,12 @@
 import { useState } from "react"
 import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert } from "react-native"
 //component
-import AccountForm from "../../components/AccountForm"
-import ToggleableForm from "../../components/ToggleableForm"
+import AccountForm from "@components/AccountForm"
+import ToggleableForm from "@components/ToggleableForm"
 //context
-import { useAuth } from "../../context/AuthContext"
+import { useAuth } from "@context/AuthContext"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface AccountProps {
   navigation: any

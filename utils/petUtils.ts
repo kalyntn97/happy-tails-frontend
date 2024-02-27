@@ -17,15 +17,15 @@ interface BirdListResponse {
 export const getIconSource = (species: string): ImageSourcePropType => {
   switch (species) {
     case 'Dog':
-      return require('../assets/icons/dog.png')
+      return require('@assets/icons/dog.png')
     case 'Cat':
-      return require('../assets/icons/cat.png')
+      return require('@assets/icons/cat.png')
     case 'Bird':
-      return require('../assets/icons/bird.png')
+      return require('@assets/icons/bird.png')
     case 'Fish':
-      return require('../assets/icons/fish.png')
+      return require('@assets/icons/fish.png')
     case 'Others':
-      return require('../assets/icons/animal.png')
+      return require('@assets/icons/animal.png')
   }
 }
 

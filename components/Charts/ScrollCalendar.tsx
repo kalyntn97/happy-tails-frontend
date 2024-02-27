@@ -3,9 +3,9 @@ import { useRef, useState, useEffect } from "react"
 import { ScrollView, StyleSheet, Text, View, Image, ImageStyle, TouchableOpacity, Pressable } from "react-native"
 //utils
 import * as careUtils from "../../utils/careUtils"
-import { Tracker } from "../../services/careService"
+import { Tracker } from "@services/careService"
 //styles
-import { Colors, Forms } from '../../styles'
+import { Colors, Forms } from '@styles/index'
 
 const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone, frequency }) => {
   const { date: currDate, year: currYear, month: monthIdx, week: currWeek, daysInMonth, weeksInMonth } = careUtils.getCurrentDate()
@@ -61,10 +61,10 @@ const ScrollCalendar = ({ careId, tracker, index, onCheckDone, onUncheckDone, fr
           }
 
           {i === index && tracker.done[index] === 1
-            ? <Image source={require('../../assets/icons/heart-filled.png')} 
+            ? <Image source={require('@assets/icons/heart-filled.png')} 
                 style={[styles.heart, { opacity: frequency === 'Daily' ? 0.5 : 1 }]} 
               />
-            : <Image source={require('../../assets/icons/heart-gray.png')} style={styles.heart } />
+            : <Image source={require('@assets/icons/heart-gray.png')} style={styles.heart } />
           }
         </TouchableOpacity>
       )

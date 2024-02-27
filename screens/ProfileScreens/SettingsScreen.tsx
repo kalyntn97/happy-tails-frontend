@@ -3,23 +3,24 @@ import { useEffect, useState } from "react"
 import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
 import { createDrawerNavigator } from "@react-navigation/drawer"
 //context
-import { useProfile } from "../../context/ProfileContext"
-import { usePet } from "../../context/PetContext"
+import { useProfile } from "@context/ProfileContext"
+import { usePet } from "@context/PetContext"
+import { usePets } from "@store/PetStore"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
-import ScrollPetList from "../../components/ScrollPetList"
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import ScrollPetList from "@components/ScrollPetList"
 
 const SettingsScreen = ({ navigation, route }) => {
   const { profile } = useProfile()
-  const { pets } = usePet()
+  const pets = usePets()
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
-    require('../../assets/icons/micon1.png'),
-    require('../../assets/icons/micon2.png'),
-    require('../../assets/icons/micon3.png'),
-    require('../../assets/icons/ficon1.png'),
-    require('../../assets/icons/ficon2.png'),
-    require('../../assets/icons/ficon3.png'),
+    require('@assets/icons/micon1.png'),
+    require('@assets/icons/micon2.png'),
+    require('@assets/icons/micon3.png'),
+    require('@assets/icons/ficon1.png'),
+    require('@assets/icons/ficon2.png'),
+    require('@assets/icons/ficon3.png'),
   ]
   const randomIdx = Math.floor(Math.random() * randomProfilePhotos.length)
 

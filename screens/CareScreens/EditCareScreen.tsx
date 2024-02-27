@@ -3,13 +3,13 @@ import { useEffect } from "react"
 import { useIsFocused } from "@react-navigation/native"
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native"
 //components
-import CareForm from "../../components/CareComponents/CareForm"
+import CareForm from "@components/CareComponents/CareForm"
 //services
-import { useCareContext } from "../../context/CareContext"
-import { Care } from "../../services/careService"
+import { useCareContext } from "@context/CareContext"
+import { Care } from "@customTypes/CareInterface"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
-import { SubButton } from "../../components/ButtonComponent"
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { SubButton } from "@components/ButtonComponent"
 
 interface EditCareProps {
   navigation: any

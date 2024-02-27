@@ -3,14 +3,15 @@ import { useCallback, useState } from "react"
 import { useFocusEffect } from "@react-navigation/native"
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native"
 //types & context
-import { Pet } from "../../services/petService"
-import { usePet } from "../../context/PetContext"
+import { Pet } from "@customTypes/PetInterface"
+import { usePet } from "@context/PetContext"
 //components
-import PetInfo from "../../components/PetInfo"
+import PetInfo from "@components/PetInfo"
 //services
-import * as petService from '../../services/petService'
+import * as petService from '@services/petService'
 //styles
-import { Buttons, Spacing, Forms, Colors } from '../../styles'
+import { Buttons, Spacing, Forms, Colors } from '@styles/index'
+import { useGetPetById } from "../../queries/petQueries"
 
 interface PetDetailsProps {
   navigation: any
@@ -18,15 +19,16 @@ interface PetDetailsProps {
 }
 
 const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
-  const [pet, setPet] = useState<Pet>({
-    _id: '',
-    name: '',
-    age: 0,
-    species: '',
-    breed: '',
-    photo: '',
-  })
+  // const [pet, setPet] = useState<Pet>({
+  //   _id: '',
+  //   name: '',
+  //   age: 0,
+  //   species: '',
+  //   breed: '',
+  //   photo: '',
+  // })
   const { petId } = route.params
+  const { data: pet, isLoading, refetch, isError, isSuccess } = useGetPetById(petId)
   const { onDeletePet } = usePet()
   
   const handleDeletePet = async (petId: string) => {
@@ -45,34 +47,37 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
     )
   }
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchPetDetails = async () => {
-        const petData = await petService.show(petId)
-        setPet(petData)
-      }
-      fetchPetDetails()
-    }, [petId])
-  )
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const fetchPetDetails = async () => {
+  //       const petData = await petService.show(petId)
+  //       setPet(petData)
+  //     }
+  //     fetchPetDetails()
+  //   }, [petId])
+  // )
 
   return ( 
     <View style={styles.container}>
-      <View style={styles.infoCard}>
-        <View style={styles.petInfo}>
-          <PetInfo pet={pet} size='expanded' />
+      {isSuccess && 
+        <View style={styles.infoCard}>
+          <View style={styles.petInfo}>
+            <PetInfo pet={pet} size='expanded' />
+          </View>
+          <View style={styles.btnContainer}>
+            <TouchableOpacity 
+              style={{...styles.mainBtn, backgroundColor: Colors.yellow}}
+              onPress={() => navigation.navigate('Edit', { pet: pet })}
+            >
+              <Text style={styles.btnText}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{...styles.mainBtn, backgroundColor: Colors.red}} onPress={showDeleteConfirmDialog}>
+              <Text style={styles.btnText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.btnContainer}>
-          <TouchableOpacity 
-            style={{...styles.mainBtn, backgroundColor: Colors.yellow}}
-            onPress={() => navigation.navigate('Edit', { pet: pet })}
-          >
-            <Text style={styles.btnText}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{...styles.mainBtn, backgroundColor: Colors.red}} onPress={showDeleteConfirmDialog}>
-            <Text style={styles.btnText}>Delete</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      }
+      {isLoading && <Text>Fetching data...</Text>}
     </View>
   )
 }

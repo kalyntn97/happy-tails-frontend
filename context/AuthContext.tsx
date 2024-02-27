@@ -2,38 +2,10 @@ import { FC, ReactNode, createContext, useContext, useEffect, useReducer, useSta
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
 //types & services
-import * as tokenService from '../services/tokenService'
-import * as authService from '../services/authService'
+import * as tokenService from '@services/tokenService'
+import * as authService from '@services/authService'
+import { Action, AuthContextValue, AuthProviderProps, DeleteAccountAction, InitializeAction, LoginAction, LogoutAction, RegisterAction, State } from "@customTypes/AuthInterface"
 
-interface State {
-  authState: { token: string | null, authenticated: boolean | null }
-}
-interface AuthContextValue extends State {
-  onRegister: (name: string, username: string, password: string) => Promise<any>
-  onLogin: (username: string, password: string) => Promise<any>
-  onLogout: () => Promise<any>
-  onDeleteAccount: (username: string, password: string) => Promise<any>
-}
-interface AuthProviderProps { children: ReactNode }
-type InitializeAction = {
-  type: 'INITIALIZE'
-  payload: { token: string | null }
-}
-type RegisterAction = {
-  type: 'REGISTER'
-  payload: { token: string | null }
-}
-type LoginAction = {
-  type: 'LOGIN'
-  payload: { token: string | null }
-}
-type LogoutAction = {
-  type: 'LOGOUT'
-}
-type DeleteAccountAction = {
-  type: 'DELETE'
-}
-type Action = InitializeAction | RegisterAction | LoginAction | LogoutAction | DeleteAccountAction
 
 const initialState: State = {
   authState: { token: null, authenticated: false }

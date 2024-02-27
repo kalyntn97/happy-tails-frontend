@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react"
 import { Keyboard, StyleSheet, View, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback } from "react-native"
 // context
-import { useAuth } from "../context/AuthContext"
+import { useAuth } from "@context/AuthContext"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
-import { show } from "../services/petService"
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { show } from "@services/petService"
 
 interface AccountFormProps {
   showForm: string

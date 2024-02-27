@@ -2,15 +2,15 @@
 import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 //services & utils
-import { Care } from '../services/careService'
+import { Care } from '@customTypes/CareInterface'
 import * as careUtils from '../utils/careUtils'
 // context
-import { useCareContext } from '../context/CareContext'
+import { useCareContext } from '@context/CareContext'
 //components
 import { SquareButton } from './ButtonComponent'
 import ScrollPetList from './ScrollPetList'
 //styles
-import { Spacing, Forms } from '../styles'
+import { Spacing, Forms } from '@styles/index'
 
 const TaskItem = ({ task, navigation, onPress }) => {
   const { onCheckAllDone, onUncheckAllDone} = useCareContext()
@@ -58,7 +58,7 @@ const TaskItem = ({ task, navigation, onPress }) => {
 
         <TouchableOpacity style={styles.bulletBtn} onPress={() => checkAllDone(task)}>
           {done === task.times 
-          ? <Image source={require('../assets/icons/check.png')} style={styles.check}/>
+          ? <Image source={require('@assets/icons/check.png')} style={styles.check}/>
           : <Text style={styles.bulletBtnText}>○</Text> }
         </TouchableOpacity>
 

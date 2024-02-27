@@ -1,10 +1,10 @@
 //npm
 import { ScrollView, View, StyleSheet } from "react-native"
-import { Pet } from "../services/petService"
+import { Pet } from "@customTypes/PetInterface"
 //component
 import PetInfo from "./PetInfo"
 //styles
-import { Spacing } from '../styles'
+import { Spacing } from '@styles/index'
 
 interface ScrollPetListProps {
   petArray: Pet[]

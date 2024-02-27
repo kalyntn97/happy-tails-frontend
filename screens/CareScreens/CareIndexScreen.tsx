@@ -4,11 +4,11 @@ import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView, Imag
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 //components
-import { AddButton } from "../../components/ButtonComponent"
+import { AddButton } from "@components/ButtonComponent"
 //services & utils
-import { useCareContext } from "../../context/CareContext"
+import { useCareContext } from "@context/CareContext"
 //styles
-import { Buttons, Spacing, Typography, Colors, Forms } from '../../styles'
+import { Buttons, Spacing, Typography, Colors, Forms } from '@styles/index'
 import * as careUtils from "../../utils/careUtils"
 
 type CareIndexProps = {
@@ -41,7 +41,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
           <Image source={iconSource} style={styles.itemIcon} />
           <Text>{care.name}</Text>
         </View>
-        <Image source={require('../../assets/icons/next2.png')} style={{...Forms.smallIcon, marginRight: 10 }} />
+        <Image source={require('@assets/icons/next2.png')} style={{...Forms.smallIcon, marginRight: 10 }} />
       </TouchableOpacity>
     )
   }
@@ -86,7 +86,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
     <View style={styles.container}>
       {!sortedCareCards &&
         <View style={styles.empty}>
-          <LottieView source={require('../../assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
+          <LottieView source={require('@assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
           <Text style={styles.msg}>Start managing your pet's health</Text>
         </View>
       }

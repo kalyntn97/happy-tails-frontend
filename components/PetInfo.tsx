@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View } from "react-native"
-import { Pet } from "../services/petService"
+import { Pet } from "@types/PetInterface"
 import { getIconSource } from "../utils/petUtils"
-import { Spacing, Forms, Typography, Colors } from '../styles'
+import { Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface PetInfoProps {
   pet: Pet
@@ -18,7 +18,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
           <Image source={iconSource} style={styles.petIcon } />
         }
         <Image 
-          source={pet.photo ? {uri: pet.photo} : require('../assets/icons/pet-profile.png')} 
+          source={pet.photo ? {uri: pet.photo} : require('@assets/icons/pet-profile.png')} 
           style={[
             styles.petPhoto , 
             size === 'expanded' ? {...Forms.smallPhoto} 

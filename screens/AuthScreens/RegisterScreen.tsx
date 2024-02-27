@@ -1,11 +1,13 @@
 //npm modules
 import React, { useState } from 'react'
-import { View, StyleSheet, TextInput, Pressable, Text, Alert } from 'react-native'
-import LottieView from 'lottie-react-native'
+import { View, StyleSheet, TextInput, Pressable, Text, Alert, SafeAreaView } from 'react-native'
 //context
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '@context/AuthContext'
+//components
+import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponent'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState<string>('')
@@ -31,8 +33,9 @@ const RegisterScreen = ({ navigation }) => {
   }
 
   return ( 
-    <View style={styles.container}>
-      {/* <LottieView source={require('../assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} /> */}
+    <SafeAreaView style={styles.container}>
+      {/* <LottieView source={require('@assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} /> */}
+      <GoBackButton top={50} onPress={() => navigation.goBack()}/>
       <Text style={styles.header}>Create Account</Text>
       <View style={styles.form}>
         <TextInput 
@@ -62,11 +65,10 @@ const RegisterScreen = ({ navigation }) => {
           value={passwordConf} 
           secureTextEntry={true}
         />
-        <Pressable onPress={register} style={styles.mainButton}>
-          <Text style={styles.buttonText}>Register</Text>
-        </Pressable>
+        <MainButton title='Submit' onPress={register} top={40} bottom={0} />
+        <SubButton title='Sign in' onPress={() => navigation.navigate('Login')} top={0} bottom={0} />
       </View>
-    </View>
+    </SafeAreaView>
   )
 }
  
@@ -90,15 +92,6 @@ const styles = StyleSheet.create({
     ...Forms.input,
     borderColor: Colors.pink,
   },
-  mainButton: {
-    ...Buttons.smallRounded,
-    marginTop: 50,
-    backgroundColor: Colors.pink
-  },
-  buttonText: {
-    ...Buttons.buttonText,
-    color: Colors.darkestPink
-  }
 })
 
 export default RegisterScreen

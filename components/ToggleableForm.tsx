@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity, Text, View, Image, ImageStyle } from "react-native"
 import { useState } from "react"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface FormProps {
   visible: string
@@ -14,7 +14,7 @@ const ToggleableForm: React.FC<FormProps> = ({ visible, title, content }) => {
   return (
     <View style={styles.container}>
       <View style={styles.mainBtn}>
-        <Image source={require('../assets/icons/dropdownRound.png')} style={styles.icon } />
+        <Image source={require('@assets/icons/dropdownRound.png')} style={styles.icon } />
         <Text style={[styles.btnText, { color: visible === title ? Colors.darkPink : 'black' }]}>
           {title}
         </Text>

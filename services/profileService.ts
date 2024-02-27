@@ -1,9 +1,9 @@
 import axios from 'axios'
-import * as tokenService from './tokenService'
-import { Pet } from './petService'
-import { Care } from './careService'
+import { PROFILE_BASE_URL } from './urls'
+import { Pet } from '@customTypes/PetInterface'
+import { Care } from '@customTypes/CareInterface'
 
-const BASE_URL = `${process.env.EXPO_PUBLIC_BACKEND_URL}/profile`
+const BASE_URL = PROFILE_BASE_URL
 
 export interface Profile {
   _id: string

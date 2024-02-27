@@ -1,4 +1,5 @@
 import axios from "axios"
+import { AUTH_BASE_URL } from "./urls"
 export interface User {
   _id: string
   name: string
@@ -8,8 +9,7 @@ export interface User {
   token: string
 }
 
-const TOKEN_KEY = 'happy-tails'
-export const BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL
+const BASE_URL = AUTH_BASE_URL
 
 export async function register(name: string, username: string, password: string) {
   try {

@@ -1,5 +1,6 @@
 import axios from "axios"
-const BASE_URL = `${process.env.EXPO_PUBLIC_BACKEND_URL}/pets`
+import { PET_BASE_URL } from "./urls"
+const BASE_URL = PET_BASE_URL
 
 export interface Pet {
   _id: string
@@ -19,7 +20,7 @@ export async function index(): Promise<Pet[]> {
   }
 }
 
-export async function create(name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null): Promise<Pet> {
+export async function create(name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null): Promise<any> {
   try {
     const result = await axios.post(BASE_URL, { name, age, species, breed, photoData })
     if (photoData) {
@@ -29,6 +30,7 @@ export async function create(name: string, age: number, species: string, breed: 
     return result.data
   } catch (error) {
     console.error(error)
+    return { error }
   }
 }
 
@@ -44,7 +46,7 @@ export async function addPhoto(petId: string, photoData: any): Promise<any> {
   }
 }
 
-export async function update(name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string): Promise<Pet> {
+export async function update(name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string): Promise<any> {
   try {
     const result = await axios.put(`${BASE_URL}/${petId}`, { name, age, species, breed })
     if (photoData) {
@@ -57,7 +59,7 @@ export async function update(name: string, age: number, species: string, breed: 
   }
 }
 
-export async function show(petId: string): Promise<Pet> {
+export async function show(petId: string): Promise<any> {
   try {
     const result = await axios.get(`${BASE_URL}/${petId}`)
     return result.data
@@ -66,7 +68,7 @@ export async function show(petId: string): Promise<Pet> {
   }
 }
 
-export async function deletePet(petId: string): Promise<Pet> {
+export async function deletePet(petId: string): Promise<any> {
   try {
     const result = await axios.delete(`${BASE_URL}/${petId}`)
     return result.data

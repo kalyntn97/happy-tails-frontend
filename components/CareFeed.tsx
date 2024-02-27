@@ -3,17 +3,17 @@ import { useEffect, useState } from "react"
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Modal, TouchableWithoutFeedback, Pressable } from "react-native"
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 //context
-import { useCareContext } from "../context/CareContext"
+import { useCareContext } from "@context/CareContext"
 //utils & services
-import { Care } from "../services/careService"
+import { Care } from "@customTypes/CareInterface"
 import * as careUtils from '../utils/careUtils'
 //components
 import CareCard from "./CareComponents/CareCard"
 import TaskItem from "./TaskItem"
+import FloatingButton from "./FloatingButton/FloatingButton"
 import { AddButton, CloseButton } from "./ButtonComponent"
 //styles
-import { Buttons, Spacing, Forms, Colors } from '../styles'
-import FloatingButton from "./FloatingButton/FloatingButton"
+import { Buttons, Spacing, Forms, Colors } from '@styles/index'
 
 interface CareFeedProps {
   navigation: any
@@ -46,25 +46,25 @@ const CareFeed: React.FC<CareFeedProps> = ({ navigation }) => {
       <View style={styles.iconMenuContainer}>
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
           <Text style={styles.taskCount}>{sortedCareCards['Daily']?.length ?? 0}</Text>
-          <Image source={require('../assets/icons/day.png')} style={styles.icon } />
+          <Image source={require('@assets/icons/day.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'day' && styles.selected]}>Today</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('week')}>
           <Text style={styles.taskCount}>{sortedCareCards['Weekly']?.length ?? 0}</Text>
-          <Image source={require('../assets/icons/week.png')} style={styles.icon } />
+          <Image source={require('@assets/icons/week.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'week' && styles.selected]}>This Week</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('month')}>
           <Text style={styles.taskCount}>{sortedCareCards['Monthly']?.length ?? 0}</Text>
-          <Image source={require('../assets/icons/month.png')} style={styles.icon } />
+          <Image source={require('@assets/icons/month.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'month' && styles.selected]}>This Month</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('year')}>
           <Text style={styles.taskCount}>{sortedCareCards['Yearly']?.length ?? 0}</Text>
-          <Image source={require('../assets/icons/year.png')} style={styles.icon } />
+          <Image source={require('@assets/icons/year.png')} style={styles.icon } />
           <Text style={[styles.iconText, selected === 'year' && styles.selected]}>This Year</Text>
         </TouchableOpacity>
       </View>

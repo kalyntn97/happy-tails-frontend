@@ -1,7 +1,8 @@
 import * as tokenService from './tokenService'
+import { CARE_BASE_URL } from './urls'
 import { Pet } from "./petService"
 
-const BASE_URL = `${process.env.EXPO_PUBLIC_BACKEND_URL}/care-cards`
+const BASE_URL = CARE_BASE_URL
 
 //types
 export interface Tracker {

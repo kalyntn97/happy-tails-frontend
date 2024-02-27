@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
 //services & utils
 import * as careUtils from '../../utils/careUtils'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface BarChartProps {
   tracker: any

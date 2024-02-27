@@ -1,4 +1,4 @@
-import { Colors, Spacing } from "../../styles";
+import { Colors, Spacing } from "@styles/index";
 
 export const ButtonStyles = {
   width: 60, 

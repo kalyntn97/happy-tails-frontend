@@ -6,9 +6,10 @@ import Dropdown from "../Dropdown"
 import MultipleSelection from "../MultipleSelection"
 import { MainButton, SubButton } from "../ButtonComponent"
 //context
-import { usePetContext } from "../../context/PetContext"
+import { usePetContext } from "@context/PetContext"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { usePets } from "../../store/PetStore"
 
 interface CareFormProps {
   onSubmit: (name: string, frequency: string, times: number, pets: string[], careId: string | null) => Promise<any>
@@ -24,7 +25,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
 
-  const { pets } = usePetContext()
+  const pets = usePets()
   //convert initial pet Ids into names
   const initialPetNames = initialValues?.pets.map(id => {
     const pet = pets.find(pet => pet._id === id)

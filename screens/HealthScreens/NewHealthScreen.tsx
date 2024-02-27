@@ -1,10 +1,10 @@
 //npm
 import { View, Text, StyleSheet } from "react-native"
 //components
-import VetForm from "../../components/HealthComponents/HealthForm"
-import { SubButton } from "../../components/ButtonComponent"
+import VetForm from "@components/HealthComponents/HealthForm"
+import { SubButton } from "@components/ButtonComponent"
 //styles
-import { Spacing } from "../../styles"
+import { Spacing } from "@styles/index"
 
 
 const NewHealthScreen = ({ navigation }) => {

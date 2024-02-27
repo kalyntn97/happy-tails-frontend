@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef } from "react"
 import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, FlatList } from "react-native"
+import { useShallow } from 'zustand/react/shallow'
+//states
+import { usePetStore, usePets } from "../store/PetStore"
 //context
-import { usePetContext } from "../context/PetContext"
+import { usePetContext } from "@context/PetContext"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface MultipleSelectionProps {
   label: string | string[]
@@ -42,17 +45,14 @@ const MultipleSelection: React.FC<MultipleSelectionProps> = ({ label, dataType, 
   }
 
   // get data for select pets
-  const { pets } = usePetContext()
-  const getPetNames = (): string[] => {
-    return pets.map(pet => pet.name)
-  }
-
+  const petNames = usePetStore(useShallow(state => state.pets.map(pet => pet.name)))
+ 
   //populate data
   useEffect(() => {
     const fetchData = async (dataType: string) => {
       let result: string[]
       if (dataType === 'petNames') {
-        result = getPetNames()
+        result = petNames
       }
       setData(result)
     }
@@ -88,7 +88,7 @@ const MultipleSelection: React.FC<MultipleSelectionProps> = ({ label, dataType, 
       </View>
     : <Text>{label}</Text>
     }
-    <Image source={require('../assets/icons/dropdown.png')} style={styles.icon } />
+    <Image source={require('@assets/icons/dropdown.png')} style={styles.icon } />
   </TouchableOpacity>
   )
 

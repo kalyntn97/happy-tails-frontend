@@ -3,11 +3,11 @@ import { useEffect } from "react"
 import { View } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 //components
-import PetForm from "../../components/PetComponents/PetForm"
-import { Pet } from "../../services/petService"
-import { SubButton } from "../../components/ButtonComponent"
+import PetForm from "@components/PetComponents/PetForm"
+import { Pet } from "@customTypes/PetInterface"
+import { SubButton } from "@components/ButtonComponent"
 //context
-import { usePet } from "../../context/PetContext"
+import { usePet } from "@context/PetContext"
 
 interface EditPetProps {
   navigation: any

@@ -1,23 +1,26 @@
 //npm modules
 import { useEffect } from "react"
-import { StyleSheet, View } from "react-native"
+import { Alert, StyleSheet, View } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 //context
-import { usePet } from "../../context/PetContext"
+import { usePet } from "@context/PetContext"
+//queries
+import { useAddPet } from "../../queries/petQueries"
 //components
-import PetForm from "../../components/PetComponents/PetForm"
-import { SubButton } from "../../components/ButtonComponent"
+import PetForm from "@components/PetComponents/PetForm"
+import { SubButton } from "@components/ButtonComponent"
 //styles
-import { Spacing } from "../../styles"
+import { Spacing } from "@styles/index"
 
 const NewPetScreen = ({ navigation }) => {
-  const { onAddPet } = usePet()
-
+  // const { onAddPet } = usePet()
   const isFocused = useIsFocused()
-
+  const addPetMutation = useAddPet()
+  const { mutate, isPending, isSuccess, isError } = addPetMutation
   const handleAddPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null) => {
-    await onAddPet!(name, age, species, breed, photoData)
-    navigation.navigate('Index')
+    mutate({ name, age, species, breed, photoData }, {
+      onSuccess: () => navigation.navigate('Index')
+    })
   }
 
   useEffect(() => {
@@ -28,7 +31,7 @@ const NewPetScreen = ({ navigation }) => {
 
   return ( 
     <View style={styles.container}>
-      <PetForm onSubmit={handleAddPet} navigation={navigation} />
+      <PetForm onSubmit={handleAddPet} navigation={navigation} isPending={isPending} />
     </View>
   )
 }
