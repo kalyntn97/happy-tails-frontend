@@ -65,7 +65,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
         
         <TouchableOpacity 
           style={styles.mainBtn} 
-          onPress={() => navigation.navigate('Details', { petId: pet._id })}
+          onPress={() => navigation.navigate('Details', { pet: pet })}
         >
           <Text style={styles.btnText}>Details</Text>
         </TouchableOpacity>

@@ -4,18 +4,16 @@ import { useFocusEffect } from "@react-navigation/native"
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native"
 //types & context
 import { Pet } from "@pet/PetInterface"
-import { usePet } from "@context/PetContext"
 //components
 import PetInfo from "@components/PetInfo/PetInfo"
-//services
-import * as petService from '@pet/petService'
+//store
+import { usePetActions } from "@store/store"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
-import { useGetPetById } from "../petQueries"
 
 interface PetDetailsProps {
   navigation: any
-  route: { params: { petId: string }}
+  route: { params: { pet: Pet } }
 }
 
 const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
@@ -27,9 +25,9 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   //   breed: '',
   //   photo: '',
   // })
-  const { petId } = route.params
-  const { data: pet, isLoading, refetch, isError, isSuccess } = useGetPetById(petId)
-  const { onDeletePet } = usePet()
+  const { pet } = route.params
+  // const { data: pet, isLoading, refetch, isError, isSuccess } = useGetPetById(petId)
+  const { onDeletePet } = usePetActions()
   
   const handleDeletePet = async (petId: string) => {
     await onDeletePet!(petId)
@@ -41,25 +39,15 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
       'Are you sure?',
       `Remove ${pet.name} from your profile?`, 
       [
-        { text: 'Yes', onPress: () => { handleDeletePet(petId) }},
+        { text: 'Yes', onPress: () => { handleDeletePet(pet._id) }},
         { text: 'No' }
       ]
     )
   }
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const fetchPetDetails = async () => {
-  //       const petData = await petService.show(petId)
-  //       setPet(petData)
-  //     }
-  //     fetchPetDetails()
-  //   }, [petId])
-  // )
-
   return ( 
     <View style={styles.container}>
-      {isSuccess && 
+      {pet && 
         <View style={styles.infoCard}>
           <View style={styles.petInfo}>
             <PetInfo pet={pet} size='expanded' />
@@ -77,7 +65,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
           </View>
         </View>
       }
-      {isLoading && <Text>Fetching data...</Text>}
+      {/* {isLoading && <Text>Fetching data...</Text>} */}
     </View>
   )
 }

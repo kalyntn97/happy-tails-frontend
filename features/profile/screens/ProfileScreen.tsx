@@ -1,17 +1,16 @@
 //npm modules
 import { useEffect, useState } from "react"
 import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
-import { createDrawerNavigator } from "@react-navigation/drawer"
-//context
-import { useProfile } from "@context/ProfileContext"
-import { usePet } from "@context/PetContext"
-import { usePets } from "@pet/PetStore"
+//store
+import { useProfile } from "@store/store"
+import { usePets } from "@store/store"
+//components
+import ScrollPetList from "@components/PetInfo/ScrollPetList"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import ScrollPetList from "@components/PetInfo/ScrollPetList"
 
 const ProfileScreen = ({ navigation, route }) => {
-  const { profile } = useProfile()
+  const profile = useProfile()
   const pets = usePets()
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
@@ -59,7 +58,7 @@ const ProfileScreen = ({ navigation, route }) => {
     </View>
   )
 }
- 
+
 const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,

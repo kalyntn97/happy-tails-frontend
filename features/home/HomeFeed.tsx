@@ -7,7 +7,7 @@ import { useCareContext } from "@context/CareContext"
 import { Care } from "@care/CareInterface"
 import * as careHelpers from '@care/careHelpers'
 //store & queries
-import { useBoundStore, useCares, useProfile } from "@store/store"
+import { useSetActions } from "@store/store"
 import { useGetProfile } from "@profile/profileQueries"
 //components
 import CareCard from "@care/components/CareCard"
@@ -26,10 +26,9 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [clickedTask, setClickedTask] = useState<Care>({})
 
-  const { setProfile , setPets, setCares, setHealths } = useBoundStore()
-
   const { data, isLoading, isSuccess, isError } = useGetProfile()
 
+ const { setProfile, setPets, setCares, setHealths } = useSetActions()
 
   const handleClickTask = (task: Care) => {
     setClickedTask(task)
@@ -48,11 +47,12 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         bio: data.bio,
         photo: data.photo,
       }
+      setSortedCareCards(careHelpers.sortByFrequency(data.careCards))
+      //set global states
       setProfile(partialProfile)
       setPets(data.pets)
       setCares(data.careCards)
       setHealths(data.healthCards)
-      setSortedCareCards(careHelpers.sortByFrequency(data.careCards))
     }
   }, [data])
 

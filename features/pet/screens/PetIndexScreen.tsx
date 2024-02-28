@@ -6,7 +6,7 @@ import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useS
 import PetCard from '../components/PetCard'
 import { AddButton } from '@components/ButtonComponent'
 //store & queries
-import { usePetActions, usePetStore, usePets } from '../PetStore'
+import { usePets, usePetActions } from '@store/store'
 import { useGetAllPets } from '@pet/petQueries'
 //styles
 import { Buttons, Spacing, Typography, Colors } from '@styles/index'
@@ -15,10 +15,9 @@ import { Pet } from '../PetInterface'
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
   const [currCard, setCurrCard] = useState<number>(0)
-  // const { pets } = usePet()
+
   const pets = usePets()
-  const { setPets } = usePetActions()
-  const { data, isLoading, isSuccess, isError } = useGetAllPets()
+  const petCount = pets?.length ?? 0
   
   const { width } = useWindowDimensions()
   const scrollX = useSharedValue(0)
@@ -28,7 +27,6 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     scrollX.value = event.contentOffset.x
   })
 
-  const petCount = pets?.length ?? 0
 
   const onScrollEnd = () => {
     const currentIndex = scrollX.value / width
@@ -38,13 +36,13 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   const handleClickNext = () => {
     const nextCard = Math.min(currCard + 1, petCount - 1)
     if (FlatListRef.current) {
-      FlatListRef.current.scrollToIndex({ index: nextCard })
+      (FlatListRef.current as any).scrollToIndex({ index: nextCard })
     }
   }
   const handleClickPrev = () => {
     const prevCard = Math.max(currCard - 1, 0)
     if (FlatListRef.current) {
-      FlatListRef.current.scrollToIndex({ index: prevCard })
+      (FlatListRef.current as any).scrollToIndex({ index: prevCard })
     }
   }
 
@@ -74,15 +72,13 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     )
   }
 
-  useEffect(() => {
-    if (data) {
-      setPets(data)
-    }
-  }, [data])
+  // useEffect(() => {
+  //  
+  // }, [])
 
   return ( 
     <View style={styles.container}>
-      { isSuccess && 
+      { pets.length && 
         <>
           <View style={styles.btnContainer}>
             <Pressable 
@@ -128,9 +124,9 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
             )}
           </View>
         </>
-      }
+      } 
 
-      {isLoading && <Text>Fetching data...</Text>}
+      {/* {isLoading && <Text>Fetching data...</Text>} */}
 
       <AddButton onPress={() => navigation.navigate('Create')} />
     </View>
