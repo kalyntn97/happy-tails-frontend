@@ -3,7 +3,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import * as React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 //context
-import { AuthProvider } from '@context/AuthContext'
+import { AuthProvider } from '@auth/AuthContext'
 import { PetProvider } from './context/PetContext'
 import { ProfileProvider } from './context/ProfileContext'
 import { CareProvider } from './context/CareContext'

@@ -1,11 +1,11 @@
 //npm
 import { FC, ReactNode, createContext, useContext, useEffect, useReducer } from "react"
 //types
-import { Profile } from "@customTypes/ProfileInterface"
+import { Profile } from "@profile/ProfileInterface"
 //services
-import * as profileService from '@services/profileService'
+import * as profileService from '@profile/profileService'
 //context
-import { useAuth } from "./AuthContext"
+import { useAuth } from "../features/auth/AuthContext"
 interface State {
   profile: Profile | null
 }

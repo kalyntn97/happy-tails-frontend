@@ -1,7 +1,7 @@
 //npm modules
 import { NavigationContainer } from '@react-navigation/native'
 //context
-import { useAuth } from '@context/AuthContext'
+import { useAuth } from '@auth/AuthContext'
 //components
 import PrivateApp from './PrivateApp'
 import PublicApp from './PublicApp'

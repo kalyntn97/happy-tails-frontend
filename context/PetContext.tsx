@@ -1,8 +1,8 @@
 //npm modules
 import React, { ReactNode, createContext, useContext, useState, useEffect, FC, useReducer } from "react"
-import { Pet } from "@customTypes/PetInterface"
+import { Pet } from "@pet/PetInterface"
 //services
-import * as petService from '@services/petService'
+import * as petService from '@pet/petService'
 
 //types
 interface State {

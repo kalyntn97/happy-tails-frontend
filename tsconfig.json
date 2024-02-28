@@ -13,6 +13,12 @@
       "@customTypes/*": [ "types/*" ],
       "@utils/*": [ "utils/*" ],
       "@navigation/*": [ "navigation/*" ],
+      "@features/*": [ "features/*" ],
+      "@auth/*": [ "features/auth/*"],
+      "@profile/*": [ "features/profile/*"],
+      "@pet/*": [ "features/pet/*"],
+      "@care/*": [ "features/care/*"],
+      "@health/*": [ "features/health/*"],
     }
   },
   "extends": "expo/tsconfig.base"

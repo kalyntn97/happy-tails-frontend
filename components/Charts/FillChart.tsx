@@ -1,7 +1,7 @@
 //npm
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
-//services & utils
-import * as careUtils from '../../utils/careUtils'
+//types & helpers
+import * as careHelpers from '@care/careHelpers'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -12,10 +12,10 @@ const FillChart = ({ tracker, frequency, times }) => {
   const chartHeight = windowHeight * 0.4
   const squareWidth = frequency === 'Weekly' ? chartWidth * 0.9 / 3.2 : chartWidth * 0.9 / 4
 
-  const { trackerMonthName, trackerYear, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
-  const { monthName: currMonth, week: currWeek } = careUtils.getCurrentDate()
+  const { trackerMonthName, trackerYear, isCurrent } = careHelpers.getDateTimeFromTracker(tracker.name)
+  const { monthName: currMonth, week: currWeek } = careHelpers.getCurrentDate()
 
-  const colorArray = careUtils.getColorArray()
+  const colorArray = careHelpers.getColorArray()
 
   return (  
     <View style={[styles.container, 
@@ -36,7 +36,7 @@ const FillChart = ({ tracker, frequency, times }) => {
               ( (currWeek === index + 1 && isCurrent && frequency === 'Weekly') 
                 || (currMonth === index + 1 && isCurrent && frequency === 'Monthly') 
               ) ? Colors.darkPink : Colors.white,
-              backgroundColor: careUtils.getColor(times, value, colorArray),
+              backgroundColor: careHelpers.getColor(times, value, colorArray),
             }
         
           ]}>
@@ -48,7 +48,7 @@ const FillChart = ({ tracker, frequency, times }) => {
               //   ) ? Colors.darkPink : Colors.white
               // }
             ]}>
-              {frequency === 'Monthly' ? careUtils.getMonth(index + 1).slice(0, 3) : `Week ${index + 1}`}
+              {frequency === 'Monthly' ? careHelpers.getMonth(index + 1).slice(0, 3) : `Week ${index + 1}`}
             </Text>
             <Text style={styles.value}>{value ? '✔︎' : ''}</Text>
           </View>

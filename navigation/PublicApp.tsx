@@ -1,8 +1,8 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 //screens
-import LoginScreen from "@screens/AuthScreens/LoginScreen"
-import RegisterScreen from "@screens/AuthScreens/RegisterScreen"
-import HomeScreen from "@screens/HomeScreen"
+import LoginScreen from "@auth/screens/LoginScreen"
+import RegisterScreen from "@auth/screens/RegisterScreen"
+import HomeScreen from "@features/HomeScreen"
 //style
 import { Colors } from "@styles/index"
 

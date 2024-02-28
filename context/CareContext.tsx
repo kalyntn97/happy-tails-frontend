@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react"
-import { Care } from "@customTypes/CareInterface"
-import * as careService from '@services/careService'
+import { Care } from "@care/CareInterface"
+import * as careService from '@care/careService'
 
 interface CareProps {
   careCards: Care[]
