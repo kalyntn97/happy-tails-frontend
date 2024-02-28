@@ -2,6 +2,7 @@
 import { StyleSheet, Text, View, Image } from "react-native"
 //types & helpers
 import * as careHelpers from "@care/careHelpers"
+import { getCurrentDate } from "@utils/datetime"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -12,7 +13,7 @@ interface YearChartProps {
 
 const YearChart: React.FC<YearChartProps> = ({ tracker, times }) => {
   const { isCurrent } = careHelpers.getDateTimeFromTracker(tracker.name)
-  const { year: currYear } = careHelpers.getCurrentDate()
+  const { year: currYear } = getCurrentDate()
   const done = tracker.done[0]
   const size = times > 6 ? 'small' : 'large'
 

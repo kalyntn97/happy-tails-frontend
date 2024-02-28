@@ -2,6 +2,8 @@ import axios from 'axios'
 import { PROFILE_BASE_URL } from '@services/urls'
 import { Pet } from '@pet/PetInterface'
 import { Care } from '@care/CareInterface'
+import { Health } from '@health/HealthInterface'
+
 
 const BASE_URL = PROFILE_BASE_URL
 
@@ -12,15 +14,11 @@ export interface Profile {
   bio: string
   pets: Pet[]
   careCards: Care[]
+  healthCards: Health[]
 }
 
-export async function show(): Promise<Profile> {
-  try {
-    const result = await axios.get(BASE_URL)
-    return result.data
-  } catch (error) {
-    console.error(error)
-  }
+export async function getProfile() {
+  return (await axios.get<Profile>(BASE_URL)).data
 }
 
 export async function addPhoto(photoData: any): Promise<any> {

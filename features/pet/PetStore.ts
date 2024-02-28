@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { Pet } from './petQueries'
+import { Pet } from './PetInterface'
+
 
 export interface PetStore {
   pets: Pet[],

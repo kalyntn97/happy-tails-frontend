@@ -1,18 +1,6 @@
 //types
 import { ImageSourcePropType } from "react-native"
-
-interface DogBreedListResponse {
-  message: Record<string, string[]>;
-  status: string;
-}
-
-interface CatBreed {
-  name: string
-}
-
-interface BirdListResponse {
-  commonFeederBirds: Array<{commonNameEnglish: string}>
-}
+import { BirdListResponse, CatBreed, DogBreedListResponse } from "./PetInterface"
 
 export const getIconSource = (species: string): ImageSourcePropType => {
   switch (species) {

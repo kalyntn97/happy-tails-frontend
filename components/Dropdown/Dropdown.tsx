@@ -44,8 +44,10 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width })
     setVisible(false)
   }
 
+  const pets = usePets()
+
   const petNames = () => {
-    const names = usePets().map(pet => pet.name)
+    const names = pets.map(pet => pet.name)
     return names
   }
   

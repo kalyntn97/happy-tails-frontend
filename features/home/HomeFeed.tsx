@@ -6,10 +6,13 @@ import { useCareContext } from "@context/CareContext"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import * as careHelpers from '@care/careHelpers'
+//store & queries
+import { useBoundStore, useCares, useProfile } from "@store/store"
+import { useGetProfile } from "@profile/profileQueries"
 //components
 import CareCard from "@care/components/CareCard"
-import SwipeableTask from "./SwipableTask"
-import { CloseButton } from "./ButtonComponent"
+import SwipeableTask from "../../components/SwipableTask"
+import { CloseButton } from "../../components/ButtonComponent"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
 
@@ -18,12 +21,15 @@ interface HomeFeedProps {
 }
 
 const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
-  const { careCards } = useCareContext()
-  const sortedCareCards: {[key: string]: Care[]} = careCards.length ? careHelpers.sortByFrequency(careCards) : {}
-
+  const [sortedCareCards, setSortedCareCards] = useState<{[key: string]: Care[]}>({})
   const [selected, setSelected] = useState<string>('day')
   const [modalVisible, setModalVisible] = useState(false)
   const [clickedTask, setClickedTask] = useState<Care>({})
+
+  const { setProfile , setPets, setCares, setHealths } = useBoundStore()
+
+  const { data, isLoading, isSuccess, isError } = useGetProfile()
+
 
   const handleClickTask = (task: Care) => {
     setClickedTask(task)
@@ -35,9 +41,21 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   )
 
   useEffect(() => {
+    if (data) {
+      const partialProfile = {
+        _id: data._id,
+        name: data.name,
+        bio: data.bio,
+        photo: data.photo,
+      }
+      setProfile(partialProfile)
+      setPets(data.pets)
+      setCares(data.careCards)
+      setHealths(data.healthCards)
+      setSortedCareCards(careHelpers.sortByFrequency(data.careCards))
+    }
+  }, [data])
 
-  }, [careCards.length])
-    
   return (  
     <View style={styles.container}>
 
@@ -67,58 +85,62 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.taskListContainer}>
-        {selected === 'day' && 
-          <FlatList
-            data={sortedCareCards['Daily']}
-            extraData={sortedCareCards['Daily']}
-            keyExtractor={(item, index) => item + index.toString()}
-            renderItem={({ item }) => 
-              <SwipeableTask key={item._id} task={item} navigation={navigation} 
-                onPress={() => handleClickTask(item)}
-              />
+        { isLoading && <Text>Fetching data... </Text> }
+        { isError && <Text>Error fetching data... </Text> }
+        { isSuccess && <>
+          {selected === 'day' && 
+            <FlatList
+              data={sortedCareCards['Daily']}
+              extraData={sortedCareCards['Daily']}
+              keyExtractor={(item, index) => item + index.toString()}
+              renderItem={({ item }) => 
+                <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                  onPress={() => handleClickTask(item)}
+                />
+              }
+              ListEmptyComponent={<EmptyList />}
+            />
+          }
+          
+          {selected === 'week' && 
+            <FlatList
+              data={sortedCareCards['Weekly']}
+              keyExtractor={(item, index) => item + index.toString()}
+              renderItem={({ item }) => 
+                <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                  onPress={() => handleClickTask(item)}
+                />
+              }
+              ListEmptyComponent={<EmptyList />}
+            />
+          }
+  
+          {selected === 'month' && 
+            <FlatList
+              data={sortedCareCards['Monthly']}
+              keyExtractor={(item, index) => item + index.toString()}
+              renderItem={({ item }) => 
+                <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                  onPress={() => handleClickTask(item)}
+                />
+              }
+              ListEmptyComponent={<EmptyList />}
+            />
+          }
+  
+          {selected === 'year' && 
+            <FlatList
+              data={sortedCareCards['Yearly']}
+              keyExtractor={(item, index) => item + index.toString()}
+              renderItem={({ item }) => 
+                <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                  onPress={() => handleClickTask(item)}
+                />
+              }
+              ListEmptyComponent={<EmptyList />}
+            />
             }
-            ListEmptyComponent={<EmptyList />}
-          />
-        }
-        
-        {selected === 'week' && 
-          <FlatList
-            data={sortedCareCards['Weekly']}
-            keyExtractor={(item, index) => item + index.toString()}
-            renderItem={({ item }) => 
-              <SwipeableTask key={item._id} task={item} navigation={navigation} 
-                onPress={() => handleClickTask(item)}
-              />
-            }
-            ListEmptyComponent={<EmptyList />}
-          />
-        }
-
-        {selected === 'month' && 
-          <FlatList
-            data={sortedCareCards['Monthly']}
-            keyExtractor={(item, index) => item + index.toString()}
-            renderItem={({ item }) => 
-              <SwipeableTask key={item._id} task={item} navigation={navigation} 
-                onPress={() => handleClickTask(item)}
-              />
-            }
-            ListEmptyComponent={<EmptyList />}
-          />
-        }
-
-        {selected === 'year' && 
-          <FlatList
-            data={sortedCareCards['Yearly']}
-            keyExtractor={(item, index) => item + index.toString()}
-            renderItem={({ item }) => 
-              <SwipeableTask key={item._id} task={item} navigation={navigation} 
-                onPress={() => handleClickTask(item)}
-              />
-            }
-            ListEmptyComponent={<EmptyList />}
-          />
-        }
+        </> }
       </View>
 
       <Modal

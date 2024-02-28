@@ -3,12 +3,13 @@ import { useRef, useState, useEffect } from "react"
 import { ScrollView, StyleSheet, Text, View, Image, ImageStyle, TouchableOpacity, Pressable } from "react-native"
 //utils
 import * as careHelpers from "@care/careHelpers"
+import { getCurrentDate, getMonth, getDayOfWeek } from "@utils/datetime"
 import { Tracker } from "@care/careService"
 //styles
 import { Colors, Forms } from '@styles/index'
 
 const ScrollChart = ({ careId, tracker, index, onCheckDone, onUncheckDone, frequency }) => {
-  const { date: currDate, year: currYear, month: monthIdx, week: currWeek, daysInMonth, weeksInMonth } = careHelpers.getCurrentDate()
+  const { date: currDate, year: currYear, month: monthIdx, week: currWeek, daysInMonth, weeksInMonth } = getCurrentDate()
 
   const handleCheck = async () => {
     tracker.done[index] === 1
@@ -48,7 +49,7 @@ const ScrollChart = ({ careId, tracker, index, onCheckDone, onUncheckDone, frequ
           {frequency === 'Daily' ?
             <>
               <Text style={[styles.text, { color: i + 1 === currDate ? Colors.darkPink : 'black'}]}>
-                {careHelpers.getDayOfWeek(new Date(currYear, monthIdx - 1, i + 1)).slice(0, 3)}
+                {getDayOfWeek(new Date(currYear, monthIdx - 1, i + 1)).slice(0, 3)}
               </Text>
               <Text style={[styles.text, { color: i + 1 === currDate ? Colors.darkestPink : 'black', fontSize: 20, zIndex: 2 }]}>{i + 1}</Text>
             </>
@@ -56,7 +57,7 @@ const ScrollChart = ({ careId, tracker, index, onCheckDone, onUncheckDone, frequ
             <Text style={[styles.text, styles.topText, { color: i + 1 === currWeek ? Colors.darkPink : 'black' }]}>W{i + 1}</Text>
           : 
             <Text style={[styles.text, styles.topText, { color: i + 1 === monthIdx ? Colors.darkPink : 'black'}]}>
-              {careHelpers.getMonth(i + 1).slice(0, 3)}
+              {getMonth(i + 1).slice(0, 3)}
             </Text>
           }
 

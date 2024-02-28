@@ -6,6 +6,10 @@ export interface Profile {
   name: string
   photo: string | null
   bio: string
-  pets: Pet[]
-  careCards: Care[]
+  // pets: Pet[]
+  // careCards: Care[]
+}
+
+export interface ProfileStore {
+
 }

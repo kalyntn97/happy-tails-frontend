@@ -9,6 +9,8 @@ import * as careHelpers from "@care/careHelpers"
 import ScrollChart from "@components/Charts/ScrollChart"
 //context
 import { useCareContext } from "@context/CareContext"
+//utils
+import { getCurrentDate } from "@utils/datetime"
 //styles
 import { Spacing, Typography, Colors } from '@styles/index'
 
@@ -24,7 +26,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   const {onCheckDone, onUncheckDone } = useCareContext()
 
   // get month and year of current tracker from name
-  const { monthName: currMonth, year: currYear } = careHelpers.getCurrentDate()
+  const { monthName: currMonth, year: currYear } = getCurrentDate()
   
   const checkDone = async (careId: string, trackerId: string, index: number) => {
     const updatedTracker = await onCheckDone!(careId, trackerId, index)

@@ -7,6 +7,14 @@ export interface Pet {
   photo: string | null
 }
 
+export interface PetFormData {
+  name: string
+  age: number
+  species: string 
+  breed: string
+  photoData: { uri: string, name: string, type: string } | null
+}
+
 export interface DogBreedListResponse {
   message: Record<string, string[]>;
   status: string;

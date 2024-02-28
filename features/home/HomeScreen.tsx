@@ -5,17 +5,17 @@ import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from "@auth/AuthContext"
 //components
-import HomeFeed from "@components/HomeFeed"
+import HomeFeed from "@features/home/HomeFeed"
 import FloatingButton from "@components/FloatingButton/FloatingButton"
 //utils & services
-import * as careHelpers from '@care/careHelpers'
+import { getCurrentDate } from "@utils/datetime"
 //styles
 import { Buttons, Typography, Colors, Forms, Spacing } from '@styles/index'
 
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
 
-  const {date: currDate, monthName: currMonth, year: currYear } = careHelpers.getCurrentDate()
+  const {date: currDate, monthName: currMonth, year: currYear } = getCurrentDate()
   
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
@@ -27,7 +27,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
       scrollViewRef.current.scrollTo({ y: pageNum * windowHeight, animated: true })
     }
   }
-
+ 
   return ( 
     <View>
       <StatusBar barStyle="dark-content" />
@@ -36,7 +36,6 @@ const HomeScreen: React.FC = ({ navigation }) => {
           <View style={[styles.screen, { minHeight: centerHeight }]}>
             <Image source={require('@assets/images/happy-tails-banner-large.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.3 }]} />
             <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{currMonth} {currDate} {currYear}</Text>
-
             <HomeFeed navigation={navigation} />
             <FloatingButton navigation={navigation} />
 

@@ -1,5 +1,5 @@
 import axios from "axios"
-import { PET_BASE_URL } from "../../services/urls"
+import { PET_BASE_URL } from "@services/urls"
 const BASE_URL = PET_BASE_URL
 
 export interface Pet {
