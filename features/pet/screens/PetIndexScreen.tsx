@@ -78,6 +78,8 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
 
   return ( 
     <View style={styles.container}>
+      {!pets && <Text>Fetching data...</Text>}
+
       { pets.length && 
         <>
           <View style={styles.btnContainer}>
@@ -125,8 +127,6 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
           </View>
         </>
       } 
-
-      {/* {isLoading && <Text>Fetching data...</Text>} */}
 
       <AddButton onPress={() => navigation.navigate('Create')} />
     </View>
