@@ -5,6 +5,8 @@ import * as ImagePicker from 'expo-image-picker'
 //types & context
 import { Profile } from "@customTypes/ProfileInterface"
 import { useProfile, useProfileContext } from "@context/ProfileContext"
+//components
+import { MainButton, SubButton } from "@components/ButtonComponent"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -83,9 +85,8 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
               multiline
             />
 
-          <TouchableOpacity onPress={handleSubmit} style={styles.mainButton}>
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
+          <MainButton title='Save' onPress={handleSubmit} top={40} bottom={0} />
+          <SubButton title='Cancel' onPress={() => navigation.goBack()} top={0} bottom={0} />
 
           </View>
       </View>

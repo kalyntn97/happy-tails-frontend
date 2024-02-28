@@ -1,10 +1,11 @@
 //npm modules
 import { StyleSheet, Text, View, Image, TouchableOpacity, useWindowDimensions } from "react-native"
-//types & utils
-import { Pet } from "../@customTypes/PetInterface"
-//styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../@styles/index'
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated"
+//types & utils
+import { Pet } from "@customTypes/PetInterface"
+//styles
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { getIconSource } from "@utils/petUtils"
 interface PetCardProps {
   pet: Pet
   index: number
@@ -58,7 +59,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
         </View>
 
         <Image 
-          source={pet.photo ? {uri: pet.photo} : require('../@assets/icons/pet-profile.png')} 
+          source={pet.photo ? {uri: pet.photo} : require('@assets/icons/pet-profile.png')} 
           style={styles.petPhoto } 
         />
         

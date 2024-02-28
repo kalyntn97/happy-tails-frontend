@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, View } from "react-native"
-import { Pet } from "@types/PetInterface"
+import { Pet } from "@customTypes/PetInterface"
 import { getIconSource } from "../utils/petUtils"
 import { Spacing, Forms, Typography, Colors } from '@styles/index'
 

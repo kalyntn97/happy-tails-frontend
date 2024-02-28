@@ -1,16 +1,18 @@
 //npm modules
 import { useState, useRef, useEffect } from 'react'
 import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image } from "react-native"
+import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 //components
-import PetCard from '@components/PetComponents/PetCard'
+import PetCard from './PetComponents/PetCard'
 import { AddButton } from '@components/ButtonComponent'
 //context
 import { usePet } from '@context/PetContext'
+//store & queries
+import { usePetActions, usePetStore, usePets } from '../../store/PetStore'
+import { useGetAllPets } from 'queries/petQueries'
 //styles
 import { Buttons, Spacing, Typography, Colors } from '@styles/index'
-import Animated, { interpolate, useAnimatedReaction, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
-import { useGetAllPets } from '../../queries/petQueries'
-import { usePetActions, usePetStore, usePets } from '../../store/PetStore'
+
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
   const [currCard, setCurrCard] = useState<number>(0)

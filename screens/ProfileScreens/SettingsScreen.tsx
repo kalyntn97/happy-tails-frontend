@@ -1,125 +1,185 @@
 //npm modules
-import { useEffect, useState } from "react"
-import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
-import { createDrawerNavigator } from "@react-navigation/drawer"
+import { useState } from "react"
+import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert } from "react-native"
+//component
+import AccountForm from "@screens/ProfileScreens/ProfileComponents/AccountForm"
+import ToggleableForm from "@components/ToggleableForm"
 //context
-import { useProfile } from "@context/ProfileContext"
-import { usePet } from "@context/PetContext"
-import { usePets } from "@store/PetStore"
+import { useAuth } from "@context/AuthContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import ScrollPetList from "@components/ScrollPetList"
 
-const SettingsScreen = ({ navigation, route }) => {
-  const { profile } = useProfile()
-  const pets = usePets()
-  //set a random profile photo if user does not have one
-  const randomProfilePhotos = [
-    require('@assets/icons/micon1.png'),
-    require('@assets/icons/micon2.png'),
-    require('@assets/icons/micon3.png'),
-    require('@assets/icons/ficon1.png'),
-    require('@assets/icons/ficon2.png'),
-    require('@assets/icons/ficon3.png'),
-  ]
-  const randomIdx = Math.floor(Math.random() * randomProfilePhotos.length)
+interface AccountProps {
+  navigation: any
+  route: { params: {  } }
+}
 
-  return ( 
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View style={styles.profileHeader}>
-          <Text style={styles.header}>{profile.name}</Text>
-          <Image source={{ uri: profile.photo ?? randomProfilePhotos[randomIdx] }} style={styles.profilePhoto }/>
-        </View>
-        
-        <View style={styles.bioBox}>
-          <Text style={styles.bioText}>{profile.bio}</Text>
-        </View>
+const SettingsScreen: React.FC<AccountProps> = ({ navigation, route }) => {
+  const { onLogout, onDeleteAccount } = useAuth()
+  const [visible, setVisible] = useState<string>('')
 
+  const titleData = ['Update account information', 'Delete account and all pet profiles', 'Log out of account']
+
+
+  const logout = async () => {
+    const { status, error } = await onLogout!()
+    console.log(status)
+    return Alert.alert(
+      'Alert',
+      status ?? error,
+      [{ text: 'OK' }]
+    )
+  }
+
+  const DeleteAccountForm = () => {
+    const deleteProfile = async (username: string, password: string) => {
+      await onDeleteAccount!(username, password)
+    }
+
+    const showDeleteConfirmDialog = (username: string, password: string) => {
+      return Alert.alert(
+        'Are you sure?',
+        `Delete your account? This is irreversible.`, 
+        [
+          { text: 'Yes', onPress: () => { deleteProfile(username, password) }},
+          { text: 'No' }
+        ]
+      )
+    }
+
+    return (
+      <View style={styles.deleteForm}>
+        <AccountForm showForm="delete" onSubmit={showDeleteConfirmDialog}/>
+      </View>
+    )
+  }
+
+  const UpdateAccountForm = () => {
+    const [showForm, setShowForm] = useState<string>('password')
+    
+    const handleUpdateAccount = async (username: string, password: string) => {
+      showForm === 'password'
+        ? await onChangePassword!(username, password)
+        : await onChangeUsername!(username, password)
+      navigation.navigate('Settings')
+    }
+
+    return (
+      <View style={styles.updateForm}>
         <View style={styles.btnContainer}>
           <TouchableOpacity 
-            style={[styles.mainBtn, { backgroundColor: Colors.yellow }]}
-            onPress={() => navigation.navigate('Edit', { profile : profile })}
-          >
-            <Text style={styles.btnText}>Edit</Text>
+            onPress={() => setShowForm('password')} 
+            style={[styles.tabBtn, { backgroundColor: showForm === 'password' ? Colors.white : Colors.lightestPink}]}>
+            <Text style={[styles.btnText, { color: showForm === 'password' ? Colors.darkPink : 'black' }]}>Change {'\n'}Password</Text>
           </TouchableOpacity>
+        
           <TouchableOpacity 
-            style={[styles.mainBtn, { backgroundColor: Colors.red }]}
-            onPress={() => navigation.navigate('Config', { profile : profile })}
-          >
-            <Text style={styles.btnText}>Manage</Text>
+            onPress={() => setShowForm('username')} 
+            style={[styles.tabBtn, { backgroundColor: showForm === 'username' ? Colors.white : Colors.lightestPink}]}>
+            <Text style={[styles.btnText, { color: showForm === 'username' ? Colors.darkPink : 'black' }]}>Change Username</Text>
           </TouchableOpacity>
         </View>
-      </View>
 
-      <Pressable onLongPress={() => navigation.navigate('Profile')}>
-        <ScrollPetList petArray={pets} size='compact' />
+        <AccountForm showForm={showForm} onSubmit={handleUpdateAccount}/>
+        
+      </View>
+    )
+  }
+
+  return (
+    <ScrollView 
+      contentContainerStyle={styles.scrollViewContent}
+      style={styles.scrollView}
+      scrollEventThrottle={200}
+      decelerationRate="fast"
+      pagingEnabled
+    >
+      <Pressable style={styles.headingBtn} onPress={() => setVisible(visible === titleData[0] ? '' : titleData[0])}>
+        <ToggleableForm
+          visible={visible}
+          title={titleData[0]}
+          content={ <UpdateAccountForm /> } 
+        />
       </Pressable>
 
-    </View>
+      <Pressable style={styles.headingBtn} onPress={() => setVisible(visible === titleData[1] ? '' : titleData[1])}>
+        <ToggleableForm
+          visible={visible}
+          title={titleData[1]}
+          content={ <DeleteAccountForm /> }
+        />
+      </Pressable>
+
+      <Pressable style={styles.headingBtn} onPress={() => setVisible(visible === titleData[2] ? '' : titleData[2])}>
+        <ToggleableForm
+          visible={visible}
+          title={titleData[2]}
+          content={
+            <TouchableOpacity onPress={logout} style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.darkPink }]}>
+              <Text style={styles.btnText}>Logout</Text>
+            </TouchableOpacity>
+          }
+        />
+      </Pressable>
+      
+
+    </ScrollView>
   )
 }
  
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-  },
-  headerContainer: {
+  scrollView: {
     width: '100%',
-    height: '50%',
-    ...Spacing.flexColumn,
+    backgroundColor: Colors.lightestPink,
   },
-  profileHeader: {
+  scrollViewContent: {
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 30,
+  },
+  headingBtn: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  updateForm: {
     width: '90%',
-    height: '60%',
-    ...Spacing.flexColumn,
+    height: 400,
+    alignItems: 'center',
   },
-  header: {
-    ...Typography.xSmallHeader,
-    height: '15%',
-    margin: 10
-  },
-  profilePhoto: {
-    ...Forms.smallPhoto,
-    backgroundColor: Colors.lightPink,
-    margin: 10,
-  },
-  bioBox: {
+  deleteForm: {
     width: '90%',
-    maxHeight: '20%',
-    marginBottom: 10,
-    ...Spacing.centered
-  },
-  bioText: {
-    textAlign: 'left'
-  },
-  btnContainer: {
-    width: '90%',
-    height: '15%',
-    ...Spacing.flexRow,
-    justifyContent: 'center'
-  },
-  mainBtn : {
-    ...Buttons.xSmallRounded,
+    height: 350,
+    justifyContent: 'center',
   },
   btnText: {
-    ...Buttons.buttonText
+    ...Typography.xSmallHeader,
+    margin: 0,
+    padding: 5,
+    alignSelf: 'center',
   },
-  petList: {
+  btnContainer: {
+    width: '100%',
+    height: '20%',
     ...Spacing.flexRow,
-    width: '90%',
-    flexWrap: 'wrap',
   },
-  petInfo: {
-    width: '30%',
-    height: 130
+  tabBtn: {
+    width: '50%',
+    height: '100%',
+    justifyContent: 'center',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
-  logoutBtn: {
-    ...Buttons.longSquare,
-    backgroundColor: Colors.darkPink,
-    marginTop: 'auto',
-    marginBottom: 20,
-  }
+   mainBtn: {
+    ...Spacing.flexRow,
+    margin: 10
+   },
+   icon: {
+    ...Forms.smallIcon
+   },
+   warn: {
+    ...Buttons.xSmallSquare,
+    width: '80%',
+   },
 })
 
 export default SettingsScreen

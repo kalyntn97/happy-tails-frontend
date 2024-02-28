@@ -3,8 +3,8 @@ import { useState } from "react"
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ImageStyle } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 //components
-import { MainButton, SubButton } from "../ButtonComponent"
-import Dropdown from "../Dropdown"
+import { MainButton, SubButton } from '@components/ButtonComponent'
+import Dropdown from "@components/Dropdown"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
 

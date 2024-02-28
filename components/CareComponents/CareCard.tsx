@@ -8,7 +8,6 @@ import { Care } from "@customTypes/CareInterface"
 import * as careUtils from "../../utils/careUtils"
 import * as careService from '@services/careService'
 //components
-import PetInfo from "../PetInfo"
 import ScrollPetList from "../ScrollPetList"
 import TrackerPanel from "./TrackerPanel"
 //styles
