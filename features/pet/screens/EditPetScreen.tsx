@@ -5,9 +5,8 @@ import { useIsFocused } from "@react-navigation/native"
 //components
 import PetForm from "../components/PetForm"
 import { Pet } from "@pet/PetInterface"
-import { SubButton } from "@components/ButtonComponent"
-//context
-import { usePet } from "@context/PetContext"
+//store
+import { usePetActions } from "@store/store"
 
 interface EditPetProps {
   navigation: any
@@ -16,7 +15,7 @@ interface EditPetProps {
 
 const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
   const { pet } = route.params
-  const { onUpdatePet } = usePet()
+  const { onUpdatePet } = usePetActions()
 
   const isFocused = useIsFocused()
 
@@ -28,7 +27,7 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
 
   const handleEditPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null)  => {
     await onUpdatePet!(name, age, species, breed, photoData, pet._id)
-    navigation.navigate('Details', {petId: pet._id})
+    navigation.navigate('Details', {pet: pet})
   }
 
   useEffect(() => {

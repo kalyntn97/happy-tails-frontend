@@ -10,6 +10,7 @@ export interface ProfileSlice {
     setPets: (pets: Pet[]) => void
     setCares: (cares: Care[]) => void
     setHealths: (healths: Health[]) => void
+    onUpdateProfile: (profile: Profile) => void
   }
 }
 
@@ -28,6 +29,10 @@ export interface CareSlice {
     onAddCare: (care: Care) => void
     onUpdateCare: (care: Care) => void
     onDeleteCare: (careId: string) => void
+    onCheckDone: (care: Care) => void
+    onUncheckDone: (care: Care) => void
+    onCheckAllDone: (care: Care) => void
+    onUncheckAllDone: (care: Care) => void
   }
 }
 

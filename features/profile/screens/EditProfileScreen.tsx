@@ -2,9 +2,9 @@
 import { useState } from "react"
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageStyle, TextInput, TouchableWithoutFeedback, Keyboard } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
-//types & context
+//types & store
 import { Profile } from "@profile/ProfileInterface"
-import { useProfile, useProfileContext } from "@context/ProfileContext"
+import { useSetActions } from "@store/store"
 //components
 import { MainButton, SubButton } from "@components/ButtonComponent"
 //styles
@@ -17,7 +17,7 @@ interface EditProfileProps {
 
 const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) => {
   const { profile } = route.params
-  const { updateProfile } = useProfile()
+  const { onUpdateProfile } = useSetActions()
 
   const [name, setName] = useState<string>(profile.name)
   const [bio, setBio] = useState<string>(profile.bio ?? '')
@@ -47,7 +47,7 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
     } else {
       setErrorMsg('')
 
-      await updateProfile(name, bio, photoData)
+      await onUpdateProfile(name, bio, photoData)
       
       navigation.navigate('Profile', { profileId: profile._id })
     }

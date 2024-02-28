@@ -4,8 +4,8 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 //types & helpers
 import { Care } from '@care/CareInterface'
 import * as careHelpers from '@care/careHelpers'
-// context
-import { useCareContext } from '@context/CareContext'
+//store
+import { useCareActions } from '@store/store'
 //components
 import { SquareButton } from './ButtonComponent'
 import ScrollPetList from './PetInfo/ScrollPetList'
@@ -13,7 +13,7 @@ import ScrollPetList from './PetInfo/ScrollPetList'
 import { Spacing, Forms } from '@styles/index'
 
 const SwipeableTask = ({ task, navigation, onPress }) => {
-  const { onCheckAllDone, onUncheckAllDone} = useCareContext()
+  const { onCheckAllDone, onUncheckAllDone} = useCareActions()
   const done = careHelpers.getTaskStatus(task)
 
   const checkAllDone = async (task: Care) => {

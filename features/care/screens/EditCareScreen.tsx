@@ -4,9 +4,10 @@ import { useIsFocused } from "@react-navigation/native"
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native"
 //components
 import CareForm from "../components/CareForm"
-//services
-import { useCareContext } from "@context/CareContext"
+//types
 import { Care } from "@care/CareInterface"
+//store
+import { useCareActions } from "@store/store"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -17,7 +18,7 @@ interface EditCareProps {
 
 const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   const { care } = route.params
-  const { onEditCare } = useCareContext()
+  const { onUpdateCare } = useCareActions()
   const isFocused = useIsFocused()
   const petData = care.pets.map(pet => pet._id)
 
@@ -28,7 +29,7 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   }
 
   const handleSubmit = async (name: string, frequency: string, times: number, pets: string[], careId: string) => {
-    const updatedCareCard = await onEditCare!(name, frequency, times, pets, careId)
+    const updatedCareCard = await onUpdateCare!({ name, frequency, times, pets, careId })
   
     navigation.navigate('Details', { careId: updatedCareCard._id })
   }

@@ -2,8 +2,6 @@
 import { useEffect } from "react"
 import { Alert, StyleSheet, View } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
-//context
-import { usePet } from "@context/PetContext"
 //queries
 import { useAddPet } from "../petQueries"
 //components

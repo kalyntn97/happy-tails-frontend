@@ -8,6 +8,7 @@ const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & Hea
     setPets: pets => set({ pets: pets }),
     setCares: cares => set({ cares: cares}),
     setHealths: healths => set({ healths: healths }),
+    onUpdateProfile: profile => set({ profile: profile}),
   }
 })
 
@@ -25,7 +26,11 @@ const createCareSlice: StateCreator<CareSlice> = (set) => ({
   careActions: {
     onAddCare: care => set(state => ({ cares: [...state.cares, care] })),
     onUpdateCare: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c) })),
-    onDeleteCare: careId => set(state => ({ cares: state.cares.filter(c => c._id !== careId) }))
+    onDeleteCare: careId => set(state => ({ cares: state.cares.filter(c => c._id !== careId) })),
+    onCheckDone: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c)})),
+    onUncheckDone: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c)})),
+    onCheckAllDone: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c)})),
+    onUncheckAllDone: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c)})),
   }
 })
 

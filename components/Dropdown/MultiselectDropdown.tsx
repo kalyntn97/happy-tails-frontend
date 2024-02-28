@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, FlatList } from "react-native"
-import { useShallow } from 'zustand/react/shallow'
-//states
-import { usePetStore, usePets } from "@pet/PetStore"
-//context
+//store
+import { usePetNames } from "@store/storeUtils"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -18,6 +16,7 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
   const [visible, setVisible] = useState<boolean>(false)
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>(initials ? initials : [])
+  const petNames = usePetNames()
 
   const toggleDropdown = (): void => {
     visible ? setVisible(false) : openDropDown()
@@ -43,9 +42,6 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
     })
   }
 
-  // get data for select pets
-  const petNames = usePetStore(useShallow(state => state.pets.map(pet => pet.name)))
- 
   //populate data
   useEffect(() => {
     const fetchData = async (dataType: string) => {
@@ -56,7 +52,7 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
       setData(result)
     }
     fetchData(dataType)
-  }, [])
+  }, [petNames])
 
   return (  
     <TouchableOpacity style={styles.dropDownBtn} onPress={toggleDropdown} ref={DropdownBtn}>

@@ -5,8 +5,8 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, TouchableWithoutFe
 import Dropdown from "@components/Dropdown/Dropdown"
 import MultiselectDropdown from "@components/Dropdown/MultiselectDropdown"
 import { MainButton, SubButton } from "@components/ButtonComponent"
-//context
-import { usePets } from "@pet/PetStore"
+//store
+import { useShallowPets } from "@store/storeUtils"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -24,10 +24,9 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
 
-  const pets = usePets()
   //convert initial pet Ids into names
-  const initialPetNames = initialValues?.pets.map(id => {
-    const pet = pets.find(pet => pet._id === id)
+  const initialusePetNames = initialValues?.pets.map(id => {
+    const pet = useShallowPets().find(pet => pet._id === id)
     return pet.name
   })
   
@@ -92,7 +91,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
           value={times !== '' ? times.toString() : ''} 
           keyboardType="numeric"
         />
-        <MultiselectDropdown label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialPetNames} />
+        <MultiselectDropdown label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialusePetNames} />
         <MainButton onPress={handleSubmit} title={initialValues?.name ? 'Save' : 'Create'} top={50} bottom={10} />
         <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
 

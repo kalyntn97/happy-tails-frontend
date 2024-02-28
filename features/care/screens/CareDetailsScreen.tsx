@@ -4,8 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, Scr
 //types & helpers
 import { Care } from "@care/careService"
 import * as careHelpers from '@care/careHelpers'
-//context
-import { useCareContext } from "@context/CareContext"
+import { useCareActions } from "@store/store"
 //components
 import ScrollPetList from "@components/PetInfo/ScrollPetList"
 import DailyChart from "@components/Charts/DailyChart"
@@ -24,7 +23,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
 
   const { care: careCard } = route.params
   
-  const { onDeleteCare } = useCareContext()
+  const { onDeleteCare } = useCareActions()
 
   const iconSource = careHelpers.getIconSource(careCard.name)
 

@@ -1,8 +1,6 @@
 //npm
 import { useEffect, useState } from "react"
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Modal, TouchableWithoutFeedback, Pressable } from "react-native"
-//context
-import { useCareContext } from "@context/CareContext"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import * as careHelpers from '@care/careHelpers'
@@ -11,7 +9,7 @@ import { useSetActions } from "@store/store"
 import { useGetProfile } from "@profile/profileQueries"
 //components
 import CareCard from "@care/components/CareCard"
-import SwipeableTask from "../../components/SwipableTask"
+import SwipeableTask from "@components/SwipeableTask"
 import { CloseButton } from "../../components/ButtonComponent"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'

@@ -5,8 +5,9 @@ import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 //components
 import { AddButton } from "@components/ButtonComponent"
+//store
+import { useCares } from "@store/store"
 //types & helpers
-import { useCareContext } from "@context/CareContext"
 import * as careHelpers from "@care/careHelpers"
 //styles
 import { Buttons, Spacing, Typography, Colors, Forms } from '@styles/index'
@@ -17,7 +18,7 @@ type CareIndexProps = {
 }
 
 const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
-  const { careCards } = useCareContext()
+  const careCards = useCares()
   const sortedCareCards = careHelpers.sortByFrequency(careCards)
 
   // custom sort function by section
@@ -176,6 +177,9 @@ const styles = StyleSheet.create({
   itemBtn: {
     marginLeft: 'auto'
   },
+  empty: {
+    
+  }
 })
  
 export default CareIndexScreen

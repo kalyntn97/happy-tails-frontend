@@ -2,7 +2,7 @@
 import { ReactElement, useEffect, useRef, useState } from "react"
 import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, FlatList } from "react-native"
 //store & hooks
-import { usePetStore, usePets } from "@pet/PetStore"
+import { usePetNames } from "@store/storeUtils"
 //helpers 
 import * as petHelpers from '@pet/petHelpers'
 import * as careHelpers from '@care/careHelpers'
@@ -23,6 +23,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width })
   const [selected, setSelected] = useState<string>(
     label !== 'Select Species' || 'Select Breed' ? label : ''
   )
+  const petNames = usePetNames()
 
   const toggleDropdown = (): void => {
     visible ? setVisible(false) : openDropDown()
@@ -44,13 +45,6 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width })
     setVisible(false)
   }
 
-  const pets = usePets()
-
-  const petNames = () => {
-    const names = pets.map(pet => pet.name)
-    return names
-  }
-  
   //populate data
   useEffect(() => {
     const fetchData = async (dataType: string) => {

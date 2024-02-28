@@ -7,8 +7,8 @@ import { Care } from "@care/CareInterface"
 import * as careHelpers from "@care/careHelpers"
 //components
 import ScrollChart from "@components/Charts/ScrollChart"
-//context
-import { useCareContext } from "@context/CareContext"
+//store
+import { useCareActions } from "@store/store"
 //utils
 import { getCurrentDate } from "@utils/datetime"
 //styles
@@ -23,7 +23,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   const [index, setIndex] = useState<number>(0)
 
   const {frequency: freq, times, _id: careId } = care
-  const {onCheckDone, onUncheckDone } = useCareContext()
+  const {onCheckDone, onUncheckDone } = useCareActions()
 
   // get month and year of current tracker from name
   const { monthName: currMonth, year: currYear } = getCurrentDate()
