@@ -5,12 +5,14 @@ import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 //components
 import { AddButton } from "@components/ButtonComponent"
+import PlaceHolder from "@components/PlaceHolder"
 //store
 import { useCares } from "@store/store"
 //types & helpers
 import * as careHelpers from "@care/careHelpers"
 //styles
 import { Buttons, Spacing, Typography, Colors, Forms } from '@styles/index'
+import Loader from "@components/Loader"
 
 type CareIndexProps = {
   navigation: any
@@ -85,39 +87,39 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   
   return (
     <View style={styles.container}>
-      {!sortedCareCards &&
-        <View style={styles.empty}>
-          <LottieView source={require('@assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
-          <Text style={styles.msg}>Start managing your pet's health</Text>
-        </View>
-      }
-
       <AddButton onPress={() => navigation.navigate('Create')} />
+      {careIndex ? 
+        <>
+          { !careIndex.length && <PlaceHolder /> }
 
-      <ScrollView 
-        horizontal
-        style={styles.listHeader}
-        showsHorizontalScrollIndicator={false}
-      >
-        {careIndex.map((section, idx) => 
-          <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn, { backgroundColor: Colors.multiArray[idx] }]} onPress={() => handleHeaderPress(idx)}>
-            <Text>{section.title}</Text>
-            <Text style={styles.headerCount}>{section.data.length}</Text>
-          </TouchableOpacity>
-        )}
-      </ScrollView>
+          <ScrollView 
+            horizontal
+            style={styles.listHeader}
+            showsHorizontalScrollIndicator={false}
+          >
+            {careIndex.map((section, idx) => 
+              <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn, { backgroundColor: Colors.multiArray[idx] }]} onPress={() => handleHeaderPress(idx)}>
+                <Text>{section.title}</Text>
+                <Text style={styles.headerCount}>{section.data.length}</Text>
+              </TouchableOpacity>
+            )}
+          </ScrollView>
 
-      <SectionList
-        ref={sectionListRef}
-        sections={careIndex}
-        keyExtractor={(item, index) => item + index}
-        renderItem={({ item }) => (
-          <CareItem care={item} />
-        )}
-        getItemLayout={getItemLayout}
-        showsVerticalScrollIndicator={false}
-        style={{ width: '90%' }}
-      />
+          <SectionList
+            ref={sectionListRef}
+            sections={careIndex}
+            keyExtractor={(item, index) => item + index}
+            renderItem={({ item }) => (
+              <CareItem care={item} />
+            )}
+            getItemLayout={getItemLayout}
+            showsVerticalScrollIndicator={false}
+            style={{ width: '90%' }}
+            // ListEmptyComponent={<Text>Empty...</Text>}
+          />
+        </>
+        : <Loader />
+      }
     </View> 
   )
 }
@@ -126,14 +128,6 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
     ...Spacing.centered,
-  },
-  msg: {
-    ...Typography.subHeader,
-    color: Colors.darkPink,
-    marginTop: 50
-  },
-  catAnimation: {
-    width: '100%'
   },
   mainBtn: {
     ...Buttons.longSquare,
@@ -177,9 +171,6 @@ const styles = StyleSheet.create({
   itemBtn: {
     marginLeft: 'auto'
   },
-  empty: {
-    
-  }
 })
  
 export default CareIndexScreen

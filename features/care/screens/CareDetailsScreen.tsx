@@ -13,6 +13,7 @@ import YearChart from "@components/Charts/YearChart"
 import FillChart from "@components/Charts/FillChart"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import Loader from "@components/Loader"
 
 interface CareDetailsProps {
   navigation: any
@@ -43,53 +44,58 @@ const CareDetailsScreen = ({ navigation, route }) => {
     )
   }
 
-  return (  
+  return (
     <ScrollView
       style={styles.scrollView}
       contentContainerStyle={styles.scrollContent}
       scrollEventThrottle={200}
       decelerationRate="fast" 
     >
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}>{careCard.name}</Text>
-        <View style={styles.careInfo}>
-          <Image source={iconSource} style={styles.careIcon} />
-          <Text style={styles.freq}>
-            {careCard.times} times / {
-              careCard.frequency === 'Daily' ? 'day' 
-              : careCard.frequency === 'Weekly' ? 'week' 
-              : careCard.frequency === 'Monthly' ? 'month' 
-              : 'year'
-            }
-          </Text>
-          <TouchableOpacity style={styles.subBtn} onPress={() => navigation.goBack()}>
-            <Text style={styles.btnText}>Go back</Text>
-          </TouchableOpacity>
-        </View>
-      
-        <ScrollPetList petArray={careCard.pets} size='small' />
+      {careCard ?
+        <>
+          <View style={styles.headerContainer}>
+            <Text style={styles.header}>{careCard.name}</Text>
+            <View style={styles.careInfo}>
+              <Image source={iconSource} style={styles.careIcon} />
+              <Text style={styles.freq}>
+                {careCard.times} times / {
+                  careCard.frequency === 'Daily' ? 'day' 
+                  : careCard.frequency === 'Weekly' ? 'week' 
+                  : careCard.frequency === 'Monthly' ? 'month' 
+                  : 'year'
+                }
+              </Text>
+              <TouchableOpacity style={styles.subBtn} onPress={() => navigation.goBack()}>
+                <Text style={styles.btnText}>Go back</Text>
+              </TouchableOpacity>
+            </View>
+          
+            <ScrollPetList petArray={careCard.pets} size='small' />
 
-        <View style={styles.btnContainer}>
-          <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} onPress={() => navigation.navigate('Edit', { care: careCard })}>
-            <Text style={styles.btnText}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} onPress={showDeleteConfirmDialog}>
-            <Text style={styles.btnText}>Delete</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      {careCard.trackers.map((tracker, idx) =>
-        <React.Fragment key={`tracker-${idx}`}>
-          {careCard.frequency === 'Daily' 
-          ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={careCard.times} />
-          : careCard.times === 1 && careCard.frequency !== 'Yearly'
-          ? <FillChart key={`1X-${idx}`} tracker={tracker} frequency={careCard.frequency} times={careCard.times} />
-          : ( careCard.frequency === 'Weekly' || careCard.frequency === 'Monthly' ) 
-            ? <BarChart key={`${careCard.frequency}-${idx}`} tracker={tracker} frequency={careCard.frequency} times={careCard.times} />
-            : <YearChart key={`Yearly-${idx}`} tracker={tracker} times={careCard.times} />
-          }
-        </React.Fragment>
-      )}
+            <View style={styles.btnContainer}>
+              <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} onPress={() => navigation.navigate('Edit', { care: careCard })}>
+                <Text style={styles.btnText}>Edit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} onPress={showDeleteConfirmDialog}>
+                <Text style={styles.btnText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          {careCard.trackers.map((tracker, idx) =>
+            <React.Fragment key={`tracker-${idx}`}>
+              {careCard.frequency === 'Daily' 
+              ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={careCard.times} />
+              : careCard.times === 1 && careCard.frequency !== 'Yearly'
+              ? <FillChart key={`1X-${idx}`} tracker={tracker} frequency={careCard.frequency} times={careCard.times} />
+              : ( careCard.frequency === 'Weekly' || careCard.frequency === 'Monthly' ) 
+                ? <BarChart key={`${careCard.frequency}-${idx}`} tracker={tracker} frequency={careCard.frequency} times={careCard.times} />
+                : <YearChart key={`Yearly-${idx}`} tracker={tracker} times={careCard.times} />
+              }
+            </React.Fragment>
+          )}
+        </> 
+        : <Loader />
+      }
 
     </ScrollView> 
   )

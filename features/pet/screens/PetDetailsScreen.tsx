@@ -6,6 +6,7 @@ import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native"
 import { Pet } from "@pet/PetInterface"
 //components
 import PetInfo from "@components/PetInfo/PetInfo"
+import Loader from "@components/Loader"
 //store
 import { usePetActions } from "@store/store"
 //styles
@@ -17,16 +18,7 @@ interface PetDetailsProps {
 }
 
 const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
-  // const [pet, setPet] = useState<Pet>({
-  //   _id: '',
-  //   name: '',
-  //   age: 0,
-  //   species: '',
-  //   breed: '',
-  //   photo: '',
-  // })
   const { pet } = route.params
-  // const { data: pet, isLoading, refetch, isError, isSuccess } = useGetPetById(petId)
   const { onDeletePet } = usePetActions()
   
   const handleDeletePet = async (petId: string) => {
@@ -47,7 +39,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
 
   return ( 
     <View style={styles.container}>
-      {pet && 
+      {pet ?
         <View style={styles.infoCard}>
           <View style={styles.petInfo}>
             <PetInfo pet={pet} size='expanded' />
@@ -64,8 +56,8 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
         </View>
+        : <Loader />
       }
-      {/* {isLoading && <Text>Fetching data...</Text>} */}
     </View>
   )
 }

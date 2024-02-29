@@ -7,6 +7,7 @@ import { Profile } from "@profile/ProfileInterface"
 import { useSetActions } from "@store/store"
 //components
 import { MainButton, SubButton } from "@components/ButtonComponent"
+import Loader from "@components/Loader"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -57,38 +58,43 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
   return ( 
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <View style={styles.photoUpload}>
-            <Image source={{ uri: photo ?? null }} style={styles.image as ImageStyle} />
-            <View style={styles.uploadBtnContainer}>
-              <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
-                <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
-                <Image source={require('@assets/icons/camera.png')} style={styles.cameraIcon } />
-              </TouchableOpacity>
+        {profile ? 
+          <>
+            <View style={styles.photoUpload}>
+              <Image source={{ uri: photo ?? null }} style={styles.image as ImageStyle} />
+              <View style={styles.uploadBtnContainer}>
+                <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
+                  <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
+                  <Image source={require('@assets/icons/camera.png')} style={styles.cameraIcon } />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
 
-          <Text style={{ color: Colors.red, fontWeight: 'bold' }}>{errorMsg}</Text>
+            <Text style={{ color: Colors.red, fontWeight: 'bold' }}>{errorMsg}</Text>
 
-          <View style={styles.form}>
-            <TextInput 
-              style={styles.input}
-              value={name}
-              placeholder="Name"
-              onChangeText={(text: string) => setName(text)}
-              autoCapitalize="words"
-            />
-            <TextInput 
-              style={[styles.input, styles.multiline]}
-              value={bio}
-              placeholder="Enter Bio"
-              onChangeText={(text: string) => setBio(text)}
-              multiline
-            />
+            <View style={styles.form}>
+              <TextInput 
+                style={styles.input}
+                value={name}
+                placeholder="Name"
+                onChangeText={(text: string) => setName(text)}
+                autoCapitalize="words"
+              />
+              <TextInput 
+                style={[styles.input, styles.multiline]}
+                value={bio}
+                placeholder="Enter Bio"
+                onChangeText={(text: string) => setBio(text)}
+                multiline
+              />
 
-          <MainButton title='Save' onPress={handleSubmit} top={40} bottom={0} />
-          <SubButton title='Cancel' onPress={() => navigation.goBack()} top={0} bottom={0} />
+              <MainButton title='Save' onPress={handleSubmit} top={40} bottom={0} />
+              <SubButton title='Cancel' onPress={() => navigation.goBack()} top={0} bottom={0} />
 
-          </View>
+            </View>
+          </>
+          : <Loader />
+        }
       </View>
     </TouchableWithoutFeedback>
   )

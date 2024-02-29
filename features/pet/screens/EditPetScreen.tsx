@@ -5,6 +5,7 @@ import { useIsFocused } from "@react-navigation/native"
 //components
 import PetForm from "../components/PetForm"
 import { Pet } from "@pet/PetInterface"
+import Loader from "@components/Loader"
 //store
 import { usePetActions } from "@store/store"
 
@@ -38,7 +39,10 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
 
   return (
     <View style={{flex: 1}}>
+     { pet ?
       <PetForm onSubmit={handleEditPet} initialValues={initialValues} navigation={navigation} />
+      : <Loader />
+     }
     </View>
   )
 }

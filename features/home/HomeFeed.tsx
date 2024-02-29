@@ -14,6 +14,7 @@ import { CloseButton } from "../../components/ButtonComponent"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
 import Loader from "@components/Loader"
+import PlaceHolder from "@components/PlaceHolder"
 
 interface HomeFeedProps {
   navigation: any
@@ -85,62 +86,65 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       </View>
       <View style={styles.taskListContainer}>
         { isLoading && <Loader /> }
-        <Loader />
         { isError && <Text>Error fetching data... </Text> }
-        { isSuccess && <>
-          {selected === 'day' && 
-            <FlatList
-              data={sortedCareCards['Daily']}
-              extraData={sortedCareCards['Daily']}
-              keyExtractor={(item, index) => item + index.toString()}
-              renderItem={({ item }) => 
-                <SwipeableTask key={item._id} task={item} navigation={navigation} 
-                  onPress={() => handleClickTask(item)}
-                />
-              }
-              ListEmptyComponent={<EmptyList />}
-            />
-          }
-          
-          {selected === 'week' && 
-            <FlatList
-              data={sortedCareCards['Weekly']}
-              keyExtractor={(item, index) => item + index.toString()}
-              renderItem={({ item }) => 
-                <SwipeableTask key={item._id} task={item} navigation={navigation} 
-                  onPress={() => handleClickTask(item)}
-                />
-              }
-              ListEmptyComponent={<EmptyList />}
-            />
-          }
-  
-          {selected === 'month' && 
-            <FlatList
-              data={sortedCareCards['Monthly']}
-              keyExtractor={(item, index) => item + index.toString()}
-              renderItem={({ item }) => 
-                <SwipeableTask key={item._id} task={item} navigation={navigation} 
-                  onPress={() => handleClickTask(item)}
-                />
-              }
-              ListEmptyComponent={<EmptyList />}
-            />
-          }
-  
-          {selected === 'year' && 
-            <FlatList
-              data={sortedCareCards['Yearly']}
-              keyExtractor={(item, index) => item + index.toString()}
-              renderItem={({ item }) => 
-                <SwipeableTask key={item._id} task={item} navigation={navigation} 
-                  onPress={() => handleClickTask(item)}
-                />
-              }
-              ListEmptyComponent={<EmptyList />}
-            />
+        { isSuccess && 
+          <>
+            {!Object.keys(sortedCareCards).length && <PlaceHolder /> }
+            
+            {selected === 'day' && 
+              <FlatList
+                data={sortedCareCards['Daily']}
+                extraData={sortedCareCards['Daily']}
+                keyExtractor={(item, index) => item + index.toString()}
+                renderItem={({ item }) => 
+                  <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                    onPress={() => handleClickTask(item)}
+                  />
+                }
+                ListEmptyComponent={<EmptyList />}
+              />
             }
-        </> }
+            
+            {selected === 'week' && 
+              <FlatList
+                data={sortedCareCards['Weekly']}
+                keyExtractor={(item, index) => item + index.toString()}
+                renderItem={({ item }) => 
+                  <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                    onPress={() => handleClickTask(item)}
+                  />
+                }
+                ListEmptyComponent={<EmptyList />}
+              />
+            }
+    
+            {selected === 'month' && 
+              <FlatList
+                data={sortedCareCards['Monthly']}
+                keyExtractor={(item, index) => item + index.toString()}
+                renderItem={({ item }) => 
+                  <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                    onPress={() => handleClickTask(item)}
+                  />
+                }
+                ListEmptyComponent={<EmptyList />}
+              />
+            }
+    
+            {selected === 'year' && 
+              <FlatList
+                data={sortedCareCards['Yearly']}
+                keyExtractor={(item, index) => item + index.toString()}
+                renderItem={({ item }) => 
+                  <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                    onPress={() => handleClickTask(item)}
+                  />
+                }
+                ListEmptyComponent={<EmptyList />}
+              />
+              }
+          </> 
+        }
       </View>
 
       <Modal

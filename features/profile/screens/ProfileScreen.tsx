@@ -6,6 +6,7 @@ import { useProfile } from "@store/store"
 import { usePets } from "@store/store"
 //components
 import ScrollPetList from "@components/PetInfo/ScrollPetList"
+import Loader from "@components/Loader"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -26,14 +27,19 @@ const ProfileScreen = ({ navigation, route }) => {
   return ( 
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <View style={styles.profileHeader}>
-          <Text style={styles.header}>{profile.name}</Text>
-          <Image source={{ uri: profile.photo ?? randomProfilePhotos[randomIdx] }} style={styles.profilePhoto }/>
-        </View>
-        
-        <View style={styles.bioBox}>
-          <Text style={styles.bioText}>{profile.bio}</Text>
-        </View>
+        { profile ? 
+          <>
+              <View style={styles.profileHeader}>
+                <Text style={styles.header}>{profile.name}</Text>
+                <Image source={{ uri: profile.photo ?? randomProfilePhotos[randomIdx] }} style={styles.profilePhoto }/>
+              </View>
+              
+              <View style={styles.bioBox}>
+                <Text style={styles.bioText}>{profile.bio}</Text>
+              </View>
+          </> 
+          : <Loader /> 
+        }
 
         <View style={styles.btnContainer}>
           <TouchableOpacity 
@@ -51,9 +57,12 @@ const ProfileScreen = ({ navigation, route }) => {
         </View>
       </View>
 
-      <Pressable onLongPress={() => navigation.navigate('Profile')}>
-        <ScrollPetList petArray={pets} size='compact' />
-      </Pressable>
+      {pets ?
+        <Pressable onPress={() => navigation.navigate('Pets', { screen: 'Index'})}>
+          <ScrollPetList petArray={pets} size='compact' />
+        </Pressable>
+        : <Loader />
+      }
 
     </View>
   )

@@ -5,6 +5,8 @@ import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useS
 //components
 import PetCard from '../components/PetCard'
 import { AddButton } from '@components/ButtonComponent'
+import Loader from '@components/Loader'
+import PlaceHolder from '@components/PlaceHolder'
 //store & queries
 import { usePets, usePetActions } from '@store/store'
 import { useGetAllPets } from '@pet/petQueries'
@@ -72,16 +74,12 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     )
   }
 
-  // useEffect(() => {
-  //  
-  // }, [])
-
   return ( 
     <View style={styles.container}>
-      {!pets && <Text>Fetching data...</Text>}
-
-      { pets.length && 
+      { pets ?
         <>
+          { !pets.length && <PlaceHolder /> }
+
           <View style={styles.btnContainer}>
             <Pressable 
               onPress={handleClickPrev} 
@@ -126,6 +124,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
             )}
           </View>
         </>
+        : <Loader />
       } 
 
       <AddButton onPress={() => navigation.navigate('Create')} />

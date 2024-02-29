@@ -4,6 +4,7 @@ import { useIsFocused } from "@react-navigation/native"
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native"
 //components
 import CareForm from "../components/CareForm"
+import Loader from "@components/Loader"
 //types
 import { Care } from "@care/CareInterface"
 //store
@@ -42,7 +43,10 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
 
   return (  
     <View style={styles.container}>
-      <CareForm onSubmit={handleSubmit} initialValues={initialValues} navigation={navigation} />
+      {care ? 
+        <CareForm onSubmit={handleSubmit} initialValues={initialValues} navigation={navigation} />
+        : <Loader />
+      }
     </View>
   )
 }

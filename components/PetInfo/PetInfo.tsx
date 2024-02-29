@@ -82,9 +82,10 @@ const styles = StyleSheet.create({
   },
   name: {
     ...Typography.subHeader,
-    fontSize: 20,
+    fontSize: 15,
     padding: 10,
-    margin: 0
+    margin: 0,
+    width: '100%',
   },
   details: {
     ...Spacing.flexRow,
