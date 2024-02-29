@@ -79,7 +79,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
       { pets ?
         <>
           { !pets.length && <PlaceHolder /> }
-
+  
           <View style={styles.btnContainer}>
             <Pressable 
               onPress={handleClickPrev} 
@@ -117,7 +117,6 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
             />
             
           </View>
-
           <View style={styles.dotNav}>
             {pets.map((pet, index) => 
               <DotNav key={index} index={index}/>

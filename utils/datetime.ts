@@ -1,7 +1,7 @@
 export const getCurrentDate = () => {
   const today = new Date()
   const date = today.getDate()
-  const month =today.getMonth() + 1 //0-index 
+  const month = today.getMonth() + 1 //0-index 
   const year = today.getFullYear()
   const day = getDayOfWeek(today)
   const monthName = getMonth(month)

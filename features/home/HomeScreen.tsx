@@ -12,11 +12,12 @@ import { getCurrentDate } from "@utils/datetime"
 //styles
 import { Buttons, Typography, Colors, Forms, Spacing } from '@styles/index'
 import Loader from "@components/Loader"
+import ScrollCalendar from "@components/ScrollCalendar"
 
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
 
-  const {date: currDate, monthName: currMonth, year: currYear } = getCurrentDate()
+  const {date: currDate, day: currDay } = getCurrentDate()
   
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
@@ -35,11 +36,12 @@ const HomeScreen: React.FC = ({ navigation }) => {
       {authState.authenticated ? (
         <>
           <View style={[styles.screen, { minHeight: centerHeight }]}>
-            <Image source={require('@assets/images/happy-tails-banner-large.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.3 }]} />
-            <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{currMonth} {currDate} {currYear}</Text>
-            <HomeFeed navigation={navigation} />
+            <Image source={require('@assets/images/happy-tails-banner.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.2 }]} />
+            <ScrollCalendar />
+            <View style={[styles.body, { height: windowHeight * 0.7 }]}>
+              <HomeFeed navigation={navigation} />
+            </View>
             <FloatingButton navigation={navigation} />
-
           </View>
         </>
       ) : (
@@ -90,14 +92,17 @@ const styles = StyleSheet.create({
   screen: {
     width: '100%',
     alignItems: 'center',
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.lightPink,
   },
   banner: {
-    borderBottomRightRadius: 20,
-    borderBottomLeftRadius: 20,
+    marginTop: 40,
   },
-  date: {
-    ...Typography.smallSubHeader,
+  body: {
+    width: '100%',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    backgroundColor: Colors.white,
+    alignItems: 'center',
   },
   headers:{
     width: '80%',

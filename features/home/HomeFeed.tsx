@@ -90,7 +90,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         { isSuccess && 
           <>
             {!Object.keys(sortedCareCards).length && <PlaceHolder /> }
-            
+
             {selected === 'day' && 
               <FlatList
                 data={sortedCareCards['Daily']}
@@ -181,7 +181,8 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     width: '100%',
     height: '5%',
-    marginVertical: 10
+    marginTop: 25,
+    marginBottom: 15,
   },
   iconMenu: {
     ...Spacing.flexColumn,
@@ -207,6 +208,7 @@ const styles = StyleSheet.create({
   taskListContainer : {
     width: '90%',
     height: '95%',
+    marginTop: 10,
   },
   taskIcon: {
     ...Forms.smallIcon,

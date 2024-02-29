@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { Image, StyleSheet, View } from "react-native"
+import { Image, StyleSheet, View, useWindowDimensions } from "react-native"
 import { Forms } from "@styles/index"
 import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated"
 
@@ -8,7 +8,7 @@ const Loader = () => {
   const DELAY = 250
   const DURATION = 500
   const NUM_OP = 7
-
+  const windowWidth = useWindowDimensions().width
   const opacity = Array.from({length: NUM_OP }, () => useSharedValue(0))
 
   const animateDelayOpacity = (toValue: number) => {
@@ -49,7 +49,7 @@ const Loader = () => {
   return (
     <View style={[
       styles.container,
-      
+      { width: windowWidth * 0.9 }
     ]}>
       { container }
     </View>
@@ -58,7 +58,7 @@ const Loader = () => {
 
 const styles = StyleSheet.create({
   container: {
-
+    alignSelf: 'center',
   },
   paw: {
     position: 'absolute',
