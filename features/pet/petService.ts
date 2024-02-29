@@ -29,7 +29,7 @@ export const getAllPets = async () => {
 //   }
 // }
 
-export const create = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null) => {
+export const create = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null): Promise<[Pet, string?]> => {
   const result = (await axios.post<Pet>(BASE_URL, { name, age, species, breed })).data
   if (photoData) {
     const url = await addPhoto(result._id, photoData)
@@ -44,7 +44,7 @@ export const addPhoto = async (petId: string, photoData: any): Promise<string> =
   return (await axios.patch<string>(`${BASE_URL}/${petId}/add-photo`, photoFormData)).data
 }
 
-export const update = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string): Promise<any> => {
+export const update = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string): Promise<Pet> => {
     const result = (await axios.put<Pet>(`${BASE_URL}/${petId}`, { name, age, species, breed })).data
     if (photoData) {
       const url = await addPhoto(result._id, photoData)

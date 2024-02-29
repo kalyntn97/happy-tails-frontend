@@ -17,14 +17,15 @@ const NewPetScreen = ({ navigation }) => {
   const addPetMutation = useAddPet()
 
   const handleAddPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null) => {
-    addPetMutation.mutate({ name, age, species, breed, photoData }, 
-      { onSuccess: () => {
+    addPetMutation.mutate({ name, age, species, breed, photoData }, {
+      onSuccess: () => {
         navigation.navigate('Index')
         return AlertForm({ body: 'Pet added successfully', button: 'OK' })
-      }, onError: (error) => {
+      }, 
+      onError: (error) => {
         return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      } }
-    )
+      } 
+    })
   }
 
   useEffect(() => {

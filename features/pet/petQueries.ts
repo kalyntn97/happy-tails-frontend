@@ -8,7 +8,6 @@ const BASE_URL = `${process.env.EXPO_PUBLIC_BACKEND_URL}/pets`
 export const petKeyFactory = {
   pets: ['all-pets'],
   petById: (id: string) => [...petKeyFactory.pets, id],
-  addPet: ['add-pet']
 }
 
 export const useGetAllPets = () => {
@@ -33,7 +32,6 @@ export const useAddPet = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationKey: [...petKeyFactory.addPet],
     mutationFn: ({ name, age, species, breed, photoData }: PetFormData) => petService.create(name, age, species, breed, photoData),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
@@ -41,4 +39,25 @@ export const useAddPet = () => {
   })
 }
 
+export const useUpdatePet = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ name, age, species, breed, photoData, petId }: PetFormData) => petService.update(name, age, species, breed, photoData, petId),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
+    }
+  })
+}
+
+export const useDeletePet = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: (petId: string) => petService.deletePet(petId),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
+    }
+  })
+}
 

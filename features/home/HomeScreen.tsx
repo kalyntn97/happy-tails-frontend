@@ -5,14 +5,14 @@ import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from "@auth/AuthContext"
 //components
-import HomeFeed from "@features/home/HomeFeed"
+import HomeFeed from "@home/HomeFeed"
 import FloatingButton from "@components/FloatingButton/FloatingButton"
+import ScrollCalendar from "@components/ScrollCalendar"
+import Loader from "@components/Loader"
 //utils & services
 import { getCurrentDate } from "@utils/datetime"
 //styles
 import { Buttons, Typography, Colors, Forms, Spacing } from '@styles/index'
-import Loader from "@components/Loader"
-import ScrollCalendar from "@components/ScrollCalendar"
 
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()

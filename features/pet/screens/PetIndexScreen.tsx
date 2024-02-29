@@ -19,7 +19,7 @@ import { AlertForm } from '@utils/ui'
 const PetIndexScreen: React.FC = ({ navigation }) => {
   const [currCard, setCurrCard] = useState<number>(0)
 
-  const {data: pets, isSuccess, isLoading, error } = useGetAllPets()
+  const {data: pets, isSuccess, isLoading, isError } = useGetAllPets()
 
   const petCount = pets?.length ?? 0
   
@@ -78,7 +78,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   return ( 
     <View style={styles.container}>
       { isLoading && <Loader /> }
-      { error && <Text>Error fetching pets...</Text> }
+      { isError && <Text>Error fetching pets...</Text> }
       { isSuccess &&  <>
           { !pets.length && <PlaceHolder /> }
   

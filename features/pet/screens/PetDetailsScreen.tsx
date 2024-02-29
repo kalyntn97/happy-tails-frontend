@@ -7,8 +7,9 @@ import { Pet } from "@pet/PetInterface"
 //components
 import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
-//store
-import { usePetActions } from "@store/store"
+//store & queries
+import { useDeletePet } from "@pet/petQueries"
+import { AlertForm } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
 
@@ -19,11 +20,18 @@ interface PetDetailsProps {
 
 const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   const { pet } = route.params
-  const { onDeletePet } = usePetActions()
+  const deletePetMutation = useDeletePet()
   
   const handleDeletePet = async (petId: string) => {
-    await onDeletePet!(petId)
-    navigation.navigate('Index')
+    deletePetMutation.mutate(petId, {
+      onSuccess: () => {
+        navigation.navigate('Index')
+        return AlertForm({ body: 'Pet deleted successfully', button: 'OK' })
+      }, 
+      onError: (error) => {
+        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+      }
+    })
   }
   
   const showDeleteConfirmDialog = () => {
@@ -52,7 +60,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
               <Text style={styles.btnText}>Edit</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{...styles.mainBtn, backgroundColor: Colors.red}} onPress={showDeleteConfirmDialog}>
-              <Text style={styles.btnText}>Delete</Text>
+              <Text style={styles.btnText}>{deletePetMutation.isPending ? 'Deleting...' : 'Delete'}</Text>
             </TouchableOpacity>
           </View>
         </View>

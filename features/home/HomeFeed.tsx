@@ -7,7 +7,6 @@ import { Care } from "@care/CareInterface"
 import * as careHelpers from '@care/careHelpers'
 //store & queries
 import { useSetActions } from "@store/store"
-import { useGetProfile } from "@profile/profileQueries"
 //components
 import CareCard from "@care/components/CareCard"
 import SwipeableTask from "@components/SwipeableTask"
@@ -29,6 +28,8 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const [clickedTask, setClickedTask] = useState<Care>({})
   //queries
   const [profile, pets, cares, healths] = useUserQueries()
+  //store
+  const { setPets } = useSetActions()
 
   const isLoading = useUserQueries().some(query => query.isLoading)
   const isSuccess = useUserQueries().every(query => query.isSuccess)
@@ -47,7 +48,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     if (isSuccess) {
       setSortedCareCards(careHelpers.sortByFrequency(cares.data))
       // setProfile(profile.data)
-      // setPets(pets.data)
+      setPets(pets.data)
       // setCares(cares.data)
       // setHealths(healths.data)
     }

@@ -13,6 +13,7 @@ export interface PetFormData {
   species: string 
   breed: string
   photoData: { uri: string, name: string, type: string } | null
+  petId?: string
 }
 
 export interface DogBreedListResponse {

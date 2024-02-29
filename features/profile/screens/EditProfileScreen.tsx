@@ -1,7 +1,8 @@
 //npm modules
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageStyle, TextInput, TouchableWithoutFeedback, Keyboard } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
+import { useIsFocused } from "@react-navigation/native"
 //types & store
 import { Profile } from "@profile/ProfileInterface"
 import { useSetActions } from "@store/store"
@@ -19,6 +20,8 @@ interface EditProfileProps {
 const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) => {
   const { profile } = route.params
   const { onUpdateProfile } = useSetActions()
+
+  const isFocused = useIsFocused()
 
   const [name, setName] = useState<string>(profile.name)
   const [bio, setBio] = useState<string>(profile.bio ?? '')
@@ -53,8 +56,13 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
       navigation.navigate('Profile', { profileId: profile._id })
     }
   }
-  
 
+  useEffect(() => {
+    if (!isFocused) {
+      navigation.goBack()
+    }
+  }, [navigation, isFocused])
+  
   return ( 
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>

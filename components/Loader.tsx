@@ -49,7 +49,7 @@ const Loader = () => {
   return (
     <View style={[
       styles.container,
-      { width: windowWidth * 0.9 }
+      { width: windowWidth * 0.9, height: 120 }
     ]}>
       { container }
     </View>

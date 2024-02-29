@@ -9,7 +9,7 @@ import EditCareScreen from "@care/screens/EditCareScreen"
 import NewCareScreen from "@care/screens/NewCareScreen"
 import HealthIndexScreen from "@health/screens/HealthIndexScreen"
 import NewHealthScreen from "@health/screens/NewHealthScreen"
-import HomeScreen from "@features/home/HomeScreen"
+import HomeScreen from "@home/HomeScreen"
 import EditPetScreen from "@pet/screens/EditPetScreen"
 import NewPetScreen from "@pet/screens/NewPetScreen"
 import PetDetailsScreen from "@pet/screens/PetDetailsScreen"
@@ -97,7 +97,7 @@ const PrivateApp = () => {
       <Tab.Screen name='Pets'>
         {() => (
           <PetStack.Navigator
-          screenOptions={{ ...stackOptions }}
+            screenOptions={{ ...stackOptions }}
           >
             <PetStack.Screen name='Index' component={PetIndexScreen} options={{ title: 'All Pets' }}/>
             <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }}
@@ -109,8 +109,8 @@ const PrivateApp = () => {
       </Tab.Screen>
 
       <Tab.Screen name='User'
-        options={{ unmountOnBlur: true, }}
-        listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) }>
+        /* options={{ unmountOnBlur: true, }}
+        listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) } */>
         {() => (
           <ProfileStack.Navigator screenOptions={{ 
             // headerBackImageSource: require('@assets/icons/undo.png'),

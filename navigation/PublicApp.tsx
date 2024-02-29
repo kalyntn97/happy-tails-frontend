@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 //screens
 import LoginScreen from "@auth/screens/LoginScreen"
 import RegisterScreen from "@auth/screens/RegisterScreen"
-import HomeScreen from "@features/home/HomeScreen"
+import HomeScreen from "@home/HomeScreen"
 //style
 import { Colors } from "@styles/index"
 

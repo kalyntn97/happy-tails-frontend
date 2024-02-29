@@ -1,11 +1,12 @@
 //npm modules
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert } from "react-native"
+import { useIsFocused } from "@react-navigation/native"
 //component
 import AccountForm from "@profile/components/AccountForm"
 import ToggleableForm from "@components/ToggleableForm"
 //context
-import { useAuth } from "@features/auth/AuthContext"
+import { useAuth } from "@auth/AuthContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -17,6 +18,8 @@ interface AccountProps {
 const SettingsScreen: React.FC<AccountProps> = ({ navigation, route }) => {
   const { onLogout, onDeleteAccount } = useAuth()
   const [visible, setVisible] = useState<string>('')
+
+  const isFocused = useIsFocused()
 
   const titleData = ['Update account information', 'Delete account and all pet profiles', 'Log out of account']
 
@@ -85,6 +88,12 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation, route }) => {
       </View>
     )
   }
+
+  useEffect(() => {
+    if (!isFocused) {
+      navigation.goBack()
+    }
+  }, [navigation, isFocused])
 
   return (
     <ScrollView 

@@ -6,8 +6,9 @@ import { useIsFocused } from "@react-navigation/native"
 import PetForm from "../components/PetForm"
 import { Pet } from "@pet/PetInterface"
 import Loader from "@components/Loader"
-//store
-import { usePetActions } from "@store/store"
+//store & queries
+import { useUpdatePet } from "@pet/petQueries"
+import { AlertForm } from "@utils/ui"
 
 interface EditPetProps {
   navigation: any
@@ -16,7 +17,7 @@ interface EditPetProps {
 
 const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
   const { pet } = route.params
-  const { onUpdatePet } = usePetActions()
+  const updatePetMutation = useUpdatePet()
 
   const isFocused = useIsFocused()
 
@@ -26,9 +27,16 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
     name: pet.name, age: pet.age, species: pet.species, breed: pet.breed, photo: pet.photo ? pet.photo : null, petId: pet._id
   }
 
-  const handleEditPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null)  => {
-    await onUpdatePet!(name, age, species, breed, photoData, pet._id)
-    navigation.navigate('Details', {pet: pet})
+  const handleEditPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string)  => {
+    updatePetMutation.mutate({ name, age, species, breed, photoData, petId }, {
+      onSuccess: (data) => {
+        navigation.navigate('Details', { pet: data })
+        return AlertForm({ body: 'Pet updated successfully', button: 'OK' })
+      }, 
+      onError: (error) => {
+        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+      }
+    })
   }
 
   useEffect(() => {
@@ -40,7 +48,7 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
   return (
     <View style={{flex: 1}}>
      { pet ?
-      <PetForm onSubmit={handleEditPet} initialValues={initialValues} navigation={navigation} />
+      <PetForm onSubmit={handleEditPet} initialValues={initialValues} navigation={navigation} status={updatePetMutation.status} />
       : <Loader />
      }
     </View>

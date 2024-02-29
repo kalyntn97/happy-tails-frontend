@@ -13,6 +13,7 @@
       "@customTypes/*": [ "types/*" ],
       "@utils/*": [ "utils/*" ],
       "@navigation/*": [ "navigation/*" ],
+      "@home/*": [ "features/home/*" ],
       "@auth/*": [ "features/auth/*"],
       "@profile/*": [ "features/profile/*"],
       "@pet/*": [ "features/pet/*"],
