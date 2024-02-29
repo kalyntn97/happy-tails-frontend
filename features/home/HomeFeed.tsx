@@ -13,6 +13,7 @@ import SwipeableTask from "@components/SwipeableTask"
 import { CloseButton } from "../../components/ButtonComponent"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
+import Loader from "@components/Loader"
 
 interface HomeFeedProps {
   navigation: any
@@ -83,7 +84,8 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.taskListContainer}>
-        { isLoading && <Text>Fetching data... </Text> }
+        { isLoading && <Loader /> }
+        <Loader />
         { isError && <Text>Error fetching data... </Text> }
         { isSuccess && <>
           {selected === 'day' && 

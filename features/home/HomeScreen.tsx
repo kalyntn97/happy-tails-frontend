@@ -37,7 +37,6 @@ const HomeScreen: React.FC = ({ navigation }) => {
           <View style={[styles.screen, { minHeight: centerHeight }]}>
             <Image source={require('@assets/images/happy-tails-banner-large.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.3 }]} />
             <Text style={[styles.date, { height: centerHeight * 0.05 }]}>{currMonth} {currDate} {currYear}</Text>
-            <Loader />
             <HomeFeed navigation={navigation} />
             <FloatingButton navigation={navigation} />
 
