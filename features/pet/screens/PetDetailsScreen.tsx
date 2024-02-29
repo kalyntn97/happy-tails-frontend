@@ -9,6 +9,7 @@ import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
 //store & queries
 import { useDeletePet } from "@pet/petQueries"
+import { usePetActions } from "@store/store"
 import { AlertForm } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
@@ -20,11 +21,13 @@ interface PetDetailsProps {
 
 const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   const { pet } = route.params
+  const { onDeletePet } = usePetActions()
   const deletePetMutation = useDeletePet()
   
   const handleDeletePet = async (petId: string) => {
     deletePetMutation.mutate(petId, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        onDeletePet(data)
         navigation.navigate('Index')
         return AlertForm({ body: 'Pet deleted successfully', button: 'OK' })
       }, 

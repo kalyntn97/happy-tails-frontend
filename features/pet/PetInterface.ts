@@ -7,6 +7,11 @@ export interface Pet {
   photo: string | null
 }
 
+export interface PetBasic {
+  name: string
+  photo: string | null
+}
+
 export interface PetFormData {
   name: string
   age: number

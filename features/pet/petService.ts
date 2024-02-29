@@ -29,7 +29,7 @@ export const getAllPets = async () => {
 //   }
 // }
 
-export const create = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null): Promise<[Pet, string?]> => {
+export const create = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null): Promise<Pet> => {
   const result = (await axios.post<Pet>(BASE_URL, { name, age, species, breed })).data
   if (photoData) {
     const url = await addPhoto(result._id, photoData)
@@ -57,6 +57,6 @@ export async function show(petId: string): Promise<any> {
   return (await axios.get<Pet>(`${BASE_URL}/${petId}`)).data
 }
 
-export async function deletePet(petId: string): Promise<any> {
+export async function deletePet(petId: string): Promise<string> {
   return (await axios.delete<string>(`${BASE_URL}/${petId}`)).data
 }

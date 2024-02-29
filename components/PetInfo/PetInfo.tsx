@@ -1,10 +1,15 @@
 import { Image, StyleSheet, Text, View } from "react-native"
-import { Pet } from "@pet/PetInterface"
 import { getIconSource } from "../../features/pet/petHelpers"
 import { Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface PetInfoProps {
-  pet: Pet
+  pet: {
+    name: string
+    age?: number
+    species?: string 
+    breed?: string
+    photo: string | null
+  }
   size: 'compact' | 'expanded' | 'small' | 'mini'
 }
 

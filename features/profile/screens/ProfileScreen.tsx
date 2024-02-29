@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react"
 import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
 //store & queries
-import { useProfile } from "@store/store"
-import { usePets } from "@store/store"
 import { useGetProfile } from "@profile/profileQueries"
-import { useGetAllPets } from "@pet/petQueries"
+import { useShallowPetBasics } from "@store/storeUtils"
+//types
+import { PetBasic } from "@pet/PetInterface"
 //components
 import ScrollPetList from "@components/PetInfo/ScrollPetList"
 import Loader from "@components/Loader"
@@ -14,7 +14,8 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 const ProfileScreen = ({ navigation, route }) => {
   const { data: profile, isLoading: profileIsLoading, isError: profileError } = useGetProfile()
-  const { data: pets, isLoading: petsIsLoading, isError: petsError } = useGetAllPets()
+  // const { data: pets, isLoading: petsIsLoading, isError: petsError } = useGetAllPets()
+  const pets: PetBasic[] = useShallowPetBasics()
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
     require('@assets/icons/micon1.png'),
@@ -64,8 +65,8 @@ const ProfileScreen = ({ navigation, route }) => {
           <ScrollPetList petArray={pets} size='compact' navigation={navigation} />
         </View>
       }
-      { petsIsLoading && <Loader /> }
-      { petsError && <Text>Error fetching pets...</Text> }
+      { pets && !pets.length && <Loader /> }
+      { !pets && <Text>Error fetching pets...</Text> }
 
     </View>
   )

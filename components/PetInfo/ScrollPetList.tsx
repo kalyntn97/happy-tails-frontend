@@ -1,13 +1,13 @@
 //npm
 import { ScrollView, View, StyleSheet, Pressable } from "react-native"
-import { Pet } from "@pet/PetInterface"
+import { Pet, PetBasic } from "@pet/PetInterface"
 //component
 import PetInfo from "./PetInfo"
 //styles
 import { Spacing } from '@styles/index'
 
 interface ScrollPetListProps {
-  petArray: Pet[]
+  petArray: Pet[] | PetBasic[]
   size: 'compact' | 'small' | 'mini' // small < compact
   navigation?: any
 }
