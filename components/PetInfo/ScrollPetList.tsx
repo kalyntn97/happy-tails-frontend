@@ -1,5 +1,5 @@
 //npm
-import { ScrollView, View, StyleSheet } from "react-native"
+import { ScrollView, View, StyleSheet, Pressable } from "react-native"
 import { Pet } from "@pet/PetInterface"
 //component
 import PetInfo from "./PetInfo"
@@ -9,18 +9,21 @@ import { Spacing } from '@styles/index'
 interface ScrollPetListProps {
   petArray: Pet[]
   size: 'compact' | 'small' | 'mini' // small < compact
+  navigation?: any
 }
 
-const ScrollPetList: React.FC<ScrollPetListProps> = ({ petArray, size }) => {
+const ScrollPetList: React.FC<ScrollPetListProps> = ({ petArray, size, navigation }) => {
   return (  
     <View style={
-      size === 'mini' ? { maxWidth: 225, height: 45 } 
-      : size === 'small' ? { maxWidth: 300, height: 100 } 
-      : { maxWidth: 450, height: 240 }
+      size === 'mini' ? { maxWidth: 225, height: 50 } 
+      : size === 'small' ? { maxWidth: 300, height: 110 } 
+      : { maxWidth: 450, height: 250 }
     }>
-      <ScrollView 
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          size === 'compact' && { paddingVertical: 10}
+        ]}>
         {petArray.map((pet: Pet, idx: number) => 
           <View 
             key={idx}
@@ -30,7 +33,9 @@ const ScrollPetList: React.FC<ScrollPetListProps> = ({ petArray, size }) => {
               : { width: 90, height: 120 }
             } 
           >
-            <PetInfo pet={pet} size={size} key={pet._id} />
+            <Pressable onPress={() => navigation.navigate('Pets', { screen: 'Details', params: { pet: pet } })}>
+              <PetInfo pet={pet} size={size} key={pet._id} />
+            </Pressable>
           </View>  
         )}
       </ScrollView>

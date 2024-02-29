@@ -12,10 +12,10 @@ interface PetFormProps {
   onSubmit: (name: string, age: number | '', species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
   initialValues?: { name?: string, age?: number, species?: string, breed?: string, photo?: string | null, petId?: string }
   navigation: any
-  isPending: boolean
+  status: string
 }
 
-const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, isPending }) => {
+const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
   const [photo, setPhoto] = useState<string | null>(initialValues?.photo ?? null)
   const [name, setName] = useState<string>(initialValues?.name ?? '')
   const [age, setAge] = useState<number | ''>(initialValues?.age ?? '')
@@ -116,7 +116,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
           />
         }
       
-        <MainButton onPress={handleSubmit} title={isPending ? 'Submitting' : initialValues?.name ? 'Save' : 'Add Pet'} top={50} bottom={10} />
+        <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting' : initialValues?.name ? 'Save' : 'Add Pet'} top={50} bottom={10} />
         <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
 
       </View>

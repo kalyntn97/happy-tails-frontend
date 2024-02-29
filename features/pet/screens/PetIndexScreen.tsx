@@ -13,12 +13,14 @@ import { useGetAllPets } from '@pet/petQueries'
 //styles
 import { Buttons, Spacing, Typography, Colors } from '@styles/index'
 import { Pet } from '../PetInterface'
+import { AlertForm } from '@utils/ui'
 
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
   const [currCard, setCurrCard] = useState<number>(0)
 
-  const pets = usePets()
+  const {data: pets, isSuccess, isLoading, error } = useGetAllPets()
+
   const petCount = pets?.length ?? 0
   
   const { width } = useWindowDimensions()
@@ -28,7 +30,6 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   const onScrollHandler = useAnimatedScrollHandler((event) => {
     scrollX.value = event.contentOffset.x
   })
-
 
   const onScrollEnd = () => {
     const currentIndex = scrollX.value / width
@@ -76,8 +77,9 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
 
   return ( 
     <View style={styles.container}>
-      { pets ?
-        <>
+      { isLoading && <Loader /> }
+      { error && <Text>Error fetching pets...</Text> }
+      { isSuccess &&  <>
           { !pets.length && <PlaceHolder /> }
   
           <View style={styles.btnContainer}>
@@ -123,7 +125,6 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
             )}
           </View>
         </>
-        : <Loader />
       } 
 
       <AddButton onPress={() => navigation.navigate('Create')} />

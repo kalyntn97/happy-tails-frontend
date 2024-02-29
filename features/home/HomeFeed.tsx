@@ -1,6 +1,7 @@
 //npm
 import { useEffect, useState } from "react"
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Modal, TouchableWithoutFeedback, Pressable } from "react-native"
+import { useQueries } from "@tanstack/react-query"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import * as careHelpers from '@care/careHelpers'
@@ -11,10 +12,11 @@ import { useGetProfile } from "@profile/profileQueries"
 import CareCard from "@care/components/CareCard"
 import SwipeableTask from "@components/SwipeableTask"
 import { CloseButton } from "../../components/ButtonComponent"
-//styles
-import { Buttons, Spacing, Forms, Colors } from '@styles/index'
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
+//styles
+import { Buttons, Spacing, Forms, Colors } from '@styles/index'
+import { useUserQueries } from "./homeQueries"
 
 interface HomeFeedProps {
   navigation: any
@@ -25,11 +27,13 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const [selected, setSelected] = useState<string>('day')
   const [modalVisible, setModalVisible] = useState(false)
   const [clickedTask, setClickedTask] = useState<Care>({})
+  //queries
+  const [profile, pets, cares, healths] = useUserQueries()
 
-  const { data, isLoading, isSuccess, isError } = useGetProfile()
-
- const { setProfile, setPets, setCares, setHealths } = useSetActions()
-
+  const isLoading = useUserQueries().some(query => query.isLoading)
+  const isSuccess = useUserQueries().every(query => query.isSuccess)
+  const isError = useUserQueries().some(query => query.isError)
+ 
   const handleClickTask = (task: Care) => {
     setClickedTask(task)
     setModalVisible(true)
@@ -40,21 +44,14 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   )
 
   useEffect(() => {
-    if (data) {
-      const partialProfile = {
-        _id: data._id,
-        name: data.name,
-        bio: data.bio,
-        photo: data.photo,
-      }
-      setSortedCareCards(careHelpers.sortByFrequency(data.careCards))
-      //set global states
-      setProfile(partialProfile)
-      setPets(data.pets)
-      setCares(data.careCards)
-      setHealths(data.healthCards)
+    if (isSuccess) {
+      setSortedCareCards(careHelpers.sortByFrequency(cares.data))
+      // setProfile(profile.data)
+      // setPets(pets.data)
+      // setCares(cares.data)
+      // setHealths(healths.data)
     }
-  }, [data])
+  }, [isSuccess])
 
   return (  
     <View style={styles.container}>

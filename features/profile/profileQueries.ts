@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import * as profileService from "./profileService"
 import { Profile } from "./ProfileInterface"
 
-const profileKeyFactory = {
+export const profileKeyFactory = {
   profile: ['profile'],
 }
 

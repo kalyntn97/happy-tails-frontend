@@ -1,9 +1,11 @@
 //npm modules
 import { useEffect, useState } from "react"
 import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
-//store
+//store & queries
 import { useProfile } from "@store/store"
 import { usePets } from "@store/store"
+import { useGetProfile } from "@profile/profileQueries"
+import { useGetAllPets } from "@pet/petQueries"
 //components
 import ScrollPetList from "@components/PetInfo/ScrollPetList"
 import Loader from "@components/Loader"
@@ -11,8 +13,8 @@ import Loader from "@components/Loader"
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 const ProfileScreen = ({ navigation, route }) => {
-  const profile = useProfile()
-  const pets = usePets()
+  const { data: profile, isLoading: profileIsLoading, isError: profileError } = useGetProfile()
+  const { data: pets, isLoading: petsIsLoading, isError: petsError } = useGetAllPets()
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
     require('@assets/icons/micon1.png'),
@@ -27,7 +29,7 @@ const ProfileScreen = ({ navigation, route }) => {
   return ( 
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        { profile ? 
+        { profile &&
           <>
               <View style={styles.profileHeader}>
                 <Text style={styles.header}>{profile.name}</Text>
@@ -37,10 +39,10 @@ const ProfileScreen = ({ navigation, route }) => {
               <View style={styles.bioBox}>
                 <Text style={styles.bioText}>{profile.bio}</Text>
               </View>
-          </> 
-          : <Loader /> 
-        }
-
+          </> }
+        { profileIsLoading && <Loader /> }
+        { profileError && <Text>Error fetching profile</Text> }
+        
         <View style={styles.btnContainer}>
           <TouchableOpacity 
             style={[styles.mainBtn, { backgroundColor: Colors.yellow }]}
@@ -57,12 +59,13 @@ const ProfileScreen = ({ navigation, route }) => {
         </View>
       </View>
 
-      {pets ?
-        <Pressable onPress={() => navigation.navigate('Pets', { screen: 'Index'})}>
-          <ScrollPetList petArray={pets} size='compact' />
-        </Pressable>
-        : <Loader />
+      {pets &&
+        <View>
+          <ScrollPetList petArray={pets} size='compact' navigation={navigation} />
+        </View>
       }
+      { petsIsLoading && <Loader /> }
+      { petsError && <Text>Error fetching pets...</Text> }
 
     </View>
   )

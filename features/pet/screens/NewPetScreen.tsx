@@ -6,19 +6,25 @@ import { useIsFocused } from "@react-navigation/native"
 import { useAddPet } from "../petQueries"
 //components
 import PetForm from "../components/PetForm"
-import { SubButton } from "@components/ButtonComponent"
+//utils
+import { AlertForm } from "@utils/ui"
 //styles
 import { Spacing } from "@styles/index"
 
 const NewPetScreen = ({ navigation }) => {
-  // const { onAddPet } = usePet()
   const isFocused = useIsFocused()
+
   const addPetMutation = useAddPet()
-  const { mutate, isPending, isSuccess, isError } = addPetMutation
+
   const handleAddPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null) => {
-    mutate({ name, age, species, breed, photoData }, {
-      onSuccess: () => navigation.navigate('Index')
-    })
+    addPetMutation.mutate({ name, age, species, breed, photoData }, 
+      { onSuccess: () => {
+        navigation.navigate('Index')
+        return AlertForm({ body: 'Pet added successfully', button: 'OK' })
+      }, onError: (error) => {
+        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+      } }
+    )
   }
 
   useEffect(() => {
@@ -29,7 +35,7 @@ const NewPetScreen = ({ navigation }) => {
 
   return ( 
     <View style={styles.container}>
-      <PetForm onSubmit={handleAddPet} navigation={navigation} isPending={isPending} />
+      <PetForm onSubmit={handleAddPet} navigation={navigation} status={addPetMutation.status} />
     </View>
   )
 }

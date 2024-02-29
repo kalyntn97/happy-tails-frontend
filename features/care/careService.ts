@@ -1,26 +1,15 @@
+import axios from 'axios'
 import * as authHelpers from '../auth/authHelpers'
 import { CARE_BASE_URL } from '../../services/urls'
 import { Pet } from "@pet/PetInterface"
+import { Care } from './CareInterface'
 
 const BASE_URL = CARE_BASE_URL
 
 //types
-export interface Tracker {
-  _id: string
-  name: string
-  total: number
-  done: number[]
-  skipped: number
-  left: number
-}
 
-export interface Care {
-  _id: string
-  pets: Pet[]
-  name: string
-  times: number
-  frequency: 'Daily' | 'Weekly' | 'Monthly' | 'Yearly'
-  trackers: Tracker[]
+export async function getAllCares(): Promise<Care[]> {
+  return (await axios.get<Care[]>(BASE_URL)).data
 }
 
 export async function index(): Promise<Care[]> {
