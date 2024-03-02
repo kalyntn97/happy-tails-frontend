@@ -3,14 +3,16 @@ import { useEffect, useState } from "react"
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageStyle, TextInput, TouchableWithoutFeedback, Keyboard } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 import { useIsFocused } from "@react-navigation/native"
-//types & store
+//types & store & queries
 import { Profile } from "@profile/ProfileInterface"
 import { useSetActions } from "@store/store"
+import { useUpdateProfile } from "@profile/profileQueries"
 //components
 import { MainButton, SubButton } from "@components/ButtonComponent"
 import Loader from "@components/Loader"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { AlertForm } from "@utils/ui"
 
 interface EditProfileProps {
   navigation: any
@@ -19,7 +21,7 @@ interface EditProfileProps {
 
 const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) => {
   const { profile } = route.params
-  const { onUpdateProfile } = useSetActions()
+  const updateProfileMutation = useUpdateProfile()
 
   const isFocused = useIsFocused()
 
@@ -43,17 +45,22 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
     }
   }
 
-  const handleSubmit = async () => {
-    const photoData: { uri: string, name: string, type: string } | null 
-      = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
+  const handleSubmit = async (name: string, bio: string, photo: string) => {
+    const photoData = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
     if (!name) {
       setErrorMsg('Please enter name.')
     } else {
       setErrorMsg('')
 
-      await onUpdateProfile(name, bio, photoData)
-      
-      navigation.navigate('Profile', { profileId: profile._id })
+      updateProfileMutation.mutate({ name, bio, photoData }, {
+        onSuccess: () => {
+          navigation.navigate('Profile')
+          return AlertForm({ body: 'Profile updated successfully', button: 'OK' })
+        },
+        onError: (error) => {
+          return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+        }
+      }) 
     }
   }
 
@@ -96,7 +103,7 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
                 multiline
               />
 
-              <MainButton title='Save' onPress={handleSubmit} top={40} bottom={0} />
+              <MainButton title={updateProfileMutation.isPending ? 'Submitting' : 'Save'} onPress={() => handleSubmit(name, bio, photo)} top={40} bottom={0} />
               <SubButton title='Cancel' onPress={() => navigation.goBack()} top={0} bottom={0} />
 
             </View>

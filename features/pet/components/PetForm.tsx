@@ -25,7 +25,6 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
 
   const petId: string | null = initialValues?.petId ?? null
 
-  
   const addPhoto = async (): Promise<void> => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -117,7 +116,11 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
         }
       
         <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting' : initialValues?.name ? 'Save' : 'Add Pet'} top={50} bottom={10} />
-        <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
+        <SubButton onPress={ () => {
+          navigation.canGoBack() ? navigation.goBack() : navigation.reset({ index: 0, routeName: 'Index'})
+        }}
+          title='Cancel' top={10} bottom={10} 
+        />
 
       </View>
 

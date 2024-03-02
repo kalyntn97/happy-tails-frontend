@@ -34,6 +34,7 @@ const PrivateApp = () => {
   return (
     <Tab.Navigator
       initialRouteName='Home'
+      backBehavior="history"
       screenOptions={({ route }) => ({
         ...tabBarOptions,
         tabBarLabel: ({ focused }) => {
@@ -67,6 +68,7 @@ const PrivateApp = () => {
       <Tab.Screen name='Home'>
         {() => (
           <HomeStack.Navigator
+            initialRouteName="Main"
             screenOptions={() => ({ headerShown: false })}
           >
             <HomeStack.Screen name='Main' component={HomeScreen} />

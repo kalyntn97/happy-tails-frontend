@@ -60,7 +60,7 @@ const CareCard = ({ care, navigation, onNavigate }) => {
           </View>
         </View>
         
-        <ScrollPetList petArray={care.pets} size='small' />
+        <ScrollPetList petArray={care.pets} size='small' navigation={navigation}/>
       </View>
       
       <View style={styles.body}>

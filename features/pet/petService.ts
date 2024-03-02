@@ -53,7 +53,7 @@ export const update = async (name: string, age: number, species: string, breed: 
     return result
 }
 
-export async function show(petId: string): Promise<any> {
+export async function getPet(petId: string): Promise<any> {
   return (await axios.get<Pet>(`${BASE_URL}/${petId}`)).data
 }
 

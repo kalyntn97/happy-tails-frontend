@@ -16,27 +16,27 @@ import PlaceHolder from "@components/PlaceHolder"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
 import { useUserQueries } from "./homeQueries"
+import { useGetAllCares } from "@care/careQueries"
+import { useGetAllPets } from "@pet/petQueries"
 
 interface HomeFeedProps {
   navigation: any
 }
 
 const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
-  const [sortedCareCards, setSortedCareCards] = useState<{[key: string]: Care[]}>({})
   const [selected, setSelected] = useState<string>('day')
   const [modalVisible, setModalVisible] = useState(false)
-  const [clickedTask, setClickedTask] = useState<Care>({})
+  const [clickedCare, setClickedCare] = useState<Care>({})
   //queries
   const [profile, pets, cares, healths] = useUserQueries()
-  //store
   const { setPets } = useSetActions()
-
+  //store
   const isLoading = useUserQueries().some(query => query.isLoading)
   const isSuccess = useUserQueries().every(query => query.isSuccess)
   const isError = useUserQueries().some(query => query.isError)
  
-  const handleClickTask = (task: Care) => {
-    setClickedTask(task)
+  const handleClickTask = (care: Care) => {
+    setClickedCare(care)
     setModalVisible(true)
   }
 
@@ -46,56 +46,51 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      setSortedCareCards(careHelpers.sortByFrequency(cares.data))
-      // setProfile(profile.data)
       setPets(pets.data)
-      // setCares(cares.data)
-      // setHealths(healths.data)
     }
   }, [isSuccess])
 
   return (  
     <View style={styles.container}>
+      { isLoading && <Loader /> }
+      { isError && <Text>Error fetching data... </Text> }
+      { isSuccess && 
+        <>        
+          <View style={styles.iconMenuContainer}>
+            <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
+              <Text style={styles.taskCount}>{cares.data['Daily'].length ?? 0}</Text>
+              <Image source={require('@assets/icons/day.png')} style={styles.icon } />
+              <Text style={[styles.iconText, selected === 'day' && styles.selected]}>Today</Text>
+            </TouchableOpacity>
 
-      <View style={styles.iconMenuContainer}>
-        <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
-          <Text style={styles.taskCount}>{sortedCareCards['Daily']?.length ?? 0}</Text>
-          <Image source={require('@assets/icons/day.png')} style={styles.icon } />
-          <Text style={[styles.iconText, selected === 'day' && styles.selected]}>Today</Text>
-        </TouchableOpacity>
+            <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('week')}>
+              <Text style={styles.taskCount}>{cares.data['Weekly'].length ?? 0}</Text>
+              <Image source={require('@assets/icons/week.png')} style={styles.icon } />
+              <Text style={[styles.iconText, selected === 'week' && styles.selected]}>This Week</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('week')}>
-          <Text style={styles.taskCount}>{sortedCareCards['Weekly']?.length ?? 0}</Text>
-          <Image source={require('@assets/icons/week.png')} style={styles.icon } />
-          <Text style={[styles.iconText, selected === 'week' && styles.selected]}>This Week</Text>
-        </TouchableOpacity>
+            <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('month')}>
+              <Text style={styles.taskCount}>{cares.data['Monthly'].length ?? 0}</Text>
+              <Image source={require('@assets/icons/month.png')} style={styles.icon } />
+              <Text style={[styles.iconText, selected === 'month' && styles.selected]}>This Month</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('month')}>
-          <Text style={styles.taskCount}>{sortedCareCards['Monthly']?.length ?? 0}</Text>
-          <Image source={require('@assets/icons/month.png')} style={styles.icon } />
-          <Text style={[styles.iconText, selected === 'month' && styles.selected]}>This Month</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('year')}>
-          <Text style={styles.taskCount}>{sortedCareCards['Yearly']?.length ?? 0}</Text>
-          <Image source={require('@assets/icons/year.png')} style={styles.icon } />
-          <Text style={[styles.iconText, selected === 'year' && styles.selected]}>This Year</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.taskListContainer}>
-        { isLoading && <Loader /> }
-        { isError && <Text>Error fetching data... </Text> }
-        { isSuccess && 
-          <>
-            {!Object.keys(sortedCareCards).length && <PlaceHolder /> }
+            <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('year')}>
+              <Text style={styles.taskCount}>{cares.data['Yearly'].length ?? 0}</Text>
+              <Image source={require('@assets/icons/year.png')} style={styles.icon } />
+              <Text style={[styles.iconText, selected === 'year' && styles.selected]}>This Year</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.taskListContainer}>
+            {!Object.keys(cares.data).length && <PlaceHolder /> }
 
             {selected === 'day' && 
               <FlatList
-                data={sortedCareCards['Daily']}
-                extraData={sortedCareCards['Daily']}
+                data={cares.data['Daily']}
+                extraData={cares.data['Daily']}
                 keyExtractor={(item, index) => item + index.toString()}
                 renderItem={({ item }) => 
-                  <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                  <SwipeableTask key={item._id} care={item} navigation={navigation} 
                     onPress={() => handleClickTask(item)}
                   />
                 }
@@ -105,56 +100,59 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
             
             {selected === 'week' && 
               <FlatList
-                data={sortedCareCards['Weekly']}
+                data={cares.data['Weekly']}
+                extraData={cares.data['Weekly']}
                 keyExtractor={(item, index) => item + index.toString()}
                 renderItem={({ item }) => 
-                  <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                  <SwipeableTask key={item._id} care={item} navigation={navigation} 
                     onPress={() => handleClickTask(item)}
                   />
                 }
                 ListEmptyComponent={<EmptyList />}
               />
             }
-    
+
             {selected === 'month' && 
               <FlatList
-                data={sortedCareCards['Monthly']}
+                data={cares.data['Monthly']}
+                extraData={cares.data['Monthly']}
                 keyExtractor={(item, index) => item + index.toString()}
                 renderItem={({ item }) => 
-                  <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                  <SwipeableTask key={item._id} care={item} navigation={navigation} 
                     onPress={() => handleClickTask(item)}
                   />
                 }
                 ListEmptyComponent={<EmptyList />}
               />
             }
-    
+
             {selected === 'year' && 
               <FlatList
-                data={sortedCareCards['Yearly']}
+                data={cares.data['Yearly']}
+                extraData={cares.data['Yearly']}
                 keyExtractor={(item, index) => item + index.toString()}
                 renderItem={({ item }) => 
-                  <SwipeableTask key={item._id} task={item} navigation={navigation} 
+                  <SwipeableTask key={item._id} care={item} navigation={navigation} 
                     onPress={() => handleClickTask(item)}
                   />
                 }
                 ListEmptyComponent={<EmptyList />}
               />
-              }
-          </> 
-        }
-      </View>
+            }
+          </View>
+        </>
+      }
 
       <Modal
         animationType="slide"
         visible={modalVisible}
         onRequestClose={() => setModalVisible(!modalVisible)}
-        onDismiss={() => setClickedTask({})}
+        onDismiss={() => setClickedCare({})}
       >
         <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={styles.modalContainer}> 
           <View style={styles.detailContainer}>
             <CloseButton onPress={() => setModalVisible(false)} />
-            <CareCard care={clickedTask} navigation={navigation} onNavigate={() => setModalVisible(false)}/>
+            <CareCard care={clickedCare} navigation={navigation} onNavigate={() => setModalVisible(false)}/>
           </View>
         </Pressable>
       </Modal> 

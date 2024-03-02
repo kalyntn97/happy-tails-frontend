@@ -6,58 +6,78 @@ import { Care } from '@care/CareInterface'
 import * as careHelpers from '@care/careHelpers'
 //store
 import { useCareActions } from '@store/store'
+import { useCheckDoneCare, useUnCheckDoneCare } from '@care/careQueries'
 //components
+import { AlertForm } from '@utils/ui'
 import { SquareButton } from './ButtonComponent'
 import ScrollPetList from './PetInfo/ScrollPetList'
 //styles
 import { Spacing, Forms } from '@styles/index'
 
-const SwipeableTask = ({ task, navigation, onPress }) => {
+const SwipeableTask = ({ care, navigation, onPress }) => {
   const { onCheckAllDone, onUncheckAllDone} = useCareActions()
-  const done = careHelpers.getTaskStatus(task)
+  const done = careHelpers.getTaskStatus(care)
 
-  const checkAllDone = async (task: Care) => {
-    const trackerId = task.trackers[task.trackers.length - 1]._id
-    const index = careHelpers.getCurrentTrackerIndex(task.frequency)
+  const checkDoneMutation = useCheckDoneCare()
+  const uncheckDoneMutation = useUnCheckDoneCare()
 
-    done === task.times
-      ? await onUncheckAllDone!(task._id, trackerId, index)
-      : await onCheckAllDone!(task._id, trackerId, index)
+  const checkAllDone = async (care: Care) => {
+    const careId = care._id
+    const trackerId = care.trackers[care.trackers.length - 1]._id
+    const index = careHelpers.getCurrentTrackerIndex(care.frequency)
+
+    done === care.times
+      ? checkDoneMutation.mutate({ careId, trackerId, index }, {
+        onSuccess: () => {
+          navigation.navigate('Care', { screen: 'Index'})
+        },
+        onError: (error) => {
+          return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+        }
+      })
+      : uncheckDoneMutation.mutate({ careId, trackerId, index }, {
+        onSuccess: () => {
+          navigation.navigate('Care', { screen: 'Index'})
+        },
+        onError: (error) => {
+          return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+        }
+      })
   }
 
   const rightSwipeActions = () => (
     <View style={styles.squareBtnContainer}>
-      <SquareButton title='Edit' onPress={() => navigation.navigate('Care', { screen: 'Edit', params: { care: task } })} />
-      <SquareButton title='Details' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { care: task } })} />
-      <SquareButton title='Delete' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { care: task } })} />
+      <SquareButton title='Edit' onPress={() => navigation.navigate('Care', { screen: 'Edit', params: { care: care } })} />
+      <SquareButton title='Details' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { care: care } })} />
+      <SquareButton title='Delete' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { care: care } })} />
     </View>
   )
 
   return (
     <Swipeable renderRightActions={() => rightSwipeActions()}>
       <TouchableOpacity 
-        key={task._id}
+        key={care._id}
         style={[
           styles.task, 
-          { backgroundColor: careHelpers.getTaskBackgroundColor(task.frequency) }
+          { backgroundColor: careHelpers.getTaskBackgroundColor(care.frequency) }
         ]} 
         onPress={onPress}
       > 
         <View style={styles.taskContent}>
           <Text style={[
-            done === task.times && styles.done, 
+            done === care.times && styles.done, 
             styles.taskText
           ]}>
-            {task.name}
+            {care.name}
           </Text>
-          <Text style={styles.taskStatus}>{done}/{task.times}</Text>
+          <Text style={styles.taskStatus}>{done}/{care.times}</Text>
           <View style={styles.taskPetList}>
-            <ScrollPetList petArray={task.pets} size='mini' />
+            <ScrollPetList petArray={care.pets} size='mini' />
           </View>
         </View>
 
-        <TouchableOpacity style={styles.bulletBtn} onPress={() => checkAllDone(task)}>
-          {done === task.times 
+        <TouchableOpacity style={styles.bulletBtn} onPress={() => checkAllDone(care)}>
+          {done === care.times 
           ? <Image source={require('@assets/icons/check.png')} style={styles.check}/>
           : <Text style={styles.bulletBtnText}>○</Text> }
         </TouchableOpacity>

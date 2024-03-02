@@ -1,19 +1,20 @@
 //npm
 import React from "react"
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView } from "react-native"
-//types & helpers
-import { Care } from "@care/careService"
+//types & helpers & queries
+import { Care } from "@care/CareInterface"
 import * as careHelpers from '@care/careHelpers'
-import { useCareActions } from "@store/store"
+import { useDeleteCare } from "@care/careQueries"
 //components
+import { AlertForm } from "@utils/ui"
 import ScrollPetList from "@components/PetInfo/ScrollPetList"
 import DailyChart from "@components/Charts/DailyChart"
 import BarChart from "@components/Charts/BarChart"
 import YearChart from "@components/Charts/YearChart"
 import FillChart from "@components/Charts/FillChart"
+import Loader from "@components/Loader"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import Loader from "@components/Loader"
 
 interface CareDetailsProps {
   navigation: any
@@ -24,13 +25,20 @@ const CareDetailsScreen = ({ navigation, route }) => {
 
   const { care: careCard } = route.params
   
-  const { onDeleteCare } = useCareActions()
+  const deleteCareMutation = useDeleteCare()
 
   const iconSource = careHelpers.getIconSource(careCard.name)
 
   const handleDeleteCareCard = async (careId: string) => {
-    await onDeleteCare!(careId)
-    navigation.navigate('Index')
+    deleteCareMutation.mutate(careId, {
+      onSuccess: () => {
+        navigation.navigate('Index')
+        return AlertForm({ body: `Deleted successfully`, button: 'OK' })
+      },
+      onError: (error) => {
+        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+      },
+    })
   }
 
   const showDeleteConfirmDialog = () => {

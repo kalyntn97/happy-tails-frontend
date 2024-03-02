@@ -10,6 +10,8 @@ export interface Profile {
   // careCards: Care[]
 }
 
-export interface ProfileStore {
-
+export interface ProfileFormData {
+  name: string
+  bio: string
+  photoData: { uri: string, name: string, type: string } | null
 }

@@ -13,6 +13,7 @@ import * as careHelpers from "@care/careHelpers"
 //styles
 import { Buttons, Spacing, Typography, Colors, Forms } from '@styles/index'
 import Loader from "@components/Loader"
+import { useGetAllCares } from "@care/careQueries"
 
 type CareIndexProps = {
   navigation: any
@@ -20,16 +21,10 @@ type CareIndexProps = {
 }
 
 const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
-  const careCards = useCares()
-  const sortedCareCards = careHelpers.sortByFrequency(careCards)
+  const { data: cares, isLoading, isSuccess, isError} = useGetAllCares()
 
-  // custom sort function by section
-  const sortOrder = ['Daily', 'Weekly', 'Monthly', 'Yearly']
-  
-  const careIndex = sortOrder.map(sectionTitle => ({
-    title: sectionTitle,
-    data: sortedCareCards[sectionTitle] || []
-  }))
+  let careIndex = []
+
 
   const CareItem = ({ care }) => {
     const iconSource = careHelpers.getIconSource(care.name)
@@ -83,7 +78,14 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
       }
       setInitialListPosition()
     }
-  }, [route.params])
+    if (cares) {
+      const sortOrder = ['Daily', 'Weekly', 'Monthly', 'Yearly']
+      careIndex = sortOrder.map(sectionTitle => ({
+        title: sectionTitle,
+        data: cares[sectionTitle] || []
+      }))
+    }
+  }, [route.params, isSuccess])
   
   return (
     <View style={styles.container}>

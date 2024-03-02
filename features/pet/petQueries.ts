@@ -1,5 +1,4 @@
-import axios, { AxiosError } from 'axios'
-import { useQuery, UseQueryOptions, useQueryClient, useMutation } from '@tanstack/react-query'
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { Pet, PetFormData } from './PetInterface'
 import * as petService from './petService'
 

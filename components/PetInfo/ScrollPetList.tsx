@@ -33,9 +33,9 @@ const ScrollPetList: React.FC<ScrollPetListProps> = ({ petArray, size, navigatio
               : { width: 90, height: 120 }
             } 
           >
-            <Pressable onPress={() => navigation.navigate('Pets', { screen: 'Details', params: { pet: pet } })}>
+            {/* <Pressable onPress={() => navigation.navigate('Pets', { screen: 'Details', params: { pet: pet } })}> */}
               <PetInfo pet={pet} size={size} key={pet._id} />
-            </Pressable>
+            {/* </Pressable> */}
           </View>  
         )}
       </ScrollView>

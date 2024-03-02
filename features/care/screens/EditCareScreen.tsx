@@ -7,8 +7,10 @@ import CareForm from "../components/CareForm"
 import Loader from "@components/Loader"
 //types
 import { Care } from "@care/CareInterface"
+import { Pet } from "@pet/PetInterface"
 //store
-import { useCareActions } from "@store/store"
+import { useUpdateCare } from "@care/careQueries"
+import { AlertForm } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -19,20 +21,28 @@ interface EditCareProps {
 
 const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   const { care } = route.params
-  const { onUpdateCare } = useCareActions()
   const isFocused = useIsFocused()
-  const petData = care.pets.map(pet => pet._id)
+ 
+  const updateCareMutation = useUpdateCare()
 
   const initialValues: {
-    name: string, frequency: string, times: number, pets: string[], careId: string
+    name: string, frequency: string, times: number, pets: Pet[], careId: string
   } = {
-    name: care.name, frequency: care.frequency, times: care.times, pets: petData, careId: care._id
+    name: care.name, frequency: care.frequency, times: care.times, pets: care.pets, careId: care._id
   }
 
   const handleSubmit = async (name: string, frequency: string, times: number, pets: string[], careId: string) => {
-    const updatedCareCard = await onUpdateCare!({ name, frequency, times, pets, careId })
+    updateCareMutation.mutate({ name, frequency, times, pets, careId }, {
+      onSuccess: (data) => {
+        console.log(data)
+        navigation.navigate('Details', { care: data })
+        return AlertForm({ body: `Updated successfully`, button: 'OK' })
+      },
+      onError: (error) => {
+        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+      },
+    })
   
-    navigation.navigate('Details', { careId: updatedCareCard._id })
   }
 
   useEffect(() => {
@@ -44,7 +54,7 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   return (  
     <View style={styles.container}>
       {care ? 
-        <CareForm onSubmit={handleSubmit} initialValues={initialValues} navigation={navigation} />
+        <CareForm onSubmit={handleSubmit} initialValues={initialValues} navigation={navigation} status={updateCareMutation.status} />
         : <Loader />
       }
     </View>

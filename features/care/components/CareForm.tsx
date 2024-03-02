@@ -5,33 +5,35 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, TouchableWithoutFe
 import Dropdown from "@components/Dropdown/Dropdown"
 import MultiselectDropdown from "@components/Dropdown/MultiselectDropdown"
 import { MainButton, SubButton } from "@components/ButtonComponent"
+//types
+import { Pet } from "@pet/PetInterface"
 //store
-import { useShallowPets } from "@store/storeUtils"
+import { usePetIds } from "@store/storeUtils"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { usePets } from "@store/store"
 
 interface CareFormProps {
   onSubmit: (name: string, frequency: string, times: number, pets: string[], careId: string | null) => Promise<any>
-  initialValues?: { name?: string, frequency?: string, times?: number, pets?: string[], careId?: string }
+  initialValues?: { name?: string, frequency?: string, times?: number, pets?: Pet[], careId?: string }
   navigation: any
+  status: string
 }
 
-const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation }) => {
+const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
+  const initialPetNames = initialValues?.pets.map(pet => pet.name) ?? null
+  const initialPets = initialValues?.pets.map(pet => pet._id)
+  const pets = usePetIds()
+  
   const [name, setName] = useState<string>(initialValues?.name ?? '')
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? '')
   const [times, setTimes] = useState<number | ''>(initialValues?.times ?? '')
-  const [petData, setPetData] = useState<string[]>(initialValues?.pets ?? [])
+  const [petData, setPetData] = useState<string[]>(initialPets ?? [])
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
 
-  //convert initial pet Ids into names
-  const initialusePetNames = initialValues?.pets.map(id => {
-    const pet = useShallowPets().find(pet => pet._id === id)
-    return pet.name
-  })
-  
   const careId: string | null = initialValues?.careId ?? null
-
+  // handle input custom name for form
   const handleSelectName = (selected: string) => {
     setName(() => {
       if (selected === 'Others') {
@@ -43,6 +45,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       }
     })
   }
+
 
   // handle select multiple pets
   const handleSelectPets = (selected: string[]) => {
@@ -91,8 +94,8 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
           value={times !== '' ? times.toString() : ''} 
           keyboardType="numeric"
         />
-        <MultiselectDropdown label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialusePetNames} />
-        <MainButton onPress={handleSubmit} title={initialValues?.name ? 'Save' : 'Create'} top={50} bottom={10} />
+        <MultiselectDropdown label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialPetNames} />
+        <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={50} bottom={10} />
         <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
 
       </View>

@@ -14,6 +14,20 @@ export interface Care {
   pets: Pet[]
   name: string
   times: number
-  frequency: 'Daily' | 'Weekly' | 'Monthly' | 'Yearly'
+  frequency: string
   trackers: Tracker[]
+}
+
+export interface CareFormData {
+  name: string
+  times: number
+  frequency: string
+  pets: string[]
+  careId?: string
+}
+
+export interface TrackerFormData {
+  careId: string
+  trackerId: string
+  index: number
 }

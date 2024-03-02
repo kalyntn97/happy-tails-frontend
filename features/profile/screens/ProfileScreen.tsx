@@ -13,7 +13,7 @@ import Loader from "@components/Loader"
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 const ProfileScreen = ({ navigation, route }) => {
-  const { data: profile, isLoading: profileIsLoading, isError: profileError } = useGetProfile()
+  const { data: profile, isLoading, isError } = useGetProfile()
   // const { data: pets, isLoading: petsIsLoading, isError: petsError } = useGetAllPets()
   const pets: PetBasic[] = useShallowPetBasics()
   //set a random profile photo if user does not have one
@@ -41,8 +41,8 @@ const ProfileScreen = ({ navigation, route }) => {
                 <Text style={styles.bioText}>{profile.bio}</Text>
               </View>
           </> }
-        { profileIsLoading && <Loader /> }
-        { profileError && <Text>Error fetching profile</Text> }
+        { isLoading && <Loader /> }
+        { isError && <Text>Error fetching profile</Text> }
         
         <View style={styles.btnContainer}>
           <TouchableOpacity 

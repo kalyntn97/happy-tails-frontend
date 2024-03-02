@@ -8,18 +8,19 @@ import { AddButton } from '@components/ButtonComponent'
 import Loader from '@components/Loader'
 import PlaceHolder from '@components/PlaceHolder'
 //store & queries
-import { usePets, usePetActions } from '@store/store'
+import { useSetActions } from '@store/store'
 import { useGetAllPets } from '@pet/petQueries'
+import { AlertForm } from '@utils/ui'
 //styles
 import { Buttons, Spacing, Typography, Colors } from '@styles/index'
 import { Pet } from '../PetInterface'
-import { AlertForm } from '@utils/ui'
 
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
   const [currCard, setCurrCard] = useState<number>(0)
 
   const {data: pets, isSuccess, isLoading, isError } = useGetAllPets()
+  const { setPets } = useSetActions()
 
   const petCount = pets?.length ?? 0
   
@@ -75,6 +76,12 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     )
   }
 
+  useEffect(() => {
+    if (isSuccess) {
+      setPets(pets)
+    }
+  }, [isSuccess])
+
   return ( 
     <View style={styles.container}>
       { isLoading && <Loader /> }
@@ -126,7 +133,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
           </View>
         </>
       } 
-
+      
       <AddButton onPress={() => navigation.navigate('Create')} />
     </View>
   )

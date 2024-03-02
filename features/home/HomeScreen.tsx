@@ -53,7 +53,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
           decelerationRate="fast"
           style={{ width: windowWidth }}
         >
-          <View style={[styles.screen, { height: windowHeight }]}>
+          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.white }]}>
             <LottieView source={require('@assets/animations/happy.json')} autoPlay loop style={styles.happyAnimation} />
             <View style={styles.headers}>
                 <Text style={styles.mainHeader}>
