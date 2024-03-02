@@ -1,28 +1,25 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 //npm modules
 import * as React from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 //context
-import { AuthProvider } from './context/AuthContext'
-import { PetProvider } from './context/PetContext'
-import { ProfileProvider } from './context/ProfileContext'
+import { AuthProvider } from '@auth/AuthContext'
+import AppNavigator from '@navigation/AppNavigator'
 //components
-import Layout from './components/Layout'
-import { CareProvider } from './context/CareContext'
+
+
 
 const App: React.FC = () => {
-  
+  const queryClient = new QueryClient()
+
   return (
-    <AuthProvider>
-      <PetProvider>
-        <CareProvider>
-          <ProfileProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <Layout />
-            </GestureHandlerRootView>
-          </ProfileProvider>
-        </CareProvider>
-      </PetProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <AppNavigator />
+        </GestureHandlerRootView>
+      </AuthProvider>
+    </QueryClientProvider>
   )
 }
 

@@ -1,5 +1,5 @@
 import { Image, Text, TouchableOpacity, View, ViewStyle } from "react-native"
-import { Buttons, Colors, Spacing, Forms } from "../styles"
+import { Buttons, Colors, Spacing, Forms } from "@styles/index"
 
 export const AddButton = ({ onPress }) => ( 
   <TouchableOpacity onPress={onPress} style={{
@@ -36,9 +36,9 @@ export const SquareButton = ({title, onPress}) => (
   }}>
     <Image
       source={
-        title === 'Edit' ? require('../assets/icons/edit.png')
-        : title === 'Delete' ? require('../assets/icons/delete.png')
-        : title === 'Details' ? require('../assets/icons/details.png')
+        title === 'Edit' ? require('@assets/icons/edit.png')
+        : title === 'Delete' ? require('@assets/icons/delete.png')
+        : title === 'Details' ? require('@assets/icons/details.png')
         : ''
       }
       style={{...Forms.smallIcon}}
@@ -51,7 +51,7 @@ export const CloseButton = ({ onPress }) => (
     width: 60,
     height: 60,
   }}>
-    <Image source={require('../assets/icons/close.png')} style={{
+    <Image source={require('@assets/icons/close.png')} style={{
       width: 40,
       height: 40,
       margin: 10
@@ -88,5 +88,18 @@ export const SubButton = ({ onPress, title, top, bottom }) => (
     }}>
       {title}
     </Text>
+  </TouchableOpacity>
+)
+
+export const GoBackButton = ({ onPress, top }) => (
+  <TouchableOpacity onPress={onPress} style={{
+    position: 'absolute',
+    top: top,
+    left: 15,
+  }}>     
+    <Image source={require('@assets/icons/undo.png')} style={{
+      ...Forms.smallIcon,
+    }}
+    />
   </TouchableOpacity>
 )

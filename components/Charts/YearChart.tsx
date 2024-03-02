@@ -1,11 +1,10 @@
 //npm
-import { StyleSheet, Text, View } from "react-native"
-//components
-import ProgressTracker from "./ProgressTracker"
-//services & utils
-import * as careUtils from "../../utils/careUtils"
+import { StyleSheet, Text, View, Image } from "react-native"
+//types & helpers
+import * as careHelpers from "@care/careHelpers"
+import { getCurrentDate } from "@utils/datetime"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface YearChartProps {
   tracker: any
@@ -13,12 +12,39 @@ interface YearChartProps {
 }
 
 const YearChart: React.FC<YearChartProps> = ({ tracker, times }) => {
-  const { isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
-  const { year: currYear } = careUtils.getCurrentDate()
+  const { isCurrent } = careHelpers.getDateTimeFromTracker(tracker.name)
+  const { year: currYear } = getCurrentDate()
+  const done = tracker.done[0]
+  const size = times > 6 ? 'small' : 'large'
+
+  const progressContainer = []
+    for (let i = 0; i < done; i++) {
+      progressContainer.push(
+        <Image 
+          key={`done-${i}`}
+          source={require('@assets/icons/heart-filled.png')} 
+          style={[styles.heart , { width: 40, height: 40 }]} 
+        />
+      )
+    }
+    for (let i = 0; i < times - done; i++) {
+      progressContainer.push(
+        <Image 
+          key={`pending-${i}`} 
+          source={require('@assets/icons/heart-gray.png')} 
+          style={[styles.heart , { width: 40, height: 40 }]} 
+        />
+      )
+    }
+
   return (  
     <View style={styles.container}>
       <Text style={[styles.header,isCurrent ? { color: Colors.darkPink } : {}]}>{currYear}</Text>
-      <ProgressTracker times={times} done={tracker.done[0]} size={times > 6 ? 'small' : 'large'} />
+    
+      <View style={[ styles.progress, { maxWidth: size === 'large' ? 200 : 140} ]}>
+        {progressContainer}
+      </View>
+
     </View>
   )
 }
@@ -38,7 +64,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '30%',
     marginRight: 'auto'
-  }
+  },
+  heart: {
+    marginHorizontal: 2,
+  }, 
+  progress: {
+    ...Spacing.flexRow,
+    flexWrap: 'wrap',
+  },
 })
 
 export default YearChart

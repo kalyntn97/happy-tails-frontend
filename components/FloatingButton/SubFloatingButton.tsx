@@ -5,8 +5,8 @@ import { State, TapGestureHandler } from "react-native-gesture-handler"
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated"
 // styles
 import { ButtonStyles, Button, subBtn_tap_event } from "./constants"
-import { Spacing, Colors, Forms } from "../../styles"
-import { getIconSource } from "../../utils/careUtils"
+import { Spacing, Colors, Forms } from "@styles/index"
+import { getIconSource } from "@care/careHelpers"
 
 
 const SubFloatingButton = ({ onPress, label, index, x }) => {

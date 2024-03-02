@@ -1,9 +1,12 @@
 //npm
 import { useWindowDimensions, StyleSheet, Text, View } from "react-native"
-//services & utils
-import * as careUtils from '../../utils/careUtils'
+//types & helpers
+import * as careHelpers from '@care/careHelpers'
+//utils
+import { getCurrentDate } from "@utils/datetime"
+import { getColor, getColorArray } from "@utils/ui"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '../../styles'
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface DailyChartProps {
   // tracker: Tracker
@@ -12,10 +15,10 @@ interface DailyChartProps {
 }
 
 const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
-  const { trackerMonthName, trackerYear, isCurrent } = careUtils.getDateTimeFromTracker(tracker.name)
-  const { date: currDate } = careUtils.getCurrentDate()
+  const { trackerMonthName, trackerYear, isCurrent } = careHelpers.getDateTimeFromTracker(tracker.name)
+  const { date: currDate } = getCurrentDate()
 
-  const colorArray = careUtils.getColorArray()
+  const colorArray = getColorArray()
 
   const windowWidth = useWindowDimensions().width
   const chartWidth = windowWidth * 0.9
@@ -65,7 +68,7 @@ const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
           <View key={idx} 
             style={[
               styles.dayContainer, { 
-                backgroundColor: careUtils.getColor(times, value, colorArray),
+                backgroundColor: getColor(times, value, colorArray),
                 width: squareWidth,
                 height: squareWidth,
                 borderColor: (currDate === idx + 1 && isCurrent) ? Colors.darkPink : Colors.white

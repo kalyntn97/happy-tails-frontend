@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, useWindowDimensions, DeviceEventEmitter, Alert,
 import { PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler"
 import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
 // styles
-import { Colors, Buttons, Spacing } from "../../styles"
+import { Colors, Buttons, Spacing } from "@styles/index"
 import { Button, ButtonStyles, Animation, ChildrenAnimation } from "./constants"
 import SubFloatingButton from "./SubFloatingButton"
 
@@ -118,7 +118,8 @@ const FloatingButton = ({ navigation }) => {
         </TouchableWithoutFeedback> 
       }
       <PanGestureHandler onHandlerStateChange={_onPanHandlerStateChange}>
-        <Animated.View style={[styles.buttonContainer, { bottom: height * 0.3 }, animatedRootStyles]}>
+        <Animated.View style={[styles.buttonContainer, { bottom: height * 0.17 }, animatedRootStyles]}>
+          
           {opened &&
             <Animated.View style={[styles.children, animatedChildrenStyles]}>
               <SubFloatingButton label='Add a Pet' index={2} x={positionX.value} 
