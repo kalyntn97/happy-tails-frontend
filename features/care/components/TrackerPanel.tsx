@@ -2,51 +2,67 @@
 import { useState, useEffect } from "react"
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 //types & helpers
-import { Tracker } from "@care/careService"
-import { Care } from "@care/CareInterface"
+import { Care, Tracker } from "@care/CareInterface"
 import * as careHelpers from "@care/careHelpers"
 //components
 import ScrollChart from "@components/Charts/ScrollChart"
-//store
-import { useCareActions } from "@store/store"
 //utils
 import { getCurrentDate } from "@utils/datetime"
 //styles
 import { Spacing, Typography, Colors } from '@styles/index'
+import { useCheckDoneCare, useUnCheckDoneCare } from "@care/careQueries"
+import { AlertForm } from "@utils/ui"
 
 interface CurrentTrackerProps {
   care: Care
+  trackerIndex?: number
 }
 
-const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
-  const [tracker, setTracker] = useState<Tracker>(care.trackers[care.trackers.length - 1])
+const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care, trackerIndex }) => {
+  const [tracker, setTracker] = useState<Tracker>(
+    trackerIndex ? care.trackers[trackerIndex] : care.trackers[care.trackers.length - 1]
+  )
   const [index, setIndex] = useState<number>(0)
 
   const {frequency: freq, times, _id: careId } = care
-  const {onCheckDone, onUncheckDone } = useCareActions()
+  const checkDoneMutation = useCheckDoneCare()
+  const uncheckDoneMutation = useUnCheckDoneCare()
 
   // get month and year of current tracker from name
   const { monthName: currMonth, year: currYear } = getCurrentDate()
   
-  const checkDone = async (careId: string, trackerId: string, index: number) => {
-    const updatedTracker = await onCheckDone!(careId, trackerId, index)
-    setTracker(updatedTracker)
+  const checkDone = (careId: string, trackerId: string, index: number) => {
+    checkDoneMutation.mutate({ careId, trackerId, index }, {
+      onSuccess: (data) => {
+        setTracker(data)
+      },
+      onError: (error) => {
+        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+      },
+    })
   }
 
   const uncheckDone = async (careId: string, trackerId: string, index: number) => {
-    const updatedTracker = await onUncheckDone!(careId, trackerId, index)
-    setTracker(updatedTracker)
+    uncheckDoneMutation.mutate({ careId, trackerId, index }, {
+      onSuccess: (data) => {
+        setTracker(data)
+      },
+      onError: (error) => {
+        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+      },
+    })
   }
 
   useEffect(() => {
-    // update as index (day, week) change, get the latest tracker
-    const updateIndex = () => {
-      
-      const updatedIdx = careHelpers.getCurrentTrackerIndex(freq)
-      setIndex(updatedIdx)
+    // if no index provided, get latest tracker and update index
+    const currIndex = careHelpers.getCurrentTrackerIndex(freq)
+    if (!trackerIndex) {
+      setIndex(currIndex)
+    } else {
+      const updatedIndex = currIndex + trackerIndex
+      setIndex(updatedIndex)
     }
-    updateIndex()
-  }, [index])
+  }, [])
 
   return (
     <View style={styles.container}>
