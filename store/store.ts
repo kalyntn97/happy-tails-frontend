@@ -23,7 +23,11 @@ const createPetSlice: StateCreator<PetSlice> = (set) => ({
 
 const createCareSlice: StateCreator<CareSlice> = (set) => ({
   cares: [],
+  activeCareFeed: null,
+  activeCareDate: null,
   careActions: {
+    setActiveCareFeed: (index: number ) => set((state) => ({ activeCareFeed: index })),
+    setActiveCareDate: (index: number ) => set((state) => ({ activeCareDate: index })),
     onAddCare: care => set(state => ({ cares: [...state.cares, care] })),
     onUpdateCare: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c) })),
     onDeleteCare: careId => set(state => ({ cares: state.cares.filter(c => c._id !== careId) })),
@@ -54,6 +58,8 @@ export const useBoundStore= create<ProfileSlice & PetSlice & CareSlice & HealthS
 export const useProfile = () => useBoundStore(state => state.profile)
 export const usePets = () => useBoundStore(state => state.pets)
 export const useCares = () => useBoundStore(state => state.cares)
+export const useActiveCareFeed = () => useBoundStore(state => state.activeCareFeed)
+export const useActiveCareDate = () => useBoundStore(state => state.activeCareDate)
 export const useHealths = () => useBoundStore(state => state.healths)
 //actions
 export const usePetActions = () => useBoundStore(state => state.petActions)

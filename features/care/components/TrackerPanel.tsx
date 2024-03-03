@@ -10,15 +10,16 @@ import ScrollChart from "@components/Charts/ScrollChart"
 import { getCurrentDate } from "@utils/datetime"
 //styles
 import { Spacing, Typography, Colors } from '@styles/index'
-import { useCheckDoneCare, useUnCheckDoneCare } from "@care/careQueries"
+import { useCheckDoneCare,  useUncheckDoneCare } from "@care/careQueries"
 import { AlertForm } from "@utils/ui"
 
 interface CurrentTrackerProps {
   care: Care
   trackerIndex?: number
+  taskIndex?: number
 }
 
-const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care, trackerIndex }) => {
+const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care, trackerIndex, taskIndex }) => {
   const [tracker, setTracker] = useState<Tracker>(
     trackerIndex ? care.trackers[trackerIndex] : care.trackers[care.trackers.length - 1]
   )
@@ -26,7 +27,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care, trackerIndex }) => 
 
   const {frequency: freq, times, _id: careId } = care
   const checkDoneMutation = useCheckDoneCare()
-  const uncheckDoneMutation = useUnCheckDoneCare()
+  const uncheckDoneMutation = useUncheckDoneCare()
 
   // get month and year of current tracker from name
   const { monthName: currMonth, year: currYear } = getCurrentDate()
@@ -56,10 +57,10 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care, trackerIndex }) => 
   useEffect(() => {
     // if no index provided, get latest tracker and update index
     const currIndex = careHelpers.getCurrentTrackerIndex(freq)
-    if (!trackerIndex) {
+    if (!taskIndex) {
       setIndex(currIndex)
     } else {
-      const updatedIndex = currIndex + trackerIndex
+      const updatedIndex = currIndex + taskIndex
       setIndex(updatedIndex)
     }
   }, [])

@@ -1,18 +1,27 @@
-import { useRef, useState } from "react"
+//npm
+import { FC, useRef, useState } from "react"
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+//utils & store
 import { getCurrentDate, getDayOfWeek } from "@utils/datetime"
+import { useCareActions } from "@store/store"
+//styles
 import { Colors, Spacing } from "@styles/index"
 
 const ScrollCalendar = () => {
   const { date: currDate, month: currMonth, year: currYear, daysInMonth } = getCurrentDate()
   const [selected, setSelected] = useState<number>(currDate - 1)
+  const { setActiveCareDate } = useCareActions()
 
   const scrollViewRef = useRef(null)
   const month = []
   for (let i = 0; i < daysInMonth; i++) {
     const day = getDayOfWeek(new Date(currYear, currMonth, i))
     month.push(
-      <TouchableOpacity key={i} style={[styles.dateContainer, i + 1 === currDate && styles.currCon, selected === i && styles.activeCon]} onPress={() => setSelected(i)}>
+      <TouchableOpacity key={i} style={[styles.dateContainer, i + 1 === currDate && styles.currCon, selected === i && styles.activeCon]} onPress={() => { 
+        setSelected(i)
+        setActiveCareDate(i) 
+      }}
+      >
         <Text style={[styles.date, i + 1 === currDate && styles.currDay, selected === i && styles.activeDay]}>{i + 1}</Text>
         <Text style={[styles.day, i + 1 === currDate && styles.currDay, selected === i && styles.activeDay]}>{day.slice(0, 3)}</Text>
       </TouchableOpacity>

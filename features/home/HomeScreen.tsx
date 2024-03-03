@@ -17,8 +17,6 @@ import { Buttons, Typography, Colors, Forms, Spacing } from '@styles/index'
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
 
-  const {date: currDate, day: currDay } = getCurrentDate()
-  
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
   const centerHeight = windowHeight - 191

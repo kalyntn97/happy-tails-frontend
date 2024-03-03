@@ -1,44 +1,57 @@
 //npm
+import { FC, useEffect } from 'react'
 import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 //types & helpers
 import { Care } from '@care/CareInterface'
 import * as careHelpers from '@care/careHelpers'
-//store
-import { useCareActions } from '@store/store'
-import { useCheckDoneCare, useUnCheckDoneCare } from '@care/careQueries'
+//store & queries
+import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
 //components
+import { useActiveCareDate, useActiveCareFeed } from '@store/store'
 import { AlertForm } from '@utils/ui'
 import { SquareButton } from './ButtonComponent'
 import ScrollPetList from './PetInfo/ScrollPetList'
 //styles
 import { Spacing, Forms } from '@styles/index'
 
-const SwipeableTask = ({ care, navigation, onPress }) => {
-  const { onCheckAllDone, onUncheckAllDone} = useCareActions()
-  const done = careHelpers.getTaskStatus(care)
+interface SwipeableTaskProps {
+  care: Care
+  taskIndex?: number
+  navigation: any
+  onPress: any
+}
 
-  const checkDoneMutation = useCheckDoneCare()
-  const uncheckDoneMutation = useUnCheckDoneCare()
+const SwipeableTask: FC<SwipeableTaskProps> = ({ care, navigation, onPress }) => {
+  const activeCareFeed = useActiveCareFeed()
+  const activeCareDate = useActiveCareDate()
+  // if the task current
+  const latestTracker = care.trackers[care.trackers.length - 1]
+  const latestTaskIndex = careHelpers.getCurrentTrackerIndex(care.frequency)
+
+  const checkAllDoneMutation = useCheckAllDoneCare()
+  const uncheckAllDoneMutation = useUncheckAllDoneCare()
+
+  const careId = care._id
+  const trackerId = activeCareFeed ? care.trackers[activeCareFeed]._id : latestTracker._id
+
+  const trackerIndex = activeCareFeed ?? care.trackers.length - 1
+  const index = activeCareDate ?? latestTaskIndex //taskIndex
+
+  const done = careHelpers.getTaskStatus(care, trackerIndex, index)
 
   const checkAllDone = async (care: Care) => {
-    const careId = care._id
-    const trackerId = care.trackers[care.trackers.length - 1]._id
-    const index = careHelpers.getCurrentTrackerIndex(care.frequency)
-
     done === care.times
-      ? checkDoneMutation.mutate({ careId, trackerId, index }, {
-        onSuccess: () => {
-          navigation.navigate('Care', { screen: 'Index'})
-        },
+      ? uncheckAllDoneMutation.mutate({ careId, trackerId, index }, {
+        // onSuccess: () => {
+        // },
         onError: (error) => {
           return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
         }
       })
-      : uncheckDoneMutation.mutate({ careId, trackerId, index }, {
-        onSuccess: () => {
-          navigation.navigate('Care', { screen: 'Index'})
-        },
+      : checkAllDoneMutation.mutate({ careId, trackerId, index }, {
+        // onSuccess: () => {
+        // },
         onError: (error) => {
           return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
         }

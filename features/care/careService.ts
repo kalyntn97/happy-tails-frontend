@@ -44,6 +44,3 @@ export const autoCreateTracker = async (careId: string): Promise<Care> => {
   return (await axios.patch<Care>(`${BASE_URL}/${careId}/auto`)).data
 }
 
-export const getCareTracker =async (careId: string, index: number): Promise<Tracker> => {
-  
-}
