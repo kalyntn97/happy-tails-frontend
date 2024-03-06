@@ -23,11 +23,15 @@ const createPetSlice: StateCreator<PetSlice> = (set) => ({
 
 const createCareSlice: StateCreator<CareSlice> = (set) => ({
   cares: [],
-  activeCareFeed: null,
   activeCareDate: null,
+  activeCareWeek: null,
+  activeCareMonth: null,
+  activeCareYear: null,
   careActions: {
-    setActiveCareFeed: (index: number ) => set((state) => ({ activeCareFeed: index })),
     setActiveCareDate: (index: number ) => set((state) => ({ activeCareDate: index })),
+    setActiveCareWeek: (index: number ) => set((state) => ({ activeCareWeek: index })),
+    setActiveCareMonth: (index: number ) => set((state) => ({ activeCareMonth: index })),
+    setActiveCareYear: (index: number ) => set((state) => ({ activeCareYear: index })),
     onAddCare: care => set(state => ({ cares: [...state.cares, care] })),
     onUpdateCare: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c) })),
     onDeleteCare: careId => set(state => ({ cares: state.cares.filter(c => c._id !== careId) })),
@@ -60,6 +64,9 @@ export const usePets = () => useBoundStore(state => state.pets)
 export const useCares = () => useBoundStore(state => state.cares)
 export const useActiveCareFeed = () => useBoundStore(state => state.activeCareFeed)
 export const useActiveCareDate = () => useBoundStore(state => state.activeCareDate)
+export const useActiveCareWeek = () => useBoundStore(state => state.activeCareWeek)
+export const useActiveCareMonth = () => useBoundStore(state => state.activeCareMonth)
+export const useActiveCareYear = () => useBoundStore(state => state.activeCareYear)
 export const useHealths = () => useBoundStore(state => state.healths)
 //actions
 export const usePetActions = () => useBoundStore(state => state.petActions)

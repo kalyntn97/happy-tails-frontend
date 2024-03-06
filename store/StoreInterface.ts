@@ -25,11 +25,15 @@ export interface PetSlice {
 
 export interface CareSlice {
   cares: Care[],
-  activeCareFeed: number | null,
   activeCareDate: number | null,
+  activeCareWeek: number | null,
+  activeCareMonth: number | null,
+  activeCareYear: number | null,
   careActions: {
-    setActiveCareFeed: (index: number ) => void
     setActiveCareDate: (index: number ) => void
+    setActiveCareWeek: (index: number ) => void
+    setActiveCareMonth: (index: number ) => void
+    setActiveCareYear: (index: number ) => void
     onAddCare: (care: Care) => void
     onUpdateCare: (care: Care) => void
     onDeleteCare: (careId: string) => void

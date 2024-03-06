@@ -6,7 +6,8 @@ import { Care, Tracker } from "@care/CareInterface"
 import * as careHelpers from "@care/careHelpers"
 //components
 import ScrollChart from "@components/Charts/ScrollChart"
-//utils
+//utils, store
+import { useActiveCareDate, useActiveCareFeed, useActiveCareWeek } from "@store/store"
 import { getCurrentDate } from "@utils/datetime"
 //styles
 import { Spacing, Typography, Colors } from '@styles/index'
@@ -15,23 +16,32 @@ import { AlertForm } from "@utils/ui"
 
 interface CurrentTrackerProps {
   care: Care
-  trackerIndex?: number
-  taskIndex?: number
 }
 
-const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care, trackerIndex, taskIndex }) => {
-  const [tracker, setTracker] = useState<Tracker>(
-    trackerIndex ? care.trackers[trackerIndex] : care.trackers[care.trackers.length - 1]
-  )
-  const [index, setIndex] = useState<number>(0)
-
+const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   const {frequency: freq, times, _id: careId } = care
+  const { date: currDate, monthName: currMonth, year: currYear } = getCurrentDate()
+
+  const activeCareFeed = useActiveCareFeed()
+  const activeCareDate = useActiveCareDate()
+  const activeCareWeek = useActiveCareWeek()
+
   const checkDoneMutation = useCheckDoneCare()
   const uncheckDoneMutation = useUncheckDoneCare()
 
-  // get month and year of current tracker from name
-  const { monthName: currMonth, year: currYear } = getCurrentDate()
-  
+  const latestTracker = care.trackers[care.trackers.length - 1]
+  const latestTaskIndex = careHelpers.getCurrentTrackerIndex(care.frequency)
+  const { isCurrent } = careHelpers.getTrackerInfo(latestTracker.name)
+
+  const trackerIndex = activeCareFeed ?? care.trackers.length - 1
+  const index = (
+    care.frequency === 'Daily' ? activeCareDate 
+    : care.frequency === 'Weekly' ? activeCareWeek 
+    : null
+  ) ?? latestTaskIndex //taskIndex
+
+  const [tracker, setTracker] = useState<Tracker>(care.trackers[trackerIndex])
+
   const checkDone = (careId: string, trackerId: string, index: number) => {
     checkDoneMutation.mutate({ careId, trackerId, index }, {
       onSuccess: (data) => {
@@ -54,23 +64,12 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care, trackerIndex, taskI
     })
   }
 
-  useEffect(() => {
-    // if no index provided, get latest tracker and update index
-    const currIndex = careHelpers.getCurrentTrackerIndex(freq)
-    if (!taskIndex) {
-      setIndex(currIndex)
-    } else {
-      const updatedIndex = currIndex + taskIndex
-      setIndex(updatedIndex)
-    }
-  }, [])
-
   return (
     <View style={styles.container}>
 
       <Text style={styles.title}>
-        {freq === 'Daily' ? 'Today' 
-          : freq === 'Weekly' ? `Week ${index + 1}` 
+        {freq === 'Daily' ? activeCareDate + 1 === currDate ? 'Today' : `${currMonth} ${activeCareDate + 1}`
+          : freq === 'Weekly' ? `Week ${activeCareWeek + 1}` 
           : freq === 'Monthly' ? currMonth
           : currYear
         }
@@ -94,7 +93,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care, trackerIndex, taskI
             <TouchableOpacity 
               style={styles.iconBtn}
               onPress={() => uncheckDone(careId, tracker._id, index)}
-              disabled={tracker.done[index] == 0}
+              disabled={tracker.done[index] === 0}
             >
               <Image source={require('@assets/icons/minus.png')} style={styles.icon } />
             </TouchableOpacity>

@@ -15,7 +15,7 @@ const FillChart = ({ tracker, frequency, times }) => {
   const chartHeight = windowHeight * 0.4
   const squareWidth = frequency === 'Weekly' ? chartWidth * 0.9 / 3.2 : chartWidth * 0.9 / 4
 
-  const { trackerMonthName, trackerYear, isCurrent } = careHelpers.getDateTimeFromTracker(tracker.name)
+  const { trackerMonthName, trackerYear, isCurrent } = careHelpers.getTrackerInfo(tracker.name)
   const { monthName: currMonth, week: currWeek } = getCurrentDate()
 
   const colorArray = getColorArray()
