@@ -5,9 +5,9 @@ import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from "@auth/AuthContext"
 //components
-import HomeFeed from "@home/HomeFeed"
+import HomeFeed from "@home/components/HomeFeed"
 import FloatingButton from "@components/FloatingButton/FloatingButton"
-import ScrollCalendar from "@components/ScrollCalendar"
+import ScrollCalendar from "@home/components/ScrollCalendar"
 import Loader from "@components/Loader"
 //utils & services
 import { getCurrentDate } from "@utils/datetime"

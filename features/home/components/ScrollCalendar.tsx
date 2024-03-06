@@ -5,10 +5,10 @@ import { Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View 
 import { getCurrentDate, getDayOfWeek, getDaysInMonth, getYears, months } from "@utils/datetime"
 import { useActiveCareDate, useActiveCareMonth, useActiveCareYear, useCareActions } from "@store/store"
 //components
-import ScrollSelector from "./ScrollSelector"
+import ScrollSelector from "../../../components/ScrollSelector"
 //styles
 import { Colors, Spacing, Typography } from "@styles/index"
-import { SubButton } from "./ButtonComponent"
+import { SubButton } from "../../../components/ButtonComponent"
 import { FlatList } from "react-native-gesture-handler"
 
 const ScrollCalendar = () => {

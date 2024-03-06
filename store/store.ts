@@ -62,7 +62,6 @@ export const useBoundStore= create<ProfileSlice & PetSlice & CareSlice & HealthS
 export const useProfile = () => useBoundStore(state => state.profile)
 export const usePets = () => useBoundStore(state => state.pets)
 export const useCares = () => useBoundStore(state => state.cares)
-export const useActiveCareFeed = () => useBoundStore(state => state.activeCareFeed)
 export const useActiveCareDate = () => useBoundStore(state => state.activeCareDate)
 export const useActiveCareWeek = () => useBoundStore(state => state.activeCareWeek)
 export const useActiveCareMonth = () => useBoundStore(state => state.activeCareMonth)

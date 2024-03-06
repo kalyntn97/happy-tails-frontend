@@ -7,8 +7,8 @@ import * as careHelpers from "@care/careHelpers"
 //components
 import ScrollChart from "@components/Charts/ScrollChart"
 //utils, store
-import { useActiveCareDate, useActiveCareFeed, useActiveCareWeek } from "@store/store"
-import { getCurrentDate } from "@utils/datetime"
+import { useActiveCareDate, useActiveCareMonth, useActiveCareWeek, useActiveCareYear } from "@store/store"
+import { getCurrentDate, getMonth } from "@utils/datetime"
 //styles
 import { Spacing, Typography, Colors } from '@styles/index'
 import { useCheckDoneCare,  useUncheckDoneCare } from "@care/careQueries"
@@ -22,25 +22,32 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   const {frequency: freq, times, _id: careId } = care
   const { date: currDate, monthName: currMonth, year: currYear } = getCurrentDate()
 
-  const activeCareFeed = useActiveCareFeed()
   const activeCareDate = useActiveCareDate()
   const activeCareWeek = useActiveCareWeek()
+  const activeCareMonth = useActiveCareMonth()
+  const activeCareMonthName = getMonth(activeCareMonth + 1)
+  const activeCareYear = useActiveCareYear()
 
   const checkDoneMutation = useCheckDoneCare()
   const uncheckDoneMutation = useUncheckDoneCare()
 
-  const latestTracker = care.trackers[care.trackers.length - 1]
-  const latestTaskIndex = careHelpers.getCurrentTrackerIndex(care.frequency)
-  const { isCurrent } = careHelpers.getTrackerInfo(latestTracker.name)
+  //get the active trackerIndex
+  const testIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeCareMonth, activeCareYear)
+ //set trackerIndex or default to latest tracker
+  const trackerIndex = testIndex !== -1 ? testIndex : (care.trackers.length - 1)
+  //set displaying tracker
+  const [tracker, setTracker] = useState<Tracker>(care.trackers[trackerIndex])
 
-  const trackerIndex = activeCareFeed ?? care.trackers.length - 1
+  //get the latest taskIndex
+  const latestTaskIndex = careHelpers.getCurrentTrackerIndex(care.frequency)
+  //set task index
   const index = (
     care.frequency === 'Daily' ? activeCareDate 
     : care.frequency === 'Weekly' ? activeCareWeek 
+    : care.frequency === 'Monthly' ? activeCareMonth 
     : null
-  ) ?? latestTaskIndex //taskIndex
-
-  const [tracker, setTracker] = useState<Tracker>(care.trackers[trackerIndex])
+  ) ?? latestTaskIndex //default
+  console.log('trackerIdx', trackerIndex, 'index', index)
 
   const checkDone = (careId: string, trackerId: string, index: number) => {
     checkDoneMutation.mutate({ careId, trackerId, index }, {
@@ -68,10 +75,10 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
     <View style={styles.container}>
 
       <Text style={styles.title}>
-        {freq === 'Daily' ? activeCareDate + 1 === currDate ? 'Today' : `${currMonth} ${activeCareDate + 1}`
+        {freq === 'Daily' ? activeCareDate + 1 === currDate ? 'Today' : `${activeCareMonthName} ${activeCareDate + 1}`
           : freq === 'Weekly' ? `Week ${activeCareWeek + 1}` 
-          : freq === 'Monthly' ? currMonth
-          : currYear
+          : freq === 'Monthly' ? activeCareMonthName === currMonth ? 'This Month' : activeCareMonthName
+          : activeCareYear === currYear ? activeCareYear : currYear
         }
       </Text>
       <Text style={[

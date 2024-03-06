@@ -6,16 +6,16 @@ import { useQueries } from "@tanstack/react-query"
 import { Care } from "@care/CareInterface"
 import * as careHelpers from '@care/careHelpers'
 //store & queries
-import { useActiveCareDate, useActiveCareFeed, useActiveCareMonth, useActiveCareWeek, useCares, useSetActions } from "@store/store"
+import { useActiveCareDate, useActiveCareMonth, useActiveCareWeek, useCares, useSetActions } from "@store/store"
 //components
 import CareCard from "@care/components/CareCard"
 import SwipeableTask from "@components/SwipeableTask"
-import { CloseButton } from "../../components/ButtonComponent"
+import { CloseButton } from "../../../components/ButtonComponent"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
 import ScrollSelector from "@components/ScrollSelector"
 //utils & store
-import { useUserQueries } from "./homeQueries"
+import { useUserQueries } from "../homeQueries"
 import { getCurrentDate, getMonth, getYears, months } from "@utils/datetime"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
@@ -37,7 +37,6 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const isError = useUserQueries().some(query => query.isError)
   
   const { date: currDate, week: currWeek, monthName: currMonth, month: currMonthIdx } = getCurrentDate()
-  const activeCareFeed = useActiveCareFeed()
   const activeCareDate = useActiveCareDate()
   const activeCareWeek = useActiveCareWeek()
   const activeCareMonth = useActiveCareMonth()

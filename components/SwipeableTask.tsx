@@ -8,7 +8,7 @@ import * as careHelpers from '@care/careHelpers'
 //store & queries
 import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
 //components
-import { useActiveCareDate, useActiveCareFeed, useActiveCareMonth, useActiveCareWeek, useActiveCareYear, useCareActions, useSetActions } from '@store/store'
+import { useActiveCareDate, useActiveCareMonth, useActiveCareWeek, useActiveCareYear } from '@store/store'
 import { AlertForm } from '@utils/ui'
 import { SquareButton } from './ButtonComponent'
 import ScrollPetList from './PetInfo/ScrollPetList'
@@ -32,11 +32,11 @@ const SwipeableTask: FC<SwipeableTaskProps> = ({ care, navigation, onPress }) =>
   
   //get the active trackerIndex
   const testIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeCareMonth, activeCareYear)
-  //set the trackerIndex
+  //set trackerIndex
   const trackerIndex = testIndex !== -1 ? testIndex : (care.trackers.length - 1)
   //get the latest taskIndex
   const latestTaskIndex = careHelpers.getCurrentTrackerIndex(care.frequency)
-  //get task index
+  //set task index
   const index = (
     care.frequency === 'Daily' ? activeCareDate 
     : care.frequency === 'Weekly' ? activeCareWeek 
