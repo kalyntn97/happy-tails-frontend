@@ -26,7 +26,6 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation, route }) => {
 
   const logout = async () => {
     const { status, error } = await onLogout!()
-    console.log(status)
     return Alert.alert(
       'Alert',
       status ?? error,

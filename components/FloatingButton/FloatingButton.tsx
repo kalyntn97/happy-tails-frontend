@@ -118,7 +118,7 @@ const FloatingButton = ({ navigation }) => {
         </TouchableWithoutFeedback> 
       }
       <PanGestureHandler onHandlerStateChange={_onPanHandlerStateChange}>
-        <Animated.View style={[styles.buttonContainer, { bottom: height * 0.17 }, animatedRootStyles]}>
+        <Animated.View style={[styles.buttonContainer, { bottom: height * 0.08 }, animatedRootStyles]}>
           
           {opened &&
             <Animated.View style={[styles.children, animatedChildrenStyles]}>

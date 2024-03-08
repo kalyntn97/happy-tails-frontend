@@ -24,6 +24,7 @@ interface CareDetailsProps {
 const CareDetailsScreen = ({ navigation, route }) => {
 
   const { care: careCard } = route.params
+  const trackers = careCard.trackers.reverse()
   
   const deleteCareMutation = useDeleteCare()
 
@@ -89,7 +90,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
           </View>
-          {careCard.trackers.map((tracker, idx) =>
+          {trackers.map((tracker, idx) =>
             <React.Fragment key={`tracker-${idx}`}>
               {careCard.frequency === 'Daily' 
               ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={careCard.times} />

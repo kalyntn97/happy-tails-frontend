@@ -1,89 +1,104 @@
 //npm
 import { FC, useRef, useState } from "react"
-import { Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList } from "react-native"
 //utils & store
-import { getCurrentDate, getDayOfWeek, getDaysInMonth, getYears, months } from "@utils/datetime"
-import { useActiveCareDate, useActiveCareMonth, useActiveCareYear, useCareActions } from "@store/store"
+import { getCurrentDate, getDayOfWeek, getDaysInMonth, getMonth, getWeekIndex, getYears, months } from "@utils/datetime"
+import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
 //components
 import ScrollSelector from "../../../components/ScrollSelector"
+import { SubButton } from "../../../components/ButtonComponent"
 //styles
 import { Colors, Spacing, Typography } from "@styles/index"
-import { SubButton } from "../../../components/ButtonComponent"
-import { FlatList } from "react-native-gesture-handler"
 
 const ScrollCalendar = () => {
-  const { date: currDate, month: currMonth, year: currYear, week: currWeek, daysInMonth: currMonthDays } = getCurrentDate()
-  const [selectedDate, setSelectedDate] = useState<number>(currDate - 1)
+  const { date: currDate, month: currMonth, year: currYear, week: currWeek, daysInMonth: currMonthDays, monthName: currMonthName } = getCurrentDate()
+  const years = getYears()
+
   const [selectedMonth, setSelectedMonth] = useState<number>(currMonth - 1)
   const [selectedYear, setSelectedYear] = useState<number>(currYear)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const scrollViewRef = useRef(null)
 
-  const years = getYears()
-  const activeCareDate = useActiveCareDate()
-  const activeCareMonth = useActiveCareMonth()
-  const activeCareYear = useActiveCareYear()
-  const { setActiveCareDate, setActiveCareWeek, setActiveCareMonth, setActiveCareYear } = useCareActions()
-
-  const currentDateIsActive = activeCareDate === null || activeCareDate === currDate - 1
-  const currMonthIsActive = activeCareMonth === null || activeCareMonth === currMonth - 1
-  const currYearIsActive = activeCareYear === null || activeCareYear === currYear
+  const {date: activeDate, month: activeMonth, year: activeYear } = useActiveDate()
+  const { date: currDateIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
+  const { setActiveDate } = useSetActions()
+  const activeMonthName = getMonth(activeMonth + 1)
   
-  console.log(
-    'currMonth active',currMonthIsActive, 
-    'currYear active', currYearIsActive, 
-    'activeMonth', activeCareMonth, //0-index
-    'activeYear', activeCareYear
-  )
-
+  const scrollViewRef = useRef(null)
   const month = []
   const numDays = 
     currMonthIsActive ? currMonthDays 
-    : currYearIsActive ? getDaysInMonth(activeCareMonth, activeCareYear) 
-    : getDaysInMonth(activeCareMonth, currYear)
+    : currYearIsActive ? getDaysInMonth(activeMonth, currYear) 
+    : getDaysInMonth(activeMonth, activeYear)
   
   for (let i = 0; i < numDays; i++) {
     const day = getDayOfWeek(new Date(
-      activeCareYear ?? currYear, 
-      activeCareMonth ?? currMonth - 1,  //month 0-11
+      activeYear ?? currYear, 
+      activeMonth ?? currMonth - 1,  //month 0-11
       i + 1 //date 1-31
     ))
     
     month.push(
-      <TouchableOpacity key={i} style={[styles.dateContainer, i + 1 === currDate && styles.currCon, selectedDate === i && styles.activeCon]} onPress={() => { 
-        setSelectedDate(i)
-        setActiveCareDate(i) 
-        setActiveCareWeek(Math.floor(i / 7))
+      <TouchableOpacity key={i} 
+      style={[
+        styles.dateContainer, 
+        i + 1 === currDate && styles.currCon, 
+        activeDate === i && styles.activeCon
+      ]} 
+      onPress={() => { 
+        setActiveDate({ 
+          date: i, 
+          week: Math.floor((i + 1)/ 7), 
+          month: activeMonth, 
+          year: activeYear 
+        })
       }}
       >
-        <Text style={[styles.date, i + 1 === currDate && styles.currDay, selectedDate === i && styles.activeDay]}>{i + 1}</Text>
-        <Text style={[styles.day, i + 1 === currDate && styles.currDay, selectedDate === i && styles.activeDay]}>{day.slice(0, 3)}</Text>
+        <Text style={[
+          styles.date, 
+          i + 1 === currDate && styles.currDay, 
+          activeDate === i && styles.activeDay
+          ]}>
+            {i + 1}
+        </Text>
+        <Text style={[
+          styles.day, 
+          i + 1 === currDate && styles.currDay, 
+          activeDate === i && styles.activeDay
+        ]}>
+            {day.slice(0, 3)}
+        </Text>
       </TouchableOpacity>
     )
   }
 
   const scrollToPos = (index: number) => {
     if (scrollViewRef.current) {
-      console.log(index)
       scrollViewRef.current.scrollToIndex({ index: index, viewPosition: 0 })
     }
   }
 
   return (
     <View style={styles.container}>
-      {(!currentDateIsActive || !currMonthIsActive) && 
-        <TouchableOpacity style={[styles.headerBtnCon, styles.left]} onPress={() => {
-          setSelectedDate(currDate - 1)
-          setActiveCareDate(currDate - 1)
-          setActiveCareWeek(currWeek)
-          setActiveCareMonth(currMonth - 1)
-          setActiveCareYear(currYear)
+      <View style={[styles.headerBtnCon, styles.middle]}>
+        <Text style={styles.headerBtnText}>{activeMonthName}</Text>
+      </View>
+      
+      <TouchableOpacity style={[styles.headerBtnCon, styles.left]} 
+        disabled={currDateIsActive && currMonthIsActive && currYearIsActive}
+        onPress={() => {
+          setActiveDate({ 
+            date: currDate - 1, 
+            week: currWeek - 1, 
+            month: currMonth - 1, 
+            year: currYear
+          })
           scrollToPos(currDate - 1) 
-        }}>
-          <Text style={styles.headerBtnText}>Today</Text>
-          <Text style={styles.headerBtnText}>▶︎</Text>
-        </TouchableOpacity>
-      }
+        }
+      }>
+        <Text style={styles.headerBtnText}>Today</Text>
+        <Text style={styles.headerBtnText}>▶︎</Text>
+      </TouchableOpacity>
+      
       <TouchableOpacity style={[styles.headerBtnCon, styles.right]}
         onPress={() => setModalVisible(true)}
       >
@@ -121,20 +136,24 @@ const ScrollCalendar = () => {
               
               <SubButton title='Confirm' top={0} bottom={0}
                 onPress={() => {
-                  setSelectedDate(selectedMonth === currMonth - 1 ? currDate - 1 : 0)
-                  setActiveCareDate(selectedMonth === currMonth - 1 ? currDate - 1 : 0)
-                  setActiveCareMonth(selectedMonth)
-                  setActiveCareYear(selectedYear)
+                  setActiveDate({ 
+                    date: selectedMonth === currMonth - 1 ? currDate - 1 : 0, 
+                    week: selectedMonth === currMonth - 1 ? getWeekIndex(currDate) : 0, 
+                    month: selectedMonth, 
+                    year: selectedYear 
+                  })
                   scrollToPos(selectedMonth === currMonth - 1 ? currDate - 1 : 0)
                   setModalVisible(false)
                 }}
               />
               <SubButton title='Cancel' top={0} bottom={0}
                 onPress={() => {
-                  setSelectedDate(currDate - 1)
-                  setActiveCareDate(currDate - 1)
-                  setActiveCareMonth(currMonth - 1)
-                  setActiveCareYear(currYear)
+                  setActiveDate({
+                    date: currDate - 1, 
+                    week: getWeekIndex(currDate), 
+                    month: currMonth - 1, 
+                    year: currYear 
+                  })
                   scrollToPos(currDate - 1)
                   setModalVisible(false)
                 }}
@@ -209,6 +228,11 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 15,
     right: -20,
     borderBottomLeftRadius: 15,
+  },
+  middle: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    borderRadius: 15,
   },
   modalCon: {
     ...Spacing.fullWH,

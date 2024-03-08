@@ -1,13 +1,13 @@
 //npm
 import { useState, useEffect } from "react"
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 //types & helpers
 import { Care, Tracker } from "@care/CareInterface"
 import * as careHelpers from "@care/careHelpers"
 //components
 import ScrollChart from "@components/Charts/ScrollChart"
 //utils, store
-import { useActiveCareDate, useActiveCareMonth, useActiveCareWeek, useActiveCareYear } from "@store/store"
+import { useActiveCareDate, useActiveCareMonth, useActiveCareWeek, useActiveCareYear, useActiveDate } from "@store/store"
 import { getCurrentDate, getMonth } from "@utils/datetime"
 //styles
 import { Spacing, Typography, Colors } from '@styles/index'
@@ -20,34 +20,19 @@ interface CurrentTrackerProps {
 
 const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   const {frequency: freq, times, _id: careId } = care
-  const { date: currDate, monthName: currMonth, year: currYear } = getCurrentDate()
-
-  const activeCareDate = useActiveCareDate()
-  const activeCareWeek = useActiveCareWeek()
-  const activeCareMonth = useActiveCareMonth()
-  const activeCareMonthName = getMonth(activeCareMonth + 1)
-  const activeCareYear = useActiveCareYear()
+  
+  const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
+  const activeMonthName = getMonth(activeMonth + 1)
 
   const checkDoneMutation = useCheckDoneCare()
   const uncheckDoneMutation = useUncheckDoneCare()
 
-  //get the active trackerIndex
-  const testIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeCareMonth, activeCareYear)
- //set trackerIndex or default to latest tracker
-  const trackerIndex = testIndex !== -1 ? testIndex : (care.trackers.length - 1)
+  //get the active trackerIndex or default to latest tracker
+  const trackerIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeMonth, activeYear)
   //set displaying tracker
   const [tracker, setTracker] = useState<Tracker>(care.trackers[trackerIndex])
-
-  //get the latest taskIndex
-  const latestTaskIndex = careHelpers.getCurrentTrackerIndex(care.frequency)
   //set task index
-  const index = (
-    care.frequency === 'Daily' ? activeCareDate 
-    : care.frequency === 'Weekly' ? activeCareWeek 
-    : care.frequency === 'Monthly' ? activeCareMonth 
-    : null
-  ) ?? latestTaskIndex //default
-  console.log('trackerIdx', trackerIndex, 'index', index)
+  const index = careHelpers.getTaskIndex(freq, activeDate, activeWeek, activeMonth, activeYear)
 
   const checkDone = (careId: string, trackerId: string, index: number) => {
     checkDoneMutation.mutate({ careId, trackerId, index }, {
@@ -75,12 +60,9 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
     <View style={styles.container}>
 
       <Text style={styles.title}>
-        {freq === 'Daily' ? activeCareDate + 1 === currDate ? 'Today' : `${activeCareMonthName} ${activeCareDate + 1}`
-          : freq === 'Weekly' ? `Week ${activeCareWeek + 1}` 
-          : freq === 'Monthly' ? activeCareMonthName === currMonth ? 'This Month' : activeCareMonthName
-          : activeCareYear === currYear ? activeCareYear : currYear
-        }
+        { careHelpers.getTrackerDisplayName(freq, activeDate, activeWeek, activeMonthName, activeYear) }
       </Text>
+
       <Text style={[
         styles.status, 
         { color: times === tracker.done[index] ? Colors.green : Colors.red }
@@ -92,9 +74,11 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
       </Text>
       {times === 1 && freq !== 'Yearly'
         ? <>
-          <View style={styles.ScrollChart}>
-            <ScrollChart careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone} frequency={freq} />
-          </View>
+            <View style={styles.ScrollChart}>
+              <Pressable>
+                <ScrollChart careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone} frequency={freq} />
+              </Pressable>
+            </View>
         </> : <>
           <View style={styles.countBox}>
             <TouchableOpacity 

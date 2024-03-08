@@ -47,11 +47,24 @@ export const getCurrentTrackerIndex = (frequency: string): number => {
 
 export const getTrackerIndex = (trackers: Tracker[], frequency: string, activeMonth: number, activeYear: number): number => {
   const monthlyTrackerName = `${activeMonth + 1}-${activeYear}`
+  let activeIndex: number
   if (frequency === 'Daily' || frequency === 'Weekly') {
-    return trackers.findIndex(tracker => tracker.name === monthlyTrackerName)
+    activeIndex = trackers.findIndex(tracker => tracker.name === monthlyTrackerName)
   } else {
-    return trackers.findIndex(tracker => tracker.name === activeYear.toString())
+    activeIndex = trackers.findIndex(tracker => tracker.name === activeYear.toString())
   }
+  return activeIndex !== -1 ? activeIndex : (trackers.length - 1)
+}
+
+export const getTaskIndex = (frequency: string, activeDate: number | null, activeWeek: number | null, activeMonth: number | null, activeYear: number | null): number => {
+  const latestIndex = getCurrentTrackerIndex(frequency)
+  const mapByFrequency = {
+    Daily: activeDate,
+    Weekly: activeWeek,
+    Monthly: activeMonth,
+    Yearly: activeYear,
+  }
+  return mapByFrequency[frequency] ?? latestIndex
 }
 
 export const getTaskStatus = (task: Care, trackerIndex: number, taskIndex: number) => {
@@ -65,6 +78,17 @@ export const getTaskStatus = (task: Care, trackerIndex: number, taskIndex: numbe
     case 'Yearly':
       return task.trackers[trackerIndex].done[0]
   }
+}
+
+export const getTrackerDisplayName = (frequency: string, activeDate: number | null, activeWeek: number | null, activeMonthName: string | null, activeYear: number | null): string => {
+  const { date, week, monthName, year } = getCurrentDate()
+  const mapByFrequency = {
+    Daily: activeDate + 1 === date ? 'Today' : `${activeMonthName} ${activeDate + 1}`,
+    Weekly: activeWeek + 1 === week ? 'This week' : `Week ${activeWeek + 1}`,
+    Monthly: activeMonthName === monthName ? 'This month' : activeMonthName,
+    Yearly: activeYear === year ? activeYear : year
+  }
+  return mapByFrequency[frequency]
 }
 
 export const getTrackerInfo = (trackerName: string) => {

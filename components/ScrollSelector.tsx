@@ -2,8 +2,6 @@
 import { useEffect, useRef, useState } from "react"
 import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated"
-//data
-import { months } from "@utils/datetime"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
 

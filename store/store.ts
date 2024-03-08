@@ -1,10 +1,24 @@
 import { create, StateCreator } from 'zustand'
 import { CareSlice, HealthSlice, PetSlice, ProfileSlice } from './StoreInterface'
+import { getCurrentDate } from '@utils/datetime'
 
-const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & HealthSlice, [], [], ProfileSlice> = (set) => ({
+const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & HealthSlice, [], [], ProfileSlice> = (set, get) => ({
   profile: {},
+  activeDate: { 
+    date: getCurrentDate().date - 1, 
+    week: getCurrentDate().week - 1, 
+    month: getCurrentDate().month - 1, 
+    year: getCurrentDate().year 
+  },
+  currentIsActive: {
+    get date() { return get().activeDate.date + 1 === getCurrentDate().date },
+    get week() { return get().activeDate.week + 1 === getCurrentDate().week },
+    get month() { return get().activeDate.month + 1 === getCurrentDate().month },
+    get year() { return get().activeDate.year === getCurrentDate().year },
+  },
   setActions: {
     setProfile: profile => set({ profile: profile }),
+    setActiveDate: dateObj => set({ activeDate: dateObj }),
     setPets: pets => set({ pets: pets }),
     setCares: cares => set({ cares: cares}),
     setHealths: healths => set({ healths: healths }),
@@ -23,15 +37,7 @@ const createPetSlice: StateCreator<PetSlice> = (set) => ({
 
 const createCareSlice: StateCreator<CareSlice> = (set) => ({
   cares: [],
-  activeCareDate: null,
-  activeCareWeek: null,
-  activeCareMonth: null,
-  activeCareYear: null,
   careActions: {
-    setActiveCareDate: (index: number ) => set((state) => ({ activeCareDate: index })),
-    setActiveCareWeek: (index: number ) => set((state) => ({ activeCareWeek: index })),
-    setActiveCareMonth: (index: number ) => set((state) => ({ activeCareMonth: index })),
-    setActiveCareYear: (index: number ) => set((state) => ({ activeCareYear: index })),
     onAddCare: care => set(state => ({ cares: [...state.cares, care] })),
     onUpdateCare: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c) })),
     onDeleteCare: careId => set(state => ({ cares: state.cares.filter(c => c._id !== careId) })),
@@ -60,12 +66,10 @@ export const useBoundStore= create<ProfileSlice & PetSlice & CareSlice & HealthS
 
 //states
 export const useProfile = () => useBoundStore(state => state.profile)
+export const useActiveDate = () => useBoundStore(state => state.activeDate)
+export const useCurrentIsActive = () => useBoundStore(state => state.currentIsActive)
 export const usePets = () => useBoundStore(state => state.pets)
 export const useCares = () => useBoundStore(state => state.cares)
-export const useActiveCareDate = () => useBoundStore(state => state.activeCareDate)
-export const useActiveCareWeek = () => useBoundStore(state => state.activeCareWeek)
-export const useActiveCareMonth = () => useBoundStore(state => state.activeCareMonth)
-export const useActiveCareYear = () => useBoundStore(state => state.activeCareYear)
 export const useHealths = () => useBoundStore(state => state.healths)
 //actions
 export const usePetActions = () => useBoundStore(state => state.petActions)

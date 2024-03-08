@@ -8,7 +8,7 @@ import * as careHelpers from '@care/careHelpers'
 //store & queries
 import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
 //components
-import { useActiveCareDate, useActiveCareMonth, useActiveCareWeek, useActiveCareYear } from '@store/store'
+import { useActiveCareDate, useActiveCareMonth, useActiveCareWeek, useActiveCareYear, useActiveDate } from '@store/store'
 import { AlertForm } from '@utils/ui'
 import { SquareButton } from './ButtonComponent'
 import ScrollPetList from './PetInfo/ScrollPetList'
@@ -23,30 +23,16 @@ interface SwipeableTaskProps {
 }
 
 const SwipeableTask: FC<SwipeableTaskProps> = ({ care, navigation, onPress }) => {
-  const activeCareDate = useActiveCareDate()
-  const activeCareWeek = useActiveCareWeek()
-  const activeCareMonth = useActiveCareMonth()
-  const activeCareYear = useActiveCareYear()
+  const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const checkAllDoneMutation = useCheckAllDoneCare()
   const uncheckAllDoneMutation = useUncheckAllDoneCare()
   
-  //get the active trackerIndex
-  const testIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeCareMonth, activeCareYear)
-  //set trackerIndex
-  const trackerIndex = testIndex !== -1 ? testIndex : (care.trackers.length - 1)
-  //get the latest taskIndex
-  const latestTaskIndex = careHelpers.getCurrentTrackerIndex(care.frequency)
+  //get the active trackerIndex or default to latest tracker
+  const trackerIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeMonth, activeYear)
   //set task index
-  const index = (
-    care.frequency === 'Daily' ? activeCareDate 
-    : care.frequency === 'Weekly' ? activeCareWeek 
-    : care.frequency === 'Monthly' ? activeCareMonth 
-    : null
-  ) ?? latestTaskIndex //default
-  console.log('trackerIdx', trackerIndex, 'index', index)
-
+  const index = careHelpers.getTaskIndex(care.frequency, activeDate, activeWeek, activeMonth, activeYear)
+  //get task status
   const done = careHelpers.getTaskStatus(care, trackerIndex, index)
-  console.log('done', done)
 
   const careId = care._id
   const trackerId = care.trackers[trackerIndex]._id

@@ -41,3 +41,5 @@ export const getDaysInMonth = (month: number, year: number) => {
   const lastDayOfMonth = new Date(year, month + 1, 0) //month 0-index
   return lastDayOfMonth.getDate()
 }
+
+export const getWeekIndex = (date: number) => Math.round(date / 7)

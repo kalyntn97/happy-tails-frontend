@@ -34,8 +34,10 @@ const HomeScreen: React.FC = ({ navigation }) => {
       {authState.authenticated ? (
         <>
           <View style={[styles.screen, { minHeight: centerHeight }]}>
-            <Image source={require('@assets/images/happy-tails-banner.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.2 }]} />
-            <ScrollCalendar />
+            <View style={{ height: windowHeight * 0.22, justifyContent: 'flex-end' }}>
+              <ScrollCalendar />
+            </View>
+            {/* <Image source={require('@assets/images/happy-tails-banner.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.2 }]} /> */}
             <View style={[styles.body, { height: windowHeight * 0.7 }]}>
               <HomeFeed navigation={navigation} />
             </View>

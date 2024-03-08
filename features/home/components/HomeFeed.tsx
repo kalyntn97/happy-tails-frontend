@@ -6,7 +6,7 @@ import { useQueries } from "@tanstack/react-query"
 import { Care } from "@care/CareInterface"
 import * as careHelpers from '@care/careHelpers'
 //store & queries
-import { useActiveCareDate, useActiveCareMonth, useActiveCareWeek, useCares, useSetActions } from "@store/store"
+import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
 //components
 import CareCard from "@care/components/CareCard"
 import SwipeableTask from "@components/SwipeableTask"
@@ -36,17 +36,13 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const isSuccess = useUserQueries().every(query => query.isSuccess)
   const isError = useUserQueries().some(query => query.isError)
   
-  const { date: currDate, week: currWeek, monthName: currMonth, month: currMonthIdx } = getCurrentDate()
-  const activeCareDate = useActiveCareDate()
-  const activeCareWeek = useActiveCareWeek()
-  const activeCareMonth = useActiveCareMonth()
-  const activeCareMonthName = activeCareMonth !== null ? getMonth(activeCareMonth + 1) : null
-  
-  const currentDateIsActive = activeCareDate === null || activeCareDate === currDate - 1
-  const currentWeekIsActive = activeCareWeek === null || activeCareWeek === currWeek - 1
-  const currMonthIsActive = activeCareMonth === null || activeCareMonth === currMonthIdx - 1
+  const { monthName: currMonth } = getCurrentDate()
 
-  console.log('activeCareMonthName', activeCareMonthName, 'activeCareMonth', activeCareMonth, 'currMonth active', currMonthIsActive)
+  const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
+
+  const activeMonthName = getMonth(activeMonth + 1)
+  
+  const { date: currDateIsActive, week: currWeekIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
 
   const handleClickTask = (care: Care) => {
     setClickedCare(care)
@@ -61,7 +57,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     if (isSuccess) {
       setPets(pets.data)
     }
-  }, [isSuccess])
+  }, [pets.data, cares.data])
 
   return (  
     <View style={styles.container}>
@@ -71,35 +67,35 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         <>        
           <View style={styles.iconMenuContainer}>
             <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
-              <Text style={styles.taskCount}>{cares.data['Daily'].length ?? 0}</Text>
+              <Text style={styles.taskCount}>{cares.data['Daily']?.length ?? 0}</Text>
               <Image source={require('@assets/icons/day.png')} style={styles.icon } />
               <Text style={[styles.iconText, selected === 'day' && styles.selected]}>{ 
-                currentDateIsActive && currMonthIsActive ? 'Today' 
-                : currMonthIsActive ? `${currMonth} ${activeCareDate + 1}`
-                : `${activeCareMonthName} ${activeCareDate + 1}`
+                currDateIsActive && currMonthIsActive ? 'Today' 
+                : currMonthIsActive ? `${currMonth} ${activeDate + 1}`
+                : `${activeMonthName} ${activeDate + 1}`
               }</Text>
           
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('week')}>
-              <Text style={styles.taskCount}>{cares.data['Weekly'].length ?? 0}</Text>
+              <Text style={styles.taskCount}>{cares.data['Weekly']?.length ?? 0}</Text>
               <Image source={require('@assets/icons/week.png')} style={styles.icon } />
               <Text style={[styles.iconText, selected === 'week' && styles.selected]}>{ 
-                currentWeekIsActive && currMonthIsActive ? 'This Week' 
-                : `Week ${activeCareWeek + 1}`
+                currWeekIsActive && currMonthIsActive ? 'This Week' 
+                : `Week ${activeWeek + 1}`
               }</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('month')}>
-              <Text style={styles.taskCount}>{cares.data['Monthly'].length ?? 0}</Text>
+              <Text style={styles.taskCount}>{cares.data['Monthly']?.length ?? 0}</Text>
               <Image source={require('@assets/icons/month.png')} style={styles.icon } />
-              <Text style={[styles.iconText, selected === 'month' && styles.selected]}>{currMonthIsActive ? 'This Month' : activeCareMonthName}</Text>
+              <Text style={[styles.iconText, selected === 'month' && styles.selected]}>{currMonthIsActive ? 'This Month' : activeMonthName}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('year')}>
-              <Text style={styles.taskCount}>{cares.data['Yearly'].length ?? 0}</Text>
+              <Text style={styles.taskCount}>{cares.data['Yearly']?.length ?? 0}</Text>
               <Image source={require('@assets/icons/year.png')} style={styles.icon } />
-              <Text style={[styles.iconText, selected === 'year' && styles.selected]}>This Year</Text>
+              <Text style={[styles.iconText, selected === 'year' && styles.selected]}>{currYearIsActive ? 'This Year' : activeYear}</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.taskListContainer}>

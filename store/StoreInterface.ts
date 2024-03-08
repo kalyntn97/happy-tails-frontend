@@ -3,10 +3,25 @@ import { Pet, PetInfo } from '@pet/PetInterface'
 import { Care } from '@care/CareInterface'
 import { Health } from '@health/HealthInterface'
 
+interface DateObject {
+  date: number | null, 
+  week: number | null, 
+  month: number | null, 
+  year: number | null
+}
+
 export interface ProfileSlice {
   profile: Profile | {}
+  activeDate: DateObject
+  currentIsActive: { 
+    date: boolean, 
+    week: boolean, 
+    month: boolean, 
+    year: boolean, 
+  }
   setActions : {
     setProfile: (profile: Profile) => void
+    setActiveDate: (dateObj: { date: number, week: number, month: number, year: number }) => void
     setPets: (pets: Pet[]) => void
     setCares: (cares: Care[]) => void
     setHealths: (healths: Health[]) => void
@@ -25,15 +40,7 @@ export interface PetSlice {
 
 export interface CareSlice {
   cares: Care[],
-  activeCareDate: number | null,
-  activeCareWeek: number | null,
-  activeCareMonth: number | null,
-  activeCareYear: number | null,
   careActions: {
-    setActiveCareDate: (index: number ) => void
-    setActiveCareWeek: (index: number ) => void
-    setActiveCareMonth: (index: number ) => void
-    setActiveCareYear: (index: number ) => void
     onAddCare: (care: Care) => void
     onUpdateCare: (care: Care) => void
     onDeleteCare: (careId: string) => void
