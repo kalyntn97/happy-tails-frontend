@@ -13,7 +13,7 @@ const NewCareScreen: React.FC = ({ navigation }) => {
   const isFocused = useIsFocused()
   const addCareMutation = useAddCare()
 
-  const handleSubmit = (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date, frequency: string, times: number) => {
+  const handleSubmit = (name: string, pets: string[], repeat: boolean, ending: boolean, date: string, endDate: string | null, frequency: string | null, times: number | null) => {
     addCareMutation.mutate({ name, pets, repeat, ending, date, endDate, frequency, times }, {
       onSuccess: () => {
         navigation.navigate('Index')

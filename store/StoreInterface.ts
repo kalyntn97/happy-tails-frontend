@@ -1,5 +1,5 @@
 import { Profile } from '@profile/ProfileInterface'
-import { Pet, PetInfo } from '@pet/PetInterface'
+import { Pet } from '@pet/PetInterface'
 import { Care } from '@care/CareInterface'
 import { Health } from '@health/HealthInterface'
 

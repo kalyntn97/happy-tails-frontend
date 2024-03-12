@@ -25,8 +25,7 @@ interface CareCardProps {
 const CareCard = ({ care, navigation, onNavigate }) => {
   const iconSource = careHelpers.getIconSource(care.name)
   
-  const autoTrackerMutation = useAutoCreateTracker()
-  
+  const autoTrackerMutation = useAutoCreateTracker() 
   if (care.repeat) {
     const latestTracker = care.trackers[care.trackers.length - 1]
     const { isCurrent } = careHelpers.getTrackerInfo(latestTracker.name)

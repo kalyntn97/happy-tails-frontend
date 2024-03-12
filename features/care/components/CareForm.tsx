@@ -27,14 +27,14 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   const pets = usePetIds()
   const height = useWindowDimensions().height
 
+  const [name, setName] = useState<string>(initialValues?.name ?? '')
+  const [petData, setPetData] = useState<string[]>(initialPets ?? [])
   const [repeat, setRepeat] = useState<boolean>(initialValues?.repeat ?? false)
   const [ending, setEnding] = useState<boolean>(initialValues?.ending ?? false)
-  const [name, setName] = useState<string>(initialValues?.name ?? '')
+  const [date, setDate] = useState<Date>(new Date(initialValues?.date) ?? null)
+  const [endDate, setEndDate] = useState<Date>(new Date(initialValues?.endDate) ?? null)
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
-  const [date, setDate] = useState<Date>(initialValues?.date ?? null)
-  const [endDate, setEndDate] = useState<Date>(initialValues?.endDate ?? null)
   const [times, setTimes] = useState<number>(initialValues?.times ?? null)
-  const [petData, setPetData] = useState<string[]>(initialPets ?? [])
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
 
