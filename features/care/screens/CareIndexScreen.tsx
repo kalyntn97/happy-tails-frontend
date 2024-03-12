@@ -6,8 +6,6 @@ import LottieView from "lottie-react-native"
 //components
 import { AddButton } from "@components/ButtonComponent"
 import PlaceHolder from "@components/PlaceHolder"
-//store
-import { useCares } from "@store/store"
 //types & helpers
 import * as careHelpers from "@care/careHelpers"
 //styles

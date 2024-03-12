@@ -15,8 +15,8 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { usePets } from "@store/store"
 
 interface CareFormProps {
-  onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, careId: string | null) => Promise<any>
-  initialValues?: { name?: string, repeat?: boolean, ending?: boolean, date?: Date, endDate?: Date, frequency?: string, times?: number, pets?: Pet[], careId?: string }
+  onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: string, endDate: string | null, frequency: string, times: number, careId: string | null) => Promise<any>
+  initialValues?: { name?: string, repeat?: boolean, ending?: boolean, date?: string, endDate?: string, frequency?: string, times?: number, pets?: Pet[], careId?: string }
   navigation: any
   status: string
 }
@@ -31,8 +31,8 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   const [petData, setPetData] = useState<string[]>(initialPets ?? [])
   const [repeat, setRepeat] = useState<boolean>(initialValues?.repeat ?? false)
   const [ending, setEnding] = useState<boolean>(initialValues?.ending ?? false)
-  const [date, setDate] = useState<Date>(new Date(initialValues?.date) ?? null)
-  const [endDate, setEndDate] = useState<Date>(new Date(initialValues?.endDate) ?? null)
+  const [date, setDate] = useState<string | null>(initialValues?.date ?? null)
+  const [endDate, setEndDate] = useState<string | null>(initialValues?.endDate ?? null)
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
   const [times, setTimes] = useState<number>(initialValues?.times ?? null)
   const [errorMsg, setErrorMsg] = useState<string>('')
@@ -103,7 +103,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
 
         <View style={styles.rowCon}>
           <Text style={styles.rowText}>{repeat ? 'Start Date' : 'Date'}</Text>
-          <RNDateTimePicker value={date ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.darkPink} />
+          <RNDateTimePicker value={new Date(date) ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setDate(selectedDate.toDateString()) }} accentColor={Colors.darkPink} />
         </View>
 
         {repeat &&
@@ -132,7 +132,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         {repeat && ending &&
           <View style={styles.rowCon}>
             <Text style={styles.rowText}>End Date</Text>
-            <RNDateTimePicker value={endDate ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setEndDate(selectedDate) }} accentColor={Colors.darkPink} />
+            <RNDateTimePicker value={new Date(endDate) ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setEndDate(selectedDate.toDateString()) }} accentColor={Colors.darkPink} />
           </View>
         }
 

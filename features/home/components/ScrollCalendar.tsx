@@ -84,7 +84,6 @@ const ScrollCalendar = () => {
       {/* </View> */}
       
       <TouchableOpacity style={[styles.headerBtnCon, styles.left]} 
-        disabled={currDateIsActive && currMonthIsActive && currYearIsActive}
         onPress={() => {
           setActiveDate({ 
             date: currDate - 1, 
