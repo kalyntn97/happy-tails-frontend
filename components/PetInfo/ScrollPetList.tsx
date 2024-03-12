@@ -20,6 +20,7 @@ const ScrollPetList: React.FC<ScrollPetListProps> = ({ petArray, size, navigatio
       : { maxWidth: 450, height: 250 }
     }>
       <ScrollView
+        alwaysBounceVertical={false}
         contentContainerStyle={[
           styles.scrollContent,
           size === 'compact' && { paddingVertical: 10}

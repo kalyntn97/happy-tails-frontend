@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text } from "react-native"
 import LottieView from "lottie-react-native"
-import { Typography, Colors } from "@styles/index"
+import { Typography, Colors, Spacing } from "@styles/index"
 
 const PlaceHolder = () => {
   return (  
@@ -13,15 +13,16 @@ const PlaceHolder = () => {
 
 const styles = StyleSheet.create({
   empty: {
-
+    ...Spacing.flexColumn,
   },
   msg: {
     ...Typography.subHeader,
     color: Colors.darkPink,
-    marginTop: 50
+    marginTop: 40
   },
   catAnimation: {
-    width: '100%'
+    width: 300,
+    height: 300,
   },
 })
 

@@ -61,7 +61,7 @@ const ScrollChart = ({ careId, tracker, index, onCheckDone, onUncheckDone, frequ
             </Text>
           }
 
-          {i === index && tracker.done[index] === 1
+          {tracker.done[i] === 1
             ? <Image source={require('@assets/icons/heart-filled.png')} 
                 style={[styles.heart, { opacity: frequency === 'Daily' ? 0.5 : 1 }]} 
               />

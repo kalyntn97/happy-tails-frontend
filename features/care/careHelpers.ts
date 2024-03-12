@@ -126,3 +126,11 @@ export const sortByFrequency: (careArray: Care[]) => {[key: string]: Care[]} = (
   }, {})
   return sorted
 }
+
+export const getDateConstructor = (dateString: string): Date => {
+  return new Date(
+    new Date(dateString).getFullYear(),
+    new Date(dateString).getMonth(),
+    new Date(dateString).getDate(),
+  )
+}

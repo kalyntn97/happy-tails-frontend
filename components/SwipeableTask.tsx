@@ -8,12 +8,13 @@ import * as careHelpers from '@care/careHelpers'
 //store & queries
 import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
 //components
-import { useActiveCareDate, useActiveCareMonth, useActiveCareWeek, useActiveCareYear, useActiveDate } from '@store/store'
+import { useActiveDate } from '@store/store'
 import { AlertForm } from '@utils/ui'
 import { SquareButton } from './ButtonComponent'
 import ScrollPetList from './PetInfo/ScrollPetList'
 //styles
 import { Spacing, Forms } from '@styles/index'
+import { useShallowPetBasics } from '@store/storeUtils'
 
 interface SwipeableTaskProps {
   care: Care
@@ -24,21 +25,29 @@ interface SwipeableTaskProps {
 
 const SwipeableTask: FC<SwipeableTaskProps> = ({ care, navigation, onPress }) => {
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
+  const petsBasic = useShallowPetBasics()
   const checkAllDoneMutation = useCheckAllDoneCare()
   const uncheckAllDoneMutation = useUncheckAllDoneCare()
-  
+  let trackerIndex: number, index: number, done: number
+  const times = care.repeat ? care.times : 1
   //get the active trackerIndex or default to latest tracker
-  const trackerIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeMonth, activeYear)
-  //set task index
-  const index = careHelpers.getTaskIndex(care.frequency, activeDate, activeWeek, activeMonth, activeYear)
-  //get task status
-  const done = careHelpers.getTaskStatus(care, trackerIndex, index)
+  if (care.repeat) {
+    trackerIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeMonth, activeYear)
+    //set task index
+    index = careHelpers.getTaskIndex(care.frequency, activeDate, activeWeek, activeMonth, activeYear)
+    //get task status
+    done = careHelpers.getTaskStatus(care, trackerIndex, index)
+  } else {
+    trackerIndex = 0
+    index = 0
+    done = care.trackers[trackerIndex].done[0]
+  }
 
   const careId = care._id
   const trackerId = care.trackers[trackerIndex]._id
-
+  
   const checkAllDone = async (care: Care) => {
-    done === care.times
+    done === times
       ? uncheckAllDoneMutation.mutate({ careId, trackerId, index }, {
         // onSuccess: () => {
         // },
@@ -75,19 +84,19 @@ const SwipeableTask: FC<SwipeableTaskProps> = ({ care, navigation, onPress }) =>
       > 
         <View style={styles.taskContent}>
           <Text style={[
-            done === care.times && styles.done, 
+            done === times && styles.done, 
             styles.taskText
           ]}>
             {care.name}
           </Text>
-          <Text style={styles.taskStatus}>{done}/{care.times}</Text>
+          <Text style={styles.taskStatus}>{done}/{times}</Text>
           <View style={styles.taskPetList}>
             <ScrollPetList petArray={care.pets} size='mini' />
           </View>
         </View>
 
         <TouchableOpacity style={styles.bulletBtn} onPress={() => checkAllDone(care)}>
-          {done === care.times 
+          {done === times 
           ? <Image source={require('@assets/icons/check.png')} style={styles.check}/>
           : <Text style={styles.bulletBtnText}>○</Text> }
         </TouchableOpacity>

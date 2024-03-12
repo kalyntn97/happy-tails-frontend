@@ -8,12 +8,12 @@ export const getAllCares = async (): Promise<{[key: string]: Care[]}> => {
   return (await axios.get<{[key: string]: Care[]}>(BASE_URL)).data
 }
 
-export const create = async (name: string, frequency: string, times: number, pets: string[]): Promise<Care>  => {
-  return (await axios.post<Care>(BASE_URL, {name, frequency, times, pets })).data
+export const create = async (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date, frequency: string, times: number): Promise<Care>  => {
+  return (await axios.post<Care>(BASE_URL, { name, pets, repeat, ending, date, endDate, frequency, times })).data
 }
 
-export const update = async (name: string, frequency: string, times: number, pets: string[], careId: string): Promise<Care>  => {
-  return (await axios.put<Care>(`${BASE_URL}/${careId}`, { name, frequency, times, pets })).data
+export const update = async (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date, frequency: string, times: number, careId: string): Promise<Care>  => {
+  return (await axios.put<Care>(`${BASE_URL}/${careId}`, { name, pets, repeat, ending, date, endDate, frequency, times })).data
 }
 
 export const getCare = async (careId: string): Promise<Care>  => {

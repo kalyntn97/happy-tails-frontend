@@ -3,7 +3,7 @@ import { useState } from "react"
 import { Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 //store
-import { useShallowPets } from "@store/storeUtils"
+import { usePets } from "@store/store"
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
 import { MainButton, SubButton } from "@components/ButtonComponent"
@@ -31,11 +31,6 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   const [allowManualDueDate, setAllowManualDueDate] = useState<boolean>(false)
   const [errorMsg, setErrorMsg] = useState<string>('')
 
-  const initialPetName = () => {
-    const pet = useShallowPets().find(pet => pet._id === initialValues?.pet)
-    return pet.name
-  }
-
   const vetId: string | null = initialValues?.vetId ?? null
 
   const handleSelectName = (selected: string) => {
@@ -51,7 +46,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   }
 
   const handleSelectPet = (selected: string) => {
-    const pet = useShallowPets().find(pet => pet.name === selected)
+    const pet = usePets().find(pet => pet.name === selected)
     setPet(pet._id)
     setSpecies(pet.species)
   }

@@ -24,27 +24,28 @@ interface CareCardProps {
 
 const CareCard = ({ care, navigation, onNavigate }) => {
   const iconSource = careHelpers.getIconSource(care.name)
- 
-  const latestTracker = care.trackers[care.trackers.length - 1]
-
-  const { isCurrent } = careHelpers.getTrackerInfo(latestTracker.name)
-
+  
   const autoTrackerMutation = useAutoCreateTracker()
+  
+  if (care.repeat) {
+    const latestTracker = care.trackers[care.trackers.length - 1]
+    const { isCurrent } = careHelpers.getTrackerInfo(latestTracker.name)
+
+    if (!isCurrent) {
+      autoTrackerMutation.mutate(care._id, {
+        onSuccess: () => {
+          
+        },
+        onError: (error) => {
+          return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+        }
+      })
+    }
+  }
 
   const handleNavigate = () => {
     onNavigate && onNavigate()
     navigation.navigate('Care', { screen: 'Details' , params : { care: care } })
-  }
-
-  if (!isCurrent) {
-    autoTrackerMutation.mutate(care._id, {
-      onSuccess: () => {
-        
-      },
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      }
-    })
   }
 
   return (
@@ -58,9 +59,11 @@ const CareCard = ({ care, navigation, onNavigate }) => {
             <Image source={iconSource} style={styles.icon } />
             <View style={styles.titleContent}>
               <Text style={styles.title}>{care.name}</Text>
-              <Text style={styles.freq}>
-                {care.times} times / {care.frequency === 'Daily' ? 'day' : care.frequency === 'Weekly' ? 'week' : care.frequency === 'Monthly' ? 'month' : 'year'}
-              </Text>
+              {care.repeat &&
+                <Text style={styles.freq}>
+                  {care.times} times / {care.frequency === 'Daily' ? 'day' : care.frequency === 'Weekly' ? 'week' : care.frequency === 'Monthly' ? 'month' : 'year'}
+                </Text>
+              }
             </View>
           </View>
         </View>
@@ -72,9 +75,11 @@ const CareCard = ({ care, navigation, onNavigate }) => {
         <View style={styles.currentTracker}>
           <TrackerPanel care={care} />
         </View>
-        <TouchableOpacity style={styles.mainBtn} onPress={handleNavigate}>
-          <Text style={styles.btnText}>View History</Text>
-        </TouchableOpacity>
+        {care.repeat &&
+          <TouchableOpacity style={styles.mainBtn} onPress={handleNavigate}>
+            <Text style={styles.btnText}>View History</Text>
+          </TouchableOpacity>
+        }
       </View>
     </View>
   )

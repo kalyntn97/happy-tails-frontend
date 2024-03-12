@@ -19,20 +19,26 @@ interface CurrentTrackerProps {
 }
 
 const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
-  const {frequency: freq, times, _id: careId } = care
+  const {frequency: freq, _id: careId } = care
+  const times = care.repeat ? care.times : 1
   
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const activeMonthName = getMonth(activeMonth + 1)
 
   const checkDoneMutation = useCheckDoneCare()
   const uncheckDoneMutation = useUncheckDoneCare()
+  let trackerIndex: number, index: number
 
   //get the active trackerIndex or default to latest tracker
-  const trackerIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeMonth, activeYear)
+  if (care.repeat) {
+    trackerIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeMonth, activeYear)
+    index = careHelpers.getTaskIndex(freq, activeDate, activeWeek, activeMonth, activeYear)
+  } else {
+    trackerIndex = 0
+    index = 0
+  }
   //set displaying tracker
   const [tracker, setTracker] = useState<Tracker>(care.trackers[trackerIndex])
-  //set task index
-  const index = careHelpers.getTaskIndex(freq, activeDate, activeWeek, activeMonth, activeYear)
 
   const checkDone = (careId: string, trackerId: string, index: number) => {
     checkDoneMutation.mutate({ careId, trackerId, index }, {
@@ -60,7 +66,10 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
     <View style={styles.container}>
 
       <Text style={styles.title}>
-        { careHelpers.getTrackerDisplayName(freq, activeDate, activeWeek, activeMonthName, activeYear) }
+        { care.repeat 
+        ? careHelpers.getTrackerDisplayName(freq, activeDate, activeWeek, activeMonthName, activeYear)
+        : new Date(care.date).toLocaleDateString()
+        }
       </Text>
 
       <Text style={[
@@ -72,7 +81,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
           <Image source={require('@assets/icons/hand.png')} style={styles.ScrollChartIcon} />
         }
       </Text>
-      {times === 1 && freq !== 'Yearly'
+      {care.repeat && times === 1 && freq !== 'Yearly'
         ? <>
             <View style={styles.ScrollChart}>
               <Pressable>

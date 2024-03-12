@@ -1,10 +1,9 @@
 //npm
 import { useEffect, useState } from "react"
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Modal, TouchableWithoutFeedback, Pressable } from "react-native"
+import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Modal, TouchableWithoutFeedback, Pressable, ListRenderItem } from "react-native"
 import { useQueries } from "@tanstack/react-query"
 //types & helpers
 import { Care } from "@care/CareInterface"
-import * as careHelpers from '@care/careHelpers'
 //store & queries
 import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
 //components
@@ -13,7 +12,7 @@ import SwipeableTask from "@components/SwipeableTask"
 import { CloseButton } from "../../../components/ButtonComponent"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
-import ScrollSelector from "@components/ScrollSelector"
+import CustomFlatList from './CustomFlatList';
 //utils & store
 import { useUserQueries } from "../homeQueries"
 import { getCurrentDate, getMonth, getYears, months } from "@utils/datetime"
@@ -39,7 +38,8 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const { monthName: currMonth } = getCurrentDate()
 
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
-
+  const activeDateObj = new Date(activeYear, activeMonth, activeDate + 1)
+  
   const activeMonthName = getMonth(activeMonth + 1)
   
   const { date: currDateIsActive, week: currWeekIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
@@ -101,60 +101,24 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           <View style={styles.taskListContainer}>
             {!Object.keys(cares.data).length && <PlaceHolder /> }
 
-            {selected === 'day' && 
-              <FlatList
-                data={cares.data['Daily']}
-                extraData={cares.data['Daily']}
-                keyExtractor={(item, index) => item + index.toString()}
-                renderItem={({ item }) => 
-                  <SwipeableTask key={item._id} care={item} navigation={navigation}
-                    onPress={() => handleClickTask(item)}
-                  />
-                }
-                ListEmptyComponent={<EmptyList />}
-              />
+            {selected === 'day' &&
+              <>
+                <CustomFlatList data={cares.data['Daily']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
+    
+                <CustomFlatList data={cares.data['Others']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
+              </>
             }
             
             {selected === 'week' && 
-              <FlatList
-                data={cares.data['Weekly']}
-                extraData={cares.data['Weekly']}
-                keyExtractor={(item, index) => item + index.toString()}
-                renderItem={({ item }) => 
-                  <SwipeableTask key={item._id} care={item} navigation={navigation}
-                    onPress={() => handleClickTask(item)}
-                  />
-                }
-                ListEmptyComponent={<EmptyList />}
-              />
+              <CustomFlatList data={cares.data['Weekly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
             }
 
             {selected === 'month' && 
-              <FlatList
-                data={cares.data['Monthly']}
-                extraData={cares.data['Monthly']}
-                keyExtractor={(item, index) => item + index.toString()}
-                renderItem={({ item }) => 
-                  <SwipeableTask key={item._id} care={item} navigation={navigation}
-                    onPress={() => handleClickTask(item)}
-                  />
-                }
-                ListEmptyComponent={<EmptyList />}
-              />
+              <CustomFlatList data={cares.data['Monthly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
             }
 
             {selected === 'year' && 
-              <FlatList
-                data={cares.data['Yearly']}
-                extraData={cares.data['Yearly']}
-                keyExtractor={(item, index) => item + index.toString()}
-                renderItem={({ item }) => 
-                  <SwipeableTask key={item._id} care={item} navigation={navigation}
-                    onPress={() => handleClickTask(item)}
-                  />
-                }
-                ListEmptyComponent={<EmptyList />}
-              />
+              <CustomFlatList data={cares.data['Yearly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
             }
           </View>
         </>
@@ -174,7 +138,6 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         </Pressable>
       </Modal> 
       
-
     </View>
   )
 }
@@ -182,7 +145,6 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: '75%',
     alignItems: 'center',
     position: 'relative',
   },
@@ -193,9 +155,7 @@ const styles = StyleSheet.create({
   iconMenuContainer: {
     ...Spacing.flexRow,
     width: '100%',
-    height: '5%',
-    marginTop: 25,
-    marginBottom: 15,
+    marginVertical: 10,
   },
   iconMenu: {
     ...Spacing.flexColumn,
@@ -220,8 +180,6 @@ const styles = StyleSheet.create({
   },
   taskListContainer : {
     width: '90%',
-    height: '95%',
-    marginTop: 10,
   },
   taskIcon: {
     ...Forms.smallIcon,

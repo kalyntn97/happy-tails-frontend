@@ -11,18 +11,26 @@ export interface Tracker {
 
 export interface Care {
   _id: string
-  pets: Pet[]
   name: string
-  times: number
-  frequency: string
+  pets: Pet[]
+  repeat: boolean
+  ending: boolean
+  date: string
+  endDate?: string
+  frequency?: string
+  times?: number
   trackers: Tracker[]
 }
 
 export interface CareFormData {
   name: string
-  times: number
-  frequency: string
   pets: string[]
+  repeat: boolean
+  ending: boolean
+  date: string
+  endDate?: string
+  frequency: string
+  times: number
   careId?: string
 }
 

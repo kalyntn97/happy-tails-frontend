@@ -79,9 +79,9 @@ const ScrollCalendar = () => {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.headerBtnCon, styles.middle]}>
-        <Text style={styles.headerBtnText}>{activeMonthName}</Text>
-      </View>
+      {/* <View style={[, styles.middle]}> */}
+        <Text style={styles.middle}>{activeMonthName}</Text>
+      {/* </View> */}
       
       <TouchableOpacity style={[styles.headerBtnCon, styles.left]} 
         disabled={currDateIsActive && currMonthIsActive && currYearIsActive}
@@ -230,9 +230,12 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 15,
   },
   middle: {
+    position: 'absolute',
+    top: -55,
     alignSelf: 'center',
-    justifyContent: 'center',
-    borderRadius: 15,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.darkPink,
   },
   modalCon: {
     ...Spacing.fullWH,
