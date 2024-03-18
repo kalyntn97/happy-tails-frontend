@@ -5,9 +5,9 @@ import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from "@auth/AuthContext"
 //components
-import HomeFeed from "@home/HomeFeed"
+import HomeFeed from "@home/components/HomeFeed"
 import FloatingButton from "@components/FloatingButton/FloatingButton"
-import ScrollCalendar from "@components/ScrollCalendar"
+import ScrollCalendar from "@home/components/ScrollCalendar"
 import Loader from "@components/Loader"
 //utils & services
 import { getCurrentDate } from "@utils/datetime"
@@ -17,8 +17,6 @@ import { Buttons, Typography, Colors, Forms, Spacing } from '@styles/index'
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
 
-  const {date: currDate, day: currDay } = getCurrentDate()
-  
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
   const centerHeight = windowHeight - 191
@@ -36,8 +34,10 @@ const HomeScreen: React.FC = ({ navigation }) => {
       {authState.authenticated ? (
         <>
           <View style={[styles.screen, { minHeight: centerHeight }]}>
-            <Image source={require('@assets/images/happy-tails-banner.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.2 }]} />
-            <ScrollCalendar />
+            <View style={{ height: windowHeight * 0.22, justifyContent: 'flex-end' }}>
+              <ScrollCalendar />
+            </View>
+            {/* <Image source={require('@assets/images/happy-tails-banner.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.2 }]} /> */}
             <View style={[styles.body, { height: windowHeight * 0.7 }]}>
               <HomeFeed navigation={navigation} />
             </View>

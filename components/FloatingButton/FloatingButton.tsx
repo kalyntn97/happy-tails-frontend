@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react"
 import { StyleSheet, View, Text, useWindowDimensions, DeviceEventEmitter, Alert, TouchableWithoutFeedback } from "react-native"
 import { PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler"
 import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
-// styles
-import { Colors, Buttons, Spacing } from "@styles/index"
-import { Button, ButtonStyles, Animation, ChildrenAnimation } from "./constants"
+//components
 import SubFloatingButton from "./SubFloatingButton"
+// styles & constants
+import { Button, ButtonStyles, Animation, ChildrenAnimation } from "./constants"
 
 const FloatingButton = ({ navigation }) => {
   const [opened, setOpened] = useState(false)
@@ -118,7 +118,7 @@ const FloatingButton = ({ navigation }) => {
         </TouchableWithoutFeedback> 
       }
       <PanGestureHandler onHandlerStateChange={_onPanHandlerStateChange}>
-        <Animated.View style={[styles.buttonContainer, { bottom: height * 0.17 }, animatedRootStyles]}>
+        <Animated.View style={[styles.buttonContainer, { bottom: height * 0.08 }, animatedRootStyles]}>
           
           {opened &&
             <Animated.View style={[styles.children, animatedChildrenStyles]}>

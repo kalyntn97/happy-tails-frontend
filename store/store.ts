@@ -1,14 +1,28 @@
 import { create, StateCreator } from 'zustand'
 import { CareSlice, HealthSlice, PetSlice, ProfileSlice } from './StoreInterface'
+import { getCurrentDate } from '@utils/datetime'
 
-const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & HealthSlice, [], [], ProfileSlice> = (set) => ({
+const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & HealthSlice, [], [], ProfileSlice> = (set, get) => ({
   profile: {},
+  activeDate: { 
+    date: getCurrentDate().date - 1, 
+    week: getCurrentDate().week - 1, 
+    month: getCurrentDate().month - 1, 
+    year: getCurrentDate().year 
+  },
+  currentIsActive: {
+    get date() { return get().activeDate.date + 1 === getCurrentDate().date },
+    get week() { return get().activeDate.week + 1 === getCurrentDate().week },
+    get month() { return get().activeDate.month + 1 === getCurrentDate().month },
+    get year() { return get().activeDate.year === getCurrentDate().year },
+  },
   setActions: {
     setProfile: profile => set({ profile: profile }),
+    setActiveDate: dateObj => set({ activeDate: dateObj }),
     setPets: pets => set({ pets: pets }),
     setCares: cares => set({ cares: cares}),
     setHealths: healths => set({ healths: healths }),
-    onUpdateProfile: profile => set({ profile: profile}),
+    onUpdateProfile: profile => set({ profile: profile}),    
   }
 })
 
@@ -52,6 +66,8 @@ export const useBoundStore= create<ProfileSlice & PetSlice & CareSlice & HealthS
 
 //states
 export const useProfile = () => useBoundStore(state => state.profile)
+export const useActiveDate = () => useBoundStore(state => state.activeDate)
+export const useCurrentIsActive = () => useBoundStore(state => state.currentIsActive)
 export const usePets = () => useBoundStore(state => state.pets)
 export const useCares = () => useBoundStore(state => state.cares)
 export const useHealths = () => useBoundStore(state => state.healths)

@@ -1,12 +1,27 @@
 import { Profile } from '@profile/ProfileInterface'
-import { Pet, PetInfo } from '@pet/PetInterface'
+import { Pet } from '@pet/PetInterface'
 import { Care } from '@care/CareInterface'
 import { Health } from '@health/HealthInterface'
 
+interface DateObject {
+  date: number | null, 
+  week: number | null, 
+  month: number | null, 
+  year: number | null
+}
+
 export interface ProfileSlice {
   profile: Profile | {}
+  activeDate: DateObject
+  currentIsActive: { 
+    date: boolean, 
+    week: boolean, 
+    month: boolean, 
+    year: boolean, 
+  }
   setActions : {
     setProfile: (profile: Profile) => void
+    setActiveDate: (dateObj: { date: number, week: number, month: number, year: number }) => void
     setPets: (pets: Pet[]) => void
     setCares: (cares: Care[]) => void
     setHealths: (healths: Health[]) => void

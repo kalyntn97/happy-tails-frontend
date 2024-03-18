@@ -1,44 +1,63 @@
 //npm
+import { FC, useEffect } from 'react'
 import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 //types & helpers
 import { Care } from '@care/CareInterface'
 import * as careHelpers from '@care/careHelpers'
-//store
-import { useCareActions } from '@store/store'
-import { useCheckDoneCare, useUnCheckDoneCare } from '@care/careQueries'
+//store & queries
+import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
 //components
+import { useActiveDate } from '@store/store'
 import { AlertForm } from '@utils/ui'
 import { SquareButton } from './ButtonComponent'
 import ScrollPetList from './PetInfo/ScrollPetList'
 //styles
 import { Spacing, Forms } from '@styles/index'
+import { useShallowPetBasics } from '@store/storeUtils'
 
-const SwipeableTask = ({ care, navigation, onPress }) => {
-  const { onCheckAllDone, onUncheckAllDone} = useCareActions()
-  const done = careHelpers.getTaskStatus(care)
+interface SwipeableTaskProps {
+  care: Care
+  taskIndex?: number
+  navigation: any
+  onPress: any
+}
 
-  const checkDoneMutation = useCheckDoneCare()
-  const uncheckDoneMutation = useUnCheckDoneCare()
+const SwipeableTask: FC<SwipeableTaskProps> = ({ care, navigation, onPress }) => {
+  const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
+  const petsBasic = useShallowPetBasics()
+  const checkAllDoneMutation = useCheckAllDoneCare()
+  const uncheckAllDoneMutation = useUncheckAllDoneCare()
+  let trackerIndex: number, index: number, done: number
+  const times = care.repeat ? care.times : 1
+  //get the active trackerIndex or default to latest tracker
+  if (care.repeat) {
+    trackerIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeMonth, activeYear)
+    //set task index
+    index = careHelpers.getTaskIndex(care.frequency, activeDate, activeWeek, activeMonth, activeYear)
+    //get task status
+    done = careHelpers.getTaskStatus(care, trackerIndex, index)
+  } else {
+    trackerIndex = 0
+    index = 0
+    done = care.trackers[trackerIndex].done[0]
+  }
 
+  const careId = care._id
+  const trackerId = care.trackers[trackerIndex]._id
+  
   const checkAllDone = async (care: Care) => {
-    const careId = care._id
-    const trackerId = care.trackers[care.trackers.length - 1]._id
-    const index = careHelpers.getCurrentTrackerIndex(care.frequency)
-
-    done === care.times
-      ? checkDoneMutation.mutate({ careId, trackerId, index }, {
-        onSuccess: () => {
-          navigation.navigate('Care', { screen: 'Index'})
-        },
+    done === times
+      ? uncheckAllDoneMutation.mutate({ careId, trackerId, index }, {
+        // onSuccess: () => {
+        // },
         onError: (error) => {
           return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
         }
       })
-      : uncheckDoneMutation.mutate({ careId, trackerId, index }, {
-        onSuccess: () => {
-          navigation.navigate('Care', { screen: 'Index'})
-        },
+      : checkAllDoneMutation.mutate({ careId, trackerId, index }, {
+        // onSuccess: () => {
+        // },
         onError: (error) => {
           return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
         }
@@ -65,19 +84,19 @@ const SwipeableTask = ({ care, navigation, onPress }) => {
       > 
         <View style={styles.taskContent}>
           <Text style={[
-            done === care.times && styles.done, 
+            done === times && styles.done, 
             styles.taskText
           ]}>
             {care.name}
           </Text>
-          <Text style={styles.taskStatus}>{done}/{care.times}</Text>
+          <Text style={styles.taskStatus}>{done}/{times}</Text>
           <View style={styles.taskPetList}>
             <ScrollPetList petArray={care.pets} size='mini' />
           </View>
         </View>
 
         <TouchableOpacity style={styles.bulletBtn} onPress={() => checkAllDone(care)}>
-          {done === care.times 
+          {done === times 
           ? <Image source={require('@assets/icons/check.png')} style={styles.check}/>
           : <Text style={styles.bulletBtnText}>○</Text> }
         </TouchableOpacity>

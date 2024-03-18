@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import * as careService from "./careService"
 import { CareFormData, TrackerFormData } from "./CareInterface"
+import { useSetActions } from "@store/store"
 
 export const careKeyFactory = {
   cares: ['all-cares'],
@@ -10,7 +11,7 @@ export const careKeyFactory = {
 export const useGetAllCares = () => {
   return useQuery({
     queryKey: [...careKeyFactory.cares],
-    queryFn: careService.getAllCares
+    queryFn: careService.getAllCares,
   })
 }
 
@@ -25,7 +26,7 @@ export const useAddCare = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ name, frequency, times, pets }: CareFormData) => careService.create(name, frequency, times, pets),
+    mutationFn: ({ name, pets, repeat, ending, date, endDate, frequency, times }: CareFormData) => careService.create(name, pets, repeat, ending, date, endDate, frequency, times),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares]})
     }
@@ -36,7 +37,7 @@ export const useUpdateCare = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ name, frequency, times, pets, careId }: CareFormData) => careService.update(name, frequency, times, pets, careId),
+    mutationFn: ({ name, pets, repeat, ending, date, endDate, frequency, times, careId }: CareFormData) => careService.update(name, pets, repeat, ending, date, endDate, frequency, times, careId),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares]})
     }
@@ -65,11 +66,33 @@ export const useCheckDoneCare = () => {
   })
 }
 
-export const useUnCheckDoneCare = () => {
+export const useUncheckDoneCare = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
     mutationFn: ({careId, trackerId, index}: TrackerFormData) => careService.uncheckDone(careId, trackerId, index),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
+    }
+  })
+}
+
+export const useCheckAllDoneCare = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: ({ careId, trackerId, index }: TrackerFormData) => careService.checkAllDone(careId, trackerId, index),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
+    }
+  })
+}
+
+export const useUncheckAllDoneCare = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: ({careId, trackerId, index}: TrackerFormData) => careService.uncheckAllDone(careId, trackerId, index),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
     }

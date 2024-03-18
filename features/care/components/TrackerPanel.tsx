@@ -1,63 +1,77 @@
 //npm
 import { useState, useEffect } from "react"
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 //types & helpers
-import { Tracker } from "@care/careService"
-import { Care } from "@care/CareInterface"
+import { Care, Tracker } from "@care/CareInterface"
 import * as careHelpers from "@care/careHelpers"
 //components
 import ScrollChart from "@components/Charts/ScrollChart"
-//store
-import { useCareActions } from "@store/store"
-//utils
-import { getCurrentDate } from "@utils/datetime"
+//utils, store
+import { useActiveCareDate, useActiveCareMonth, useActiveCareWeek, useActiveCareYear, useActiveDate } from "@store/store"
+import { getCurrentDate, getMonth } from "@utils/datetime"
 //styles
 import { Spacing, Typography, Colors } from '@styles/index'
+import { useCheckDoneCare,  useUncheckDoneCare } from "@care/careQueries"
+import { AlertForm } from "@utils/ui"
 
 interface CurrentTrackerProps {
   care: Care
 }
 
 const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
-  const [tracker, setTracker] = useState<Tracker>(care.trackers[care.trackers.length - 1])
-  const [index, setIndex] = useState<number>(0)
-
-  const {frequency: freq, times, _id: careId } = care
-  const {onCheckDone, onUncheckDone } = useCareActions()
-
-  // get month and year of current tracker from name
-  const { monthName: currMonth, year: currYear } = getCurrentDate()
+  const {frequency: freq, _id: careId } = care
+  const times = care.repeat ? care.times : 1
   
-  const checkDone = async (careId: string, trackerId: string, index: number) => {
-    const updatedTracker = await onCheckDone!(careId, trackerId, index)
-    setTracker(updatedTracker)
+  const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
+  const activeMonthName = getMonth(activeMonth + 1)
+
+  const checkDoneMutation = useCheckDoneCare()
+  const uncheckDoneMutation = useUncheckDoneCare()
+  let trackerIndex: number, index: number
+
+  //get the active trackerIndex or default to latest tracker
+  if (care.repeat) {
+    trackerIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeMonth, activeYear)
+    index = careHelpers.getTaskIndex(freq, activeDate, activeWeek, activeMonth, activeYear)
+  } else {
+    trackerIndex = 0
+    index = 0
+  }
+  //set displaying tracker
+  const [tracker, setTracker] = useState<Tracker>(care.trackers[trackerIndex])
+
+  const checkDone = (careId: string, trackerId: string, index: number) => {
+    checkDoneMutation.mutate({ careId, trackerId, index }, {
+      onSuccess: (data) => {
+        setTracker(data)
+      },
+      onError: (error) => {
+        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+      },
+    })
   }
 
   const uncheckDone = async (careId: string, trackerId: string, index: number) => {
-    const updatedTracker = await onUncheckDone!(careId, trackerId, index)
-    setTracker(updatedTracker)
+    uncheckDoneMutation.mutate({ careId, trackerId, index }, {
+      onSuccess: (data) => {
+        setTracker(data)
+      },
+      onError: (error) => {
+        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+      },
+    })
   }
-
-  useEffect(() => {
-    // update as index (day, week) change, get the latest tracker
-    const updateIndex = () => {
-      
-      const updatedIdx = careHelpers.getCurrentTrackerIndex(freq)
-      setIndex(updatedIdx)
-    }
-    updateIndex()
-  }, [index])
 
   return (
     <View style={styles.container}>
 
       <Text style={styles.title}>
-        {freq === 'Daily' ? 'Today' 
-          : freq === 'Weekly' ? `Week ${index + 1}` 
-          : freq === 'Monthly' ? currMonth
-          : currYear
+        { care.repeat 
+        ? careHelpers.getTrackerDisplayName(freq, activeDate, activeWeek, activeMonthName, activeYear)
+        : new Date(care.date).toLocaleDateString()
         }
       </Text>
+
       <Text style={[
         styles.status, 
         { color: times === tracker.done[index] ? Colors.green : Colors.red }
@@ -67,17 +81,19 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
           <Image source={require('@assets/icons/hand.png')} style={styles.ScrollChartIcon} />
         }
       </Text>
-      {times === 1 && freq !== 'Yearly'
+      {care.repeat && times === 1 && freq !== 'Yearly'
         ? <>
-          <View style={styles.ScrollChart}>
-            <ScrollChart careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone} frequency={freq} />
-          </View>
+            <View style={styles.ScrollChart}>
+              <Pressable>
+                <ScrollChart careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone} frequency={freq} />
+              </Pressable>
+            </View>
         </> : <>
           <View style={styles.countBox}>
             <TouchableOpacity 
               style={styles.iconBtn}
               onPress={() => uncheckDone(careId, tracker._id, index)}
-              disabled={tracker.done[index] == 0}
+              disabled={tracker.done[index] === 0}
             >
               <Image source={require('@assets/icons/minus.png')} style={styles.icon } />
             </TouchableOpacity>

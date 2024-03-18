@@ -26,15 +26,14 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   const updateCareMutation = useUpdateCare()
 
   const initialValues: {
-    name: string, frequency: string, times: number, pets: Pet[], careId: string
+    name: string, pets: Pet[], repeat: boolean, ending: boolean, date: string, endDate: string | null, frequency: string | null, times: number | null, careId: string
   } = {
-    name: care.name, frequency: care.frequency, times: care.times, pets: care.pets, careId: care._id
+    name: care.name, pets: care.pets, repeat: care.repeat, ending: care.ending, date: care.date, endDate: care.endDate, frequency: care.frequency, times: care.times, careId: care._id
   }
 
-  const handleSubmit = async (name: string, frequency: string, times: number, pets: string[], careId: string) => {
-    updateCareMutation.mutate({ name, frequency, times, pets, careId }, {
+  const handleSubmit = async (name: string, pets: string[], repeat: boolean, ending: boolean, date: string, endDate: string | null, frequency: string | null, times: number | null, careId: string) => {
+    updateCareMutation.mutate({ name, pets, repeat, ending, date, endDate, frequency, times, careId }, {
       onSuccess: (data) => {
-        console.log(data)
         navigation.navigate('Details', { care: data })
         return AlertForm({ body: `Updated successfully`, button: 'OK' })
       },

@@ -5,8 +5,9 @@ import { View, StyleSheet, Text, Image, ImageStyle, ScrollView, TouchableOpacity
 import { Pet } from "@pet/PetInterface"
 import { Care } from "@care/CareInterface"
 import * as careHelpers from "@care/careHelpers"
-//services
-import * as careService from '@care/careService'
+//queries, store
+import { useAutoCreateTracker } from "@care/careQueries"
+import { AlertForm } from "@utils/ui"
 //components
 import ScrollPetList from "@components/PetInfo/ScrollPetList"
 import TrackerPanel from "./TrackerPanel"
@@ -22,25 +23,11 @@ interface CareCardProps {
 
 const CareCard = ({ care, navigation, onNavigate }) => {
   const iconSource = careHelpers.getIconSource(care.name)
-  const [careCard, setCareCard] = useState<Care>(care)
-
-  const latestTracker = careCard.trackers[careCard.trackers.length - 1]
-  const { isCurrent } = careHelpers.getDateTimeFromTracker(latestTracker.name)
-
+  
   const handleNavigate = () => {
     onNavigate && onNavigate()
     navigation.navigate('Care', { screen: 'Details' , params : { care: care } })
   }
-  
-  useEffect(() => {
-    const autoUpdateCareCard = async () => {
-      if ( !isCurrent ) {
-        const data = await careService.autoCreateTracker(careCard._id)
-        setCareCard(data)
-      }
-    }
-    autoUpdateCareCard()
-  }, [isCurrent, latestTracker])
 
   return (
     <View style={styles.container}>
@@ -53,9 +40,11 @@ const CareCard = ({ care, navigation, onNavigate }) => {
             <Image source={iconSource} style={styles.icon } />
             <View style={styles.titleContent}>
               <Text style={styles.title}>{care.name}</Text>
-              <Text style={styles.freq}>
-                {care.times} times / {care.frequency === 'Daily' ? 'day' : care.frequency === 'Weekly' ? 'week' : care.frequency === 'Monthly' ? 'month' : 'year'}
-              </Text>
+              {care.repeat &&
+                <Text style={styles.freq}>
+                  {care.times} times / {care.frequency === 'Daily' ? 'day' : care.frequency === 'Weekly' ? 'week' : care.frequency === 'Monthly' ? 'month' : 'year'}
+                </Text>
+              }
             </View>
           </View>
         </View>
@@ -67,9 +56,11 @@ const CareCard = ({ care, navigation, onNavigate }) => {
         <View style={styles.currentTracker}>
           <TrackerPanel care={care} />
         </View>
-        <TouchableOpacity style={styles.mainBtn} onPress={handleNavigate}>
-          <Text style={styles.btnText}>View History</Text>
-        </TouchableOpacity>
+        {care.repeat &&
+          <TouchableOpacity style={styles.mainBtn} onPress={handleNavigate}>
+            <Text style={styles.btnText}>View History</Text>
+          </TouchableOpacity>
+        }
       </View>
     </View>
   )

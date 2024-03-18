@@ -13,7 +13,7 @@ export const AddButton = ({ onPress }) => (
     bottom: 20,
     right: 20,
     zIndex: 2,
-  }}>
+  } as ViewStyle}>
     <Text style={{
       color: Colors.white,
       fontSize: 30,

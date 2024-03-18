@@ -8,12 +8,12 @@ import { AddButton } from '@components/ButtonComponent'
 import Loader from '@components/Loader'
 import PlaceHolder from '@components/PlaceHolder'
 //store & queries
+import { Pet } from '../PetInterface'
 import { useSetActions } from '@store/store'
 import { useGetAllPets } from '@pet/petQueries'
 import { AlertForm } from '@utils/ui'
 //styles
 import { Buttons, Spacing, Typography, Colors } from '@styles/index'
-import { Pet } from '../PetInterface'
 
 
 const PetIndexScreen: React.FC = ({ navigation }) => {
@@ -95,7 +95,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
               style={[styles.prevBtn, currCard == 0 && styles.disabled]}
               disabled={currCard == 0}
             >
-              <Image source={require('@assets/icons/prev2.png')} style={{ width: 30, height: 30 }}/> 
+              <Image source={require('@assets/icons/prev2.png')} style={{ width: 30, height:  30 }}/> 
             </Pressable>
             
             <Pressable 

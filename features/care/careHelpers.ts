@@ -1,6 +1,6 @@
 import { ImageSourcePropType } from "react-native"
 import { Colors } from "@styles/index"
-import { Care } from "@care/CareInterface"
+import { Care, Tracker } from "@care/CareInterface"
 import { getCurrentDate, getMonth } from "@utils/datetime"
 
 export const careData = ['Teeth Brushing', 'Nail Clipping', 'Walk', 'Grooming', 'Litter Box Cleaning', 'Others']
@@ -45,7 +45,53 @@ export const getCurrentTrackerIndex = (frequency: string): number => {
   }
 }
 
-export const getDateTimeFromTracker = (trackerName: string) => {
+export const getTrackerIndex = (trackers: Tracker[], frequency: string, activeMonth: number, activeYear: number): number => {
+  const monthlyTrackerName = `${activeMonth + 1}-${activeYear}`
+  let activeIndex: number
+  if (frequency === 'Daily' || frequency === 'Weekly') {
+    activeIndex = trackers.findIndex(tracker => tracker.name === monthlyTrackerName)
+  } else {
+    activeIndex = trackers.findIndex(tracker => tracker.name === activeYear.toString())
+  }
+  return activeIndex !== -1 ? activeIndex : (trackers.length - 1)
+}
+
+export const getTaskIndex = (frequency: string, activeDate: number | null, activeWeek: number | null, activeMonth: number | null, activeYear: number | null): number => {
+  const latestIndex = getCurrentTrackerIndex(frequency)
+  const mapByFrequency = {
+    Daily: activeDate,
+    Weekly: activeWeek,
+    Monthly: activeMonth,
+    Yearly: activeYear,
+  }
+  return mapByFrequency[frequency] ?? latestIndex
+}
+
+export const getTaskStatus = (task: Care, trackerIndex: number, taskIndex: number) => {
+  switch (task.frequency) {
+    case 'Daily': 
+      return task.trackers[trackerIndex].done[taskIndex]
+    case 'Weekly': 
+      return task.trackers[trackerIndex].done[taskIndex]
+    case 'Monthly':
+      return task.trackers[trackerIndex].done[taskIndex]
+    case 'Yearly':
+      return task.trackers[trackerIndex].done[0]
+  }
+}
+
+export const getTrackerDisplayName = (frequency: string, activeDate: number | null, activeWeek: number | null, activeMonthName: string | null, activeYear: number | null): string => {
+  const { date, week, monthName, year } = getCurrentDate()
+  const mapByFrequency = {
+    Daily: activeDate + 1 === date ? 'Today' : `${activeMonthName} ${activeDate + 1}`,
+    Weekly: activeWeek + 1 === week ? 'This week' : `Week ${activeWeek + 1}`,
+    Monthly: activeMonthName === monthName ? 'This month' : activeMonthName,
+    Yearly: activeYear === year ? activeYear : year
+  }
+  return mapByFrequency[frequency]
+}
+
+export const getTrackerInfo = (trackerName: string) => {
   let trackerMonth: number, trackerMonthName: string, trackerYear: number, isCurrent: boolean
   const { month: currMonth, year: currYear } = getCurrentDate()
   // tracker name: 'mm-yyyy'
@@ -60,20 +106,6 @@ export const getDateTimeFromTracker = (trackerName: string) => {
     isCurrent = trackerYear === currYear
   }
   return { trackerMonth, trackerMonthName, trackerYear, isCurrent }
-}
-
-export const getTaskStatus = (task: Care) => {
-  const { date: currDate, week: currWeek, month: monthIdx } = getCurrentDate()
-  switch (task.frequency) {
-    case 'Daily': 
-      return task.trackers[task.trackers.length - 1].done[currDate - 1]
-    case 'Weekly': 
-      return task.trackers[task.trackers.length - 1].done[currWeek - 1]
-    case 'Monthly':
-      return task.trackers[task.trackers.length - 1].done[monthIdx - 1]
-    case 'Yearly':
-      return task.trackers[task.trackers.length - 1].done
-  }
 }
 
 export const getTaskBackgroundColor = (frequency: string) => {
@@ -93,4 +125,12 @@ export const sortByFrequency: (careArray: Care[]) => {[key: string]: Care[]} = (
     return result
   }, {})
   return sorted
+}
+
+export const getDateConstructor = (dateString: string): Date => {
+  return new Date(
+    new Date(dateString).getFullYear(),
+    new Date(dateString).getMonth(),
+    new Date(dateString).getDate(),
+  )
 }
