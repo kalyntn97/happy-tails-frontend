@@ -30,7 +30,6 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   } = {
     name: care.name, pets: care.pets, repeat: care.repeat, ending: care.ending, date: care.date, endDate: care.endDate, frequency: care.frequency, times: care.times, careId: care._id
   }
-  console.log(initialValues)
 
   const handleSubmit = async (name: string, pets: string[], repeat: boolean, ending: boolean, date: string, endDate: string | null, frequency: string | null, times: number | null, careId: string) => {
     updateCareMutation.mutate({ name, pets, repeat, ending, date, endDate, frequency, times, careId }, {

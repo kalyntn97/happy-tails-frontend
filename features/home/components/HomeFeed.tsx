@@ -18,6 +18,7 @@ import { useUserQueries } from "../homeQueries"
 import { getCurrentDate, getMonth, getYears, months } from "@utils/datetime"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
+import { useAutoCreateTracker } from "@care/careQueries"
 
 interface HomeFeedProps {
   navigation: any
@@ -26,7 +27,7 @@ interface HomeFeedProps {
 const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const [selected, setSelected] = useState<string>('day')
   const [modalVisible, setModalVisible] = useState(false)
-  const [clickedCare, setClickedCare] = useState<Care>({})
+  const [clickedCare, setClickedCare] = useState<Care>(null)
   //queries
   const [profile, pets, cares, healths] = useUserQueries()
   const { setPets } = useSetActions()
@@ -35,8 +36,6 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const isSuccess = useUserQueries().every(query => query.isSuccess)
   const isError = useUserQueries().some(query => query.isError)
   
-  const { monthName: currMonth } = getCurrentDate()
-
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const activeDateObj = new Date(activeYear, activeMonth, activeDate + 1)
   
@@ -48,11 +47,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     setClickedCare(care)
     setModalVisible(true)
   }
-
-  const EmptyList  = () => (
-    <Text style={styles.empty}>No tasks to manage.</Text>
-  )
-
+  
   useEffect(() => {
     if (isSuccess) {
       setPets(pets.data)
@@ -69,11 +64,9 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
             <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
               <Text style={styles.taskCount}>{cares.data['Daily']?.length ?? 0}</Text>
               <Image source={require('@assets/icons/day.png')} style={styles.icon } />
-              <Text style={[styles.iconText, selected === 'day' && styles.selected]}>{ 
-                currDateIsActive && currMonthIsActive ? 'Today' 
-                : currMonthIsActive ? `${currMonth} ${activeDate + 1}`
-                : `${activeMonthName} ${activeDate + 1}`
-              }</Text>
+              <Text style={[styles.iconText, selected === 'day' && styles.selected]}>
+                { currDateIsActive && currMonthIsActive ? 'Today' : `${activeMonthName} ${activeDate + 1}` }
+              </Text>
           
             </TouchableOpacity>
 
@@ -97,16 +90,12 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
               <Image source={require('@assets/icons/year.png')} style={styles.icon } />
               <Text style={[styles.iconText, selected === 'year' && styles.selected]}>{currYearIsActive ? 'This Year' : activeYear}</Text>
             </TouchableOpacity>
-          </View>
+          </View>    
           <View style={styles.taskListContainer}>
             {!Object.keys(cares.data).length && <PlaceHolder /> }
 
             {selected === 'day' &&
-              <>
-                <CustomFlatList data={cares.data['Daily']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
-    
-                <CustomFlatList data={cares.data['Others']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
-              </>
+              <CustomFlatList data={[...cares.data['Daily'], ...cares.data['Others'] ?? []]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
             }
             
             {selected === 'week' && 
@@ -128,7 +117,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         animationType="slide"
         visible={modalVisible}
         onRequestClose={() => setModalVisible(!modalVisible)}
-        onDismiss={() => setClickedCare({})}
+        onDismiss={() => setClickedCare(null)}
       >
         <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={styles.modalContainer}> 
           <View style={styles.detailContainer}>

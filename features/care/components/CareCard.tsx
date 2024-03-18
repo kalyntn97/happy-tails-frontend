@@ -6,7 +6,6 @@ import { Pet } from "@pet/PetInterface"
 import { Care } from "@care/CareInterface"
 import * as careHelpers from "@care/careHelpers"
 //queries, store
-import { useActiveCareDate, useActiveCareFeed } from "@store/store"
 import { useAutoCreateTracker } from "@care/careQueries"
 import { AlertForm } from "@utils/ui"
 //components
@@ -25,23 +24,6 @@ interface CareCardProps {
 const CareCard = ({ care, navigation, onNavigate }) => {
   const iconSource = careHelpers.getIconSource(care.name)
   
-  const autoTrackerMutation = useAutoCreateTracker() 
-  if (care.repeat) {
-    const latestTracker = care.trackers[care.trackers.length - 1]
-    const { isCurrent } = careHelpers.getTrackerInfo(latestTracker.name)
-
-    if (!isCurrent) {
-      autoTrackerMutation.mutate(care._id, {
-        onSuccess: () => {
-          
-        },
-        onError: (error) => {
-          return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-        }
-      })
-    }
-  }
-
   const handleNavigate = () => {
     onNavigate && onNavigate()
     navigation.navigate('Care', { screen: 'Details' , params : { care: care } })

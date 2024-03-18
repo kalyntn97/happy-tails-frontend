@@ -22,7 +22,7 @@ const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & Hea
     setPets: pets => set({ pets: pets }),
     setCares: cares => set({ cares: cares}),
     setHealths: healths => set({ healths: healths }),
-    onUpdateProfile: profile => set({ profile: profile}),
+    onUpdateProfile: profile => set({ profile: profile}),    
   }
 })
 

@@ -39,8 +39,3 @@ export const checkAllDone = async (careId: string, trackerId: string, index: num
 export const uncheckAllDone = async (careId: string, trackerId: string, index: number): Promise<Tracker> => {
   return (await axios.patch<Tracker>(`${BASE_URL}/${careId}/${trackerId}/uncheck-all`, { index })).data
 }
-
-export const autoCreateTracker = async (careId: string): Promise<Care> => {
-  return (await axios.patch<Care>(`${BASE_URL}/${careId}/auto`)).data
-}
-

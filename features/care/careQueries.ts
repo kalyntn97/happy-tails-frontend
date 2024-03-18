@@ -98,14 +98,3 @@ export const useUncheckAllDoneCare = () => {
     }
   })
 }
-
-export const useAutoCreateTracker = () => {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (careId: string) => careService.autoCreateTracker(careId),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
-    }
-  })
-}
