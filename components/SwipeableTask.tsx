@@ -1,12 +1,13 @@
 //npm
-import { FC, useEffect } from 'react'
-import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native'
+import { FC, useEffect, useRef } from 'react'
+import { View, TouchableOpacity, Text, StyleSheet, Image, Alert } from 'react-native'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 //types & helpers
 import { Care } from '@care/CareInterface'
 import * as careHelpers from '@care/careHelpers'
-//store & queries
+//store & queries & hooks
 import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
+import { useDeleteCareCard } from '@care/careHooks'
 //components
 import { useActiveDate } from '@store/store'
 import { AlertForm } from '@utils/ui'
@@ -14,7 +15,6 @@ import { SquareButton } from './ButtonComponent'
 import ScrollPetList from './PetInfo/ScrollPetList'
 //styles
 import { Spacing, Forms } from '@styles/index'
-import { useShallowPetBasics } from '@store/storeUtils'
 
 interface SwipeableTaskProps {
   care: Care
@@ -25,9 +25,10 @@ interface SwipeableTaskProps {
 
 const SwipeableTask: FC<SwipeableTaskProps> = ({ care, navigation, onPress }) => {
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
-  const petsBasic = useShallowPetBasics()
   const checkAllDoneMutation = useCheckAllDoneCare()
   const uncheckAllDoneMutation = useUncheckAllDoneCare()
+  const { showDeleteConfirmDialog } = useDeleteCareCard(navigation)
+  
   let trackerIndex: number, index: number, done: number
   const times = care.repeat ? care.times : 1
   //get the active trackerIndex or default to latest tracker
@@ -64,16 +65,30 @@ const SwipeableTask: FC<SwipeableTaskProps> = ({ care, navigation, onPress }) =>
       })
   }
 
+  const swipeableRef = useRef(null)
+
+  const closeSwipeable = () => {
+    swipeableRef.current.close()
+  }
+  
   const rightSwipeActions = () => (
     <View style={styles.squareBtnContainer}>
-      <SquareButton title='Edit' onPress={() => navigation.navigate('Care', { screen: 'Edit', params: { care: care } })} />
-      <SquareButton title='Details' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { care: care } })} />
-      <SquareButton title='Delete' onPress={() => navigation.navigate('Care', { screen: 'Details', params: { care: care } })} />
+      <SquareButton title='Edit' onPress={() => {
+        navigation.navigate('Care', { screen: 'Edit', params: { care: care }, initial: false })
+        closeSwipeable()
+      }} />
+      {care.repeat &&
+        <SquareButton title='Details' onPress={() => {
+          navigation.navigate('Care', { screen: 'Details', params: { care: care }, initial: false })
+          closeSwipeable()
+        }} />
+      }
+      <SquareButton title='Delete' onPress={() => showDeleteConfirmDialog(care)} />
     </View>
   )
 
   return (
-    <Swipeable renderRightActions={() => rightSwipeActions()}>
+    <Swipeable ref={swipeableRef} renderRightActions={() => rightSwipeActions()}>
       <TouchableOpacity 
         key={care._id}
         style={[

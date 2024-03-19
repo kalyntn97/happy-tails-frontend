@@ -15,8 +15,8 @@ export interface Care {
   pets: Pet[]
   repeat: boolean
   ending: boolean
-  date: string
-  endDate?: string
+  date: Date
+  endDate?: Date
   frequency?: string
   times?: number
   trackers: Tracker[]
@@ -27,8 +27,8 @@ export interface CareFormData {
   pets: string[]
   repeat: boolean
   ending: boolean
-  date: string
-  endDate?: string
+  date: Date
+  endDate?: Date
   frequency: string
   times: number
   careId?: string

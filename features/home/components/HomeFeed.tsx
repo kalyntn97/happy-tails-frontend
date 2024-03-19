@@ -15,10 +15,9 @@ import PlaceHolder from "@components/PlaceHolder"
 import CustomFlatList from './CustomFlatList';
 //utils & store
 import { useUserQueries } from "../homeQueries"
-import { getCurrentDate, getMonth, getYears, months } from "@utils/datetime"
+import { getMonth } from "@utils/datetime"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
-import { useAutoCreateTracker } from "@care/careQueries"
 
 interface HomeFeedProps {
   navigation: any
@@ -38,7 +37,6 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const activeDateObj = new Date(activeYear, activeMonth, activeDate + 1)
-  
   const activeMonthName = getMonth(activeMonth + 1)
   
   const { date: currDateIsActive, week: currWeekIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
@@ -90,7 +88,8 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
               <Image source={require('@assets/icons/year.png')} style={styles.icon } />
               <Text style={[styles.iconText, selected === 'year' && styles.selected]}>{currYearIsActive ? 'This Year' : activeYear}</Text>
             </TouchableOpacity>
-          </View>    
+          </View>
+
           <View style={styles.taskListContainer}>
             {!Object.keys(cares.data).length && <PlaceHolder /> }
 
@@ -133,8 +132,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    alignItems: 'center',
+    ...Spacing.fullScreenDown,
     position: 'relative',
   },
   done: {
@@ -169,6 +167,7 @@ const styles = StyleSheet.create({
   },
   taskListContainer : {
     width: '90%',
+    height: '80%',
   },
   taskIcon: {
     ...Forms.smallIcon,

@@ -2,7 +2,7 @@
 import React from "react"
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView } from "react-native"
 //types & helpers & queries
-import { Care } from "@care/CareInterface"
+import { Care, Tracker } from "@care/CareInterface"
 import * as careHelpers from '@care/careHelpers'
 import { useDeleteCare } from "@care/careQueries"
 //components
@@ -15,6 +15,7 @@ import FillChart from "@components/Charts/FillChart"
 import Loader from "@components/Loader"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { useDeleteCareCard } from "@care/careHooks"
 
 interface CareDetailsProps {
   navigation: any
@@ -24,35 +25,12 @@ interface CareDetailsProps {
 const CareDetailsScreen = ({ navigation, route }) => {
 
   const { care: careCard } = route.params
+  const { showDeleteConfirmDialog } = useDeleteCareCard(navigation)
   const trackers = careCard.trackers.reverse()
   
-  const deleteCareMutation = useDeleteCare()
-
   const iconSource = careHelpers.getIconSource(careCard.name)
 
-  const handleDeleteCareCard = async (careId: string) => {
-    deleteCareMutation.mutate(careId, {
-      onSuccess: () => {
-        navigation.navigate('Index')
-        return AlertForm({ body: `Deleted successfully`, button: 'OK' })
-      },
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      },
-    })
-  }
-
-  const showDeleteConfirmDialog = () => {
-    return Alert.alert(
-      'Are you sure?',
-      `Remove ${careCard.name} Tracker ?`, 
-      [
-        { text: 'Yes', onPress: () => { handleDeleteCareCard(careCard._id) }},
-        { text: 'No' }
-      ]
-    )
-  }
-
+  
   return (
     <ScrollView
       style={styles.scrollView}
@@ -65,18 +43,29 @@ const CareDetailsScreen = ({ navigation, route }) => {
           <View style={styles.headerContainer}>
             <Text style={styles.header}>{careCard.name}</Text>
             <View style={styles.careInfo}>
-              <Image source={iconSource} style={styles.careIcon} />
-              <Text style={styles.freq}>
-                {careCard.times} times / {
-                  careCard.frequency === 'Daily' ? 'day' 
-                  : careCard.frequency === 'Weekly' ? 'week' 
-                  : careCard.frequency === 'Monthly' ? 'month' 
-                  : 'year'
-                }
-              </Text>
-              <TouchableOpacity style={styles.subBtn} onPress={() => navigation.goBack()}>
+              <View style={styles.rowCon}>
+                <Image source={require('@assets/icons/date.png')} style={styles.careIcon}/>
+                <Text style={styles.subHeader}>
+                  {new Date(careCard.date).toLocaleDateString()}
+                  {careCard.endDate &&
+                    <Text> - {new Date(careCard.endDate).toLocaleDateString()}</Text>
+                  }
+                </Text>
+              </View>
+              <View style={styles.rowCon}>
+                <Image source={iconSource} style={styles.careIcon} />
+                <Text style={styles.subHeader}>
+                  {careCard.times} times / {
+                    careCard.frequency === 'Daily' ? 'day' 
+                    : careCard.frequency === 'Weekly' ? 'week' 
+                    : careCard.frequency === 'Monthly' ? 'month' 
+                    : 'year'
+                  }
+                </Text>
+              </View>
+              {/* <TouchableOpacity style={styles.subBtn} onPress={() => navigation.goBack()}>
                 <Text style={styles.btnText}>Go back</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           
             <ScrollPetList petArray={careCard.pets} size='small' />
@@ -85,12 +74,12 @@ const CareDetailsScreen = ({ navigation, route }) => {
               <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} onPress={() => navigation.navigate('Edit', { care: careCard })}>
                 <Text style={styles.btnText}>Edit</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} onPress={showDeleteConfirmDialog}>
+              <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} onPress={() => showDeleteConfirmDialog(careCard)}>
                 <Text style={styles.btnText}>Delete</Text>
               </TouchableOpacity>
             </View>
           </View>
-          {trackers.map((tracker, idx) =>
+          {trackers.map((tracker: Tracker, idx: number) =>
             <React.Fragment key={`tracker-${idx}`}>
               {careCard.frequency === 'Daily' 
               ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={careCard.times} />
@@ -127,13 +116,18 @@ const styles = StyleSheet.create({
   },
   careInfo: {
     ...Spacing.flexRow,
-    width: '80%',
+    width: '100%',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10
   },
   careIcon: {
     ...Forms.smallIcon,
   },
-  freq: {
+  subHeader: {
     ...Typography.smallSubHeader,
+  },
+  rowCon: {
+    ...Spacing.flexRow,
   },
   btnContainer: {
     ...Spacing.flexRow,

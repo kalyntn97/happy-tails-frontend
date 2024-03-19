@@ -129,7 +129,7 @@ const FloatingButton = ({ navigation }) => {
                 onPress={() => navigation.navigate('Health', { screen: 'Create' })} 
               />
               <SubFloatingButton label='Add a Task' index={0} x={positionX.value} 
-                onPress={() => navigation.navigate('Care', { screen: 'Create' })} 
+                onPress={() => navigation.navigate('Care', { screen: 'Create', initial: false })} 
               />
             </Animated.View>
           }

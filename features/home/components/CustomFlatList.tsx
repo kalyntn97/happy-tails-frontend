@@ -6,6 +6,8 @@ import SwipeableTask from '@components/SwipeableTask'
 import { getDateConstructor } from '@care/careHelpers'
 //types
 import { Care } from '@care/CareInterface'
+//styles
+import { Spacing } from '@styles/index'
 
 interface FlatListProps {
   data: Care[]
@@ -32,7 +34,7 @@ const CustomFlatList: FC<FlatListProps> = ({ data, navigation, activeDateObj, on
           && activeDateObj >= startDate 
           && (!endDate || activeDateObj <= endDate)
         const isOneTime = !item.repeat //only render one-time task on the date
-          && activeDateObj.toDateString() == new Date(item.date).toDateString()
+          && activeDateObj.toLocaleDateString() == new Date(item.date).toLocaleDateString()
         if (isRepeating || isOneTime) {
           return <SwipeableTask key={item._id} care={item} navigation={navigation} onPress={() => onPressTask(item)} />
         } else {
@@ -40,7 +42,9 @@ const CustomFlatList: FC<FlatListProps> = ({ data, navigation, activeDateObj, on
         }
       }}
       ListEmptyComponent={ <EmptyList /> }
+      showsVerticalScrollIndicator={false}
       alwaysBounceVertical={false}
+      style={styles.list}
     />
   )
 }
@@ -51,6 +55,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'bold',
     textAlign: 'center'
+  },
+  list: {
+    ...Spacing.fullWH,
   },
 })
 

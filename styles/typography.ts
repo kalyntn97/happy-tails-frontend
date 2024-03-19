@@ -50,7 +50,6 @@ export const xSmallHeader = {
 export const smallSubHeader: TextStyle = {
   margin: 10,
   textAlign: 'center',
-  letterSpacing: 1,
   ...xSmall,
   fontStyle: 'italic',
 }

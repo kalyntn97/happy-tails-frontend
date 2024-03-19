@@ -1,6 +1,6 @@
 //npm
 import { useEffect } from "react"
-import { useIsFocused } from "@react-navigation/native"
+import { useIsFocused, useNavigation } from "@react-navigation/native"
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native"
 //components
 import CareForm from "../components/CareForm"
@@ -13,10 +13,10 @@ const NewCareScreen: React.FC = ({ navigation }) => {
   const isFocused = useIsFocused()
   const addCareMutation = useAddCare()
 
-  const handleSubmit = (name: string, pets: string[], repeat: boolean, ending: boolean, date: string, endDate: string | null, frequency: string | null, times: number | null) => {
+  const handleSubmit = (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string | null, times: number | null) => {
     addCareMutation.mutate({ name, pets, repeat, ending, date, endDate, frequency, times }, {
       onSuccess: () => {
-        navigation.navigate('Index')
+        navigation.navigate('Main')
         return AlertForm({ body: `Added successfully`, button: 'OK' })
       },
       onError: (error) => {

@@ -26,7 +26,7 @@ const CareCard = ({ care, navigation, onNavigate }) => {
   
   const handleNavigate = () => {
     onNavigate && onNavigate()
-    navigation.navigate('Care', { screen: 'Details' , params : { care: care } })
+    navigation.navigate('Care', { screen: 'Details' , params : { care: care }, initial: false })
   }
 
   return (

@@ -6,41 +6,46 @@ import LottieView from "lottie-react-native"
 //components
 import { AddButton } from "@components/ButtonComponent"
 import PlaceHolder from "@components/PlaceHolder"
+import Loader from "@components/Loader"
 //types & helpers
 import * as careHelpers from "@care/careHelpers"
+import { Care } from "@care/CareInterface"
+//queries
+import { useGetAllCares } from "@care/careQueries"
 //styles
 import { Buttons, Spacing, Typography, Colors, Forms } from '@styles/index'
-import Loader from "@components/Loader"
-import { useGetAllCares } from "@care/careQueries"
 
 type CareIndexProps = {
   navigation: any
   route: { params?: { sectionIndex?: number, itemIndex?: number }}
 }
 
+const CareItem = ({ care, navigation }) => {
+  const iconSource = careHelpers.getIconSource(care.name)
+
+  return (
+    <TouchableOpacity 
+      onPress={() => navigation.navigate('Details', { care: care })}
+      style={[styles.itemContainer,
+      { backgroundColor: careHelpers.getTaskBackgroundColor(care.frequency) }
+    ]}>
+      <View style={styles.itemLeft}>
+        <Image source={iconSource} style={styles.itemIcon} />
+        <Text>{care.name}</Text>
+      </View>
+      <Image source={require('@assets/icons/next2.png')} style={{...Forms.smallIcon, marginRight: 10 }} />
+    </TouchableOpacity>
+  )
+}
+
 const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   const { data: cares, isLoading, isSuccess, isError} = useGetAllCares()
-
-  let careIndex = []
-
-
-  const CareItem = ({ care }) => {
-    const iconSource = careHelpers.getIconSource(care.name)
   
-    return (
-      <TouchableOpacity 
-        onPress={() => navigation.navigate('Details', { care: care })}
-        style={[styles.itemContainer,
-        { backgroundColor: careHelpers.getTaskBackgroundColor(care.frequency) }
-      ]}>
-        <View style={styles.itemLeft}>
-          <Image source={iconSource} style={styles.itemIcon} />
-          <Text>{care.name}</Text>
-        </View>
-        <Image source={require('@assets/icons/next2.png')} style={{...Forms.smallIcon, marginRight: 10 }} />
-      </TouchableOpacity>
-    )
-  }
+  const sortOrder = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'Others']
+  const careIndex: { title: string; data: Care[] }[] = sortOrder.map(sectionTitle => ({
+    title: sectionTitle,
+    data: cares[sectionTitle] || []
+  }))
 
   // another method that uses for.. of loop and IIFE
   // const careIndex: Array<{ title: string, data: Care[] }> = (() => {
@@ -52,7 +57,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   //   }
   //   return Object.values(result)
   // })()
-
+  
   const sectionListRef = useRef<SectionList>(null)
 
   const getItemLayout = sectionListGetItemLayout({
@@ -76,50 +81,44 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
       }
       setInitialListPosition()
     }
-    if (cares) {
-      const sortOrder = ['Daily', 'Weekly', 'Monthly', 'Yearly']
-      careIndex = sortOrder.map(sectionTitle => ({
-        title: sectionTitle,
-        data: cares[sectionTitle] || []
-      }))
-    }
   }, [route.params, isSuccess])
   
   return (
     <View style={styles.container}>
       <AddButton onPress={() => navigation.navigate('Create')} />
-      {careIndex ? 
+      {isSuccess ?
         <>
-          { !careIndex.length && <PlaceHolder /> }
-
-          <ScrollView 
-            horizontal
-            style={styles.listHeader}
-            showsHorizontalScrollIndicator={false}
-          >
-            {careIndex.map((section, idx) => 
-              <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn, { backgroundColor: Colors.multiArray[idx] }]} onPress={() => handleHeaderPress(idx)}>
-                <Text>{section.title}</Text>
-                <Text style={styles.headerCount}>{section.data.length}</Text>
-              </TouchableOpacity>
-            )}
-          </ScrollView>
-
+          { !Object.values(cares).length && <PlaceHolder /> }
+          <View style={styles.headerCon}>
+            <ScrollView 
+              horizontal
+              contentContainerStyle={styles.listHeader}
+              showsHorizontalScrollIndicator={false}
+            >
+              {careIndex.map((section, idx) => 
+                <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn, { backgroundColor: Colors.multiArray[idx] }]} onPress={() => handleHeaderPress(idx)}>
+                  <Text>{section.title}</Text>
+                  <Text style={styles.headerCount}>{section.data.length}</Text>
+                </TouchableOpacity>
+              )}
+            </ScrollView>
+          </View>
+          
           <SectionList
             ref={sectionListRef}
             sections={careIndex}
             keyExtractor={(item, index) => item + index}
-            renderItem={({ item }) => (
-              <CareItem care={item} />
+            renderItem={({ item, index }) => (
+              <CareItem key={item._id} care={item} navigation={navigation} />
             )}
             getItemLayout={getItemLayout}
             showsVerticalScrollIndicator={false}
             style={{ width: '90%' }}
             // ListEmptyComponent={<Text>Empty...</Text>}
           />
-        </>
-        : <Loader />
+        </> : <Loader />
       }
+        
     </View> 
   )
 }
@@ -127,7 +126,6 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
-    ...Spacing.centered,
   },
   mainBtn: {
     ...Buttons.longSquare,
@@ -141,9 +139,11 @@ const styles = StyleSheet.create({
   btnText: {
     ...Buttons.buttonText
   },
+  headerCon: {
+    height: '10%',
+  },
   listHeader: {
-    marginTop: 50,
-    height: 0,
+    marginVertical: 10,
   },
   headerCount: {
     color: Colors.red,

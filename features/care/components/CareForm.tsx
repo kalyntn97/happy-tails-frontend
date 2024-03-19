@@ -15,7 +15,7 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { usePets } from "@store/store"
 
 interface CareFormProps {
-  onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, careId: string | null) => Promise<any>
+  onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, careId: string | null) => void
   initialValues?: { name?: string, repeat?: boolean, ending?: boolean, date?: Date, endDate?: Date, frequency?: string, times?: number, pets?: Pet[], careId?: string }
   navigation: any
   status: string
@@ -31,7 +31,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   const [petData, setPetData] = useState<string[]>(initialPets ?? [])
   const [repeat, setRepeat] = useState<boolean>(initialValues?.repeat ?? false)
   const [ending, setEnding] = useState<boolean>(initialValues?.ending ?? false)
-  const [date, setDate] = useState<Date | null>(initialValues?.date ?? null)
+  const [date, setDate] = useState<Date | null>(initialValues?.date ?? new Date())
   const [endDate, setEndDate] = useState<Date | null>(initialValues?.endDate ?? null)
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
   const [times, setTimes] = useState<number>(initialValues?.times ?? null)
@@ -64,7 +64,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   }
 
   const handleSubmit = async () => {
-    if (!name || !date) {
+    if (!name || !petData.length || !date) {
       setErrorMsg('Please enter all fields.')
     } else {
       setErrorMsg('')
@@ -103,7 +103,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
 
         <View style={styles.rowCon}>
           <Text style={styles.rowText}>{repeat ? 'Start Date' : 'Date'}</Text>
-          <RNDateTimePicker value={new Date(date) ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.darkPink} />
+          <RNDateTimePicker value={new Date(date)} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.darkPink} />
         </View>
 
         {repeat &&
