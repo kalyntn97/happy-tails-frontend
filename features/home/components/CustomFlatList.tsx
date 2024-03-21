@@ -43,7 +43,7 @@ const CustomFlatList: FC<FlatListProps> = ({ data, navigation, activeDateObj, on
       }}
       ListEmptyComponent={ <EmptyList /> }
       showsVerticalScrollIndicator={false}
-      alwaysBounceVertical={false}
+      // alwaysBounceVertical={false}
       style={styles.list}
     />
   )

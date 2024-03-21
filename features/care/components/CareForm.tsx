@@ -27,7 +27,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   const pets = usePetIds()
   const height = useWindowDimensions().height
 
-  const [name, setName] = useState<string>(initialValues?.name ?? '')
+  const [name, setName] = useState<string>(initialValues?.name ?? null)
   const [petData, setPetData] = useState<string[]>(initialPets ?? [])
   const [repeat, setRepeat] = useState<boolean>(initialValues?.repeat ?? false)
   const [ending, setEnding] = useState<boolean>(initialValues?.ending ?? false)
@@ -89,7 +89,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
 
         {!!name && <Text>Enter Name</Text>}
-        <Dropdown label={initialValues?.name ? initialValues.name : 'Select Name'} dataType="care" onSelect={handleSelectName} />
+        <Dropdown label={'Select Name'} dataType="care" onSelect={handleSelectName} initial={name} />
         {allowManualName && 
           <TextInput 
             style={styles.input}
@@ -109,13 +109,13 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         {repeat &&
           <>
             {!!frequency && <Text>Select Frequency</Text>}
-            <Dropdown label={initialValues?.frequency ? initialValues.frequency : 'Select Frequency'} dataType="frequency" onSelect={setFrequency} />
+            <Dropdown label={'Select Frequency'} dataType="frequency" onSelect={setFrequency} initial={frequency} />
             
             <TextInput 
               style={styles.input} 
               placeholder='Enter Times' 
-              onChangeText={(text: string) => setTimes(text !== '' ? Number(text) : null)} 
-              value={times !== null ? times.toString() : null} 
+              onChangeText={(text: string) => setTimes(Number(text))} 
+              value={(times ?? '').toString()} 
               keyboardType="numeric"
             />
           </>

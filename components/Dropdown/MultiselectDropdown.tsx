@@ -66,7 +66,7 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
                 renderItem={({ item }) => (
                   <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
                       <Text style={selected.some(s => s === item) ? styles.selected : {}}>
-                        { item || label }
+                        { item }
                       </Text>
                   </TouchableOpacity>
                 )} 
@@ -78,7 +78,7 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
     {selected.length
     ? <View style={styles.labelField}>
         {selected.map((item, idx) =>
-          <Text key={idx} style={styles.label}>{item}</Text>
+          <Text key={idx} style={styles.label}>{ item ?? label}</Text>
         )}
       </View>
     : <Text>{label}</Text>

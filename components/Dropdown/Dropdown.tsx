@@ -15,14 +15,13 @@ interface DropdownProps {
   dataType: string
   onSelect: (item: string ) => void
   width?: number
+  initial?: string
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width }) => {
+const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, initial }) => {
   const [visible, setVisible] = useState(false)
   const [data, setData] = useState<string[]>([])
-  const [selected, setSelected] = useState<string>(
-    label !== 'Select Species' || 'Select Breed' ? label : ''
-  )
+  const [selected, setSelected] = useState<string>(initial ?? null)
   const petNames = usePetNames()
 
   const toggleDropdown = (): void => {
@@ -66,9 +65,10 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width })
         default: result = []
       }
       setData(result)
+      setSelected(initial ?? null)
     }
     fetchData(dataType)
-  }, [])
+  }, [dataType])
 
   return (
     <TouchableOpacity style={[styles.dropDownBtn, width && { width: width }]} onPress={toggleDropdown} ref={DropdownBtn}>
@@ -81,8 +81,8 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width })
                 keyExtractor={(item, idx) => idx.toString()}
                 renderItem={({ item }) => (
                   <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
-                    <Text style={item === selected ? styles.selected : {}}>
-                      { item || label }
+                    <Text style={item === selected && styles.selected}>
+                      { item }
                     </Text>
                   </TouchableOpacity>
                 )} 
@@ -91,7 +91,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width })
           </TouchableOpacity>
         </Modal>
       )}
-      <Text style={styles.label}>{selected ? selected : label}</Text>
+      <Text style={styles.label}>{selected ?? label}</Text>
       <Image source={require('@assets/icons/dropdown.png')} style={styles.icon} />
     </TouchableOpacity>
   )

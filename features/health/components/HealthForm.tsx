@@ -2,8 +2,9 @@
 import { useState } from "react"
 import { Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
-//store
+//store && types
 import { usePets } from "@store/store"
+import { Pet } from "@pet/PetInterface"
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
 import { MainButton, SubButton } from "@components/ButtonComponent"
@@ -12,24 +13,26 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface HealthFormProps {
   onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Date, nextDue: Date, vetId: string) => Promise<any>
-  initialValues?: {pet?: string, type?: string, name?: string, vaccine?: string, times?: number, frequency?: string, lastDone?: Date, nextDue?: Date, vetId?: string}
+  initialValues?: {pet?: Pet, type?: string, name?: string, vaccine?: string, times?: number, frequency?: string, lastDone?: Date, nextDue?: Date, vetId?: string}
   navigation: any
 }
 
 const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, navigation }) => {
-  const [pet, setPet] = useState<string>(initialValues?.pet ?? '')
-  const [name, setName] = useState<string>(initialValues?.name ?? '')
-  const [vaccine, setVaccine] = useState<string>(initialValues?.vaccine ?? '')
+  const pets = usePets()
+  const initialPetName = pets.find(p => p._id === initialValues?.pet._id)?.name ?? null
+  const [pet, setPet] = useState<string>(initialValues?.pet._id ?? null)
+  const [name, setName] = useState<string>(initialValues?.name ?? null)
+  const [vaccine, setVaccine] = useState<string>(initialValues?.vaccine ?? null)
   const [type, setType] = useState<string>(initialValues?.type ?? 'Routine')
-  const [times, setTimes] = useState<number | ''>(initialValues?.times ?? '')
-  const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? '')
+  const [times, setTimes] = useState<number>(initialValues?.times ?? null)
+  const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
   const [lastDone, setLastDone] = useState<Date>(initialValues?.lastDone ?? null)
   const [nextDue, setNextDue] = useState<Date>(initialValues?.nextDue ?? null)
 
-  const [species, setSpecies] = useState<string>('')
+  const [species, setSpecies] = useState<string>(null)
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
   const [allowManualDueDate, setAllowManualDueDate] = useState<boolean>(false)
-  const [errorMsg, setErrorMsg] = useState<string>('')
+  const [errorMsg, setErrorMsg] = useState<string>(null)
 
   const vetId: string | null = initialValues?.vetId ?? null
 
@@ -46,9 +49,10 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   }
 
   const handleSelectPet = (selected: string) => {
-    const pet = usePets().find(pet => pet.name === selected)
+    const pet = pets.find(pet => pet.name === selected)
     setPet(pet._id)
     setSpecies(pet.species)
+    if (vaccine) setVaccine(null)
   }
 
   const handleSubmit = async () => {
@@ -83,16 +87,16 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       <ScrollView 
         contentContainerStyle={styles.container}
       >
-        <Text style={styles.header}>{initialValues?.name ? 'Edit' : 'Add'} a Vet Record</Text>
+        <Text style={styles.header}>{name ? 'Edit' : 'Add'} a Vet Record</Text>
 
         {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
 
-        <Dropdown label={initialValues?.pet ? initialValues.pet : 'Select Pet'} dataType="petNames" onSelect={handleSelectPet} />
+        <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} />
 
-        <Dropdown label={initialValues?.type ?? 'Routine'} dataType="healthTypes" onSelect={setType} />
+        <Dropdown label={'Select Type'} dataType="healthTypes" onSelect={setType} initial={type} />
       
         {!!name && <Text>Enter Name</Text>}
-        <Dropdown label={initialValues?.name ? initialValues.name : 'Select Name'} dataType="health" onSelect={handleSelectName} />
+        <Dropdown label={'Select Name'} dataType="health" onSelect={handleSelectName} initial={name} />
 
         {allowManualName && 
           <TextInput 
@@ -104,7 +108,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
           />
         }
         {name === 'Vaccine' && (species === 'Cat' || species === 'Dog') &&
-          <Dropdown label='Select Vaccine Name' dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={setVaccine} />
+          <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={setVaccine} initial={vaccine} />
         }
 
         <View style={styles.rowContainer}>
@@ -118,11 +122,11 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
             <TextInput
               style={[styles.input, { width: 50 }]}
               placeholder='1' 
-              onChangeText={(text: string) => setTimes(text !== '' ? Number(text) : '')} 
-              value={times !== '' ? times.toString() : ''} 
+              onChangeText={(text: string) => setTimes(Number(text))} 
+              value={(times ?? '').toString()} 
               keyboardType="numeric"
             />
-            <Dropdown label={initialValues?.frequency ? initialValues.frequency : '...'} dataType="healthFrequency" onSelect={setFrequency} width={120} />
+            <Dropdown label='...' dataType="healthFrequency" onSelect={setFrequency} width={120} initial={frequency} />
           </View>
         }
         {/* <View style={styles.checkboxContainer}>

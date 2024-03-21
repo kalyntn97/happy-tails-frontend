@@ -17,10 +17,10 @@ interface PetFormProps {
 
 const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
   const [photo, setPhoto] = useState<string | null>(initialValues?.photo ?? null)
-  const [name, setName] = useState<string>(initialValues?.name ?? '')
-  const [age, setAge] = useState<number | ''>(initialValues?.age ?? '')
-  const [species, setSpecies] = useState<string>(initialValues?.species ?? '')
-  const [breed, setBreed] = useState<string>(initialValues?.breed ?? '')
+  const [name, setName] = useState<string>(initialValues?.name ?? null)
+  const [age, setAge] = useState<number>(initialValues?.age ?? null)
+  const [species, setSpecies] = useState<string>(initialValues?.species ?? null)
+  const [breed, setBreed] = useState<string>(initialValues?.breed ?? null)
   const [errorMsg, setErrorMsg] = useState<string>('')
 
   const petId: string | null = initialValues?.petId ?? null
@@ -44,6 +44,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
       setErrorMsg('Please enter name and type.')
     } else {
       setErrorMsg('')
+      if (species === 'Others') setBreed(null)
       await onSubmit(name, age, species, breed, photoData, petId)
     }
   }
@@ -72,8 +73,8 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
         <TextInput 
           style={styles.input} 
           placeholder='Age' 
-          onChangeText={(text: string) => setAge(text !== '' ? Number(text) : '')} 
-          value={age !== '' ? age.toString() : ''} 
+          onChangeText={(text: string) => setAge(Number(text))} 
+          value={(age || '').toString()} 
           keyboardType="numeric"
         />
         {!!species && <Text>Select Type</Text>}

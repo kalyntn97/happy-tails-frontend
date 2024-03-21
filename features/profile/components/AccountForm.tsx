@@ -1,14 +1,12 @@
 //npm modules
 import { useEffect, useState } from "react"
 import { Keyboard, StyleSheet, View, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback } from "react-native"
-// context
-import { useAuth } from "@auth/AuthContext"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface AccountFormProps {
   showForm: string
-  onSubmit: (username: string, password: string) => Promise<any>
+  onSubmit: (username: string, password: string) => void
 }
 
 const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
