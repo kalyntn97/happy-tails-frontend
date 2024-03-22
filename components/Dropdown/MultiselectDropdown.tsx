@@ -32,7 +32,7 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
     setVisible(true)
   }
   
-  const onItemPress = (item: string ) => {
+  const onItemPress = (item: string) => {
     // use callback func with setState to handle asynchronous calls
     setSelected((prev) => {
       const selected = prev.some(p => p === item) ? prev.filter(p => p !== item) : [...prev, item]

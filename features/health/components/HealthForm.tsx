@@ -10,14 +10,16 @@ import Dropdown from "@components/Dropdown/Dropdown"
 import { MainButton, SubButton } from "@components/ButtonComponent"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import MultipleInputs from "../../../components/MultipleInputs"
 
 interface HealthFormProps {
-  onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Date, nextDue: Date, vetId: string) => Promise<any>
-  initialValues?: {pet?: Pet, type?: string, name?: string, vaccine?: string, times?: number, frequency?: string, lastDone?: Date, nextDue?: Date, vetId?: string}
+  onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Date[], nextDue: Date, healthId: string) => void
+  initialValues?: {pet?: Pet, type?: string, name?: string, vaccine?: string, times?: number, frequency?: string, lastDone?: Date[], nextDue?: Date, healthId?: string}
   navigation: any
+  status: string
 }
 
-const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, navigation }) => {
+const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
   const pets = usePets()
   const initialPetName = pets.find(p => p._id === initialValues?.pet._id)?.name ?? null
   const [pet, setPet] = useState<string>(initialValues?.pet._id ?? null)
@@ -26,7 +28,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   const [type, setType] = useState<string>(initialValues?.type ?? 'Routine')
   const [times, setTimes] = useState<number>(initialValues?.times ?? null)
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
-  const [lastDone, setLastDone] = useState<Date>(initialValues?.lastDone ?? null)
+  const [lastDone, setLastDone] = useState<Date[]>(initialValues?.lastDone ?? null)
   const [nextDue, setNextDue] = useState<Date>(initialValues?.nextDue ?? null)
 
   const [species, setSpecies] = useState<string>(null)
@@ -34,7 +36,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   const [allowManualDueDate, setAllowManualDueDate] = useState<boolean>(false)
   const [errorMsg, setErrorMsg] = useState<string>(null)
 
-  const vetId: string | null = initialValues?.vetId ?? null
+  const healthId: string | null = initialValues?.healthId ?? null
 
   const handleSelectName = (selected: string) => {
     setName(() => {
@@ -55,30 +57,12 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     if (vaccine) setVaccine(null)
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!name || !times || !frequency || !pet || !type) {
       setErrorMsg('Please enter all fields.')
     } else {
-      //calculate next due date
-      if (times && frequency && lastDone)  {
-        const date = lastDone.getDate()
-        const month = lastDone.getMonth()
-        const year = lastDone.getFullYear()
-        const nextDueDate = new Date(lastDone)
-        switch (frequency) {
-          case 'day(s)': nextDueDate.setDate(date + Number(times)); break
-          case 'week(s)': nextDueDate.setDate(date + Number(times) * 7); break
-          case 'month(s)':
-            const newMonth = month + Number(times)
-            nextDueDate.setMonth(newMonth % 12) //handle month rollover
-            nextDueDate.setFullYear(year + Math.floor(newMonth / 12)) //handle year rollover
-            break
-          case 'year(s)': nextDueDate.setFullYear(year + Number(times)); break
-        }
-        setNextDue(nextDueDate)
-      }
       setErrorMsg('')
-      await onSubmit(pet, type, name, vaccine, times, frequency, lastDone, nextDue, vetId)
+      onSubmit(pet, type, name, vaccine, times, frequency, lastDone, nextDue, healthId)
     }
   }
 
@@ -86,8 +70,9 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView 
         contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.header}>{name ? 'Edit' : 'Add'} a Vet Record</Text>
+        <Text style={styles.header}>{initialValues?.name ? 'Edit' : 'Add'} a Vet Record</Text>
 
         {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
 
@@ -110,17 +95,15 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         {name === 'Vaccine' && (species === 'Cat' || species === 'Dog') &&
           <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={setVaccine} initial={vaccine} />
         }
-
-        <View style={styles.rowContainer}>
-          <Text style={styles.label}>Last Done</Text>
-          <RNDateTimePicker value={lastDone ?? new Date()} maximumDate={new Date()} onChange={(event, selectedDate) => { setLastDone(selectedDate) }} accentColor={Colors.darkPink} />
-        </View>
+        
+        <Text style={styles.subText}>(Press + to add, - to remove dates)</Text>
+        <MultipleInputs label='Last Done' type='Date' initials={lastDone} onPress={setLastDone}/>
 
         {!allowManualDueDate && 
           <View style={styles.rowContainer}>
             <Text style={styles.label}>Due In</Text>
             <TextInput
-              style={[styles.input, { width: 50 }]}
+              style={[Forms.inputBase, { width: 50 }]}
               placeholder='1' 
               onChangeText={(text: string) => setTimes(Number(text))} 
               value={(times ?? '').toString()} 
@@ -129,7 +112,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
             <Dropdown label='...' dataType="healthFrequency" onSelect={setFrequency} width={120} initial={frequency} />
           </View>
         }
-        {/* <View style={styles.checkboxContainer}>
+        <View style={styles.checkboxContainer}>
           <Text>Or enter manually</Text>
           <TouchableOpacity style={styles.checkbox} onPress={() => setAllowManualDueDate(!allowManualDueDate)}>
             <Text style={styles.check}>{allowManualDueDate ? '✓' : ''}</Text>
@@ -137,9 +120,13 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         </View>
 
       {allowManualDueDate &&
-        <RNDateTimePicker value={nextDue ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue(selectedDate) }}/>
-      } */}
-        <MainButton onPress={handleSubmit} title={initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
+          <View style={styles.rowContainer}>
+            <Text style={styles.label}>Next Due</Text>
+            <RNDateTimePicker value={nextDue ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue(selectedDate) }}/>
+          </View>
+
+      }
+        <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
         <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
 
       </ScrollView>
@@ -161,7 +148,6 @@ const styles = StyleSheet.create({
   },
   input: {
     ...Forms.input,
-    borderColor: Colors.pink,
   },
   rowContainer: {
     ...Spacing.flexRow,
@@ -186,6 +172,9 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     margin: 10,
   },
+  subText: {
+    ...Typography.smallSubBody,
+  }
 })
 
 export default HealthForm

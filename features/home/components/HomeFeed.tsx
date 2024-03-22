@@ -8,7 +8,7 @@ import { Care } from "@care/CareInterface"
 import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
 //components
 import CareCard from "@care/components/CareCard"
-import SwipeableTask from "@components/SwipeableTask"
+import SwipeableCareTask from "@components/SwipeableCareTask"
 import { CloseButton } from "../../../components/ButtonComponent"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
@@ -50,7 +50,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     if (isSuccess) {
       setPets(pets.data)
     }
-  }, [pets.data, cares.data])
+  }, [pets.data, cares.data, healths.data])
 
   return (  
     <View style={styles.container}>
@@ -94,19 +94,22 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
             {!Object.keys(cares.data).length && <PlaceHolder /> }
 
             {selected === 'day' &&
-              <CustomFlatList data={[...cares.data['Daily'], ...cares.data['Others'] ?? []]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
+              <>
+                <CustomFlatList data={[...cares.data['Daily'], ...cares.data['Others'] ?? []]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+                <CustomFlatList data={[...healths.data ?? []]} navigation={navigation} activeDateObj={activeDateObj} type='Health' />
+              </>
             }
             
             {selected === 'week' && 
-              <CustomFlatList data={cares.data['Weekly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
+              <CustomFlatList data={cares.data['Weekly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
             }
 
             {selected === 'month' && 
-              <CustomFlatList data={cares.data['Monthly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
+              <CustomFlatList data={cares.data['Monthly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
             }
 
             {selected === 'year' && 
-              <CustomFlatList data={cares.data['Yearly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
+              <CustomFlatList data={cares.data['Yearly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
             }
           </View>
         </>

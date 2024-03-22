@@ -1,25 +1,50 @@
-import { Image, Text, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Image, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Buttons, Colors, Spacing, Forms } from "@styles/index"
+
+const whiteBtnTextStyles: TextStyle = {
+  color: Colors.white,
+  fontWeight: 'bold'
+}
 
 export const AddButton = ({ onPress }) => ( 
   <TouchableOpacity onPress={onPress} style={{
-    ...Buttons.main,
-    width: 60,
-    height: 60,
-    borderRadius: '50%',
-    backgroundColor: Colors.pink,
-    ...Spacing.centered,
+    ...Buttons.roundButton,
     position: 'absolute',
     bottom: 20,
     right: 20,
     zIndex: 2,
-  } as ViewStyle}>
+  }}>
     <Text style={{
-      color: Colors.white,
+      ...whiteBtnTextStyles,
       fontSize: 30,
-      fontWeight: 'bold'
     }}>
       +
+    </Text>
+  </TouchableOpacity>
+)
+
+export const SmallAddButton = ({ onPress }) => (
+  <TouchableOpacity onPress={onPress} style={{
+    ...Buttons.smallRoundButton,
+  }}>
+    <Text style={{
+      ...whiteBtnTextStyles,
+      fontSize: 15,
+    }}>
+      +
+    </Text>
+  </TouchableOpacity>
+)
+
+export const SmallRemoveButton = ({ onPress }) => (
+  <TouchableOpacity onPress={onPress} style={{
+    ...Buttons.smallRoundButton,
+  }}>
+    <Text style={{
+      ...whiteBtnTextStyles,
+      fontSize: 15,
+    }}>
+      −
     </Text>
   </TouchableOpacity>
 )

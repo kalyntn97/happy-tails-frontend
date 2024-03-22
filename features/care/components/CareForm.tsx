@@ -9,10 +9,10 @@ import { MainButton, SubButton } from "@components/ButtonComponent"
 //types
 import { Pet } from "@pet/PetInterface"
 //store
+import { usePets } from "@store/store"
 import { usePetIds } from "@store/storeUtils"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { usePets } from "@store/store"
 
 interface CareFormProps {
   onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, careId: string | null) => void

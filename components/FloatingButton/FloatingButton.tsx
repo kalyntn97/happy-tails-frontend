@@ -126,7 +126,7 @@ const FloatingButton = ({ navigation }) => {
                 onPress={() => navigation.navigate('Pets', { screen: 'Create' })} 
               />
               <SubFloatingButton label='Add a Vet Visit' index={1} x={positionX.value} 
-                onPress={() => navigation.navigate('Health', { screen: 'Create' })} 
+                onPress={() => navigation.navigate('Health', { screen: 'Create', initial: false })} 
               />
               <SubFloatingButton label='Add a Task' index={0} x={positionX.value} 
                 onPress={() => navigation.navigate('Care', { screen: 'Create', initial: false })} 

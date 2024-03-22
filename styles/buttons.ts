@@ -113,8 +113,29 @@ export const buttonText: TextStyle = {
   letterSpacing: 0.25,
 }
 
+export const whiteBtnText: TextStyle = {
+  ...buttonText,
+  color: Colors.white,
+}
+
+export const roundedBase = {
+  marginHorizontal: 10,
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: Colors.pink,
+  borderRadius: 99,
+}
+
 export const roundButton = {
+  ...main,
+  ...roundedBase,
   width: 60,
   height: 60,
-  borderRadius: '50%'
+}
+
+export const smallRoundButton = {
+  ...main,
+  ...roundedBase,
+  width: 25,
+  height: 25,
 }

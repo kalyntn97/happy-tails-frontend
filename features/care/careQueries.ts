@@ -28,7 +28,7 @@ export const useAddCare = () => {
   return useMutation({
     mutationFn: ({ name, pets, repeat, ending, date, endDate, frequency, times }: CareFormData) => careService.create(name, pets, repeat, ending, date, endDate, frequency, times),
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares]})
+      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
     }
   })
 }
@@ -39,7 +39,7 @@ export const useUpdateCare = () => {
   return useMutation({
     mutationFn: ({ name, pets, repeat, ending, date, endDate, frequency, times, careId }: CareFormData) => careService.update(name, pets, repeat, ending, date, endDate, frequency, times, careId),
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares]})
+      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
     }
   })
 }
@@ -50,7 +50,7 @@ export const useDeleteCare = () => {
   return useMutation({
     mutationFn: (careId: string) => careService.deleteCare(careId),
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares]})
+      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
     }
   })
 }

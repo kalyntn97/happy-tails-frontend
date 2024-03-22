@@ -1,4 +1,5 @@
 import { ViewStyle, ImageStyle } from "react-native"
+import Colors from "./colors"
 
 export const boxShadow: ViewStyle = {
   elevation: 3,
@@ -13,15 +14,20 @@ export const form: ViewStyle = {
   justifyContent: 'center'
 }
 
-export const input: ViewStyle = {
-  width: 250,
+export const inputBase: ViewStyle = {
   height: 50,
   paddingHorizontal: 10,
   paddingVertical: 10,
   margin: 10,
   borderRadius: 8,
   borderWidth: 1,
-  backgroundColor: '#FBFFFE'
+  backgroundColor: '#FBFFFE',
+  borderColor: Colors.pink,
+}
+
+export const input: ViewStyle = {
+  ...inputBase,
+  width: 250,
 }
 
 export const card: ViewStyle = {

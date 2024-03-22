@@ -11,19 +11,19 @@ import { useDeleteCareCard } from '@care/careHooks'
 //components
 import { useActiveDate } from '@store/store'
 import { AlertForm } from '@utils/ui'
-import { SquareButton } from './ButtonComponent'
-import ScrollPetList from './PetInfo/ScrollPetList'
+import { SquareButton } from '../../../components/ButtonComponent'
+import ScrollPetList from '../../../components/PetInfo/ScrollPetList'
 //styles
 import { Spacing, Forms } from '@styles/index'
 
-interface SwipeableTaskProps {
+interface SwipeableCareTaskProps {
   care: Care
   taskIndex?: number
   navigation: any
   onPress: any
 }
 
-const SwipeableTask: FC<SwipeableTaskProps> = ({ care, navigation, onPress }) => {
+const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPress }) => {
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const checkAllDoneMutation = useCheckAllDoneCare()
   const uncheckAllDoneMutation = useUncheckAllDoneCare()
@@ -170,4 +170,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SwipeableTask
+export default SwipeableCareTask

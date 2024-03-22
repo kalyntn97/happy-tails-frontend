@@ -27,6 +27,11 @@ export const xSmall: TextStyle = {
   lineHeight: 25,
 }
 
+export const xxSmall: TextStyle = {
+  fontSize: 12,
+  lineHeight: 18,
+}
+
 export const mainHeader = {
   ...header,
   ...large,
@@ -55,10 +60,18 @@ export const smallSubHeader: TextStyle = {
 }
 
 export const body: TextStyle = {
-  padding: 10,
+  // padding: 5,
 }
 
 export const smallBody = {
   ...xSmall,
   ...body,
 }
+
+export const smallSubBody: TextStyle = {
+  ...xxSmall,
+  ...body,
+  fontStyle: 'italic',
+}
+
+
