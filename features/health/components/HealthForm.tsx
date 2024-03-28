@@ -2,19 +2,21 @@
 import { useState } from "react"
 import { Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
-//store && types
+//store && types & helpers
 import { usePets } from "@store/store"
 import { Pet } from "@pet/PetInterface"
+import { Visit, VisitFormData } from "@health/HealthInterface"
+import * as healthHelpers from '@health/healthHelpers'
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
 import { MainButton, SubButton } from "@components/ButtonComponent"
+import MultipleInputs from "@components/MultipleInputs"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import MultipleInputs from "../../../components/MultipleInputs"
 
 interface HealthFormProps {
-  onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Date[], nextDue: Date, healthId: string) => void
-  initialValues?: {pet?: Pet, type?: string, name?: string, vaccine?: string, times?: number, frequency?: string, lastDone?: Date[], nextDue?: Date, healthId?: string}
+  onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Visit[] | VisitFormData[], nextDue: Date, healthId: string) => void
+  initialValues?: {pet?: Pet, type?: string, name?: string, vaccine?: string, times?: number, frequency?: string, lastDone?: Visit[], nextDue?: Date, healthId?: string}
   navigation: any
   status: string
 }
@@ -28,7 +30,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   const [type, setType] = useState<string>(initialValues?.type ?? 'Routine')
   const [times, setTimes] = useState<number>(initialValues?.times ?? null)
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
-  const [lastDone, setLastDone] = useState<Date[]>(initialValues?.lastDone ?? null)
+  const [lastDone, setLastDone] = useState<Visit[] | VisitFormData[]>(initialValues?.lastDone ?? null)
   const [nextDue, setNextDue] = useState<Date>(initialValues?.nextDue ?? null)
 
   const [species, setSpecies] = useState<string>(null)
@@ -37,6 +39,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   const [errorMsg, setErrorMsg] = useState<string>(null)
 
   const healthId: string | null = initialValues?.healthId ?? null
+  const initialVisits = lastDone?.map(visit => visit.date)
 
   const handleSelectName = (selected: string) => {
     setName(() => {
@@ -55,6 +58,16 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     setPet(pet._id)
     setSpecies(pet.species)
     if (vaccine) setVaccine(null)
+  }
+
+  const handleSaveVaccine = (vaccineName: string) => {
+    const vaccineAbbr: string = healthHelpers.vaccineKeyFromName[vaccineName]
+    return setVaccine(vaccineAbbr)
+  }
+
+  const addPastVisits = (inputs: Date[]) => {
+    const results = inputs.map(input => ({ date: input, notes: null }))
+    setLastDone(results)
   }
 
   const handleSubmit = () => {
@@ -93,11 +106,11 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
           />
         }
         {name === 'Vaccine' && (species === 'Cat' || species === 'Dog') &&
-          <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={setVaccine} initial={vaccine} />
+          <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={handleSaveVaccine} initial={vaccine} />
         }
         
         <Text style={styles.subText}>(Press + to add, - to remove dates)</Text>
-        <MultipleInputs label='Last Done' type='Date' initials={lastDone} onPress={setLastDone}/>
+        <MultipleInputs label='Last Done' type='Date' initials={initialVisits} onPress={addPastVisits}/>
 
         {!allowManualDueDate && 
           <View style={styles.rowContainer}>

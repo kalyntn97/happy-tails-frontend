@@ -13,7 +13,7 @@ interface YearChartProps {
 
 const YearChart: React.FC<YearChartProps> = ({ tracker, times }) => {
   const { isCurrent } = careHelpers.getTrackerInfo(tracker.name)
-  const { year: currYear } = getCurrentDate()
+  const { year: currYear } = getDateInfo(new Date())
   const done = tracker.done[0]
   const size = times > 6 ? 'small' : 'large'
 

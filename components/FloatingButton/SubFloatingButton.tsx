@@ -6,7 +6,7 @@ import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanima
 // styles
 import { ButtonStyles, Button, subBtn_tap_event } from "./constants"
 import { Spacing, Colors, Forms } from "@styles/index"
-import { getIconSource } from "@care/careHelpers"
+import { getIconSource } from "@utils/ui"
 
 
 const SubFloatingButton = ({ onPress, label, index, x }) => {

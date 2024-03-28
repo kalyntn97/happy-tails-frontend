@@ -3,10 +3,8 @@ import React from "react"
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView } from "react-native"
 //types & helpers & queries
 import { Care, Tracker } from "@care/CareInterface"
-import * as careHelpers from '@care/careHelpers'
-import { useDeleteCare } from "@care/careQueries"
 //components
-import { AlertForm } from "@utils/ui"
+import { AlertForm, getIconSource } from "@utils/ui"
 import ScrollPetList from "@components/PetInfo/ScrollPetList"
 import DailyChart from "@components/Charts/DailyChart"
 import BarChart from "@components/Charts/BarChart"
@@ -28,7 +26,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
   const { showDeleteConfirmDialog } = useDeleteCareCard(navigation)
   const trackers = careCard.trackers.reverse()
   
-  const iconSource = careHelpers.getIconSource(careCard.name)
+  const iconSource = getIconSource(careCard.name)
 
   
   return (

@@ -11,10 +11,10 @@ import { useDeleteCareCard } from '@care/careHooks'
 //components
 import { useActiveDate } from '@store/store'
 import { AlertForm } from '@utils/ui'
-import { SquareButton } from '../../../components/ButtonComponent'
-import ScrollPetList from '../../../components/PetInfo/ScrollPetList'
+import { SquareButton } from '../../../../components/ButtonComponent'
+import ScrollPetList from '../../../../components/PetInfo/ScrollPetList'
 //styles
-import { Spacing, Forms } from '@styles/index'
+import { styles } from './SwipeableTaskStyles'
 
 interface SwipeableCareTaskProps {
   care: Care
@@ -100,7 +100,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
         <View style={styles.taskContent}>
           <Text style={[
             done === times && styles.done, 
-            styles.taskText
+            styles.taskTitle
           ]}>
             {care.name}
           </Text>
@@ -120,54 +120,5 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
     </Swipeable>
   )
 }
-
-const styles = StyleSheet.create({
-  task: {
-    width: '100%',
-    height: 60,
-    borderRadius: 15,
-    marginVertical: 5,
-    ...Spacing.flexRow,
-    justifyContent: 'space-between'
-  },
-  taskContent: {
-    ...Spacing.flexRow,
-    justifyContent: 'space-around',
-    flex: 6,
-    paddingHorizontal: 10,
-  },
-  taskText: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    flex: 3
-  },
-  taskStatus: {
-    flex: 1,
-    fontSize: 12,
-  },
-  taskPetList: {
-    flex: 2
-  },
-  bulletBtn: {
-    marginRight: 20,
-  },
-  bulletBtnText: {
-    fontSize: 25,
-    fontWeight: '100'
-  },
-  done: {
-    textDecorationLine: 'line-through',
-    fontStyle: 'italic',
-  },
-  squareBtnContainer: {
-    ...Spacing.flexRow,
-    height: 70,
-    marginLeft: 10
-  },
-  check: {
-    width: 25,
-    height: 25,
-  }
-})
 
 export default SwipeableCareTask

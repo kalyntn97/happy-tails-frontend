@@ -71,7 +71,6 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       if (!ending) {
         setEndDate(null)
       }
-      // console.log(name, petData, repeat, ending, date, endDate, frequency, times, careId)
       await onSubmit(name, petData, repeat, ending, date, endDate, frequency, times, careId)
     }
   }

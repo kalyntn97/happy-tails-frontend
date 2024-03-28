@@ -1,5 +1,15 @@
 import { Pet } from "@pet/PetInterface"
 
+export interface Visit {
+  _id: string
+  date: Date
+  notes: string
+}
+
+export interface VisitFormData {
+  date: Date
+  notes: string
+}
 export interface Health {
   _id: string
   pet: Pet
@@ -8,7 +18,7 @@ export interface Health {
   vaccine: string
   times: number
   frequency: string
-  lastDone: Date[]
+  lastDone: Visit[]
   nextDue: Date
 }
 
@@ -19,7 +29,7 @@ export interface HealthFormData {
   vaccine?: string
   times?: number
   frequency?: string
-  lastDone?: Date[]
+  lastDone?: Visit[]
   nextDue?: Date
   healthId?: string
 }

@@ -1,22 +1,30 @@
-export const getCurrentDate = () => {
-  const today = new Date()
-  const date = today.getDate()
-  const month = today.getMonth() + 1 //0-index 
-  const year = today.getFullYear()
-  const day = getDayOfWeek(today)
+export const getDateInfo = (input: Date) => {
+  const inputDate = new Date(input)
+  const date = inputDate.getDate()
+  const month = inputDate.getMonth() + 1 //0-index 
+  const year = inputDate.getFullYear()
+  const day = getDayOfWeek(inputDate)
   const monthName = getMonth(month)
 
   const firstDayOfMonth = new Date(year, month - 1, 1)
   const lastDayOfMonth = new Date(year, month, 0)
 
   const daysInMonth = lastDayOfMonth.getDate()
-  const weeksInMonth = Math.ceil((daysInMonth /* + firstDayOfMonth.getDay() */) / 7)
+  const weeksInMonth = Math.ceil(daysInMonth / 7)
 
   const daysPassed = date - 1  
-  const weeksPassed = Math.floor((daysPassed /* + firstDayOfMonth.getDay() */) / 7)
+  const weeksPassed = Math.floor(daysPassed / 7)
   const week = weeksPassed + 1
   
-  return { date, month, monthName, year, day, week, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
+  return { date, month, monthName, year, day, week, firstDayOfMonth, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
+}
+
+export const getDateConstructor = (dateString: Date): Date => {
+  return new Date(
+    new Date(dateString).getFullYear(),
+    new Date(dateString).getMonth(),
+    new Date(dateString).getDate(),
+  )
 }
 
 export const months = [
@@ -26,7 +34,7 @@ export const months = [
 ]
 
 export const getYears = () => {
-  const { year } = getCurrentDate()
+  const { year } = getDateInfo(new Date())
   let years = Array.from({length: year - 2023}, (_, index) => 2024 + index)
   return years
 }
@@ -43,3 +51,7 @@ export const getDaysInMonth = (month: number, year: number) => {
 }
 
 export const getWeekIndex = (date: number) => Math.round(date / 7)
+
+export const getStartDate = (inputDate: Date, interval: number) => {
+  return new Date(inputDate.getTime() - (interval * 24 * 60 * 60 * 1000))
+}

@@ -1,5 +1,6 @@
 const Colors = {
   white: '#FBFFFE',
+  transparent: 'rgba(255, 255, 255, 0.8)',
   lightestPink: '#FFF6FD',
   lightPink: '#FFE6FF',
   pink: '#F39CD6',

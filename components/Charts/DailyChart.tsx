@@ -16,7 +16,7 @@ interface DailyChartProps {
 
 const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
   const { trackerMonthName, trackerYear, isCurrent } = careHelpers.getTrackerInfo(tracker.name)
-  const { date: currDate } = getCurrentDate()
+  const { date: currDate } = getDateInfo(new Date())
 
   const colorArray = getColorArray()
 

@@ -6,7 +6,7 @@ import { usePetNames } from "@store/storeUtils"
 //helpers 
 import * as petHelpers from '@pet/petHelpers'
 import * as careHelpers from '@care/careHelpers'
-import * as healthUtils from '@health/healthHelpers'
+import * as healthHelpers from '@health/healthHelpers'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -22,7 +22,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
   const [visible, setVisible] = useState(false)
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
-  const petNames = usePetNames()
+  const PET_NAMES = usePetNames()
 
   const toggleDropdown = (): void => {
     visible ? setVisible(false) : openDropDown()
@@ -47,23 +47,22 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
   //populate data
   useEffect(() => {
     const fetchData = async (dataType: string) => {
-      let result: string[]
-      switch (dataType) {
-        case 'species': result = petHelpers.speciesData; break
-        case 'dogBreed': result = await petHelpers.getDogBreedData(); break
-        case 'catBreed': result = await petHelpers.getCatBreedData(); break
-        case 'birdSpecies': result = await petHelpers.getBirdSpeciesData(); break
-        case 'fishSpecies': result = petHelpers.petFishData; break
-        case 'frequency': result = careHelpers.frequencyData; break
-        case 'care': result = careHelpers.careData; break
-        case 'health': result = healthUtils.healthData; break
-        case 'petNames': result = petNames; break
-        case 'healthFrequency': result = healthUtils.healthFrequency; break
-        case 'healthTypes': result = healthUtils.healthTypes; break
-        case 'dogVaccines': result = healthUtils.dogVaccines; break
-        case 'catVaccines': result = healthUtils.catVaccines; break
-        default: result = []
+      const typeToSource = {
+        'petNames': PET_NAMES,
+        'species': petHelpers.SPECIES,
+        'dogBreed': await petHelpers.getDogBreedData(),
+        'catBreed': await petHelpers.getCatBreedData(),
+        'birdSpecies': await petHelpers.getBirdSpeciesData(),
+        'fishSpecies': petHelpers.FISH_SPECIES,
+        'frequency': careHelpers.CARE_FREQ,
+        'care': careHelpers.CARE_NAMES,
+        'health': healthHelpers.HEALTH_NAMES,
+        'healthFrequency': healthHelpers.HEALTH_FREQ,
+        'healthTypes': healthHelpers.HEALTH_TYPES,
+        'dogVaccines': healthHelpers.DOG_VACCINE_NAMES,
+        'catVaccines': healthHelpers.CAT_VACCINE_NAMES,
       }
+      const result = typeToSource[dataType] || []
       setData(result)
       setSelected(initial ?? null)
     }

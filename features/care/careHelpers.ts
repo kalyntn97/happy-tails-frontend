@@ -1,38 +1,14 @@
 import { ImageSourcePropType } from "react-native"
 import { Colors } from "@styles/index"
 import { Care, Tracker } from "@care/CareInterface"
-import { getCurrentDate, getMonth } from "@utils/datetime"
+import { getMonth, getDateInfo } from "@utils/datetime"
 
-export const careData = ['Teeth Brushing', 'Nail Clipping', 'Walk', 'Grooming', 'Litter Box Cleaning', 'Others']
+export const CARE_NAMES = ['Teeth Brushing', 'Nail Clipping', 'Walk', 'Grooming', 'Litter Box Cleaning', 'Others']
 
-export const getIconSource  = (name: string): ImageSourcePropType => {
-  switch (name) {
-    default: 
-      return require('@assets/icons/paw.png')
-    case 'Teeth Brushing':
-      return require('@assets/icons/toothbrush.png')
-    case 'Nail Clipping':
-      return require('@assets/icons/clippers.png')
-    case 'Walk':
-      return require('@assets/icons/leash-walk.png')
-    case 'Grooming':
-      return require('@assets/icons/grooming.png')
-    case 'Litter Box Cleaning':
-      return require('@assets/icons/litter-box.png')
-    //buttons
-    case 'Add a Task': 
-      return require('@assets/icons/care-filled.png')
-    case 'Add a Vet Visit': 
-      return require('@assets/icons/vet-filled.png')
-    case 'Add a Pet': 
-      return require('@assets/icons/pet-filled.png')
-  }
-}
-
-export const frequencyData = ['Daily', 'Weekly', 'Monthly', 'Yearly']
+export const CARE_FREQ = ['Daily', 'Weekly', 'Monthly', 'Yearly']
 
 export const getCurrentTrackerIndex = (frequency: string): number => {
-  const { date, week, month } = getCurrentDate()
+  const { date, week, month } = getDateInfo(new Date())
   switch (frequency) {
     case 'Daily':
       return date - 1 //current date, all 0-index
@@ -81,7 +57,7 @@ export const getTaskStatus = (task: Care, trackerIndex: number, taskIndex: numbe
 }
 
 export const getTrackerDisplayName = (frequency: string, activeDate: number | null, activeWeek: number | null, activeMonthName: string | null, activeYear: number | null): string => {
-  const { date, week, monthName, year } = getCurrentDate()
+  const { date, week, monthName, year } = getDateInfo(new Date())
   const mapByFrequency = {
     Daily: activeDate + 1 === date ? 'Today' : `${activeMonthName} ${activeDate + 1}`,
     Weekly: activeWeek + 1 === week ? 'This week' : `Week ${activeWeek + 1}`,
@@ -93,7 +69,7 @@ export const getTrackerDisplayName = (frequency: string, activeDate: number | nu
 
 export const getTrackerInfo = (trackerName: string) => {
   let trackerMonth: number, trackerMonthName: string, trackerYear: number, isCurrent: boolean
-  const { month: currMonth, year: currYear } = getCurrentDate()
+  const { month: currMonth, year: currYear } = getDateInfo(new Date())
   // tracker name: 'mm-yyyy'
   if (trackerName.includes('-')) { // tracker is monthly-based, new tracker every month
     const splitName = trackerName.split('-') // output 'mm' & 'yyyy'
@@ -127,10 +103,3 @@ export const sortByFrequency: (careArray: Care[]) => {[key: string]: Care[]} = (
   return sorted
 }
 
-export const getDateConstructor = (dateString: Date): Date => {
-  return new Date(
-    new Date(dateString).getFullYear(),
-    new Date(dateString).getMonth(),
-    new Date(dateString).getDate(),
-  )
-}

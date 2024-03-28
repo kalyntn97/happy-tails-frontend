@@ -1,28 +1,24 @@
 //npm
-import { useState, useEffect } from "react"
+import { useState, useEffect, FC } from "react"
 import { View, StyleSheet, Text, Image, ImageStyle, ScrollView, TouchableOpacity } from "react-native"
 //types & helpers
-import { Pet } from "@pet/PetInterface"
 import { Care } from "@care/CareInterface"
 import * as careHelpers from "@care/careHelpers"
-//queries, store
-import { useAutoCreateTracker } from "@care/careQueries"
-import { AlertForm } from "@utils/ui"
+import { getIconSource } from "@utils/ui"
 //components
 import ScrollPetList from "@components/PetInfo/ScrollPetList"
 import TrackerPanel from "./TrackerPanel"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-
+import { styles } from "@home/components/SwipeableTasks/ModalCardStyles"
 
 interface CareCardProps {
   care: Care
-  onNavigate?: (value: React.SetStateAction<boolean>) => void
+  onNavigate?: () => void
   navigation: any
 }
 
-const CareCard = ({ care, navigation, onNavigate }) => {
-  const iconSource = careHelpers.getIconSource(care.name)
+const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
+  const iconSource = getIconSource(care.name)
   
   const handleNavigate = () => {
     onNavigate && onNavigate()
@@ -38,7 +34,7 @@ const CareCard = ({ care, navigation, onNavigate }) => {
         ]}>
           <View style={styles.titleContainer}>
             <Image source={iconSource} style={styles.icon } />
-            <View style={styles.titleContent}>
+            <View style={styles.columnCon}>
               <Text style={styles.title}>{care.name}</Text>
               {care.repeat &&
                 <Text style={styles.freq}>
@@ -66,66 +62,4 @@ const CareCard = ({ care, navigation, onNavigate }) => {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-    backgroundColor: Colors.white,
-    ...Forms.card,
-    width: '90%',
-    height: 370,
-    marginBottom: 40,
-    alignSelf: 'center',
-  },
-  header: {
-    width: '100%',
-    height: '50%',
-    ...Spacing.flexColumn,
-  },
-  colorBox: {
-    height: 70,
-    width: '90%',
-    marginTop: -40,
-    borderRadius: 8,
-    ...Forms.boxShadow,
-  },
-  titleContainer: {
-    height: 70,
-    width: '100%',
-    ...Spacing.flexRow,
-    justifyContent: 'space-around'
-  },
-  titleContent: {
-    ...Spacing.flexColumn,
-  },
-  title: {
-    ...Typography.smallHeader,
-    marginVertical: 0,
-    color: Colors.darkPink
-  },
-  icon: {
-    ...Forms.icon
-  },
-  body: {
-    width: '100%',
-    height: '50%',
-    alignItems: 'center',
-    marginTop: -40
-  },
-  currentTracker: {
-    width: '90%',
-    height: 150,
-  },
-  freq: {
-    fontWeight: 'bold',
-    marginLeft: 'auto',
-    marginRight: 20
-  },
-  btnText: {
-    ...Buttons.buttonText
-  },
-  mainBtn: {
-    ...Buttons.smallSub
-  }
-})
- 
 export default CareCard

@@ -9,7 +9,7 @@ import { Tracker } from "@care/careService"
 import { Colors, Forms } from '@styles/index'
 
 const ScrollChart = ({ careId, tracker, index, onCheckDone, onUncheckDone, frequency }) => {
-  const { date: currDate, year: currYear, month: monthIdx, week: currWeek, daysInMonth, weeksInMonth } = getCurrentDate()
+  const { date: currDate, year: currYear, month: monthIdx, week: currWeek, daysInMonth, weeksInMonth } = getDateInfo(new Date())
 
   const handleCheck = async () => {
     tracker.done[index] === 1

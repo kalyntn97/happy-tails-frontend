@@ -7,6 +7,13 @@ export const header: TextStyle = {
   textAlign: 'center'
 }
 
+export const sub: TextStyle = {
+  margin: 10,
+  textAlign: 'center',
+  fontStyle: 'italic',
+  // fontWeight: 'bold',
+}
+
 export const large: TextStyle = {
   fontSize: 40,
   lineHeight: 55,
@@ -53,14 +60,22 @@ export const xSmallHeader = {
 }
 
 export const smallSubHeader: TextStyle = {
-  margin: 10,
-  textAlign: 'center',
+  ...small,
+  ...sub,
+}
+
+export const xSmallSubHeader: TextStyle = {
   ...xSmall,
-  fontStyle: 'italic',
+  ...sub,
 }
 
 export const body: TextStyle = {
-  // padding: 5,
+
+}
+
+export const regBody = {
+  ...body,
+  ...small,
 }
 
 export const smallBody = {

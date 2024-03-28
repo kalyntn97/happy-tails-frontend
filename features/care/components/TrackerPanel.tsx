@@ -7,8 +7,8 @@ import * as careHelpers from "@care/careHelpers"
 //components
 import ScrollChart from "@components/Charts/ScrollChart"
 //utils, store
-import { useActiveCareDate, useActiveCareMonth, useActiveCareWeek, useActiveCareYear, useActiveDate } from "@store/store"
-import { getCurrentDate, getMonth } from "@utils/datetime"
+import { useActiveDate } from "@store/store"
+import { getMonth } from "@utils/datetime"
 //styles
 import { Spacing, Typography, Colors } from '@styles/index'
 import { useCheckDoneCare,  useUncheckDoneCare } from "@care/careQueries"

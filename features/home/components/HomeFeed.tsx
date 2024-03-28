@@ -4,15 +4,17 @@ import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, 
 import { useQueries } from "@tanstack/react-query"
 //types & helpers
 import { Care } from "@care/CareInterface"
+import { Health } from "@health/HealthInterface"
 //store & queries
-import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
+import { useActiveDate, useCurrentIsActive, useReminderInterval, useSetActions } from "@store/store"
 //components
 import CareCard from "@care/components/CareCard"
-import SwipeableCareTask from "@components/SwipeableCareTask"
+import SwipeableCareTask from "./SwipeableTasks/SwipeableCareTask"
 import { CloseButton } from "../../../components/ButtonComponent"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
 import CustomFlatList from './CustomFlatList';
+import HealthCard from "@health/components/HealthCard"
 //utils & store
 import { useUserQueries } from "../homeQueries"
 import { getMonth } from "@utils/datetime"
@@ -23,41 +25,56 @@ interface HomeFeedProps {
   navigation: any
 }
 
+type ClickedTask = {
+  item: Care | Health
+  type: string
+}
+
 const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const [selected, setSelected] = useState<string>('day')
   const [modalVisible, setModalVisible] = useState(false)
-  const [clickedCare, setClickedCare] = useState<Care>(null)
+  const [clickedTask, setClickedTask] = useState<ClickedTask>(null)
   //queries
   const [profile, pets, cares, healths] = useUserQueries()
-  const { setPets } = useSetActions()
+  const { setPets, setReminderInterval } = useSetActions()
   //store
   const isLoading = useUserQueries().some(query => query.isLoading)
   const isSuccess = useUserQueries().every(query => query.isSuccess)
   const isError = useUserQueries().some(query => query.isError)
   
+  const reminderInterval = useReminderInterval()
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const activeDateObj = new Date(activeYear, activeMonth, activeDate + 1)
   const activeMonthName = getMonth(activeMonth + 1)
   
   const { date: currDateIsActive, week: currWeekIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
 
-  const handleClickTask = (care: Care) => {
-    setClickedCare(care)
+  const handleClickTask = (item: Care | Health, type: string) => {
+    setClickedTask({ item, type })
     setModalVisible(true)
   }
   
   useEffect(() => {
     if (isSuccess) {
       setPets(pets.data)
+      setReminderInterval(profile.data.reminderInterval)
     }
-  }, [pets.data, cares.data, healths.data])
+  }, [pets.data, cares.data, healths.data, profile.data])
 
   return (  
     <View style={styles.container}>
       { isLoading && <Loader /> }
       { isError && <Text>Error fetching data... </Text> }
       { isSuccess && 
-        <>        
+        <>
+          <View style={styles.singleIconMenu}>
+            <Image source={require('@assets/icons/due.png')} style={styles.icon} />
+            <Text style={styles.iconText}>Reminders</Text>
+          </View>
+          <View style={styles.taskListContainer}>
+            <CustomFlatList data={healths.data} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Health' interval={reminderInterval} />
+          </View>
+
           <View style={styles.iconMenuContainer}>
             <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
               <Text style={styles.taskCount}>{cares.data['Daily']?.length ?? 0}</Text>
@@ -94,13 +111,10 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
             {!Object.keys(cares.data).length && <PlaceHolder /> }
 
             {selected === 'day' &&
-              <>
-                <CustomFlatList data={[...cares.data['Daily'], ...cares.data['Others'] ?? []]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
-                <CustomFlatList data={[...healths.data ?? []]} navigation={navigation} activeDateObj={activeDateObj} type='Health' />
-              </>
+              <CustomFlatList data={[...cares.data['Daily'], ...cares.data['Others'] ?? []]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
             }
             
-            {selected === 'week' && 
+            {selected === 'week' &&
               <CustomFlatList data={cares.data['Weekly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
             }
 
@@ -119,12 +133,23 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         animationType="slide"
         visible={modalVisible}
         onRequestClose={() => setModalVisible(!modalVisible)}
-        onDismiss={() => setClickedCare(null)}
+        onDismiss={() => setClickedTask(null)}
+        transparent={true}
       >
         <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={styles.modalContainer}> 
           <View style={styles.detailContainer}>
             <CloseButton onPress={() => setModalVisible(false)} />
-            <CareCard care={clickedCare} navigation={navigation} onNavigate={() => setModalVisible(false)}/>
+            {clickedTask &&
+              <>
+                {clickedTask.type === 'Care' ?
+                  <CareCard care={clickedTask.item as Care} navigation={navigation} onNavigate={() => setModalVisible(false)}/>
+                :
+                clickedTask.type === 'Health' ?
+                  <HealthCard health={clickedTask.item as Health} navigation={navigation} onNavigate={() => setModalVisible(false)} activeDateObj = {activeDateObj} />
+                : 
+                  null}
+              </>
+            }
           </View>
         </Pressable>
       </Modal> 
@@ -144,6 +169,11 @@ const styles = StyleSheet.create({
   },
   iconMenuContainer: {
     ...Spacing.flexRow,
+    width: '100%',
+    marginVertical: 10,
+  },
+  singleIconMenu: {
+    ...Spacing.flexColumn,
     width: '100%',
     marginVertical: 10,
   },
@@ -170,7 +200,7 @@ const styles = StyleSheet.create({
   },
   taskListContainer : {
     width: '90%',
-    height: '80%',
+    // height: '80%',
   },
   taskIcon: {
     ...Forms.smallIcon,
@@ -187,7 +217,7 @@ const styles = StyleSheet.create({
     ...Spacing.fullWH,
     ...Spacing.centered,
     position: 'relative',
-    backgroundColor: Colors.lightestPink,
+    backgroundColor: Colors.transparent,
   },
   detailContainer: {
     width: '100%',

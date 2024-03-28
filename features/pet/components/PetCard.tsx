@@ -3,9 +3,9 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, useWindowDimensions } 
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated"
 //types & utils
 import { Pet } from "@pet/PetInterface"
+import { getIconSource } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { getIconSource } from "@pet/petHelpers"
 interface PetCardProps {
   pet: Pet
   index: number

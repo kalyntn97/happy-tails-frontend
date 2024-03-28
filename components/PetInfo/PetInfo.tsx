@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, View } from "react-native"
-import { getIconSource } from "../../features/pet/petHelpers"
+import { getIconSource } from "@utils/ui"
 import { Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface PetInfoProps {

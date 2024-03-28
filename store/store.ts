@@ -1,23 +1,25 @@
 import { create, StateCreator } from 'zustand'
 import { CareSlice, HealthSlice, PetSlice, ProfileSlice } from './StoreInterface'
-import { getCurrentDate } from '@utils/datetime'
+import { getDateInfo } from '@utils/datetime'
 
 const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & HealthSlice, [], [], ProfileSlice> = (set, get) => ({
   profile: {},
+  reminderInterval: 30,
   activeDate: { 
-    date: getCurrentDate().date - 1, 
-    week: getCurrentDate().week - 1, 
-    month: getCurrentDate().month - 1, 
-    year: getCurrentDate().year 
+    date: getDateInfo(new Date()).date - 1, 
+    week: getDateInfo(new Date()).week - 1, 
+    month: getDateInfo(new Date()).month - 1, 
+    year: getDateInfo(new Date()).year 
   },
   currentIsActive: {
-    get date() { return get().activeDate.date + 1 === getCurrentDate().date },
-    get week() { return get().activeDate.week + 1 === getCurrentDate().week },
-    get month() { return get().activeDate.month + 1 === getCurrentDate().month },
-    get year() { return get().activeDate.year === getCurrentDate().year },
+    get date() { return get().activeDate.date + 1 === getDateInfo(new Date()).date },
+    get week() { return get().activeDate.week + 1 === getDateInfo(new Date()).week },
+    get month() { return get().activeDate.month + 1 === getDateInfo(new Date()).month },
+    get year() { return get().activeDate.year === getDateInfo(new Date()).year },
   },
   setActions: {
     setProfile: profile => set({ profile: profile }),
+    setReminderInterval: interval => set({ reminderInterval: interval }),
     setActiveDate: dateObj => set({ activeDate: dateObj }),
     setPets: pets => set({ pets: pets }),
     setCares: cares => set({ cares: cares}),
@@ -66,6 +68,7 @@ export const useBoundStore= create<ProfileSlice & PetSlice & CareSlice & HealthS
 
 //states
 export const useProfile = () => useBoundStore(state => state.profile)
+export const useReminderInterval = () => useBoundStore(state => state.reminderInterval)
 export const useActiveDate = () => useBoundStore(state => state.activeDate)
 export const useCurrentIsActive = () => useBoundStore(state => state.currentIsActive)
 export const usePets = () => useBoundStore(state => state.pets)

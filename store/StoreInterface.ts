@@ -12,6 +12,7 @@ interface DateObject {
 
 export interface ProfileSlice {
   profile: Profile | {}
+  reminderInterval: number
   activeDate: DateObject
   currentIsActive: { 
     date: boolean, 
@@ -21,6 +22,7 @@ export interface ProfileSlice {
   }
   setActions : {
     setProfile: (profile: Profile) => void
+    setReminderInterval: (interval: number) => void,
     setActiveDate: (dateObj: { date: number, week: number, month: number, year: number }) => void
     setPets: (pets: Pet[]) => void
     setCares: (cares: Care[]) => void

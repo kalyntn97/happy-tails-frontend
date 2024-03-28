@@ -20,7 +20,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
   const [barHeightUnit, setBarHeightUnit] = useState<number>(0)
 
   const { trackerMonthName, trackerYear, isCurrent } = careHelpers.getTrackerInfo(tracker.name)
-  const { week: currWeek, month: monthIdx } = getCurrentDate()
+  const { week: currWeek, month: monthIdx } = getDateInfo(new Date())
   
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height

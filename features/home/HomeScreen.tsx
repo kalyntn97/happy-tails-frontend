@@ -9,8 +9,6 @@ import HomeFeed from "@home/components/HomeFeed"
 import FloatingButton from "@components/FloatingButton/FloatingButton"
 import ScrollCalendar from "@home/components/ScrollCalendar"
 import Loader from "@components/Loader"
-//utils & services
-import { getCurrentDate } from "@utils/datetime"
 //styles
 import { Buttons, Typography, Colors, Forms, Spacing } from '@styles/index'
 

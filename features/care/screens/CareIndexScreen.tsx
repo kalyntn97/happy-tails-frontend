@@ -9,6 +9,7 @@ import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
 //types & helpers
 import * as careHelpers from "@care/careHelpers"
+import { getIconSource } from "@utils/ui"
 import { Care } from "@care/CareInterface"
 //queries
 import { useGetAllCares } from "@care/careQueries"
@@ -21,7 +22,7 @@ type CareIndexProps = {
 }
 
 const CareItem = ({ care, navigation }) => {
-  const iconSource = careHelpers.getIconSource(care.name)
+  const iconSource = getIconSource(care.name)
 
   return (
     <TouchableOpacity 

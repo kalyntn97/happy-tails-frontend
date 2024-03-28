@@ -2,7 +2,7 @@
 import { FC, useRef, useState } from "react"
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList } from "react-native"
 //utils & store
-import { getCurrentDate, getDayOfWeek, getDaysInMonth, getMonth, getWeekIndex, getYears, months } from "@utils/datetime"
+import { getCurrentDate, getDateInfo, getDayOfWeek, getDaysInMonth, getMonth, getWeekIndex, getYears, months } from "@utils/datetime"
 import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
 //components
 import ScrollSelector from "../../../components/ScrollSelector"
@@ -11,7 +11,7 @@ import { SubButton } from "../../../components/ButtonComponent"
 import { Colors, Spacing, Typography } from "@styles/index"
 
 const ScrollCalendar = () => {
-  const { date: currDate, month: currMonth, year: currYear, week: currWeek, daysInMonth: currMonthDays, monthName: currMonthName } = getCurrentDate()
+  const { date: currDate, month: currMonth, year: currYear, week: currWeek, daysInMonth: currMonthDays, monthName: currMonthName } = getDateInfo(new Date())
   const years = getYears()
 
   const [selectedMonth, setSelectedMonth] = useState<number>(currMonth - 1)

@@ -6,8 +6,7 @@ export interface Profile {
   name: string
   photo: string | null
   bio: string
-  // pets: Pet[]
-  // careCards: Care[]
+  reminderInterval: number
 }
 
 export interface ProfileFormData {
