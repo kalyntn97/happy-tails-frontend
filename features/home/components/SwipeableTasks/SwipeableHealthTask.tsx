@@ -11,7 +11,7 @@ import { Health, Visit } from '@health/HealthInterface'
 import { useCheckDoneHealth, useUncheckDoneHealth } from '@health/healthQueries'
 import { useDeleteHealthCard } from '@home/hooks'
 //styles
-import { styles } from '../../../../styles/SwipeableTaskStyles'
+import { styles } from '@styles/SwipeableTaskStyles'
 import Colors from '@styles/colors'
 
 
@@ -69,7 +69,7 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, do
         key={health._id}
         style={[
           styles.task, 
-          { backgroundColor: Colors.redArray[2] }
+          { backgroundColor: Colors.multiArray3[health.pet.color] }
         ]} 
         onPress={onPress}
       > 

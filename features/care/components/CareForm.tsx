@@ -13,10 +13,11 @@ import { usePets } from "@store/store"
 import { usePetIds } from "@store/storeUtils"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import ColorPickingPanel from "@components/ColorPickingPanel"
 
 interface CareFormProps {
-  onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, careId: string | null) => void
-  initialValues?: { name?: string, repeat?: boolean, ending?: boolean, date?: Date, endDate?: Date, frequency?: string, times?: number, pets?: Pet[], careId?: string }
+  onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, color: number, careId: string | null) => void
+  initialValues?: { name?: string, pets?: Pet[], repeat?: boolean, ending?: boolean, date?: Date, endDate?: Date, frequency?: string, times?: number,  color: number, careId?: string }
   navigation: any
   status: string
 }
@@ -35,9 +36,10 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   const [endDate, setEndDate] = useState<Date | null>(initialValues?.endDate ?? null)
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
   const [times, setTimes] = useState<number>(initialValues?.times ?? null)
+  const [color, setColor] = useState<number>(initialValues?.color ?? 0)
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
-
+  
   const careId: string | null = initialValues?.careId ?? null
   // handle input custom name for form
   const handleSelectName = (selected: string) => {
@@ -71,7 +73,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       if (!ending) {
         setEndDate(null)
       }
-      await onSubmit(name, petData, repeat, ending, date, endDate, frequency, times, careId)
+      await onSubmit(name, petData, repeat, ending, date, endDate, frequency, times, color, careId)
     }
   }
 
@@ -142,7 +144,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
               <Text style={[styles.rowTextFocus, { color: repeat ? Colors.green : Colors.red }]}>{repeat ? 'ON' : 'OFF'}</Text>
             </TouchableOpacity>
           </View>
-
+          <ColorPickingPanel onPress={setColor}/>
           <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
           <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
         </View>

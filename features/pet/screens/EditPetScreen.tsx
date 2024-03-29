@@ -25,9 +25,9 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
   const isFocused = useIsFocused()
 
   const initialValues: {
-    name: string, age: number, species: string, breed: string, photo: string | null, petId: string 
+    name: string, age: number, species: string, breed: string, color: number, photo: string | null, petId: string 
   } = {
-    name: pet.name, age: pet.age, species: pet.species, breed: pet.breed, photo: pet.photo ? pet.photo : null, petId: pet._id
+    name: pet.name, age: pet.age, species: pet.species, breed: pet.breed, color: pet.color, photo: pet.photo ? pet.photo : null, petId: pet._id
   }
 
   const savedPetInfo = { name: initialValues.name, photo: initialValues.photo }
@@ -36,8 +36,8 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
     onUpdatePet(pet)
   }
 
-  const handleEditPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string)  => {
-    updatePetMutation.mutate({ name, age, species, breed, photoData, petId }, {
+  const handleEditPet = async (name: string, age: number, species: string, breed: string, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string)  => {
+    updatePetMutation.mutate({ name, age, species, breed, color, photoData, petId }, {
       onSuccess: (data) => {
         if (data.name !== savedPetInfo.name || data.photo !== savedPetInfo.photo) {
           updateGlobalPetInfo(data)

@@ -11,8 +11,8 @@ import ColorPickingPanel from "@components/ColorPickingPanel"
 import { ScrollView } from "react-native-gesture-handler"
 
 interface PetFormProps {
-  onSubmit: (name: string, age: number | '', species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
-  initialValues?: { name?: string, age?: number, species?: string, breed?: string, photo?: string | null, petId?: string }
+  onSubmit: (name: string, age: number | '', species: string, breed: string, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
+  initialValues?: { name?: string, age?: number, species?: string, breed?: string, color?: string, photo?: string | null, petId?: string }
   navigation: any
   status: string
 }
@@ -23,6 +23,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
   const [age, setAge] = useState<number>(initialValues?.age ?? null)
   const [species, setSpecies] = useState<string>(initialValues?.species ?? null)
   const [breed, setBreed] = useState<string>(initialValues?.breed ?? null)
+  const [color, setColor] = useState<number>(initialValues?.color ?? 0)
   const [errorMsg, setErrorMsg] = useState<string>('')
 
   const petId: string | null = initialValues?.petId ?? null
@@ -47,7 +48,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
     } else {
       setErrorMsg('')
       if (species === 'Others') setBreed(null)
-      await onSubmit(name, age, species, breed, photoData, petId)
+      await onSubmit(name, age, species, breed, color, photoData, petId)
     }
   }
 
@@ -117,7 +118,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
             onSelect={setBreed} 
           />
         }
-        <ColorPickingPanel />
+        <ColorPickingPanel onPress={setColor}/>
         <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting' : initialValues?.name ? 'Save' : 'Add Pet'} top={50} bottom={10} />
         <SubButton onPress={ () => {
           navigation.canGoBack() ? navigation.goBack() : navigation.reset({ index: 0, routeName: 'Index'})

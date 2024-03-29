@@ -31,7 +31,7 @@ export const useAddPet = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ name, age, species, breed, photoData }: PetFormData) => petService.create(name, age, species, breed, photoData),
+    mutationFn: ({ name, age, species, breed, color, photoData }: PetFormData) => petService.create(name, age, species, breed, color, photoData),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
     }
@@ -42,7 +42,7 @@ export const useUpdatePet = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ name, age, species, breed, photoData, petId }: PetFormData) => petService.update(name, age, species, breed, photoData, petId),
+    mutationFn: ({ name, age, species, breed, color, photoData, petId }: PetFormData) => petService.update(name, age, species, breed, color,  photoData, petId),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
     }

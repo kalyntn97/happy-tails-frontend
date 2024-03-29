@@ -3,15 +3,15 @@ import React, { FC, useState } from 'react'
 import { Colors, Spacing } from '@styles/index'
 
 type Props = {
-  onPress: (colorCode: string) => void
+  onPress: (colorIndex: number) => void
 }
 
 const ColorPickingPanel: FC<Props> = ({ onPress }) => {
-  const [selected, setSelected] = useState<string>(Colors.multiArray3[0])
+  const [selected, setSelected] = useState<number>(0)
 
   const onSelect = (index: number) => {
-    setSelected(Colors.multiArray3[index])
-    // onPress(Colors.multiArray3[index])
+    setSelected(index)
+    onPress(index)
   }
 
   let colorOptions = []
@@ -21,7 +21,7 @@ const ColorPickingPanel: FC<Props> = ({ onPress }) => {
         style={[styles.circle, { backgroundColor: Colors.multiArray3[i]}]}
         onPress={() => onSelect(i)}
       >
-        { selected === Colors.multiArray3[i] && <Text style={styles.check}>✔︎</Text> }
+        { selected === i && <Text style={styles.check}>✔︎</Text> }
       </TouchableOpacity>
     )
   }

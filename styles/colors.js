@@ -17,8 +17,10 @@ const Colors = {
   purpleArray: ['rgb(160, 143, 204)', 'rgba(160, 143, 204, 0.6)', 'rgba(160, 143, 204, 0.2)'],
   redArray: ['rgb(231, 120, 116)', 'rgba(231, 120, 116, 0.6)', 'rgba(231, 120, 116, 0.2)'],
   multiArray: ['#d3e4ff', '#ffe8ce', '#d6eac7', '#e8dbff', '#FED7D7'],
+  //vibrant - floating buttons
   multiArray2: ['#81FBFF', '#FFED24', '#89EB9B', '#9F7AFD', '#81FFDC'],
-  multiArray3: ['#ffadad', '#ffd6a5', '#fdffb6', '#caffbf', '#9bf6ff', '#a0c4ff', '#bdb2ff', '#ffc6ff'],
+  //muted - task background
+  multiArray3: ['#FED7D7', '#FFE4C4', '#fcf6bd', '#d0f4de', '#bbdefb', '#d3e4ff', '#e8dbff', '#ffd6ff'],
 }
 
 export default Colors

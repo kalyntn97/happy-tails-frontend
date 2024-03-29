@@ -23,7 +23,7 @@ interface CareDetailsProps {
 const CareDetailsScreen = ({ navigation, route }) => {
 
   const { care: careCard } = route.params
-  const { showDeleteConfirmDialog } = useDeleteCareCard(navigation)
+  const { showDeleteConfirmDialog, handleDeleteCareCard } = useDeleteCareCard(navigation)
   const trackers = careCard.trackers.reverse()
   
   const iconSource = getIconSource(careCard.name)
@@ -72,7 +72,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
               <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} onPress={() => navigation.navigate('Edit', { care: careCard })}>
                 <Text style={styles.btnText}>Edit</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} onPress={() => showDeleteConfirmDialog(careCard)}>
+              <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} onPress={() => showDeleteConfirmDialog(careCard, handleDeleteCareCard)}>
                 <Text style={styles.btnText}>Delete</Text>
               </TouchableOpacity>
             </View>
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     ...Forms.smallIcon,
   },
   subHeader: {
-    ...Typography.smallSubHeader,
+    ...Typography.xSmallSubHeader,
   },
   rowCon: {
     ...Spacing.flexRow,

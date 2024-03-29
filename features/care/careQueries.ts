@@ -26,7 +26,7 @@ export const useAddCare = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ name, pets, repeat, ending, date, endDate, frequency, times }: CareFormData) => careService.create(name, pets, repeat, ending, date, endDate, frequency, times),
+    mutationFn: ({ name, pets, repeat, ending, date, endDate, frequency, times, color }: CareFormData) => careService.create(name, pets, repeat, ending, date, endDate, frequency, times, color),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
     }
@@ -37,7 +37,7 @@ export const useUpdateCare = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ name, pets, repeat, ending, date, endDate, frequency, times, careId }: CareFormData) => careService.update(name, pets, repeat, ending, date, endDate, frequency, times, careId),
+    mutationFn: ({ name, pets, repeat, ending, date, endDate, frequency, times, color, careId }: CareFormData) => careService.update(name, pets, repeat, ending, date, endDate, frequency, times, color, careId),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
     }

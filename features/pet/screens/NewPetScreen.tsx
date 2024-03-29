@@ -17,8 +17,8 @@ const NewPetScreen = ({ navigation }) => {
   const { onAddPet } = usePetActions()
   const addPetMutation = useAddPet()
 
-  const handleAddPet = async (name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null) => {
-    addPetMutation.mutate({ name, age, species, breed, photoData }, {
+  const handleAddPet = async (name: string, age: number, species: string, breed: string, color: number, photoData: { uri: string, name: string, type: string } | null) => {
+    addPetMutation.mutate({ name, age, species, breed, color, photoData }, {
       onSuccess: (data) => {
         onAddPet(data)
         navigation.navigate('Index')

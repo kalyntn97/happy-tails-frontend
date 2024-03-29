@@ -11,10 +11,11 @@ import { useDeleteCareCard } from '@home/hooks'
 //components
 import { useActiveDate } from '@store/store'
 import { AlertForm } from '@utils/ui'
-import { SquareButton } from '../../../../components/ButtonComponent'
-import ScrollPetList from '../../../../components/PetInfo/ScrollPetList'
+import { SquareButton } from '@components/ButtonComponent'
+import ScrollPetList from '@components/PetInfo/ScrollPetList'
 //styles
-import { styles } from '../../../../styles/SwipeableTaskStyles'
+import { styles } from '@styles/SwipeableTaskStyles'
+import Colors from '@styles/colors'
 
 interface SwipeableCareTaskProps {
   care: Care
@@ -93,7 +94,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
         key={care._id}
         style={[
           styles.task, 
-          { backgroundColor: careHelpers.getTaskBackgroundColor(care.frequency) }
+          { backgroundColor: Colors.multiArray3[care.color] }
         ]} 
         onPress={onPress}
       > 

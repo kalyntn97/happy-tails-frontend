@@ -46,33 +46,54 @@ export const basePhoto: ImageStyle = {
   margin: 5,
 }
 
-export const photo: ImageStyle = {
+const med = {
   width: 150,
   height: 150,
+}
+
+const small = {
+  width: 120,
+  height: 120,
+}
+
+const xSmall = {
+  width: 80,
+  height: 80,
+}
+
+const xxSmall = {
+  width: 50,
+  height: 50,
+}
+
+const tiny = {
+  width: 30,
+  height: 30,
+}
+
+
+export const photo: ImageStyle = {
+  ...med,
   ...basePhoto
 }
 
 export const smallPhoto: ImageStyle = {
-  width: 120,
-  height: 120,
+  ...small,
   ...basePhoto
 }
 
 export const xSmallPhoto: ImageStyle = {
-  width: 80,
-  height: 80,
+  ...xSmall,
   ...basePhoto
 }
 
 export const xxSmallPhoto: ImageStyle = {
-  width: 50,
-  height: 50,
+  ...xxSmall,
   ...basePhoto
 }
 
 export const tinyPhoto: ImageStyle = {
-  width: 30,
-  height: 30,
+  ...tiny,
   ...basePhoto
 }
 
@@ -83,8 +104,7 @@ export const icon: ImageStyle = {
 }
 
 export const smallIcon: ImageStyle = {
-  width: 30,
-  height: 30,
+  ...tiny,
   margin: 2
 }
 

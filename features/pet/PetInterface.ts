@@ -5,6 +5,7 @@ export interface Pet {
   species: string 
   breed: string
   photo: string | null
+  color: number
 }
 
 export interface PetBasic {
@@ -17,6 +18,7 @@ export interface PetFormData {
   age: number
   species: string 
   breed: string
+  color: number
   photoData: { uri: string, name: string, type: string } | null
   petId?: string
 }

@@ -8,9 +8,8 @@ import { AddButton } from "@components/ButtonComponent"
 import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
 //types & helpers
-import * as careHelpers from "@care/careHelpers"
-import { getIconSource } from "@utils/ui"
 import { Care } from "@care/CareInterface"
+import { getIconSource } from "@utils/ui"
 //queries
 import { useGetAllCares } from "@care/careQueries"
 //styles
@@ -28,7 +27,7 @@ const CareItem = ({ care, navigation }) => {
     <TouchableOpacity 
       onPress={() => navigation.navigate('Details', { care: care })}
       style={[styles.itemContainer,
-      { backgroundColor: careHelpers.getTaskBackgroundColor(care.frequency) }
+      { backgroundColor: Colors.multiArray3[care.color] }
     ]}>
       <View style={styles.itemLeft}>
         <Image source={iconSource} style={styles.itemIcon} />

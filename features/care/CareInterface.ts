@@ -19,6 +19,7 @@ export interface Care {
   endDate?: Date
   frequency?: string
   times?: number
+  color: number
   trackers: Tracker[]
 }
 
@@ -31,6 +32,7 @@ export interface CareFormData {
   endDate?: Date
   frequency: string
   times: number
+  color: number
   careId?: string
 }
 

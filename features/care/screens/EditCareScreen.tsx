@@ -26,13 +26,13 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   const updateCareMutation = useUpdateCare()
 
   const initialValues: {
-    name: string, pets: Pet[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string | null, times: number | null, careId: string
+    name: string, pets: Pet[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string | null, times: number | null, color: number, careId: string
   } = {
-    name: care.name, pets: care.pets, repeat: care.repeat, ending: care.ending, date: care.date, endDate: care.endDate, frequency: care.frequency, times: care.times, careId: care._id
+    name: care.name, pets: care.pets, repeat: care.repeat, ending: care.ending, date: care.date, endDate: care.endDate, frequency: care.frequency, times: care.times, color: care.color, careId: care._id
   }
 
-  const handleSubmit = async (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string | null, times: number | null, careId: string) => {
-   updateCareMutation.mutate({ name, pets, repeat, ending, date, endDate, frequency, times, careId }, {
+  const handleSubmit = async (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string | null, times: number | null, color: number, careId: string) => {
+   updateCareMutation.mutate({ name, pets, repeat, ending, date, endDate, frequency, times, color, careId }, {
       onSuccess: (data) => {
         navigation.navigate('Main')
         return AlertForm({ body: `Updated successfully`, button: 'OK' })
