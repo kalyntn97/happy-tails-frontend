@@ -60,7 +60,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   }, [pets.data, cares.data, healths.data, profile.data])
 
   return (  
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       { isLoading && <Loader /> }
       { isError && <Text>Error fetching data... </Text> }
       { isSuccess && 
@@ -152,7 +152,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         </Pressable>
       </Modal> 
       
-    </View>
+    </ScrollView>
   )
 }
 

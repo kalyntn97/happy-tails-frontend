@@ -7,6 +7,8 @@ import { MainButton, SubButton } from '@components/ButtonComponent'
 import Dropdown from "@components/Dropdown/Dropdown"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
+import ColorPickingPanel from "@components/ColorPickingPanel"
+import { ScrollView } from "react-native-gesture-handler"
 
 interface PetFormProps {
   onSubmit: (name: string, age: number | '', species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
@@ -52,7 +54,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
   return ( 
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.photoUpload}>
           <Image source={{ uri: photo }} style={styles.image as ImageStyle} />
           <View style={styles.uploadBtnContainer}>
@@ -115,7 +117,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
             onSelect={setBreed} 
           />
         }
-      
+        <ColorPickingPanel />
         <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting' : initialValues?.name ? 'Save' : 'Add Pet'} top={50} bottom={10} />
         <SubButton onPress={ () => {
           navigation.canGoBack() ? navigation.goBack() : navigation.reset({ index: 0, routeName: 'Index'})
@@ -123,7 +125,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
           title='Cancel' top={10} bottom={10} 
         />
 
-      </View>
+      </ScrollView>
 
     </TouchableWithoutFeedback>
   )
