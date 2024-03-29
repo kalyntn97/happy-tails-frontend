@@ -4,15 +4,15 @@ import React, { FC } from 'react'
 //components
 import SwipeableCareTask from './SwipeableTasks/SwipeableCareTask'
 import SwipeableHealthTask from './SwipeableTasks/SwipeableHealthTask'
-import { getDateConstructor, getStartDate } from '@utils/datetime'
+import { getDateConstructor, getDateInfo, getStartDate } from '@utils/datetime'
 //types
 import { Care } from '@care/CareInterface'
-import { Health } from '@health/HealthInterface'
+import { Health, Visit } from '@health/HealthInterface'
 //styles
 import { Spacing } from '@styles/index'
 
 interface FlatListProps {
-  data: any[]
+  data: Array<any>
   type: string
   navigation: any
   activeDateObj: Date
@@ -45,14 +45,17 @@ const CustomFlatList: FC<FlatListProps> = ({ data, type, navigation, activeDateO
               return <SwipeableCareTask key={item._id} care={item} navigation={navigation} onPress={() => onPressTask(item, 'Care')} />
             }
           } else if (type === 'Health') {
-            const startDate = getStartDate(new Date(item.nextDue), interval)
-            const doneCon: boolean = item.lastDone.some(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth())
-            const doneDate: Date = doneCon && item.lastDone.find(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth()).date
-            const dueCon: boolean = new Date(item.nextDue).toLocaleDateString() === activeDateObj.toLocaleDateString()
-            const showCon: boolean = activeDateObj >= startDate && dueCon
+            //*show future tasks based on user's selected interval, show completed tasks for the whole month
+            const startDate = getStartDate(new Date(item.nextDue), interval) //start date to show task
+            let filteredVisits: Visit[] = item.lastDone.filter((visit: Visit) => 
+              new Date(visit.date).getMonth() === activeDateObj.getMonth() && new Date(visit.date).getFullYear() === activeDateObj.getFullYear()
+            ).sort((a: Visit, b: Visit) => new Date(a.date).getTime() - new Date(b.date).getTime())
+            const pastVisit: Visit = filteredVisits.find(visit => activeDateObj < new Date(visit.date))
+            const show: boolean = activeDateObj >= startDate 
+              || !!pastVisit
             
-            if (doneCon || showCon) {
-              return <SwipeableHealthTask key={item._id} health={item} navigation={navigation} onPress={() => onPressTask(item, 'Health')} done={doneCon} due={dueCon} doneDate={doneDate} activeDateObj={activeDateObj} />
+            if (show) {
+              return <SwipeableHealthTask key={item._id} health={item} navigation={navigation} onPress={() => onPressTask(item, 'Health')} pastVisit={pastVisit} />
             }
           } else {
             return null //not render anything if conditions are not met

@@ -3,8 +3,7 @@ import { useRef, useState, useEffect } from "react"
 import { ScrollView, StyleSheet, Text, View, Image, ImageStyle, TouchableOpacity, Pressable } from "react-native"
 //utils
 import * as careHelpers from "@care/careHelpers"
-import { getCurrentDate, getMonth, getDayOfWeek } from "@utils/datetime"
-import { Tracker } from "@care/careService"
+import { getDateInfo, getMonth, getDayOfWeek } from "@utils/datetime"
 //styles
 import { Colors, Forms } from '@styles/index'
 

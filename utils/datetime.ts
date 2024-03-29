@@ -16,7 +16,7 @@ export const getDateInfo = (input: Date) => {
   const weeksPassed = Math.floor(daysPassed / 7)
   const week = weeksPassed + 1
   
-  return { date, month, monthName, year, day, week, firstDayOfMonth, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
+  return { date, month, monthName, year, day, week, firstDayOfMonth, lastDayOfMonth, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
 }
 
 export const getDateConstructor = (dateString: Date): Date => {

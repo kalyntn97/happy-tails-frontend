@@ -79,6 +79,7 @@ export const styles = StyleSheet.create({
   bodyText: {
     ...Typography.smallBody,
     marginTop: 5,
+    marginHorizontal: 2
   },
   mainBodyText: {
     ...Typography.regBody,

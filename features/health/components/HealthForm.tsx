@@ -30,7 +30,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   const [type, setType] = useState<string>(initialValues?.type ?? 'Routine')
   const [times, setTimes] = useState<number>(initialValues?.times ?? null)
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
-  const [lastDone, setLastDone] = useState<Visit[] | VisitFormData[]>(initialValues?.lastDone ?? null)
+  const [lastDone, setLastDone] = useState<Visit[] | VisitFormData[]>(initialValues?.lastDone ?? [])
   const [nextDue, setNextDue] = useState<Date>(initialValues?.nextDue ?? null)
 
   const [species, setSpecies] = useState<string>(null)

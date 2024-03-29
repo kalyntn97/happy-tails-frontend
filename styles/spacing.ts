@@ -21,7 +21,7 @@ export const flexColumn: ViewStyle = {
 
 export const fullWH: ViewStyle = {
   width: '100%',
-  height: '100%'
+  height: '100%',
 }
 
 export const fullScreenDown: ViewStyle = {

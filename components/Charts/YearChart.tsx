@@ -2,7 +2,7 @@
 import { StyleSheet, Text, View, Image } from "react-native"
 //types & helpers
 import * as careHelpers from "@care/careHelpers"
-import { getCurrentDate } from "@utils/datetime"
+import { getDateInfo } from "@utils/datetime"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 

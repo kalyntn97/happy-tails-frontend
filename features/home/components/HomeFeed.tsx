@@ -1,7 +1,6 @@
 //npm
 import { useEffect, useState } from "react"
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Modal, TouchableWithoutFeedback, Pressable, ListRenderItem } from "react-native"
-import { useQueries } from "@tanstack/react-query"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import { Health } from "@health/HealthInterface"
@@ -9,7 +8,6 @@ import { Health } from "@health/HealthInterface"
 import { useActiveDate, useCurrentIsActive, useReminderInterval, useSetActions } from "@store/store"
 //components
 import CareCard from "@care/components/CareCard"
-import SwipeableCareTask from "./SwipeableTasks/SwipeableCareTask"
 import { CloseButton } from "../../../components/ButtonComponent"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
@@ -214,10 +212,7 @@ const styles = StyleSheet.create({
     ...Buttons.buttonText,
   },
   modalContainer: {
-    ...Spacing.fullWH,
-    ...Spacing.centered,
-    position: 'relative',
-    backgroundColor: Colors.transparent,
+    ...Forms.modal,
   },
   detailContainer: {
     width: '100%',

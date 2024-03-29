@@ -1,5 +1,6 @@
 import { ViewStyle, ImageStyle } from "react-native"
 import Colors from "./colors"
+import { fullWH, centered } from "./spacing"
 
 export const boxShadow: ViewStyle = {
   elevation: 3,
@@ -91,4 +92,11 @@ export const largeIcon: ImageStyle = {
   width: 60,
   height: 60,
   margin: 5
+}
+
+export const modal: ViewStyle = {
+  ...fullWH,
+  ...centered,
+  position: 'relative',
+  backgroundColor: Colors.transparent,
 }

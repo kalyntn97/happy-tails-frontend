@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
 //types & helpers
 import * as careHelpers from '@care/careHelpers'
 //utils
-import { getCurrentDate, getMonth } from "@utils/datetime"
+import { getDateInfo, getMonth } from "@utils/datetime"
 import { getColor, getColorArray } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'

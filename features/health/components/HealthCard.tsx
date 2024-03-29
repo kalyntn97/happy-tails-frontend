@@ -21,9 +21,11 @@ interface HealthCardProps {
 
 const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activeDateObj }) => {
   const iconSource = getIconSource(health.name)
-  const pastDueCon = new Date(health.nextDue) < new Date()
-  const completedCon = health.lastDone.some(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth())
-  const completedDate = completedCon && health.lastDone.find(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth()).date
+  const pastDue = new Date(health.nextDue) < new Date()
+  const done = health.lastDone.some(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth())
+  const doneDate = done && health.lastDone.find(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth()).date
+  //handle when latest visit is not in the same month
+  const lastDoneDate = health.lastDone.length > 0 && new Date(health.lastDone[0].date)
 
   const handleNavigate = () => {
     onNavigate && onNavigate()
@@ -56,11 +58,14 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
       </View>
       
       <View style={styles.body}>
-        {completedCon && 
-          <Text style={styles.bodyText}>Completed on {new Date(completedDate).toDateString()}</Text>
+        {done && 
+          <Text style={styles.bodyText}>Completed on {new Date(doneDate).toDateString()}</Text>
         }
-        <Text style={[styles.status,  { color: pastDueCon ? Colors.red : Colors.green }]}>
-          {pastDueCon ? 'Past due!' : 'Due on'}
+        {!done && lastDoneDate && 
+          <Text style={styles.bodyText}>Completed on {new Date(lastDoneDate).toDateString()}</Text>
+        }
+        <Text style={[styles.status,  { color: pastDue ? Colors.red : Colors.green }]}>
+          {pastDue ? 'Past due!' : 'Due on'}
         </Text>
         <Text style={styles.title}>{new Date(health.nextDue).toDateString()}</Text>
         

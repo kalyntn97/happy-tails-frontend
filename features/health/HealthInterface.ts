@@ -9,6 +9,12 @@ export interface Visit {
 export interface VisitFormData {
   date: Date
   notes: string
+  healthId: string
+}
+
+export interface DeleteVisitFormData {
+  healthId: string
+  visitId: string
 }
 export interface Health {
   _id: string

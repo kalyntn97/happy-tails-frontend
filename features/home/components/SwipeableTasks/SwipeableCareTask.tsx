@@ -47,7 +47,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
   const careId = care._id
   const trackerId = care.trackers[trackerIndex]._id
   
-  const checkAllDone = async (care: Care) => {
+  const checkAllDone = async () => {
     done === times
       ? uncheckAllDoneMutation.mutate({ careId, trackerId, index }, {
         // onSuccess: () => {
@@ -110,7 +110,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
           </View>
         </View>
 
-        <TouchableOpacity style={styles.bulletBtn} onPress={() => checkAllDone(care)}>
+        <TouchableOpacity style={styles.bulletBtn} onPress={() => checkAllDone()}>
           {done === times 
           ? <Image source={require('@assets/icons/check.png')} style={styles.check}/>
           : <Text style={styles.bulletBtnText}>○</Text> }

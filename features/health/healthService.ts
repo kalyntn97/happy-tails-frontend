@@ -11,3 +11,11 @@ export const getAllHealths = async () => {
 export const create = async (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Visit[], nextDue: Date): Promise<Health> => {
   return (await axios.post<Health>(BASE_URL, { pet, type, name, vaccine, times, frequency, lastDone, nextDue })).data
 }
+
+export const checkDone = async (date: Date, notes: string, healthId: string): Promise<Visit> => {
+  return (await axios.patch<Visit>(`${BASE_URL}/${healthId}/check`, { date, notes })).data
+}
+
+export const uncheckDone = async (healthId: string, visitId: string): Promise<string> => {
+  return (await axios.patch<string>(`${BASE_URL}/${healthId}/${visitId}/uncheck`)).data
+}
