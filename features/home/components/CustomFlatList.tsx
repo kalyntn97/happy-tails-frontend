@@ -50,12 +50,13 @@ const CustomFlatList: FC<FlatListProps> = ({ data, type, navigation, activeDateO
             let filteredVisits: Visit[] = item.lastDone.filter((visit: Visit) => 
               new Date(visit.date).getMonth() === activeDateObj.getMonth() && new Date(visit.date).getFullYear() === activeDateObj.getFullYear()
             ).sort((a: Visit, b: Visit) => new Date(a.date).getTime() - new Date(b.date).getTime())
-            const pastVisit: Visit = filteredVisits.find(visit => activeDateObj < new Date(visit.date))
-            const show: boolean = activeDateObj >= startDate 
-              || !!pastVisit
+            const pastVisit: Visit = filteredVisits.length > 1 ?filteredVisits.find(visit => activeDateObj < new Date(visit.date)) : filteredVisits[0]
+            const due: boolean = activeDateObj >= startDate
+            const done: boolean = filteredVisits.length >= 1
+            const show: boolean = due || done
             
             if (show) {
-              return <SwipeableHealthTask key={item._id} health={item} navigation={navigation} onPress={() => onPressTask(item, 'Health')} pastVisit={pastVisit} />
+              return <SwipeableHealthTask key={item._id} health={item} navigation={navigation} onPress={() => onPressTask(item, 'Health')} done={done} pastVisit={pastVisit} />
             }
           } else {
             return null //not render anything if conditions are not met

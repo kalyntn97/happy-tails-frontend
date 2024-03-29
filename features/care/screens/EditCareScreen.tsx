@@ -32,7 +32,7 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   }
 
   const handleSubmit = async (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string | null, times: number | null, careId: string) => {
-    updateCareMutation.mutate({ name, pets, repeat, ending, date, endDate, frequency, times, careId }, {
+   updateCareMutation.mutate({ name, pets, repeat, ending, date, endDate, frequency, times, careId }, {
       onSuccess: (data) => {
         navigation.navigate('Main')
         return AlertForm({ body: `Updated successfully`, button: 'OK' })

@@ -8,7 +8,7 @@ import { VACCINES } from '@health/healthHelpers'
 //components
 import PetInfo from '@components/PetInfo/PetInfo'
 //styles
-import { styles } from '@home/components/SwipeableTasks/ModalCardStyles'
+import { styles } from '@styles/ModalCardStyles'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Colors from '@styles/colors'
 

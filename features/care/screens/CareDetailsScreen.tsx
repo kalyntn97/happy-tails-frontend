@@ -13,7 +13,7 @@ import FillChart from "@components/Charts/FillChart"
 import Loader from "@components/Loader"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { useDeleteCareCard } from "@care/careHooks"
+import { useDeleteCareCard } from "@home/hooks"
 
 interface CareDetailsProps {
   navigation: any

@@ -19,6 +19,7 @@ import ProfileScreen from "@profile/screens/ProfileScreen"
 import SettingsScreen from "@profile/screens/SettingsScreen"
 //styles
 import { Colors, Forms } from "@styles/index"
+import EditHealthScreen from "@health/screens/EditHealthScreen"
 
 const PrivateApp = () => {
   const Tab = createBottomTabNavigator()
@@ -87,7 +88,8 @@ const PrivateApp = () => {
               {() => (
                 <HealthStack.Navigator screenOptions={{ ...stackOptions }}>
                   <HealthStack.Screen name='Index' component={HealthIndexScreen} options={{ title: 'All Pet Health'}} />
-                  <HealthStack.Screen name='Create' component={NewHealthScreen} options={{ title: 'New Pet Card'}} />
+                  <HealthStack.Screen name='Create' component={NewHealthScreen} options={{ title: 'New Health Card'}} />
+                  <HealthStack.Screen name='Edit' component={EditHealthScreen} options={{ title: 'Update Health Card'}}/>
                 </HealthStack.Navigator>
               )}
             </HomeStack.Screen>

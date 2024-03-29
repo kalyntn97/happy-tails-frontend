@@ -7,14 +7,14 @@ import { Care } from '@care/CareInterface'
 import * as careHelpers from '@care/careHelpers'
 //store & queries & hooks
 import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
-import { useDeleteCareCard } from '@care/careHooks'
+import { useDeleteCareCard } from '@home/hooks'
 //components
 import { useActiveDate } from '@store/store'
 import { AlertForm } from '@utils/ui'
 import { SquareButton } from '../../../../components/ButtonComponent'
 import ScrollPetList from '../../../../components/PetInfo/ScrollPetList'
 //styles
-import { styles } from './SwipeableTaskStyles'
+import { styles } from '../../../../styles/SwipeableTaskStyles'
 
 interface SwipeableCareTaskProps {
   care: Care
@@ -27,7 +27,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const checkAllDoneMutation = useCheckAllDoneCare()
   const uncheckAllDoneMutation = useUncheckAllDoneCare()
-  const { showDeleteConfirmDialog } = useDeleteCareCard(navigation)
+  const { showDeleteConfirmDialog, handleDeleteCareCard } = useDeleteCareCard(navigation)
   
   let trackerIndex: number, index: number, done: number
   const times = care.repeat ? care.times : 1
@@ -47,7 +47,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
   const careId = care._id
   const trackerId = care.trackers[trackerIndex]._id
   
-  const checkAllDone = async () => {
+  const toggleAllDone = async () => {
     done === times
       ? uncheckAllDoneMutation.mutate({ careId, trackerId, index }, {
         // onSuccess: () => {
@@ -83,7 +83,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
           closeSwipeable()
         }} />
       }
-      <SquareButton title='Delete' onPress={() => showDeleteConfirmDialog(care)} />
+      <SquareButton title='Delete' onPress={() => showDeleteConfirmDialog(care, handleDeleteCareCard)} />
     </View>
   )
 
@@ -110,7 +110,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
           </View>
         </View>
 
-        <TouchableOpacity style={styles.bulletBtn} onPress={() => checkAllDone()}>
+        <TouchableOpacity style={styles.bulletBtn} onPress={() => toggleAllDone()}>
           {done === times 
           ? <Image source={require('@assets/icons/check.png')} style={styles.check}/>
           : <Text style={styles.bulletBtnText}>○</Text> }

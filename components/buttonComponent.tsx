@@ -26,7 +26,7 @@ export const AddButton = ({ onPress }) => (
 export const SmallAddButton = ({ onPress }) => (
   <TouchableOpacity onPress={onPress} style={{
     ...Buttons.smallRoundButton,
-  }}>
+  } as ViewStyle}>
     <Text style={{
       ...whiteBtnTextStyles,
       fontSize: 15,
@@ -39,7 +39,7 @@ export const SmallAddButton = ({ onPress }) => (
 export const SmallRemoveButton = ({ onPress }) => (
   <TouchableOpacity onPress={onPress} style={{
     ...Buttons.smallRoundButton,
-  }}>
+  } as ViewStyle}>
     <Text style={{
       ...whiteBtnTextStyles,
       fontSize: 15,

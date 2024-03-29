@@ -14,20 +14,26 @@ type MultipleInputsProps = {
 }
 
 const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPress }) => {
-  const [inputs, setInputs] = useState<any>(initials ?? [])
+  const [inputs, setInputs] = useState<any[]>(initials ?? [])
   const [selected, setSelected] = useState<any>(type === 'Date' && new Date())
+
+  const customSortArray = (array: any[]) => {
+    return array.sort((a, b) => type ==='Date' ? new Date(b).getTime() - new Date(a).getTime() : b - a)
+  }
 
   const handleAddInput = () => {
     setInputs((prev) => {
-      const updatedInputs = [selected, ...inputs].sort((a, b) => b - a)
+      let updatedInputs = [selected, ...inputs]
+      updatedInputs = customSortArray(updatedInputs)
       onPress(updatedInputs)
       return updatedInputs
     })
   }
 
-  const handleRemoveInput = () => {
+  const handleRemoveInput = (val: string) => {
     setInputs((prev) => {
-      const updatedInputs = prev.slice(1).sort((a, b) => b - a)
+      let updatedInputs = prev.filter(v => v !== val)
+      updatedInputs = customSortArray(updatedInputs)
       onPress(updatedInputs)
       return updatedInputs
     })
@@ -51,9 +57,13 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPres
 
       {inputs.length > 0 &&
         <View style={styles.rowCon}>
-          <SmallRemoveButton onPress={() => handleRemoveInput()} />
-          {inputs.map(val =>  
-            <Text style={styles.initial}>{type === 'Date' ? val.toLocaleDateString() : val}</Text>
+          {inputs.map((val: string, index: number) =>
+            <View style={styles.initial} key={index}>
+              <SmallRemoveButton onPress={() => handleRemoveInput(val)} />
+              <Text>
+                { type === 'Date' ? new Date(val).toLocaleDateString() : val }
+              </Text>
+            </View>
           )}
         </View>
       }
@@ -64,12 +74,14 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPres
 const styles = StyleSheet.create({
   rowCon : {
     ...Spacing.flexRow,
+    flexWrap: 'wrap',
     width: 270,
     marginVertical: 7,
     justifyContent: 'space-evenly'
   },
   initial: {
-    marginHorizontal: 5,
+    ...Spacing.flexRow,
+    margin: 5,
   },
   label: {
     fontSize: 15,

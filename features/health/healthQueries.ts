@@ -3,7 +3,7 @@ import * as healthService from "./healthService"
 import { DeleteVisitFormData, HealthFormData, VisitFormData } from "./HealthInterface"
 
 export const healthKeyFactory = {
-  healths: ['all-healths']
+  healths: ['all-healths'],
 }
 
 export const useGetAllHealths = () => {
@@ -18,6 +18,28 @@ export const useAddHealth = () => {
 
   return useMutation({
     mutationFn: ({ pet, type, name, vaccine, times, frequency, lastDone, nextDue }:  HealthFormData) => healthService.create(pet, type, name, vaccine, times, frequency, lastDone, nextDue),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [...healthKeyFactory.healths] })
+    }
+  })
+}
+
+export const useUpdateHealth = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ pet, type, name, vaccine, times, frequency, lastDone, nextDue, healthId }:  HealthFormData) => healthService.update(pet, type, name, vaccine, times, frequency, lastDone, nextDue, healthId),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [...healthKeyFactory.healths] })
+    }
+  })
+}
+
+export const useDeleteHealth = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: (healthId: string) => healthService.deleteHealth(healthId),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...healthKeyFactory.healths] })
     }

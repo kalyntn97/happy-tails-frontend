@@ -6,7 +6,8 @@ import { View, Text, StyleSheet } from "react-native"
 import HealthForm from "@health/components/HealthForm"
 import { SubButton } from "@components/ButtonComponent"
 import { AlertForm } from "@utils/ui"
-//queries
+//queries & types
+import { Visit } from "@health/HealthInterface"
 import { useAddHealth } from "@health/healthQueries"
 //styles
 import { Spacing } from "@styles/index"
@@ -16,8 +17,7 @@ const NewHealthScreen = ({ navigation }) => {
   const isFocused = useIsFocused()
   const addHealthMutation = useAddHealth()
 
-  const handleSubmit = (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Date[], nextDue: Date) => {
-    console.log(nextDue)
+  const handleSubmit = (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Visit[], nextDue: Date) => {
     addHealthMutation.mutate({ pet, type, name, vaccine, times, frequency, lastDone, nextDue }, {
       onSuccess: () => {
         navigation.navigate('Main')

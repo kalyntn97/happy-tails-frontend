@@ -15,7 +15,7 @@ import MultipleInputs from "@components/MultipleInputs"
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface HealthFormProps {
-  onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Visit[] | VisitFormData[], nextDue: Date, healthId: string) => void
+  onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: VisitFormData[], nextDue: Date, healthId: string) => void
   initialValues?: {pet?: Pet, type?: string, name?: string, vaccine?: string, times?: number, frequency?: string, lastDone?: Visit[], nextDue?: Date, healthId?: string}
   navigation: any
   status: string
@@ -39,7 +39,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   const [errorMsg, setErrorMsg] = useState<string>(null)
 
   const healthId: string | null = initialValues?.healthId ?? null
-  const initialVisits = lastDone?.map(visit => visit.date)
+  const initialVisits = initialValues?.lastDone.map(visit => visit.date)
 
   const handleSelectName = (selected: string) => {
     setName(() => {
@@ -135,7 +135,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       {allowManualDueDate &&
           <View style={styles.rowContainer}>
             <Text style={styles.label}>Next Due</Text>
-            <RNDateTimePicker value={nextDue ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue(selectedDate) }}/>
+            <RNDateTimePicker value={new Date(nextDue) ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue(selectedDate) }}/>
           </View>
 
       }

@@ -4,12 +4,20 @@ import { HEALTH_BASE_URL } from "@services/urls"
 
 const BASE_URL = HEALTH_BASE_URL
 
-export const getAllHealths = async () => {
+export const getAllHealths = async (): Promise<Health[]> => {
   return (await axios.get<Health[]>(BASE_URL)).data
 }
 
 export const create = async (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Visit[], nextDue: Date): Promise<Health> => {
   return (await axios.post<Health>(BASE_URL, { pet, type, name, vaccine, times, frequency, lastDone, nextDue })).data
+}
+
+export const update = async (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Visit[], nextDue: Date, healthId: string): Promise<Health> => {
+  return (await axios.put<Health>(`${BASE_URL}/${healthId}`, { pet, type, name, vaccine, times, frequency, lastDone, nextDue })).data
+}
+
+export const deleteHealth = async (healthId: string): Promise<string> => {
+  return (await axios.delete<string>(`${BASE_URL}/${healthId}`)).data
 }
 
 export const checkDone = async (date: Date, notes: string, healthId: string): Promise<Visit> => {

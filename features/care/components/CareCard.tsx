@@ -9,7 +9,7 @@ import { getIconSource } from "@utils/ui"
 import ScrollPetList from "@components/PetInfo/ScrollPetList"
 import TrackerPanel from "./TrackerPanel"
 //styles
-import { styles } from "@home/components/SwipeableTasks/ModalCardStyles"
+import { styles } from "@styles/ModalCardStyles"
 
 interface CareCardProps {
   care: Care
