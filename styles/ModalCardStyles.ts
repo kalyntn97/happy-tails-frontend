@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
   },
   subTitle: {
     ...Typography.xSmallHeader,
-    textDecorationLine: 'underline',
+    // textDecorationLine: 'underline',
     marginBottom: 0
   },
   icon: {

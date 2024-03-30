@@ -60,13 +60,21 @@ const ProfileScreen = ({ navigation, route }) => {
         </View>
       </View>
 
-      {pets &&
-        <View>
+      {pets ?
+        <>
           <ScrollPetList petArray={pets} size='compact' navigation={navigation} />
-        </View>
-      }
-      { pets && !pets.length && <Loader /> }
-      { !pets && <Text>Error fetching pets...</Text> }
+          { pets && !pets.length && <Loader /> }
+        </>
+      :
+        <Text>Error fetching pets...</Text> }
+
+      <TouchableOpacity style={styles.linkBtn} onPress={() => navigation.navigate('Care', { screen: 'Index', initial: false})}>
+        <Text style={styles.btnText}>Manage all care tasks</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.linkBtn} onPress={() => navigation.navigate('Health', { screen: 'Index', initial: false})}>
+        <Text style={styles.btnText}>Manage all vet visits</Text>
+      </TouchableOpacity>
 
     </View>
   )
@@ -131,6 +139,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.darkPink,
     marginTop: 'auto',
     marginBottom: 20,
+  },
+  linkBtn: {
+    margin: 10,
   }
 })
 

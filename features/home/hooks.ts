@@ -5,6 +5,7 @@ import { useDeleteCare } from "../care/careQueries"
 import { useDeleteHealth } from "@health/healthQueries"
 //types & helpers
 import { AlertForm } from "@utils/ui"
+import { useShallowPetBasics } from "@store/storeUtils"
 
 const showDeleteConfirmDialog = (item: any, handleDeleteItem: (itemId: string) => void) => {
   return Alert.alert(
@@ -53,3 +54,13 @@ export const useDeleteHealthCard = (navigation: any) => {
   return { handleDeleteHealthCard, showDeleteConfirmDialog }
 }
 
+export const useShallowPetColor = () => {
+  const pets = useShallowPetBasics()
+  const petIdToColor = (petId: string) => {
+    if (pets.length) {
+      return pets.find(pet => pet._id === petId).color
+    }
+  }
+  
+  return { petIdToColor }
+}

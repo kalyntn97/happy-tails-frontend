@@ -83,6 +83,11 @@ export const smallBody = {
   ...body,
 }
 
+export const xSmallBody = {
+  ...xxSmall,
+  ...body,
+}
+
 export const smallSubBody: TextStyle = {
   ...xxSmall,
   ...body,

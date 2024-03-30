@@ -46,7 +46,7 @@ export const styles = StyleSheet.create({
     marginTop: 5,
     position: 'absolute',
     top: -40,
-    left: 80,
+    left: 70,
     width: '90%',
     justifyContent: 'space-evenly',
   },
@@ -65,15 +65,16 @@ export const styles = StyleSheet.create({
     height: 20,
     position: 'absolute',
     top: -30,
+    right: 20,
   },
   detailText: {
-    ...Typography.smallBody,
+    ...Typography.xSmallBody,
     marginHorizontal: 5,
   },
   notesInput: {
     width: '100%',
-    fontStyle: 'italic',
-    marginVertical: 15,
+    ...Typography.smallSubBody,
+    margin: 5,
   },
   overlay: {
     ...Forms.modal,
@@ -82,6 +83,7 @@ export const styles = StyleSheet.create({
     ...Spacing.flexColumn,
     width: '100%',
     minHeight: 40,
+    marginHorizontal: 5,
   },
   pastVisitCon: {
     ...Spacing.flexColumn,
@@ -91,14 +93,17 @@ export const styles = StyleSheet.create({
   doneCon: {
     ...Spacing.flexColumn,
     width: '100%',
-    borderBottomWidth: 1,
-    borderColor: 'gray',
-    padding: 5,
-    alignItems: 'flex-start'
+    borderRadius: 15,
+    padding: 10,
+    marginVertical: 10,
+    alignItems: 'flex-start',
   },
   notes: {
     width: '100%',
     marginVertical: 10,
+  },
+  emptyNote: {
+    opacity: 0.5
   },
   emptyCon: {
 

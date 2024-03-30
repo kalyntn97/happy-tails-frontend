@@ -133,7 +133,7 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
             )}
             getItemLayout={getItemLayout}
             showsVerticalScrollIndicator={false}
-            style={{ width: '100%' }}
+            style={styles.list}
             ListEmptyComponent={ <EmptyList /> }
           />
         </> : <Loader />
@@ -163,6 +163,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listHeader: {
+  },
+  list : {
+    width: '100%',    
   },
   headerIcon: {
     ...Forms.xxSmallPhoto,

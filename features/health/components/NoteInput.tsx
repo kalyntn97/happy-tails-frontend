@@ -61,7 +61,7 @@ const NoteInput: FC<NoteInputProps> = ({ healthId, visit }) => {
         : 
           <>
             <Image source={require('@assets/icons/edit.png')} style={styles.miniIcon} />
-            <Text style={[styles.detailText, styles.notes]}>{notes ?? 'No visit notes'}</Text>
+            <Text style={[styles.detailText, styles.notes, !notes && styles.emptyNote]}>{notes ?? 'No visit notes'}</Text>
           </>
         }
     </TouchableOpacity>

@@ -3,7 +3,7 @@ import { Image, ScrollView, Text, View, TouchableOpacity, Pressable, useWindowDi
 //types
 import { Health, Visit } from "@health/HealthInterface"
 //queries & hooks
-import { useDeleteHealthCard } from "@home/hooks"
+import { useDeleteHealthCard, useShallowPetColor } from "@home/hooks"
 import { getIconSource } from "@utils/ui"
 //components
 import Loader from "@components/Loader"
@@ -22,8 +22,7 @@ interface HealthDetailsProps {
 const HealthDetailsScreen = ({ navigation, route }) => {
   const { health } = route.params
   const { showDeleteConfirmDialog, handleDeleteHealthCard } = useDeleteHealthCard(navigation)
-  const [hideInput, setHideInput] = useState<boolean>(false)
-
+  const { petIdToColor } = useShallowPetColor()
   const iconSource = getIconSource(health.name)
 
   return (
@@ -73,7 +72,9 @@ const HealthDetailsScreen = ({ navigation, route }) => {
           <View style={styles.pastVisitCon}>
             { health.lastDone.length ? 
               health.lastDone.map((visit: Visit) =>
-                <View key={visit._id} style={styles.doneCon}>
+                <View key={visit._id} style={[styles.doneCon, {
+                  backgroundColor: Colors.multiArray3[petIdToColor(health.pet._id)]
+                }]}>
                   <View style={styles.rowCon}>
                     <Image source={require('@assets/icons/done.png')} style={styles.itemIcon} />
                     <Text style={styles.detailText}>{new Date(visit.date).toLocaleDateString()}</Text>

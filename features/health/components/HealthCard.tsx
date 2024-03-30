@@ -57,7 +57,7 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
         
       </View>
       
-      <View style={styles.body}>
+      <View style={[styles.body, { marginTop: -50 }]}>
         {done && 
           <Text style={styles.bodyText}>Completed on {new Date(doneDate).toDateString()}</Text>
         }
