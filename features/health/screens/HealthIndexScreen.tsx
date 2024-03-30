@@ -1,5 +1,5 @@
 //npm modules
-import { FC, useEffect, useRef } from "react"
+import { FC, useEffect, useRef, useState } from "react"
 import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView, Image, Button } from "react-native"
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
@@ -16,6 +16,7 @@ import { useGetAllHealths } from "@health/healthQueries"
 import { Buttons, Spacing, Typography, Colors, Forms } from '@styles/index'
 import { usePetIds, useShallowPetBasics } from "@store/storeUtils"
 import PetInfo from "@components/PetInfo/PetInfo"
+import EmptyList from "@components/EmptyList"
 
 type HealthIndexProps = {
   navigation: any
@@ -26,6 +27,7 @@ type HealthItemProps = {
   health: Health
   navigation: any
 }
+
 
 const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
   const iconSource = getIconSource(health.name)
@@ -39,6 +41,9 @@ const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
       <View style={styles.itemLeft}>
         <Image source={iconSource} style={styles.itemIcon} />
         <Text>{health.name}</Text>
+        <View style={{ flex: 1 }}>
+          <PetInfo pet={health.pet} size='mini' />
+        </View>
       </View>
       <Image source={require('@assets/icons/next2.png')} style={{...Forms.smallIcon, marginRight: 10 }} />
     </TouchableOpacity>
@@ -47,6 +52,7 @@ const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
 
 const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
   const { data: healths, isLoading, isSuccess, isError} = useGetAllHealths()
+  const [filtered, setFiltered] = useState<string[]>([])
   const pets = useShallowPetBasics()
 
   const petIdToPet = (petId: string) => {
@@ -57,7 +63,9 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
   
   const healthIndex: { title: string; data: Health[] }[] = sortOrder.map(petId => ({
     title: petId,
-    data: healths.filter(health => health.pet._id === petId) || []
+    data: healths.filter(health => 
+      health.pet._id === petId && !filtered.includes(health.pet._id)
+    ) || []
   }))
   
   const sectionListRef = useRef<SectionList>(null)
@@ -71,10 +79,32 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
     listHeaderHeight: 0,
   })
 
-  const handleHeaderPress = (sectionIdx: number) => {
-    sectionListRef.current.scrollToLocation({ sectionIndex: sectionIdx, itemIndex: 0 })
+  const handleHeaderPress = (petToFilter: string) => {
+    // sectionListRef.current.scrollToLocation({ sectionIndex: sectionIdx, itemIndex: 0 })
+    setFiltered(prev => {
+      if (prev.includes(petToFilter)) {
+        return prev.filter(petId => petId !== petToFilter)
+      } else {
+        return [...prev, petToFilter]
+      }
+    })
   }
 
+  const HealthListHeader = () => (
+    <ScrollView 
+      horizontal
+      contentContainerStyle={styles.listHeader}
+      showsHorizontalScrollIndicator={false}
+    >
+      {healthIndex.map((section, idx) => 
+        <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn, filtered.includes(section.title) && { opacity: 0.3 }]} onPress={() => handleHeaderPress(section.title)}>
+          {/* <Text style={styles.headerCount}>{section.data.length}</Text> */}
+          <PetInfo pet={petIdToPet(section.title)} size='small' />
+        </TouchableOpacity>
+      )}
+    </ScrollView>
+  )
+  
   useEffect(() => {
     if (route.params) {
       const { sectionIndex, itemIndex } = route.params
@@ -91,32 +121,20 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
       {isSuccess ?
         <>
           { !healths.length && <PlaceHolder /> }
-          <View style={styles.headerCon}>
-            <ScrollView 
-              horizontal
-              contentContainerStyle={styles.listHeader}
-              showsHorizontalScrollIndicator={false}
-            >
-              {healthIndex.map((section, idx) => 
-                <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn]} onPress={() => handleHeaderPress(idx)}>
-                  {/* <Text style={styles.headerCount}>{section.data.length}</Text> */}
-                  <PetInfo pet={petIdToPet(section.title)} size='small' />
-                </TouchableOpacity>
-              )}
-            </ScrollView>
-          </View>
           
           <SectionList
             ref={sectionListRef}
             sections={healthIndex}
             keyExtractor={(item, index) => item + index}
+            ListHeaderComponent={< HealthListHeader />}
+            ListHeaderComponentStyle={styles.headerCon}
             renderItem={({ item, index }) => (
               <HealthItem key={item._id} health={item} navigation={navigation} />
             )}
             getItemLayout={getItemLayout}
             showsVerticalScrollIndicator={false}
-            style={{ width: '90%' }}
-            // ListEmptyComponent={<Text>Empty...</Text>}
+            style={{ width: '100%' }}
+            ListEmptyComponent={ <EmptyList /> }
           />
         </> : <Loader />
       }
@@ -140,10 +158,11 @@ const styles = StyleSheet.create({
     ...Buttons.buttonText
   },
   headerCon: {
-    height: '18%',
+    width: '100%',
+    height: 120,
+    alignItems: 'center',
   },
   listHeader: {
-    marginVertical: 10,
   },
   headerIcon: {
     ...Forms.xxSmallPhoto,
@@ -157,22 +176,25 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     ...Spacing.flexRow,
+    alignSelf: 'center',
     justifyContent: 'space-between',
-    width: '100%',
+    width: '95%',
     marginVertical: 5,
     borderRadius: 15,
     height: 60,
   },
   itemLeft: {
     ...Spacing.flexRow,
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
+    marginRight: 'auto',
   },
   itemIcon: {
     ...Forms.icon,
     marginHorizontal: 10,
   },
   itemBtn: {
-    marginLeft: 'auto'
+    marginLeft: 'auto',
+    flex: 1,
   },
 })
  

@@ -4,10 +4,11 @@ import React, { FC } from 'react'
 //components
 import SwipeableCareTask from './SwipeableTasks/SwipeableCareTask'
 import SwipeableHealthTask from './SwipeableTasks/SwipeableHealthTask'
-import { getDateConstructor, getDateInfo, getStartDate } from '@utils/datetime'
-//types
+import EmptyList from '@components/EmptyList'
+//types & utils
 import { Care } from '@care/CareInterface'
 import { Health, Visit } from '@health/HealthInterface'
+import { getDateConstructor, getDateInfo, getStartDate } from '@utils/datetime'
 //styles
 import { Spacing } from '@styles/index'
 
@@ -22,10 +23,6 @@ interface NestedListProps {
 
 const NestedList: FC<NestedListProps> = ({ data, type, navigation, activeDateObj, interval, onPressTask }) => {
   const windowWidth = useWindowDimensions().width
-  
-  const EmptyList: FC  = () => (
-    <Text style={styles.empty}>No tasks to manage.</Text>
-  )
 
   const showTask = (item: any) => {
     if (type === 'Care') {
@@ -101,8 +98,8 @@ const NestedList: FC<NestedListProps> = ({ data, type, navigation, activeDateObj
         ListEmptyComponent={ <EmptyList /> }
         showsVerticalScrollIndicator={false}
       /> */}
-      {data.length ?
-        data.map(item => showTask(item))
+      {data.length 
+        ? data.map(item => showTask(item))
         : <EmptyList />
       }
     </View>
@@ -110,12 +107,6 @@ const NestedList: FC<NestedListProps> = ({ data, type, navigation, activeDateObj
 }
 
 const styles = StyleSheet.create({
-  empty: {
-    marginTop: 100,
-    fontSize: 15,
-    fontWeight: 'bold',
-    textAlign: 'center'
-  },
   list: {
     
   },
