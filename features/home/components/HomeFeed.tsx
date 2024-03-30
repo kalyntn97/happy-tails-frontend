@@ -11,7 +11,7 @@ import CareCard from "@care/components/CareCard"
 import { CloseButton } from "../../../components/ButtonComponent"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
-import CustomFlatList from './CustomFlatList';
+import NestedList from './NestedList';
 import HealthCard from "@health/components/HealthCard"
 //utils & store
 import { useUserQueries } from "../homeQueries"
@@ -67,10 +67,10 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         <>
           <View style={styles.singleIconMenu}>
             <Image source={require('@assets/icons/due.png')} style={styles.icon} />
-            <Text style={styles.iconText}>Reminders</Text>
+            <Text style={styles.iconText}>Important</Text>
           </View>
           <View style={styles.taskListContainer}>
-            <CustomFlatList data={healths.data} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Health' interval={reminderInterval} />
+            <NestedList data={healths.data} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Health' interval={reminderInterval} />
           </View>
 
           <View style={styles.iconMenuContainer}>
@@ -109,19 +109,19 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
             {!Object.keys(cares.data).length && <PlaceHolder /> }
 
             {selected === 'day' &&
-              <CustomFlatList data={[...cares.data['Daily'], ...cares.data['Others'] ?? []]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+              <NestedList data={[...cares.data['Daily'], ...cares.data['Others'] ?? []]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
             }
             
             {selected === 'week' &&
-              <CustomFlatList data={cares.data['Weekly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+              <NestedList data={cares.data['Weekly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
             }
 
             {selected === 'month' && 
-              <CustomFlatList data={cares.data['Monthly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+              <NestedList data={cares.data['Monthly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
             }
 
             {selected === 'year' && 
-              <CustomFlatList data={cares.data['Yearly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+              <NestedList data={cares.data['Yearly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
             }
           </View>
         </>
@@ -158,7 +158,8 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    width: '100%',
+    alignItems: 'center',
     position: 'relative',
   },
   done: {

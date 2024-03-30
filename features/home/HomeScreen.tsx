@@ -36,7 +36,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
               <ScrollCalendar />
             </View>
             {/* <Image source={require('@assets/images/happy-tails-banner.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.2 }]} /> */}
-            <View style={[styles.body, { height: windowHeight * 0.7 }]}>
+            <View style={[styles.body, { width: windowWidth, height: windowHeight * 0.7 }]}>
               <HomeFeed navigation={navigation} />
             </View>
             <FloatingButton navigation={navigation} />
@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   body: {
-    width: '100%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     backgroundColor: Colors.white,

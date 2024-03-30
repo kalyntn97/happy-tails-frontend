@@ -12,7 +12,7 @@ import { ScrollView } from "react-native-gesture-handler"
 
 interface PetFormProps {
   onSubmit: (name: string, age: number | '', species: string, breed: string, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
-  initialValues?: { name?: string, age?: number, species?: string, breed?: string, color?: string, photo?: string | null, petId?: string }
+  initialValues?: { name?: string, age?: number, species?: string, breed?: string, color?: number, photo?: string | null, petId?: string }
   navigation: any
   status: string
 }
@@ -118,8 +118,8 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
             onSelect={setBreed} 
           />
         }
-        <ColorPickingPanel onPress={setColor}/>
-        <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting' : initialValues?.name ? 'Save' : 'Add Pet'} top={50} bottom={10} />
+        <ColorPickingPanel onPress={setColor} initial={initialValues?.color} />
+        <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting' : initialValues?.name ? 'Save' : 'Add Pet'} top={0} bottom={10} />
         <SubButton onPress={ () => {
           navigation.canGoBack() ? navigation.goBack() : navigation.reset({ index: 0, routeName: 'Index'})
         }}

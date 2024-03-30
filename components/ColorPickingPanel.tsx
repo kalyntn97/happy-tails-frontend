@@ -4,10 +4,11 @@ import { Colors, Spacing } from '@styles/index'
 
 type Props = {
   onPress: (colorIndex: number) => void
+  initial?: number
 }
 
-const ColorPickingPanel: FC<Props> = ({ onPress }) => {
-  const [selected, setSelected] = useState<number>(0)
+const ColorPickingPanel: FC<Props> = ({ onPress, initial }) => {
+  const [selected, setSelected] = useState<number>(initial ?? 0)
 
   const onSelect = (index: number) => {
     setSelected(index)
@@ -18,6 +19,7 @@ const ColorPickingPanel: FC<Props> = ({ onPress }) => {
   for (let i = 0; i < Colors.multiArray3.length; i++) {
     colorOptions.push(
       <TouchableOpacity 
+        key={i}
         style={[styles.circle, { backgroundColor: Colors.multiArray3[i]}]}
         onPress={() => onSelect(i)}
       >

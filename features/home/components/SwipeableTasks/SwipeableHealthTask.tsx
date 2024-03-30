@@ -1,7 +1,7 @@
 //npm
 import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
-import React, { FC, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 //components
 import { SquareButton } from '@components/ButtonComponent'
 import { AlertForm } from '@utils/ui'
@@ -13,6 +13,7 @@ import { useDeleteHealthCard } from '@home/hooks'
 //styles
 import { styles } from '@styles/SwipeableTaskStyles'
 import Colors from '@styles/colors'
+import { useShallowPetBasics } from '@store/storeUtils'
 
 
 interface SwipeableHealthTaskProps {
@@ -27,7 +28,12 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, do
   const checkDoneMutation = useCheckDoneHealth()
   const uncheckDoneMutation = useUncheckDoneHealth()
   const { showDeleteConfirmDialog, handleDeleteHealthCard } = useDeleteHealthCard(navigation)
-
+  const pets = useShallowPetBasics()
+  const petIdToColor = (petId: string) => {
+    if (pets.length) {
+      return pets.find(pet => pet._id === petId).color
+    }
+  }
   const swipeableRef = useRef(null)
 
   const closeSwipeable = () => {
@@ -69,7 +75,7 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, do
         key={health._id}
         style={[
           styles.task, 
-          { backgroundColor: Colors.multiArray3[health.pet.color] }
+          { backgroundColor: Colors.multiArray3[petIdToColor(health.pet._id) ?? health.pet.color] }
         ]} 
         onPress={onPress}
       > 

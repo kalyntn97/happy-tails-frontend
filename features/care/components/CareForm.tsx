@@ -39,7 +39,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   const [color, setColor] = useState<number>(initialValues?.color ?? 0)
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
-  
+
   const careId: string | null = initialValues?.careId ?? null
   // handle input custom name for form
   const handleSelectName = (selected: string) => {
@@ -144,7 +144,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
               <Text style={[styles.rowTextFocus, { color: repeat ? Colors.green : Colors.red }]}>{repeat ? 'ON' : 'OFF'}</Text>
             </TouchableOpacity>
           </View>
-          <ColorPickingPanel onPress={setColor}/>
+          <ColorPickingPanel onPress={setColor} initial={initialValues?.color} />
           <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
           <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
         </View>
