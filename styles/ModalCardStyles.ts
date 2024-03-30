@@ -65,10 +65,11 @@ export const styles = StyleSheet.create({
     height: 150,
   },
   btnText: {
-    ...Buttons.buttonText
+    ...Buttons.buttonText,
   },
   mainBtn: {
-    ...Buttons.smallSub
+    ...Buttons.smallSub,
+    marginBottom: 40,
   },
   status: {
     fontSize: 15,

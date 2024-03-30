@@ -94,10 +94,10 @@ export const getTaskBackgroundColor = (frequency: string) => {
 }
 
 export const sortByFrequency: (careArray: Care[]) => {[key: string]: Care[]} = (careArray: Care[]) => {
-  const sorted = careArray.reduce((result, careCard) => {
-    const { frequency } = careCard
+  const sorted = careArray.reduce((result, care) => {
+    const { frequency } = care
     result[frequency] = result[frequency] || []
-    result[frequency].push(careCard)
+    result[frequency].push(care)
     return result
   }, {})
   return sorted

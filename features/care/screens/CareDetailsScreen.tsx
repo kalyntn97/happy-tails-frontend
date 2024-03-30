@@ -3,6 +3,7 @@ import React from "react"
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView } from "react-native"
 //types & helpers & queries
 import { Care, Tracker } from "@care/CareInterface"
+import { useDeleteCareCard } from "@home/hooks"
 //components
 import { AlertForm, getIconSource } from "@utils/ui"
 import ScrollPetList from "@components/PetInfo/ScrollPetList"
@@ -12,8 +13,8 @@ import YearChart from "@components/Charts/YearChart"
 import FillChart from "@components/Charts/FillChart"
 import Loader from "@components/Loader"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { useDeleteCareCard } from "@home/hooks"
+import { styles } from "@styles/DetailsScreenStyles"
+import Colors from "@styles/colors"
 
 interface CareDetailsProps {
   navigation: any
@@ -22,11 +23,11 @@ interface CareDetailsProps {
 
 const CareDetailsScreen = ({ navigation, route }) => {
 
-  const { care: careCard } = route.params
+  const { care } = route.params
   const { showDeleteConfirmDialog, handleDeleteCareCard } = useDeleteCareCard(navigation)
-  const trackers = careCard.trackers.reverse()
+  const trackers = care.trackers.reverse()
   
-  const iconSource = getIconSource(careCard.name)
+  const iconSource = getIconSource(care.name)
 
   
   return (
@@ -36,27 +37,27 @@ const CareDetailsScreen = ({ navigation, route }) => {
       scrollEventThrottle={200}
       decelerationRate="fast" 
     >
-      {careCard ?
+      {care ?
         <>
           <View style={styles.headerContainer}>
-            <Text style={styles.header}>{careCard.name}</Text>
-            <View style={styles.careInfo}>
+            <Text style={styles.header}>{care.name}</Text>
+            <View style={styles.itemInfo}>
               <View style={styles.rowCon}>
-                <Image source={require('@assets/icons/date.png')} style={styles.careIcon}/>
+                <Image source={require('@assets/icons/date.png')} style={styles.itemIcon}/>
                 <Text style={styles.subHeader}>
-                  {new Date(careCard.date).toLocaleDateString()}
-                  {careCard.endDate &&
-                    <Text> - {new Date(careCard.endDate).toLocaleDateString()}</Text>
+                  {new Date(care.date).toLocaleDateString()}
+                  {care.endDate &&
+                    <Text> - {new Date(care.endDate).toLocaleDateString()}</Text>
                   }
                 </Text>
               </View>
               <View style={styles.rowCon}>
-                <Image source={iconSource} style={styles.careIcon} />
+                <Image source={iconSource} style={styles.itemIcon} />
                 <Text style={styles.subHeader}>
-                  {careCard.times} times / {
-                    careCard.frequency === 'Daily' ? 'day' 
-                    : careCard.frequency === 'Weekly' ? 'week' 
-                    : careCard.frequency === 'Monthly' ? 'month' 
+                  {care.times} times / {
+                    care.frequency === 'Daily' ? 'day' 
+                    : care.frequency === 'Weekly' ? 'week' 
+                    : care.frequency === 'Monthly' ? 'month' 
                     : 'year'
                   }
                 </Text>
@@ -66,26 +67,26 @@ const CareDetailsScreen = ({ navigation, route }) => {
               </TouchableOpacity> */}
             </View>
           
-            <ScrollPetList petArray={careCard.pets} size='small' />
+            <ScrollPetList petArray={care.pets} size='small' />
 
             <View style={styles.btnContainer}>
-              <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} onPress={() => navigation.navigate('Edit', { care: careCard })}>
+              <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} onPress={() => navigation.navigate('Edit', { care: care })}>
                 <Text style={styles.btnText}>Edit</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} onPress={() => showDeleteConfirmDialog(careCard, handleDeleteCareCard)}>
+              <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.red }]} onPress={() => showDeleteConfirmDialog(care, handleDeleteCareCard)}>
                 <Text style={styles.btnText}>Delete</Text>
               </TouchableOpacity>
             </View>
           </View>
           {trackers.map((tracker: Tracker, idx: number) =>
             <React.Fragment key={`tracker-${idx}`}>
-              {careCard.frequency === 'Daily' 
-              ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={careCard.times} />
-              : careCard.times === 1 && careCard.frequency !== 'Yearly'
-              ? <FillChart key={`1X-${idx}`} tracker={tracker} frequency={careCard.frequency} times={careCard.times} />
-              : ( careCard.frequency === 'Weekly' || careCard.frequency === 'Monthly' ) 
-                ? <BarChart key={`${careCard.frequency}-${idx}`} tracker={tracker} frequency={careCard.frequency} times={careCard.times} />
-                : <YearChart key={`Yearly-${idx}`} tracker={tracker} times={careCard.times} />
+              {care.frequency === 'Daily' 
+              ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={care.times} />
+              : care.times === 1 && care.frequency !== 'Yearly'
+              ? <FillChart key={`1X-${idx}`} tracker={tracker} frequency={care.frequency} times={care.times} />
+              : ( care.frequency === 'Weekly' || care.frequency === 'Monthly' ) 
+                ? <BarChart key={`${care.frequency}-${idx}`} tracker={tracker} frequency={care.frequency} times={care.times} />
+                : <YearChart key={`Yearly-${idx}`} tracker={tracker} times={care.times} />
               }
             </React.Fragment>
           )}
@@ -97,53 +98,6 @@ const CareDetailsScreen = ({ navigation, route }) => {
   )
 }
 
-const styles = StyleSheet.create({
-  scrollView: {
-    width: '100%'
-  },
-  scrollContent: {
-    alignItems: 'center'
-  },
-  headerContainer: {
-    ...Spacing.flexColumn,
-    width: '100%',
-  },
-  header: {
-    ...Typography.subHeader,
-    color: Colors.darkPink,
-  },
-  careInfo: {
-    ...Spacing.flexRow,
-    width: '100%',
-    justifyContent: 'space-between',
-    paddingHorizontal: 10
-  },
-  careIcon: {
-    ...Forms.smallIcon,
-  },
-  subHeader: {
-    ...Typography.xSmallSubHeader,
-  },
-  rowCon: {
-    ...Spacing.flexRow,
-  },
-  btnContainer: {
-    ...Spacing.flexRow,
-    marginVertical: 10
-  },
-  mainBtn: {
-    ...Buttons.xSmallSquare
-  },
-  subBtn: {
-    ...Buttons.smallSub,
-    marginLeft: 'auto',
-  },
-  btnText: {
-    ...Buttons.buttonText
-  },
-  icon: {
-    ...Forms.largeIcon
-  },
-})
+
 
 export default CareDetailsScreen

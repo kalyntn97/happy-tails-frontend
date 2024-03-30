@@ -34,7 +34,7 @@ const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
 
   return (
     <TouchableOpacity 
-      // onPress={() => navigation.navigate('Details', { care: care })}
+      onPress={() => navigation.navigate('Details', { health })}
       style={[styles.itemContainer,
       { backgroundColor: Colors.multiArray3[health.pet.color] }
     ]}>

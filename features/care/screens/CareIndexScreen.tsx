@@ -31,7 +31,7 @@ const CareItem = ({ care, navigation }) => {
 
   return (
     <TouchableOpacity 
-      onPress={() => navigation.navigate('Details', { care: care })}
+      onPress={() => navigation.navigate('Details', { care })}
       style={[styles.itemContainer,
       { backgroundColor: Colors.multiArray3[care.color] }
     ]}>
@@ -58,10 +58,10 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   // another method that uses for.. of loop and IIFE
   // const careIndex: Array<{ title: string, data: Care[] }> = (() => {
   //   const result = Object.create(null)
-  //   for (const careCard of careCards) {
-  //     const { frequency } = careCard
+  //   for (const care of cares) {
+  //     const { frequency } = care
   //     result[frequency] = result[frequency] || { title: frequency, data: [] }
-  //     result[frequency].data.push(careCard)
+  //     result[frequency].data.push(care)
   //   }
   //   return Object.values(result)
   // })()
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     alignSelf: 'center',
     justifyContent: 'space-between',
-    width: '90%',
+    width: '95%',
     marginVertical: 5,
     borderRadius: 15,
     height: 60,

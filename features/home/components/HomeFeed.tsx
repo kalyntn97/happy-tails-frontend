@@ -66,7 +66,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       { isSuccess && 
         <>
           <View style={styles.singleIconMenu}>
-            <Image source={require('@assets/icons/due.png')} style={styles.icon} />
+            <Image source={require('@assets/icons/scheduled.png')} style={styles.icon} />
             <Text style={styles.iconText}>Important</Text>
           </View>
           <View style={styles.taskListContainer}>
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   detailContainer: {
     width: '100%',
-    height: '60%',
+    height: '65%',
     position: 'absolute',
     alignItems: 'center',
     bottom: 0,

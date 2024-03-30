@@ -22,7 +22,7 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
   
   const handleNavigate = () => {
     onNavigate && onNavigate()
-    navigation.navigate('Care', { screen: 'Details' , params : { care: care }, initial: false })
+    navigation.navigate('Care', { screen: 'Details' , params : { care }, initial: false })
   }
 
   return (

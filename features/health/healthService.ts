@@ -27,3 +27,8 @@ export const checkDone = async (date: Date, notes: string, healthId: string): Pr
 export const uncheckDone = async (healthId: string, visitId: string): Promise<string> => {
   return (await axios.patch<string>(`${BASE_URL}/${healthId}/${visitId}/uncheck`)).data
 }
+
+export const addVisitNotes = async (notes: string, healthId: string, visitId: string): Promise<Visit> => {
+  return (await axios.patch<Visit>(`${BASE_URL}/${healthId}/${visitId}/add-notes`, { notes })).data
+}
+

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import * as healthService from "./healthService"
-import { DeleteVisitFormData, HealthFormData, VisitFormData } from "./HealthInterface"
+import { AddVisitNotesFormData, DeleteVisitFormData, HealthFormData, VisitFormData } from "./HealthInterface"
 
 export const healthKeyFactory = {
   healths: ['all-healths'],
@@ -62,6 +62,17 @@ export const useUncheckDoneHealth = () => {
 
   return useMutation({
     mutationFn: ({ healthId, visitId }: DeleteVisitFormData) => healthService.uncheckDone(healthId, visitId),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [...healthKeyFactory.healths] })
+    }
+  })
+}
+
+export const useAddVisitNotes = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ notes, healthId, visitId }: AddVisitNotesFormData) => healthService.addVisitNotes(notes, healthId, visitId),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...healthKeyFactory.healths] })
     }

@@ -29,11 +29,11 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
 
   const handleNavigate = () => {
     onNavigate && onNavigate()
-    // navigation.navigate('Care', { screen: 'Details' , params : { care: care }, initial: false })
+    navigation.navigate('Health', { screen: 'Details' , params : { health }, initial: false })
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height: 430, marginTop: 'auto' }]}>
       <View style={styles.header}>
         <View style={[
           styles.colorBox,
@@ -70,14 +70,15 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
         <Text style={styles.title}>{new Date(health.nextDue).toDateString()}</Text>
         
         <Text style={styles.subTitle}>Previous visits</Text>
-        <ScrollView horizontal>
+        <View style={styles.rowCon}>
           {health.lastDone.map(visit => 
             <Text key={visit._id} style={styles.bodyText}>{new Date(visit.date).toLocaleDateString()}</Text>  
           )}
-        </ScrollView>
-        {/* <TouchableOpacity style={styles.mainBtn} onPress={handleNavigate}>
+        </View>
+
+        <TouchableOpacity style={styles.mainBtn} onPress={handleNavigate}>
           <Text style={styles.btnText}>View History</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         
       </View>
     </View>

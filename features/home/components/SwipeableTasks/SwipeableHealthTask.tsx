@@ -47,7 +47,7 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, do
         closeSwipeable()
       }} />
       <SquareButton title='Details' onPress={() => {
-        // navigation.navigate('Care', { screen: 'Details', params: { care: care }, initial: false })
+        navigation.navigate('Health', { screen: 'Details', params: { health }, initial: false })
         closeSwipeable()
       }} />
 

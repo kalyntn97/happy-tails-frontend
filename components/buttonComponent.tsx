@@ -6,6 +6,10 @@ const whiteBtnTextStyles: TextStyle = {
   fontWeight: 'bold'
 }
 
+const smallIconButtonStyles: ViewStyle = {
+  marginHorizontal: 5,
+}
+
 export const AddButton = ({ onPress }) => ( 
   <TouchableOpacity onPress={onPress} style={{
     ...Buttons.roundButton,
@@ -46,6 +50,30 @@ export const SmallRemoveButton = ({ onPress }) => (
     }}>
       −
     </Text>
+  </TouchableOpacity>
+)
+
+export const SaveButton = ({ onPress }) => (
+  <TouchableOpacity onPress={onPress} style={{
+    ...smallIconButtonStyles,
+  } as ViewStyle}>
+    <Image source={require('@assets/icons/save.png')} style={{...Forms.smallIcon}} />
+  </TouchableOpacity>
+)
+
+export const DeleteButton = ({ onPress }) => (
+  <TouchableOpacity onPress={onPress} style={{
+    ...smallIconButtonStyles,
+  } as ViewStyle}>
+    <Image source={require('@assets/icons/delete.png')} style={{...Forms.smallIcon}} />
+  </TouchableOpacity>
+)
+
+export const UndoButton = ({ onPress }) => (
+  <TouchableOpacity onPress={onPress} style={{
+    ...smallIconButtonStyles,
+  } as ViewStyle}>
+    <Image source={require('@assets/icons/undo.png')} style={{...Forms.smallIcon}} />
   </TouchableOpacity>
 )
 

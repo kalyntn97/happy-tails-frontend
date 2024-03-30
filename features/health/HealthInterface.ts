@@ -16,6 +16,12 @@ export interface DeleteVisitFormData {
   healthId: string
   visitId: string
 }
+
+export interface AddVisitNotesFormData {
+  healthId: string
+  visitId: string
+  notes: string
+}
 export interface Health {
   _id: string
   pet: Pet
