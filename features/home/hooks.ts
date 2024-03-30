@@ -1,5 +1,7 @@
 //npm
+import { FC, useState } from "react"
 import { Alert } from "react-native"
+import * as ImagePicker from 'expo-image-picker'
 //queries
 import { useDeleteCare } from "../care/careQueries"
 import { useDeleteHealth } from "@health/healthQueries"
@@ -63,4 +65,19 @@ export const useShallowPetColor = () => {
   }
   
   return { petIdToColor }
+}
+
+
+export const useSelectPhoto = async  () => {
+  let _image = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [4,3],
+    quality: 1,
+  })
+  console.log(JSON.stringify(_image))
+
+  if (!_image.canceled) {
+    return _image.assets[0].uri
+  }
 }

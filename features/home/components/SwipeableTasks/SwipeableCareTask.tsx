@@ -12,7 +12,7 @@ import { useDeleteCareCard } from '@home/hooks'
 import { useActiveDate } from '@store/store'
 import { AlertForm } from '@utils/ui'
 import { SquareButton } from '@components/ButtonComponent'
-import ScrollPetList from '@components/PetInfo/ScrollPetList'
+import PetList from '@components/PetInfo/PetList'
 //styles
 import { styles } from '@styles/SwipeableTaskStyles'
 import Colors from '@styles/colors'
@@ -107,7 +107,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
           </Text>
           <Text style={styles.taskStatus}>{done}/{times}</Text>
           <View style={styles.taskPetList}>
-            <ScrollPetList petArray={care.pets} size='mini' />
+            <PetList petArray={care.pets} size='mini' />
           </View>
         </View>
 

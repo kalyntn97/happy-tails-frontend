@@ -5,6 +5,7 @@ export interface Profile {
   _id: string
   name: string
   photo: string | null
+  banner: string | null
   bio: string
   reminderInterval: number
 }
@@ -12,5 +13,11 @@ export interface Profile {
 export interface ProfileFormData {
   name: string
   bio: string
-  photoData: { uri: string, name: string, type: string } | null
+  photoData: PhotoData | null
+}
+
+export type PhotoData = {
+  uri: string
+  name: string
+  type: string 
 }

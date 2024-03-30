@@ -6,7 +6,7 @@ import { Care, Tracker } from "@care/CareInterface"
 import { useDeleteCareCard } from "@home/hooks"
 //components
 import { AlertForm, getIconSource } from "@utils/ui"
-import ScrollPetList from "@components/PetInfo/ScrollPetList"
+import PetList from "@components/PetInfo/PetList"
 import DailyChart from "@components/Charts/DailyChart"
 import BarChart from "@components/Charts/BarChart"
 import YearChart from "@components/Charts/YearChart"
@@ -67,7 +67,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
               </TouchableOpacity> */}
             </View>
           
-            <ScrollPetList petArray={care.pets} size='small' />
+            <PetList petArray={care.pets} size='small' />
 
             <View style={styles.btnContainer}>
               <TouchableOpacity style={[styles.mainBtn, { backgroundColor: Colors.yellow }]} onPress={() => navigation.navigate('Edit', { care: care })}>

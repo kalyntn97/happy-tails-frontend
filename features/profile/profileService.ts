@@ -16,6 +16,13 @@ export async function addPhoto(photoData: any): Promise<string> {
   return (await axios.patch<string>(`${BASE_URL}/add-photo`, photoFormData)).data
 }
 
+export async function addBanner(photoData: any): Promise<string> {
+  const photoFormData = new FormData()
+  photoFormData.append('file', photoData)
+
+  return (await axios.patch<string>(`${BASE_URL}/add-banner`, photoFormData)).data
+}
+
 export async function update(name: string, bio: string, photoData: { uri: string, name: string, type: string } | null): Promise<Profile> {
   const result = (await axios.put<Profile>(`${BASE_URL}/update`, { name, bio })).data
 
@@ -25,3 +32,4 @@ export async function update(name: string, bio: string, photoData: { uri: string
   }
   return result
 }
+

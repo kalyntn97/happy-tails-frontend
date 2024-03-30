@@ -6,7 +6,7 @@ import { Care } from "@care/CareInterface"
 import * as careHelpers from "@care/careHelpers"
 import { getIconSource } from "@utils/ui"
 //components
-import ScrollPetList from "@components/PetInfo/ScrollPetList"
+import PetList from "@components/PetInfo/PetList"
 import TrackerPanel from "./TrackerPanel"
 //styles
 import { styles } from "@styles/ModalCardStyles"
@@ -45,7 +45,7 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
           </View>
         </View>
         
-        <ScrollPetList petArray={care.pets} size='small' navigation={navigation}/>
+        <PetList petArray={care.pets} size='small' navigation={navigation}/>
       </View>
       
       <View style={styles.body}>

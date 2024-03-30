@@ -122,7 +122,7 @@ const PrivateApp = () => {
             // headerBackImageSource: require('@assets/icons/undo.png'),
             ...stackOptions
           }}>
-            <ProfileStack.Screen name='Profile' component={ProfileScreen} options={{ title: 'Profile' }} />
+            <ProfileStack.Screen name='Profile' component={ProfileScreen} options={{ title: 'Profile', headerShown: false }} />
             <ProfileStack.Screen name='Edit' component={EditProfileScreen} options={{ title: 'Edit Profile'}} />
             <ProfileStack.Screen name='Settings' component={SettingsScreen} />
           </ProfileStack.Navigator>
