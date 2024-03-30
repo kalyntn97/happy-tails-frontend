@@ -1,5 +1,5 @@
 //npm modules
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView, Image } from "react-native"
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
@@ -37,34 +37,22 @@ const CareItem = ({ care, navigation }) => {
     ]}>
       <View style={styles.itemLeft}>
         <Image source={iconSource} style={styles.itemIcon} />
-        <Text>{care.name}</Text>
+        <Text style={styles.itemText}>{care.name}</Text>
+        <Text style={styles.itemText}>{care.frequency}</Text>
       </View>
-      <Image source={require('@assets/icons/next2.png')} style={{...Forms.smallIcon, marginRight: 10 }} />
+      <Image source={require('@assets/icons/next2.png')} style={styles.rightIcon} />
     </TouchableOpacity>
   )
 }
 
-const CareListHeader = ({ list, onPress }) => (
-  <ScrollView 
-    horizontal
-    contentContainerStyle={styles.listHeader}
-    showsHorizontalScrollIndicator={false}
-  >
-    {list.map((section: CareSection, idx: number) => 
-      <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn, { backgroundColor: Colors.multiArray[idx] }]} onPress={() => onPress(idx)}>
-        <Text>{section.title}</Text>
-        <Text style={styles.headerCount}>{section.data.length}</Text>
-      </TouchableOpacity>
-    )}
-  </ScrollView>
-)
-
 const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   const { data: cares, isLoading, isSuccess, isError} = useGetAllCares()
+  const [filtered, setFiltered] = useState<string[]>([])
+
   const sortOrder = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'Others']
   const careIndex: CareSection[] = sortOrder.map(sectionTitle => ({
     title: sectionTitle,
-    data: cares[sectionTitle] || []
+    data: cares[!filtered.includes(sectionTitle) && sectionTitle] || []
   }))
 
   // another method that uses for.. of loop and IIFE
@@ -89,9 +77,34 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
     listHeaderHeight: 0,
   })
 
-  const handleHeaderPress = (sectionIdx: number) => {
-    sectionListRef.current.scrollToLocation({ sectionIndex: sectionIdx, itemIndex: 0 })
+  const handleHeaderPress = (sectionToFilter: string, sectionIdx: number) => {
+    // sectionListRef.current.scrollToLocation({ sectionIndex: sectionIdx, itemIndex: 0 })
+    setFiltered(prev => {
+      if (prev.includes(sectionToFilter)) {
+        return prev.filter(sectionTitle => sectionTitle !== sectionToFilter)
+      } else {
+        return [...prev, sectionToFilter]
+      }
+    })
   }
+
+  const CareListHeader = () => (
+    <ScrollView 
+      horizontal
+      contentContainerStyle={styles.listHeader}
+      showsHorizontalScrollIndicator={false}
+    >
+      {careIndex.map((section: CareSection, idx: number) => 
+        <TouchableOpacity key={`title-${idx}`} style={[
+          styles.subBtn, { backgroundColor: Colors.multiArray[idx] }, filtered.includes(section.title) && { opacity: 0.3 }
+          ]} onPress={() => handleHeaderPress(section.title, idx)}
+        >
+          <Text>{section.title}</Text>
+          <Text style={styles.headerCount}>{section.data.length}</Text>
+        </TouchableOpacity>
+      )}
+    </ScrollView>
+  )
 
   useEffect(() => {
     if (route.params) {
@@ -115,7 +128,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
             ref={sectionListRef}
             sections={careIndex}
             keyExtractor={(item, index) => item + index}
-            ListHeaderComponent={ <CareListHeader list={careIndex} onPress={handleHeaderPress}/> }
+            ListHeaderComponent={ <CareListHeader /> }
             renderItem={({ item, index }) => (
               <CareItem key={item._id} care={item} navigation={navigation} />
             )}
@@ -172,7 +185,8 @@ const styles = StyleSheet.create({
   },
   itemLeft: {
     ...Spacing.flexRow,
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
+    marginRight: 'auto',
   },
   itemIcon: {
     ...Forms.icon,
@@ -181,6 +195,14 @@ const styles = StyleSheet.create({
   itemBtn: {
     marginLeft: 'auto'
   },
+  itemText: {
+    marginRight: 10,
+    flex: 2,
+  },
+  rightIcon: {
+    ...Forms.smallIcon, 
+    marginRight: 10 
+  }
 })
  
 export default CareIndexScreen
