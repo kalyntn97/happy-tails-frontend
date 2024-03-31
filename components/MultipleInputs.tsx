@@ -74,10 +74,10 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPres
 const styles = StyleSheet.create({
   rowCon : {
     ...Spacing.flexRow,
+    justifyContent: 'space-evenly',
     flexWrap: 'wrap',
     width: 270,
     marginVertical: 7,
-    justifyContent: 'space-evenly'
   },
   initial: {
     ...Spacing.flexRow,

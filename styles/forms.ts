@@ -1,6 +1,6 @@
 import { ViewStyle, ImageStyle } from "react-native"
 import Colors from "./colors"
-import { fullWH, centered } from "./spacing"
+import { fullWH, centered, flexRow } from "./spacing"
 
 export const boxShadow: ViewStyle = {
   elevation: 3,
@@ -128,4 +128,22 @@ export const modal: ViewStyle = {
   ...centered,
   position: 'relative',
   backgroundColor: Colors.transparent,
+}
+
+export const rowCon: ViewStyle = {
+  width: '100%',
+  ...flexRow,
+  justifyContent: 'space-evenly',
+  marginVertical: 10,
+}
+
+export const roundedCon: ViewStyle ={
+  width: '90%',
+  backgroundColor: Colors.white,
+  borderRadius: 20,
+  paddingHorizontal: 15,
+  paddingTop: 10,
+  paddingBottom: 20,
+  // paddingVertical: 10,
+  marginVertical: 10,
 }

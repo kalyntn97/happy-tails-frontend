@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     ...Spacing.flexColumn,
   },
   rowCon: {
-    ...Spacing.flexRow
+    ...Spacing.flexRow,
   },
   title: {
     ...Typography.smallHeader,

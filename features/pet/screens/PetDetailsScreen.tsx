@@ -59,7 +59,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
             <View style={styles.petInfo}>
               <PetInfo pet={pet} size='expanded' />
             </View>
-            <View style={styles.rowCon}>
+            <View style={{...Forms.rowCon}}>
               <StatButton item={ {header: 'vet visit', stat: 100, body: 'days'}} color={Colors.multiArray3[pet.color]} />
               <StatButton item={ {header: 'tasks', stat: 1, body: 'today'}} color={Colors.multiArray3[pet.color]} />
               <StatButton item={ {header: 'status', iconUri: require('@assets/icons/very-good.png'), body: '12/30/24'}} color={Colors.multiArray3[pet.color]} />
@@ -67,7 +67,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
 
           </View>
 
-          <View style={{ ...BoxStyles }}>
+          <View style={{ ...Forms.roundedCon }}>
             <BoxHeader title="Update info" onPress={() => navigation.navigate('Edit', { pet: pet })} />
             <BoxHeader title={deletePetMutation.isPending ? 'Deleting...' : 'Delete'} onPress={showDeleteConfirmDialog} />
           </View>
@@ -94,12 +94,6 @@ const styles = StyleSheet.create({
   petInfo: {
     width: '100%',
     height: '60%'
-  },
-  rowCon: {
-    width: '100%',
-    ...Spacing.flexRow,
-    justifyContent: 'space-evenly',
-    marginVertical: 10,
   },
 })
 export default PetDetailsScreen

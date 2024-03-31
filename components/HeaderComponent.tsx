@@ -2,17 +2,6 @@ import { Image, Pressable, Text, TouchableOpacity, View, ViewStyle } from "react
 import { Spacing, Colors, Typography, Forms } from "@styles/index"
 import { FC } from "react"
 
-export const BoxStyles: ViewStyle = {
-  width: '90%',
-  backgroundColor: Colors.white,
-  borderRadius: 20,
-  paddingHorizontal: 15,
-  paddingTop: 10,
-  paddingBottom: 20,
-  // paddingVertical: 10,
-  marginVertical: 10,
-}
-
 export const BoxHeader: FC<{ title: string, onPress: () => void }> = ({ title, onPress }) => (
   <Pressable style={{
     ...Spacing.flexRow,
@@ -39,7 +28,7 @@ export const BoxHeader: FC<{ title: string, onPress: () => void }> = ({ title, o
 
 export const BoxWithHeader = ({ title, onPress, content }) => (
   <View style={{
-    ...BoxStyles,
+    ...Forms.roundedCon,
   }}>
     <BoxHeader title={title} onPress={onPress} />
     { content }

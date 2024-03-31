@@ -14,6 +14,7 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { useSelectPhoto } from "@home/hooks"
 import { AlertForm } from "@utils/ui"
 import { BoxHeader, BoxStyles, BoxWithHeader } from "@components/HeaderComponent"
+import { StatButton } from "@components/ButtonComponent"
 
 const ProfileScreen = ({ navigation, route }) => {
   const { data: profile, isLoading, isError } = useGetProfile()
@@ -50,7 +51,9 @@ const ProfileScreen = ({ navigation, route }) => {
   return ( 
     <ScrollView contentContainerStyle={styles.container}>
       <Pressable style={styles.bannerCon} onPress={addBanner}>
-        <Image source={require('@assets/icons/camera.png')} style={styles.cameraIcon} />
+        <View style={styles.cameraIcon}>
+          <Image source={require('@assets/icons/camera.png')} style={{...Forms.smallIcon}} />
+        </View>
         { banner && <Image source={{ uri: banner }} style={[
             styles.banner,
             
@@ -69,9 +72,10 @@ const ProfileScreen = ({ navigation, route }) => {
               <Text style={styles.bioText}>{profile.bio}</Text>
             </View>
               
-            <View style={styles.statsCon}>
-              
-              
+            <View style={{...Forms.rowCon}}>
+              <StatButton item={ {header: 'streak', stat: 7, body: 'days'}} />
+              <StatButton item={ {header: 'tasks', stat: 1, body: 'today'}} />
+              <StatButton item={ {header: '♥︎', stat: pets.length, body: 'pets'}} />
             </View>
           </View>
 
@@ -86,7 +90,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 <Text>Error fetching pets...</Text> 
               
             } />
-            <View style={{...BoxStyles}}>
+            <View style={{...Forms.roundedCon}}>
               <BoxHeader title="All pet care tasks" onPress={() => navigation.navigate('Care', { screen: 'Index', initial: false})} />
               <BoxHeader title="All vet visits" onPress={() => navigation.navigate('Health', { screen: 'Index', initial: false})} />
               <BoxHeader title="Update profile" onPress={() => navigation.navigate('Edit', { profile : profile })} />
@@ -125,11 +129,13 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   cameraIcon: {
-    ...Forms.smallIcon,
     position: "absolute",
-    top: 160,
+    top: 145,
     left: 10,
     zIndex: 3,
+    backgroundColor: Colors.lightPink,
+    borderRadius: 99,
+    padding: 5,
   },
   profileCon: {
     width: '100%',
@@ -146,7 +152,7 @@ const styles = StyleSheet.create({
   },
   bodyCon: {
     ...Spacing.flexColumn,
-    paddingVertical: 30,
+    marginVertical: 15,
   },
   header: {
     ...Typography.xSmallHeader,
@@ -167,22 +173,18 @@ const styles = StyleSheet.create({
   },
   bioBox: {
     width: '90%',
-    margin: 30,
-    ...Spacing.centered
+    margin: 10,
+    ...Spacing.centered,
   },
   bioText: {
-    textAlign: 'left'
+    textAlign: 'left',
+    ...Typography.xSmallBody,
+    lineHeight: 20,
   },
   statsCon: {
     width: '90%',
     ...Spacing.flexRow,
     justifyContent: 'center',
-  },
-  logoutBtn: {
-    ...Buttons.longSquare,
-    backgroundColor: Colors.darkPink,
-    marginTop: 'auto',
-    marginBottom: 20,
   },
   linkBtn: {
     width: '100%'
