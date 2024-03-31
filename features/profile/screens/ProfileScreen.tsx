@@ -11,7 +11,7 @@ import PetList from "@components/PetInfo/PetList"
 import Loader from "@components/Loader"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { useSelectPhoto } from "@home/hooks"
+import { useCaresByFrequency, useSelectPhoto } from "@home/hooks"
 import { AlertForm } from "@utils/ui"
 import { BoxHeader, BoxStyles, BoxWithHeader } from "@components/HeaderComponent"
 import { StatButton } from "@components/ButtonComponent"
@@ -20,6 +20,8 @@ const ProfileScreen = ({ navigation, route }) => {
   const { data: profile, isLoading, isError } = useGetProfile()
   const [banner, setBanner] = useState<string>(profile.banner ?? null)
   const pets: PetBasic[] = useShallowPetBasics()
+  const { caresByFrequency } = useCaresByFrequency('Daily')
+  
   const addBannerMutation = useAddBanner()
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
@@ -74,7 +76,7 @@ const ProfileScreen = ({ navigation, route }) => {
               
             <View style={{...Forms.rowCon}}>
               <StatButton item={ {header: 'streak', stat: 7, body: 'days'}} />
-              <StatButton item={ {header: 'tasks', stat: 1, body: 'today'}} />
+              <StatButton item={ {header: 'tasks', stat: caresByFrequency().length, body: 'today'}} />
               <StatButton item={ {header: '♥︎', stat: pets.length, body: 'pets'}} />
             </View>
           </View>

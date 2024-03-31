@@ -55,3 +55,13 @@ export const getWeekIndex = (date: number) => Math.round(date / 7)
 export const getStartDate = (inputDate: Date, interval: number) => {
   return new Date(inputDate.getTime() - (interval * 24 * 60 * 60 * 1000))
 }
+
+export const dateIsWithinRange = (start: Date, end: Date) => {
+  return new Date(start) <= new Date()
+  && (!end || new Date(end) >= new Date())
+}
+
+export const countDaysBetween = (start: Date, end: Date) => {
+  const timeElapsed = new Date(end).getTime() - new Date(start).getTime()
+  return  Math.round(timeElapsed / (1000 * 3600 * 24))
+}

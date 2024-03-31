@@ -196,13 +196,13 @@ export const StatButton = ({ item, color, onPress }: StatButtonProps) => (
     }}>
       {item.header}
     </Text>
-    {item.stat && 
+    {item.stat >=0 && 
       <Text style={{
       fontSize: 18,
       fontWeight: 'bold',
       marginVertical: 2,
       }}>
-        {item.stat}
+        {item.stat === Infinity ? '?' : item.stat}
       </Text> 
     }
     {item.iconUri && 

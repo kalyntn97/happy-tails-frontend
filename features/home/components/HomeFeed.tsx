@@ -34,7 +34,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const [clickedTask, setClickedTask] = useState<ClickedTask>(null)
   //queries
   const [profile, pets, cares, healths] = useUserQueries()
-  const { setPets, setReminderInterval } = useSetActions()
+  const { setPets, setCares, setHealths, setReminderInterval } = useSetActions()
   //store
   const isLoading = useUserQueries().some(query => query.isLoading)
   const isSuccess = useUserQueries().every(query => query.isSuccess)
@@ -55,6 +55,8 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   useEffect(() => {
     if (isSuccess) {
       setPets(pets.data)
+      setCares(Object.values(cares.data).flat())
+      setHealths(healths.data)
       setReminderInterval(profile.data.reminderInterval)
     }
   }, [pets.data, cares.data, healths.data, profile.data])

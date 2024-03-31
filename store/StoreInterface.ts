@@ -41,7 +41,7 @@ export interface PetSlice {
 }
 
 export interface CareSlice {
-  cares: Care[],
+  cares: Care[]
   careActions: {
     onAddCare: (care: Care) => void
     onUpdateCare: (care: Care) => void

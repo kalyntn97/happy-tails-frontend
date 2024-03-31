@@ -1,20 +1,19 @@
 //npm modules
-import { useCallback, useState } from "react"
-import { useFocusEffect } from "@react-navigation/native"
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native"
 //types & context
 import { Pet } from "@pet/PetInterface"
 //components
 import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
+import {  BoxHeader } from "@components/HeaderComponent"
+import { StatButton } from "@components/ButtonComponent"
+import { AlertForm } from "@utils/ui"
 //store & queries
 import { useDeletePet } from "@pet/petQueries"
 import { usePetActions } from "@store/store"
-import { AlertForm } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
-import { BoxWithHeader, BoxStyles, BoxHeader } from "@components/HeaderComponent"
-import { StatButton } from "@components/ButtonComponent"
+import { useCaresByPet, useHealthDueByPet, useHealthsByPet } from "@home/hooks"
 
 interface PetDetailsProps {
   navigation: any
@@ -24,8 +23,11 @@ interface PetDetailsProps {
 const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   const { pet } = route.params
   const { onDeletePet } = usePetActions()
-  const deletePetMutation = useDeletePet()
   
+  const deletePetMutation = useDeletePet()
+  const { caresByPet } = useCaresByPet(pet._id)
+  const { healthDueByPet } = useHealthDueByPet(pet._id)
+
   const handleDeletePet = async (petId: string) => {
     deletePetMutation.mutate(petId, {
       onSuccess: (data) => {
@@ -60,8 +62,8 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
               <PetInfo pet={pet} size='expanded' />
             </View>
             <View style={{...Forms.rowCon}}>
-              <StatButton item={ {header: 'vet visit', stat: 100, body: 'days'}} color={Colors.multiArray3[pet.color]} />
-              <StatButton item={ {header: 'tasks', stat: 1, body: 'today'}} color={Colors.multiArray3[pet.color]} />
+              <StatButton item={ {header: 'vet visit', stat: healthDueByPet(), body: 'days'}} color={Colors.multiArray3[pet.color]} />
+              <StatButton item={ {header: 'tasks', stat: caresByPet().length, body: 'today'}} color={Colors.multiArray3[pet.color]} />
               <StatButton item={ {header: 'status', iconUri: require('@assets/icons/very-good.png'), body: '12/30/24'}} color={Colors.multiArray3[pet.color]} />
             </View>
 
