@@ -39,20 +39,27 @@ const iconSource = {
   'Urinalysis': require('@assets/icons/urinalysis.png'),
   'Fecal Exam': require('@assets/icons/fecal-exam.png'),
   'Blood Testing': require('@assets/icons/blood-test.png'),
-  // 'Others': require('@assets/icons/misc-exam.png'),
+  'Others': require('@assets/icons/misc-exam.png'),
   //buttons
   'Add a Task':  require('@assets/icons/care-filled.png'),
   'Add a Vet Visit':  require('@assets/icons/vet-filled.png'),
   'Add a Pet':  require('@assets/icons/pet-filled.png'),
-  //species
+}
+
+const petIconSource = {
   'Dog': require('@assets/icons/dog.png'),
   'Cat': require('@assets/icons/cat.png'),
   'Bird': require('@assets/icons/bird.png'),
   'Fish': require('@assets/icons/fish.png'),
-  // 'Others': require('@assets/icons/animal.png'),
+  'Others': require('@assets/icons/animal.png'),
 }
+
 
 export const getIconSource = (name: string) => {
   return iconSource[name] || require('@assets/icons/paw.png')
+}
+
+export const getPetIconSource = (name: string) => {
+  return petIconSource[name] || require('@assets/icons/paw.png')
 }
 

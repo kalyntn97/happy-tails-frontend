@@ -1,5 +1,5 @@
-import { Image, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
-import { Buttons, Colors, Spacing, Forms } from "@styles/index"
+import { Image, ImageSourcePropType, Pressable, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Buttons, Colors, Spacing, Forms, Typography } from "@styles/index"
 
 const whiteBtnTextStyles: TextStyle = {
   color: Colors.white,
@@ -17,7 +17,7 @@ export const AddButton = ({ onPress }) => (
     bottom: 20,
     right: 20,
     zIndex: 2,
-  }}>
+  } as ViewStyle}>
     <Text style={{
       ...whiteBtnTextStyles,
       fontSize: 30,
@@ -155,4 +155,66 @@ export const GoBackButton = ({ onPress, top }) => (
     }}
     />
   </TouchableOpacity>
+)
+
+export const MediumButton = ({ title, onPress, top, bottom, color }) => (
+  <TouchableOpacity onPress={onPress} style={[
+    {
+      ...Buttons.xSmallSquare,
+      backgroundColor: color ?? Colors.pink,
+    },
+    top && { marginTop: top },
+    bottom && { marginBottom: bottom },
+  ]}>
+    <Text style={{
+      ...Buttons.buttonText,
+      fontSize: 15,
+    }}>
+      {title}
+    </Text>
+  </TouchableOpacity>
+)
+
+type StatButtonProps = {
+  item: { header: string, stat?: number, iconUri?: any, body: string }
+  color?: string,
+  onPress?: () => void
+}
+
+export const StatButton = ({ item, color, onPress }: StatButtonProps) => (
+  <Pressable onPress={onPress} style={{
+    ...Spacing.flexColumn,
+    borderRadius: 15,
+    backgroundColor: color ?? Colors.lightPink,
+    padding: 10,
+    width: 71,
+    height: 83,
+  }}>
+    <Text style={{
+      fontSize: 12,
+      fontStyle: 'italic'
+    }}>
+      {item.header}
+    </Text>
+    {item.stat && 
+      <Text style={{
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginVertical: 2,
+      }}>
+        {item.stat}
+      </Text> 
+    }
+    {item.iconUri && 
+      <Image source={item.iconUri as ImageSourcePropType} style={{
+        ...Forms.smallIcon,
+        margin: 0,
+      }}/>
+    }
+    <Text style={{
+      ...Typography.xSmallBody,
+    }}>
+      {item.body}
+    </Text>
+  </Pressable>
 )

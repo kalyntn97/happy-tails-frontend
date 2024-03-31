@@ -1,4 +1,4 @@
-import { Colors, Spacing } from "@styles/index";
+import { Colors, Spacing, Forms } from "@styles/index";
 
 export const ButtonStyles = {
   width: 60, 
@@ -15,6 +15,7 @@ export const Button = {
   backgroundColor: ButtonStyles.backgroundColor,
   borderRadius: ButtonStyles.borderRadius,
   ...Spacing.centered,
+  ...Forms.boxShadow,
 }
 
 export const Animation = {

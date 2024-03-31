@@ -3,9 +3,10 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, useWindowDimensions } 
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated"
 //types & utils
 import { Pet } from "@pet/PetInterface"
-import { getIconSource } from "@utils/ui"
+import { getPetIconSource } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { MainButton, MediumButton, SubButton } from "@components/ButtonComponent"
 interface PetCardProps {
   pet: Pet
   index: number
@@ -35,7 +36,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
     }
   })
 
-  const iconSource = getIconSource(pet.species)
+  const iconSource = getPetIconSource(pet.species)
   
   return ( 
     <Animated.View style={[styles.container, animatedStyles, { width: width }]} key={pet._id}>
@@ -45,12 +46,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
           
           <View style={styles.detailsContainer}>
             <View style={styles.petInfo}>
-              <Image style={{ width: 50, height: 50 }} source={iconSource} />
+              <Image style={{ ...Forms.icon }} source={iconSource} />
               <Text style={styles.body}>{pet.breed ? pet.breed : 'Unknown'}</Text>
             </View>
 
             <View style={styles.petInfo}>
-              <Image style={{ width: 30, height: 30 }} source={require('@assets/icons/birthday.png')} />
+              <Image style={{ ...Forms.smallIcon }} source={require('@assets/icons/birthday.png')} />
               <Text style={styles.body}>
                 {pet.age ? pet.age : 'Unknown'} {pet.age && (pet.age <= 1 ? 'year' : 'years')}
               </Text>
@@ -63,12 +64,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
           style={styles.petPhoto } 
         />
         
-        <TouchableOpacity 
-          style={styles.mainBtn} 
-          onPress={() => navigation.navigate('Details', { pet: pet })}
-        >
-          <Text style={styles.btnText}>Details</Text>
-        </TouchableOpacity>
+       <MediumButton title='Details' onPress={() => navigation.navigate('Details', { pet})} top='auto' bottom={20} color={Colors.multiArray3[pet.color]} />
       </View>
 
     </Animated.View>
@@ -81,7 +77,7 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   base: {
-    ...Forms.card,
+    ...Forms.cardWithShadow,
     width: '90%',
     height: '90%',
     justifyContent: 'flex-start',
@@ -90,11 +86,12 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     ...Spacing.flexColumn,
-    width: '100%'
+    width: '100%',
   },
   petName: {
     ...Typography.subHeader,
     margin: 0,
+    padding: 10,
   },
   detailsContainer: {
     ...Spacing.flexRow,
@@ -105,7 +102,8 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
   },
   body: {
-    ...Typography.smallBody
+    ...Typography.smallBody,
+    marginHorizontal: 5,
   },
   petPhoto: {
     ...Forms.photo,
@@ -114,7 +112,7 @@ const styles = StyleSheet.create({
   },
   mainBtn: {
     ...Buttons.xSmallRounded,
-    backgroundColor: Colors.green
+    backgroundColor: Colors.green,
   },
   btnText: {
     ...Buttons.buttonText

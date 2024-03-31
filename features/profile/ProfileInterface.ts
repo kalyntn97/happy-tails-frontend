@@ -4,6 +4,7 @@ import { Care } from "../care/CareInterface"
 export interface Profile {
   _id: string
   name: string
+  username: string
   photo: string | null
   banner: string | null
   bio: string

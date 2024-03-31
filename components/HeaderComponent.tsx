@@ -6,8 +6,9 @@ export const BoxStyles: ViewStyle = {
   width: '90%',
   backgroundColor: Colors.white,
   borderRadius: 20,
-  padding: 15,
+  paddingHorizontal: 15,
   paddingTop: 10,
+  paddingBottom: 20,
   // paddingVertical: 10,
   marginVertical: 10,
 }
@@ -18,7 +19,7 @@ export const BoxHeader: FC<{ title: string, onPress: () => void }> = ({ title, o
     borderBottomWidth: 1,
     borderColor: 'lightgray',
     width: '100%',
-    paddingVertical: 15,
+    paddingVertical: 10,
   }}
     onPress={onPress}
   >
@@ -30,8 +31,7 @@ export const BoxHeader: FC<{ title: string, onPress: () => void }> = ({ title, o
       { title }
     </Text>
     <Image source={require('@assets/icons/next3.png')} style={{
-      ...Forms.smallIcon,
-      marginTop: -10,
+      ...Forms.xSmallIcon,
       marginLeft: 'auto',
     }} />
   </Pressable>

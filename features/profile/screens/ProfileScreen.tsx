@@ -62,25 +62,16 @@ const ProfileScreen = ({ navigation, route }) => {
             <View style={styles.profileHeader}>
               <Image source={{ uri: profile.photo ?? randomProfilePhotos[randomIdx] }} style={styles.profilePhoto }/>
               <Text style={styles.header}>{profile.name}</Text>
+              <Text style={styles.subHeader}>@{profile.username}</Text>
             </View>
             
             <View style={styles.bioBox}>
               <Text style={styles.bioText}>{profile.bio}</Text>
             </View>
               
-            <View style={styles.btnContainer}>
-              <TouchableOpacity 
-                style={[styles.mainBtn, { backgroundColor: Colors.yellow }]}
-                onPress={() => navigation.navigate('Edit', { profile : profile })}
-              >
-                <Text style={styles.btnText}>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.mainBtn, { backgroundColor: Colors.red }]}
-                onPress={() => navigation.navigate('Settings', { profile : profile })}
-              >
-                <Text style={styles.btnText}>Manage</Text>
-              </TouchableOpacity>
+            <View style={styles.statsCon}>
+              
+              
             </View>
           </View>
 
@@ -96,8 +87,10 @@ const ProfileScreen = ({ navigation, route }) => {
               
             } />
             <View style={{...BoxStyles}}>
-              <BoxHeader title="Manage all care tasks" onPress={() => navigation.navigate('Care', { screen: 'Index', initial: false})} />
-              <BoxHeader title="Manage all vet visits" onPress={() => navigation.navigate('Health', { screen: 'Index', initial: false})} />
+              <BoxHeader title="All pet care tasks" onPress={() => navigation.navigate('Care', { screen: 'Index', initial: false})} />
+              <BoxHeader title="All vet visits" onPress={() => navigation.navigate('Health', { screen: 'Index', initial: false})} />
+              <BoxHeader title="Update profile" onPress={() => navigation.navigate('Edit', { profile : profile })} />
+              <BoxHeader title="Settings" onPress={() => navigation.navigate('Settings', { profile : profile })} />
             </View>
             
           </View>
@@ -129,6 +122,7 @@ const styles = StyleSheet.create({
     height: '60%',
     overflow: 'visible',
     zIndex: 2,
+    opacity: 0.8,
   },
   cameraIcon: {
     ...Forms.smallIcon,
@@ -156,9 +150,15 @@ const styles = StyleSheet.create({
   },
   header: {
     ...Typography.xSmallHeader,
+    marginTop: 10,
+    marginBottom: 0,
+    borderTopRightRadius: 15,
+  },
+  subHeader: {
+    ...Typography.xSmallSubHeader,
+    color: 'gray',
     marginTop: 0,
     marginBottom: 10,
-    borderTopRightRadius: 15,
   },
   profilePhoto: {
     ...Forms.smallPhoto,
@@ -173,16 +173,10 @@ const styles = StyleSheet.create({
   bioText: {
     textAlign: 'left'
   },
-  btnContainer: {
+  statsCon: {
     width: '90%',
     ...Spacing.flexRow,
     justifyContent: 'center',
-  },
-  mainBtn : {
-    ...Buttons.xSmallRounded,
-  },
-  btnText: {
-    ...Buttons.buttonText
   },
   logoutBtn: {
     ...Buttons.longSquare,

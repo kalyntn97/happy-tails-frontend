@@ -38,7 +38,11 @@ export const card: ViewStyle = {
   paddingHorizontal: 12,
   paddingVertical: 10,
   borderRadius: 8,
-  ...boxShadow
+}
+
+export const cardWithShadow = {
+  ...card,
+  ...boxShadow,
 }
 
 export const basePhoto: ImageStyle = {
@@ -70,7 +74,6 @@ const tiny = {
   width: 30,
   height: 30,
 }
-
 
 export const photo: ImageStyle = {
   ...med,
@@ -105,6 +108,12 @@ export const icon: ImageStyle = {
 
 export const smallIcon: ImageStyle = {
   ...tiny,
+  margin: 2
+}
+
+export const xSmallIcon: ImageStyle = {
+  width: 20,
+  height: 20,
   margin: 2
 }
 

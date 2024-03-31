@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, View } from "react-native"
-import { getIconSource } from "@utils/ui"
+import { getPetIconSource } from "@utils/ui"
 import { Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface PetInfoProps {
@@ -14,7 +14,7 @@ interface PetInfoProps {
 }
 
 const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
-  const iconSource = getIconSource(pet.species)
+  const iconSource = getPetIconSource(pet.species)
 
   return ( 
     <View style={styles.container}>
@@ -38,8 +38,8 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
       {size === 'expanded' && 
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{pet.name}</Text>
+          <Text style={styles.body}>{pet.age} {pet.age && (pet.age !== 1 ? 'years old' : 'year old')} {pet.breed}</Text>
           <View style={styles.details}>
-            <Text style={styles.body}>{pet.age} {pet.age && (pet.age !== 1 ? 'years old' : 'year old')} {pet.breed}</Text>
           </View>
         </View>}
     </View>
@@ -48,7 +48,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenAcross
+    ...Spacing.fullScreenAcross,
   },
   shortName: {
     ...Typography.xSmallHeader,
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   photoContainerExpanded: {
     width: '40%',
     height: '100%',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   photoContainerCompact: {
     width: '100%',
@@ -74,20 +74,18 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     position: 'absolute',
-    top: '60%',
-    left: '-5%',
+    top: '55%',
+    left: '-7%',
     zIndex: 1,
   },
   infoContainer: {
-    width: '50%',
+    width: '60%',
     height: '100%',
     ...Spacing.flexColumn,
-    alignItems: 'flex-start',
-    justifyContent: 'center'
   },
   name: {
     ...Typography.subHeader,
-    fontSize: 15,
+    fontSize: 18,
     padding: 10,
     margin: 0,
     width: '100%',
@@ -97,7 +95,9 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   body: {
-    ...Typography.body
+    ...Typography.xSmallSubHeader,
+    marginTop: 0,
+    color: 'gray',
   }
 })
 

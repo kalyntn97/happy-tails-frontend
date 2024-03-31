@@ -123,7 +123,6 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
         <>
           { !Object.values(cares).length && <PlaceHolder /> }
           
-          
           <SectionList
             ref={sectionListRef}
             sections={careIndex}

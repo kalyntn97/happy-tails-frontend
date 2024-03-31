@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
     backgroundColor: Colors.white,
-    ...Forms.card,
+    ...Forms.cardWithShadow,
     width: '90%',
     height: 370,
     marginBottom: 40,

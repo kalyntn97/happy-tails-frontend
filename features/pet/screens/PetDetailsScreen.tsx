@@ -13,6 +13,8 @@ import { usePetActions } from "@store/store"
 import { AlertForm } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
+import { BoxWithHeader, BoxStyles, BoxHeader } from "@components/HeaderComponent"
+import { StatButton } from "@components/ButtonComponent"
 
 interface PetDetailsProps {
   navigation: any
@@ -49,24 +51,28 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   }
 
   return ( 
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: Colors.multiArray3[pet.color] }]}>
       {pet ?
-        <View style={styles.infoCard}>
-          <View style={styles.petInfo}>
-            <PetInfo pet={pet} size='expanded' />
+        <>
+          <View style={[styles.infoCard, 
+          ]}>
+            <View style={styles.petInfo}>
+              <PetInfo pet={pet} size='expanded' />
+            </View>
+            <View style={styles.rowCon}>
+              <StatButton item={ {header: 'vet visit', stat: 100, body: 'days'}} color={Colors.multiArray3[pet.color]} />
+              <StatButton item={ {header: 'tasks', stat: 1, body: 'today'}} color={Colors.multiArray3[pet.color]} />
+              <StatButton item={ {header: 'status', iconUri: require('@assets/icons/very-good.png'), body: '12/30/24'}} color={Colors.multiArray3[pet.color]} />
+            </View>
+
           </View>
-          <View style={styles.btnContainer}>
-            <TouchableOpacity 
-              style={{...styles.mainBtn, backgroundColor: Colors.yellow}}
-              onPress={() => navigation.navigate('Edit', { pet: pet })}
-            >
-              <Text style={styles.btnText}>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{...styles.mainBtn, backgroundColor: Colors.red}} onPress={showDeleteConfirmDialog}>
-              <Text style={styles.btnText}>{deletePetMutation.isPending ? 'Deleting...' : 'Delete'}</Text>
-            </TouchableOpacity>
+
+          <View style={{ ...BoxStyles }}>
+            <BoxHeader title="Update info" onPress={() => navigation.navigate('Edit', { pet: pet })} />
+            <BoxHeader title={deletePetMutation.isPending ? 'Deleting...' : 'Delete'} onPress={showDeleteConfirmDialog} />
           </View>
-        </View>
+        </>
+      
         : <Loader />
       }
     </View>
@@ -79,26 +85,21 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     width: '90%',
-    height: '40%',
+    height: 290,
     ...Forms.card,
+    justifyContent: 'flex-start',
+    borderRadius: 20,
     backgroundColor: Colors.white,
-    justifyContent: 'flex-start'
   },
   petInfo: {
     width: '100%',
     height: '60%'
   },
-  btnContainer: {
+  rowCon: {
     width: '100%',
-    height: '30%',
     ...Spacing.flexRow,
-    justifyContent: 'space-between'
-  },
-  mainBtn: {
-    ...Buttons.xSmallRounded,
-  },
-  btnText: {
-    ...Buttons.buttonText
+    justifyContent: 'space-evenly',
+    marginVertical: 10,
   },
 })
 export default PetDetailsScreen
