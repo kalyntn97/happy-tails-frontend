@@ -45,8 +45,8 @@ export const styles = StyleSheet.create({
     ...Spacing.flexRow,
     marginTop: 5,
     position: 'absolute',
-    top: -40,
-    left: 70,
+    top: -35,
+    left: 60,
     width: '90%',
     justifyContent: 'space-evenly',
   },
@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
     height: 20,
     position: 'absolute',
     top: -30,
-    right: 20,
+    right: 10,
   },
   detailText: {
     ...Typography.xSmallBody,
@@ -87,8 +87,14 @@ export const styles = StyleSheet.create({
   },
   pastVisitCon: {
     ...Spacing.flexColumn,
-    width: '90%',
-    marginVertical: 20,
+    width: '100%',
+    marginTop: 10,
+    marginBottom: -10,
+  },
+  showButton: {
+    position: 'absolute',
+    right: 30,
+    top: 10,
   },
   doneCon: {
     ...Spacing.flexColumn,
@@ -97,6 +103,7 @@ export const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 10,
     alignItems: 'flex-start',
+    borderWidth: 1,
   },
   notes: {
     width: '100%',
@@ -105,10 +112,17 @@ export const styles = StyleSheet.create({
   emptyNote: {
     opacity: 0.5
   },
-  emptyCon: {
-
+  visitStatus: {
+    ...Typography.smallSubBody,
+    fontSize: 10,
+    marginHorizontal: 5,
+    color: 'gray',
   },
   msg: {
-    ...Typography.xSmallHeader,
+    ...Typography.xSmallSubHeader,
   },
+  pastDue: {
+    color: Colors.red, 
+    fontWeight: 'bold'
+  }
 })

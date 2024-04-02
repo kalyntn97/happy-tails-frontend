@@ -110,7 +110,7 @@ export const useCaresByFrequency = (frequency: string) => {
       result[frequency].push(care)
       return result
     }, {})
-    return sorted[frequency]
+    return sorted[frequency] ?? []
   }
   return { caresByFrequency }
 }

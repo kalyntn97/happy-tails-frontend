@@ -80,7 +80,8 @@ export const styles = StyleSheet.create({
   bodyText: {
     ...Typography.smallBody,
     marginTop: 5,
-    marginHorizontal: 2
+    marginHorizontal: 2,
+    marginBottom: 0,
   },
   mainBodyText: {
     ...Typography.regBody,

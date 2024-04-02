@@ -1,6 +1,11 @@
 import { Pet } from "../pet/PetInterface"
 import { Care } from "../care/CareInterface"
 
+export interface Streak {
+  streak: number
+  lastDate: Date
+  longestStreak: number
+}
 export interface Profile {
   _id: string
   name: string
@@ -9,6 +14,7 @@ export interface Profile {
   banner: string | null
   bio: string
   reminderInterval: number
+  streak: Streak
 }
 
 export interface ProfileFormData {

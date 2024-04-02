@@ -24,11 +24,11 @@ const EditHealthScreen: FC<EditHealthProps> = ({ navigation, route }) => {
 
   const updateHealthMutation = useUpdateHealth()
 
-  const initialValues: { pet: Pet, type: string, name: string, vaccine: string | null, times: number, frequency: string, lastDone: Visit[], nextDue: Date | null, healthId: string } = {
+  const initialValues: { pet: Pet, type: string, name: string, vaccine: string | null, times: number, frequency: string, lastDone: Visit[], nextDue: Visit | null, healthId: string } = {
     pet: health.pet, type: health.type, name: health.name, vaccine: health.vaccine, times: health.times, frequency: health.frequency, lastDone: health.lastDone, nextDue: health.nextDue, healthId: health._id
   }
 
-  const handleSubmit = async (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Visit[], nextDue: Date, healthId: string) => {
+  const handleSubmit = async (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: Visit[], nextDue: Visit, healthId: string) => {
     updateHealthMutation.mutate({ pet, type, name, vaccine, times, frequency, lastDone, nextDue, healthId }, {
       onSuccess: () => {
         navigation.navigate('Main')

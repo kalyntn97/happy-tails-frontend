@@ -9,16 +9,19 @@ import { PetBasic } from "@pet/PetInterface"
 //components
 import PetList from "@components/PetInfo/PetList"
 import Loader from "@components/Loader"
-//styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { useCaresByFrequency, useSelectPhoto } from "@home/hooks"
-import { AlertForm } from "@utils/ui"
-import { BoxHeader, BoxStyles, BoxWithHeader } from "@components/HeaderComponent"
 import { StatButton } from "@components/ButtonComponent"
+import { BoxHeader, BoxWithHeader } from "@components/HeaderComponent"
+//hooks & utils
+import { AlertForm } from "@utils/ui"
+import { useCaresByFrequency, useSelectPhoto } from "@home/hooks"
+//styles
+import { Care } from "@care/CareInterface"
+import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 const ProfileScreen = ({ navigation, route }) => {
   const { data: profile, isLoading, isError } = useGetProfile()
   const [banner, setBanner] = useState<string>(profile.banner ?? null)
+
   const pets: PetBasic[] = useShallowPetBasics()
   const { caresByFrequency } = useCaresByFrequency('Daily')
   
@@ -75,7 +78,7 @@ const ProfileScreen = ({ navigation, route }) => {
             </View>
               
             <View style={{...Forms.rowCon}}>
-              <StatButton item={ {header: 'streak', stat: 7, body: 'days'}} />
+              <StatButton item={ {header: 'streak', stat: profile.streak.streak, body: 'days'}} />
               <StatButton item={ {header: 'tasks', stat: caresByFrequency().length, body: 'today'}} />
               <StatButton item={ {header: '♥︎', stat: pets.length, body: 'pets'}} />
             </View>
@@ -132,12 +135,14 @@ const styles = StyleSheet.create({
   },
   cameraIcon: {
     position: "absolute",
-    top: 145,
-    left: 10,
+    top: 150,
+    left: 0,
     zIndex: 3,
-    backgroundColor: Colors.lightPink,
-    borderRadius: 99,
-    padding: 5,
+    backgroundColor: Colors.transparent,
+    padding: 8,
+    width: 50,
+    height: 50,
+    borderTopRightRadius: 15,
   },
   profileCon: {
     width: '100%',

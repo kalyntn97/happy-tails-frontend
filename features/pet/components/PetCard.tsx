@@ -4,9 +4,10 @@ import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated
 //types & utils
 import { Pet } from "@pet/PetInterface"
 import { getPetIconSource } from "@utils/ui"
+//components
+import { MainButton } from "@components/ButtonComponent"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { MainButton, MediumButton, SubButton } from "@components/ButtonComponent"
 interface PetCardProps {
   pet: Pet
   index: number
@@ -64,7 +65,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
           style={styles.petPhoto } 
         />
         
-       <MediumButton title='Details' onPress={() => navigation.navigate('Details', { pet})} top='auto' bottom={20} color={Colors.multiArray3[pet.color]} />
+      <MainButton title='Details' onPress={() => navigation.navigate('Details', { pet})} top='auto' bottom={20} bgColor={Colors.multiArray3[pet.color]} size='small' />
       </View>
 
     </Animated.View>
@@ -109,13 +110,6 @@ const styles = StyleSheet.create({
     ...Forms.photo,
     borderRadius: 100,
     backgroundColor: Colors.lightPink
-  },
-  mainBtn: {
-    ...Buttons.xSmallRounded,
-    backgroundColor: Colors.green,
-  },
-  btnText: {
-    ...Buttons.buttonText
   },
 })
  

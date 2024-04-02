@@ -1,6 +1,7 @@
 const Colors = {
   white: '#FBFFFE',
-  transparent: 'rgba(255, 255, 255, 0.8)',
+  transparent: 'rgba(255, 255, 255, 0.9)',
+  shadow: 'rgba(0, 0, 0, 0.5)',
   lightestPink: '#FFF6FD',
   lightPink: '#FFE6FF',
   pink: '#F39CD6',
@@ -21,6 +22,7 @@ const Colors = {
   multiArray2: ['#81FBFF', '#FFED24', '#89EB9B', '#9F7AFD', '#81FFDC'],
   //muted - task background
   multiArray3: ['#FED7D7', '#FFE4C4', '#fcf6bd', '#d0f4de', '#bbdefb', '#d3e4ff', '#e8dbff', '#ffd6ff'],
+  multiArray4: ['#ffefef', '#fff3e8', '#f9f6e0', '#e6f2ea', '#dae7f2', '#e8eff9', '#eae3f7', '#fcedfc'],
 }
 
 export default Colors

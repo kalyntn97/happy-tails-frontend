@@ -40,7 +40,7 @@ const NestedList: FC<NestedListProps> = ({ data, type, navigation, activeDateObj
       }
     } else if (type === 'Health') {
       //*show future tasks based on user's selected interval, show completed tasks for the whole month
-      const startDate = getStartDate(new Date(item.nextDue), interval) //start date to show task
+      const startDate = getStartDate(new Date(item.nextDue.date), interval) //start date to show task
       let filteredVisits: Visit[] = item.lastDone.filter((visit: Visit) => 
         new Date(visit.date).getMonth() === activeDateObj.getMonth() && new Date(visit.date).getFullYear() === activeDateObj.getFullYear()
       ).sort((a: Visit, b: Visit) => new Date(a.date).getTime() - new Date(b.date).getTime())

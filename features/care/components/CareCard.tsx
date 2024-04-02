@@ -8,6 +8,7 @@ import { getIconSource } from "@utils/ui"
 //components
 import PetList from "@components/PetInfo/PetList"
 import TrackerPanel from "./TrackerPanel"
+import { SubButton } from "@components/ButtonComponent"
 //styles
 import { styles } from "@styles/ModalCardStyles"
 
@@ -53,9 +54,7 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
           <TrackerPanel care={care} />
         </View>
         {care.repeat &&
-          <TouchableOpacity style={styles.mainBtn} onPress={handleNavigate}>
-            <Text style={styles.btnText}>View History</Text>
-          </TouchableOpacity>
+          <SubButton title='View History' onPress={handleNavigate} top={0} bottom={0} />
         }
       </View>
     </View>

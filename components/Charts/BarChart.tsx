@@ -24,13 +24,13 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
   
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
-  const chartWidth = windowWidth * 0.9
+  const chartWidth = windowWidth * 0.9 * 0.9
   const chartHeight = windowHeight * 0.35
 
   const colorArray = getColorArray()
 
   useEffect(() => {
-    const newBarWidth = frequency === 'Weekly' ? chartWidth * 0.1 : chartWidth * 0.25 / 12
+    const newBarWidth = frequency === 'Weekly' ? chartWidth * 0.45 / 6 : chartWidth * 0.25 / 12
     const newBarHeightUnit = chartHeight * 0.7 / times
 
     setBarWidth(newBarWidth)
@@ -96,7 +96,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
               {times === value && 
                 <Text style={{ fontSize: frequency === 'Weekly' ? 10 : 5, color: Colors.green }}>✔️</Text>
               }
-              {value}
+              {value !== 0 && value}
             </Text>
           </View>
         )}

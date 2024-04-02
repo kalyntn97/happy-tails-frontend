@@ -7,7 +7,7 @@ const EmptyList: FC  = () => (
 
 const styles = StyleSheet.create({
   empty: {
-    marginTop: 100,
+    margin: 20,
     fontSize: 15,
     fontWeight: 'bold',
     textAlign: 'center'

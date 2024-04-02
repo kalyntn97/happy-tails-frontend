@@ -13,7 +13,7 @@ import { useDeletePet } from "@pet/petQueries"
 import { usePetActions } from "@store/store"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
-import { useCaresByPet, useHealthDueByPet, useHealthsByPet } from "@home/hooks"
+import { useCaresByPet, useHealthDueByPet } from "@home/hooks"
 
 interface PetDetailsProps {
   navigation: any
@@ -53,7 +53,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   }
 
   return ( 
-    <View style={[styles.container, { backgroundColor: Colors.multiArray3[pet.color] }]}>
+    <View style={[styles.container, { backgroundColor: Colors.multiArray4[pet.color] }]}>
       {pet ?
         <>
           <View style={[styles.infoCard, 
@@ -62,9 +62,9 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
               <PetInfo pet={pet} size='expanded' />
             </View>
             <View style={{...Forms.rowCon}}>
-              <StatButton item={ {header: 'vet visit', stat: healthDueByPet(), body: 'days'}} color={Colors.multiArray3[pet.color]} />
-              <StatButton item={ {header: 'tasks', stat: caresByPet().length, body: 'today'}} color={Colors.multiArray3[pet.color]} />
-              <StatButton item={ {header: 'status', iconUri: require('@assets/icons/very-good.png'), body: '12/30/24'}} color={Colors.multiArray3[pet.color]} />
+              <StatButton item={ {header: 'vet visit', stat: healthDueByPet(), body: 'days'}} bgColor={Colors.multiArray3[pet.color]} />
+              <StatButton item={ {header: 'tasks', stat: caresByPet().length, body: 'today'}} bgColor={Colors.multiArray3[pet.color]} />
+              <StatButton item={ {header: 'status', iconUri: require('@assets/icons/very-good.png'), body: '12/30/24'}} bgColor={Colors.multiArray3[pet.color]} />
             </View>
 
           </View>

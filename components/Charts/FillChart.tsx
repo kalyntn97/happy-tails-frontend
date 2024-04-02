@@ -65,6 +65,8 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.flexRow,
     ...Spacing.centered,
+    marginTop: 20,
+    marginBottom: 10,
   },
   square: {
     borderWidth: 3,

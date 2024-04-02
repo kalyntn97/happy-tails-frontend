@@ -4,12 +4,20 @@ import { AddVisitNotesFormData, DeleteVisitFormData, HealthFormData, VisitFormDa
 
 export const healthKeyFactory = {
   healths: ['all-healths'],
+  healthById: (id: string) => [...healthKeyFactory.healths, id],
 }
 
 export const useGetAllHealths = () => {
   return useQuery({
     queryKey: [...healthKeyFactory.healths],
     queryFn: healthService.getAllHealths
+  })
+}
+
+export const useGetHealthById = (healthId: string) => {
+  return useQuery({
+    queryKey: [...healthKeyFactory.healthById(healthId)],
+    queryFn: () => healthService.getHealthById(healthId),
   })
 }
 
@@ -72,9 +80,9 @@ export const useAddVisitNotes = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ notes, healthId, visitId }: AddVisitNotesFormData) => healthService.addVisitNotes(notes, healthId, visitId),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...healthKeyFactory.healths] })
+    mutationFn: ({ notes, due, healthId, visitId }: AddVisitNotesFormData) => healthService.addVisitNotes(notes, due, healthId, visitId),
+    onSuccess: (data) => {
+      return queryClient.invalidateQueries({ queryKey: healthKeyFactory.healthById(data._id) })
     }
   })
 }

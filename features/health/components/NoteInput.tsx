@@ -2,7 +2,7 @@
 import { FC, useEffect, useState } from "react"
 import {  TextInput, TouchableOpacity, Image, Text, View } from "react-native"
 //components
-import { DeleteButton, SaveButton, SmallAddButton, SmallRemoveButton, UndoButton } from "@components/ButtonComponent"
+import { IconButton } from "@components/ButtonComponent"
 import { AlertForm } from "@utils/ui"
 //types & queries
 import { Visit } from "@health/HealthInterface"
@@ -13,16 +13,17 @@ import { styles } from "@styles/DetailsScreenStyles"
 interface NoteInputProps {
   healthId: string
   visit: Visit
+  due?: boolean
 }
 
-const NoteInput: FC<NoteInputProps> = ({ healthId, visit }) => {
+const NoteInput: FC<NoteInputProps> = ({ healthId, visit, due }) => {
   const [notes, setNotes] = useState<string>(visit.notes ?? null)
   const [showInput, setShowInput] = useState<boolean>(false)
 
   const addVisitNotesMutation = useAddVisitNotes()
 
-  const addVisitNotes = (healthId: string, visitId: string, notes: string) => {
-    addVisitNotesMutation.mutate({notes, healthId, visitId}, {
+  const addVisitNotes = (healthId: string, visitId: string, notes: string, due: boolean) => {
+    addVisitNotesMutation.mutate({notes, due, healthId, visitId}, {
       onSuccess: () => {
         return AlertForm({ body: `Updated successfully`, button: 'OK' })
       },
@@ -34,7 +35,7 @@ const NoteInput: FC<NoteInputProps> = ({ healthId, visit }) => {
 
   const onSubmit = () => {
     setShowInput(false)
-    addVisitNotes(healthId, visit._id, notes)
+    addVisitNotes(healthId, visit._id, notes, due)
   }
 
   const toggleShowInput = () => {
@@ -47,13 +48,13 @@ const NoteInput: FC<NoteInputProps> = ({ healthId, visit }) => {
         {showInput ?
           <>
             <View style={styles.smallBtnCon}>
-              <UndoButton onPress={toggleShowInput} />
-              <DeleteButton />
-              <SaveButton onPress={onSubmit} />
+              <IconButton onPress={toggleShowInput} type='undo' size='small' />
+              <IconButton type='delete' size='small' />
+              <IconButton onPress={onSubmit} type='save' size='small' />
             </View>
             <TextInput 
               style={styles.notesInput}
-              placeholder={notes ?? 'Enter visit notes'}
+              placeholder={notes || 'Enter visit notes'}
               value={notes}
               onChangeText={(text: string) => setNotes(text)}
             />
@@ -61,7 +62,7 @@ const NoteInput: FC<NoteInputProps> = ({ healthId, visit }) => {
         : 
           <>
             <Image source={require('@assets/icons/edit.png')} style={styles.miniIcon} />
-            <Text style={[styles.detailText, styles.notes, !notes && styles.emptyNote]}>{notes ?? 'No visit notes'}</Text>
+            <Text style={[styles.detailText, styles.notes, !notes && styles.emptyNote]}>{notes || 'No visit notes'}</Text>
           </>
         }
     </TouchableOpacity>

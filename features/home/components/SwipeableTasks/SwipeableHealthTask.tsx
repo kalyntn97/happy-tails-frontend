@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import React, { FC, useEffect, useRef, useState } from 'react'
 //components
-import { SquareButton } from '@components/ButtonComponent'
+import { IconButton } from '@components/ButtonComponent'
 import { AlertForm } from '@utils/ui'
 import PetInfo from '@components/PetInfo/PetInfo'
 //types & queries & hooks
@@ -38,22 +38,22 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, do
   
   const rightSwipeActions = () => (
     <View style={styles.squareBtnContainer}>
-      <SquareButton title='Edit' onPress={() => {
+      <IconButton type='edit' size='medium' onPress={() => {
         navigation.navigate('Health', { screen: 'Edit', params: { health: health }, initial: false })
         closeSwipeable()
       }} />
-      <SquareButton title='Details' onPress={() => {
-        navigation.navigate('Health', { screen: 'Details', params: { health }, initial: false })
+      <IconButton type='details' size='medium' onPress={() => {
+        navigation.navigate('Health', { screen: 'Details', params: { healthId: health._id }, initial: false })
         closeSwipeable()
       }} />
 
-      <SquareButton title='Delete' onPress={() => showDeleteConfirmDialog(health, handleDeleteHealthCard)} />
+      <IconButton type='delete' size='medium' onPress={() => showDeleteConfirmDialog(health, handleDeleteHealthCard)} />
     </View>
   )
 
   const toggleDone = async () => {
     !pastVisit ? 
-      checkDoneMutation.mutate({ date: health.nextDue, notes: '', healthId: health._id }, {
+      checkDoneMutation.mutate({ date: health.nextDue.date, notes: '', healthId: health._id }, {
         onError: (error) => {
           return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
         }
@@ -83,7 +83,7 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, do
             {health.name}
           </Text>
           {pastVisit && <Text style={styles.taskStatus}>{new Date(pastVisit.date).toLocaleDateString()}</Text>}
-          {!pastVisit && <Text style={styles.taskStatus}>{new Date(health.nextDue).toLocaleDateString()}</Text>}
+          {!pastVisit && <Text style={styles.taskStatus}>{new Date(health.nextDue.date).toLocaleDateString()}</Text>}
           <View style={styles.taskPetList}>
             <PetInfo pet={health.pet} size='mini' />
           </View>

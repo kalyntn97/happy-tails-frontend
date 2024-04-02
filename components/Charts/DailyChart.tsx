@@ -21,7 +21,7 @@ const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
   const colorArray = getColorArray()
 
   const windowWidth = useWindowDimensions().width
-  const chartWidth = windowWidth * 0.9
+  const chartWidth = windowWidth * 0.9 * 0.9
   const squareWidth = chartWidth / 7
 
   const CalendarHeader = () => {

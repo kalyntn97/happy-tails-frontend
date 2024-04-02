@@ -4,13 +4,13 @@ import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 //types & utils
 import { Health } from '@health/HealthInterface'
 import { getIconSource } from '@utils/ui'
-import { VACCINES } from '@health/healthHelpers'
+import { useShallowPetColor } from '@home/hooks'
 //components
 import PetInfo from '@components/PetInfo/PetInfo'
+import { TransparentButton } from '@components/ButtonComponent'
 //styles
 import { styles } from '@styles/ModalCardStyles'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import Colors from '@styles/colors'
+import { Colors, Typography, Forms } from "@styles/index"
 
 interface HealthCardProps {
   health: Health
@@ -21,7 +21,10 @@ interface HealthCardProps {
 
 const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activeDateObj }) => {
   const iconSource = getIconSource(health.name)
-  const pastDue = new Date(health.nextDue) < new Date()
+  const { petIdToColor } = useShallowPetColor()
+  const petColor = Colors.multiArray3[petIdToColor(health.pet._id) ?? health.pet.color]
+
+  const pastDue = new Date(health.nextDue.date) < new Date()
   const done = health.lastDone.some(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth())
   const doneDate = done && health.lastDone.find(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth()).date
   //handle when latest visit is not in the same month
@@ -29,7 +32,7 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
 
   const handleNavigate = () => {
     onNavigate && onNavigate()
-    navigation.navigate('Health', { screen: 'Details' , params : { health }, initial: false })
+    navigation.navigate('Health', { screen: 'Details' , params : { healthId: health._id }, initial: false })
   }
 
   return (
@@ -37,7 +40,7 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
       <View style={styles.header}>
         <View style={[
           styles.colorBox,
-          { backgroundColor: Colors.green }
+          { backgroundColor: petColor }
         ]}>
           <View style={styles.titleContainer}>
             <Image source={iconSource} style={styles.icon } />
@@ -64,22 +67,15 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
         {!done && lastDoneDate && 
           <Text style={styles.bodyText}>Completed on {new Date(lastDoneDate).toDateString()}</Text>
         }
-        <Text style={[styles.status,  { color: pastDue ? Colors.red : Colors.green }]}>
+        <Text style={styles.subTitle}>
           {pastDue ? 'Past due!' : 'Due on'}
         </Text>
-        <Text style={styles.title}>{new Date(health.nextDue).toDateString()}</Text>
+        <Text style={[styles.title, { color: pastDue ? Colors.red : Colors.green }]}>{new Date(health.nextDue.date).toDateString()}</Text>
         
-        <Text style={styles.subTitle}>Previous visits</Text>
-        <View style={styles.rowCon}>
-          {health.lastDone.map(visit => 
-            <Text key={visit._id} style={styles.bodyText}>{new Date(visit.date).toLocaleDateString()}</Text>  
-          )}
-        </View>
-
-        <TouchableOpacity style={styles.mainBtn} onPress={handleNavigate}>
-          <Text style={styles.btnText}>View History</Text>
-        </TouchableOpacity>
-        
+        <Text style={styles.subTitle}>Latest Visit</Text>
+          
+        <TransparentButton title='See more' onPress={handleNavigate} top={15} bottom={0} size='small' />
+    
       </View>
     </View>
   )

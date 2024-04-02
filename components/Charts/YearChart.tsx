@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
     width: '90%',
     ...Spacing.flexRow,
     padding: 10,
-    margin: 10,
+    marginTop: 20,
+    marginBottom: 10,
     borderRadius: 8,
     backgroundColor: Colors.white,
     ...Forms.boxShadow
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 35,
     fontWeight: 'bold',
-    width: '30%',
+    width: '20%',
     marginRight: 'auto'
   },
   heart: {

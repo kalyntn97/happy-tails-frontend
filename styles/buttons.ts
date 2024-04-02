@@ -1,111 +1,38 @@
 import { ViewStyle, TextStyle } from "react-native"
 import Colors from "./colors"
+import { boxShadow } from "./forms"
 
+//base
 export const base: ViewStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   margin: 10
 }
 
-export const main: ViewStyle = {
-  elevation: 3,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.5,
-  shadowRadius: 2,
-  backgroundColor: 'grey',
+export const roundedBase = {
+  marginHorizontal: 10,
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 99,
+  backgroundColor: Colors.pink
+}
+
+export const solid: ViewStyle = {
+  ...base,
+  ...boxShadow,
+  backgroundColor: Colors.pink,
+}
+
+export const transparent: ViewStyle = {
+  ...base,
+  borderWidth: 2,
+  backgroundColor: Colors.transparent,
 }
 
 export const sub: ViewStyle = {
   borderBottomWidth: 2
 }
-
-export const xSmall = {
-  width: 100,
-  height: 40,
-}
-
-export const xxSmall = {
-  width: 80,
-  height: 30,
-}
-
-export const small = {
-  width: 140,
-  height: 50,
-}
-
-export const long = {
-  width: 250,
-  height: 50
-}
-
-export const rounded: ViewStyle = {
-  borderRadius: 30
-}
-
-export const lessRounded: ViewStyle= {
-  borderRadius: 15
-}
-
-export const square: ViewStyle = {
-  borderRadius: 8
-}
-
-export const smallRounded = {
-  ...base,
-  ...main,
-  ...small,
-  ...rounded,
-}
-
-export const smallSquare = {
-  ...base,
-  ...main,
-  ...small,
-  ...square,
-}
-
-export const smallSub = {
-  ...base,
-  ...sub,
-}
-
-export const xSmallRounded = {
-  ...base,
-  ...main,
-  ...xSmall,
-  ...rounded,
-}
-
-export const xSmallSquare = {
-  ...base,
-  ...main,
-  ...xSmall,
-  ...square,
-}
-
-export const longSquare = {
-  ...base,
-  ...main,
-  ...long,
-  ...square
-}
-
-export const longRounded = {
-  ...base,
-  ...main,
-  ...long,
-  ...rounded,
-}
-
-export const xxSmallRounded = {
-  ...base,
-  ...main,
-  ...xxSmall,
-  ...rounded
-}
-
+//text
 export const buttonText: TextStyle = {
   fontSize: 16,
   lineHeight: 21,
@@ -117,25 +44,31 @@ export const whiteBtnText: TextStyle = {
   ...buttonText,
   color: Colors.white,
 }
+//sizes: ViewStyle
+export const xSmall = {width: 100,height: 40 }
 
-export const roundedBase = {
-  marginHorizontal: 10,
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: Colors.pink,
-  borderRadius: 99,
-}
+export const xxSmall = {width: 80,height: 30 }
 
-export const roundButton = {
-  ...main,
-  ...roundedBase,
-  width: 60,
-  height: 60,
-}
+export const small = {width: 120,height: 50 }
 
-export const smallRoundButton = {
-  ...main,
-  ...roundedBase,
-  width: 20,
-  height: 20,
-}
+export const long = {width: 250,height: 50 }
+
+export const rounded: ViewStyle = { borderRadius: 30 }
+
+export const lessRounded: ViewStyle= { borderRadius: 15 }
+
+export const square: ViewStyle = { borderRadius: 8 }
+//buttons
+export const smallRoundedSolid: ViewStyle = { ...small, ...solid, ...lessRounded }
+
+export const smallRoundedTransparent: ViewStyle = { ...small, ...rounded, ...transparent }
+
+export const xSmallRoundedTransparent: ViewStyle = { ...xSmall, ...rounded, ...transparent }
+
+export const smallSubButton: ViewStyle = { ...sub, ...base }
+
+export const xSmallSquareButton: ViewStyle = { ...xSmall, ...square, ...solid }
+
+export const roundButton = { ...solid, ...roundedBase, width: 60, height: 60 }
+
+export const smallRoundButton = { ...solid, ...roundedBase, width: 20, height: 20 }

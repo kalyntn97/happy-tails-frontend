@@ -10,7 +10,7 @@ import ScrollChart from "@components/Charts/ScrollChart"
 import { useActiveDate } from "@store/store"
 import { getMonth } from "@utils/datetime"
 //styles
-import { Spacing, Typography, Colors } from '@styles/index'
+import { Spacing, Typography, Colors, Forms } from '@styles/index'
 import { useCheckDoneCare,  useUncheckDoneCare } from "@care/careQueries"
 import { AlertForm } from "@utils/ui"
 
@@ -32,7 +32,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   //get the active trackerIndex or default to latest tracker
   if (care.repeat) {
     trackerIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeMonth, activeYear)
-    index = careHelpers.getTaskIndex(freq, activeDate, activeWeek, activeMonth, activeYear)
+    index = careHelpers.getTaskIndex(freq, activeDate, activeWeek, activeMonth)
   } else {
     trackerIndex = 0
     index = 0
@@ -71,16 +71,17 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
         : new Date(care.date).toLocaleDateString()
         }
       </Text>
-
-      <Text style={[
-        styles.status, 
-        { color: times === tracker.done[index] ? Colors.green : Colors.red }
-      ]}>
-        {tracker.done[index] === times ? 'You did it! ' : `Only ${times - tracker.done[index]} more to go! `}
+      <View style={styles.statusCon}>
         {tracker.done[index] !== times && 
           <Image source={require('@assets/icons/hand.png')} style={styles.ScrollChartIcon} />
         }
-      </Text>
+        <Text style={[
+          styles.status, 
+          // { color: times === tracker.done[index] ? Colors.green : Colors.red }
+        ]}>
+          {tracker.done[index] === times ? 'You did it! ' : `Only ${times - tracker.done[index]} more to go! `}
+        </Text>
+      </View>
       {care.repeat && times === 1 && freq !== 'Yearly'
         ? <>
             <View style={styles.ScrollChart}>
@@ -95,19 +96,21 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
               onPress={() => uncheckDone(careId, tracker._id, index)}
               disabled={tracker.done[index] === 0}
             >
-              <Image source={require('@assets/icons/minus.png')} style={styles.icon } />
+              <Image source={require('@assets/icons/decrease.png')} style={styles.icon } />
             </TouchableOpacity>
 
             <Text style={[styles.count, { color: times === tracker.done[index] ? Colors.green : Colors.red }]}>
-              {tracker.done[index]} / {times}
+              {tracker.done[index]}
             </Text>
+              <Text style={styles.subCount}>of</Text> 
+            <Text style={styles.count}>{times}</Text>
 
             <TouchableOpacity 
               style={styles.iconBtn} 
               onPress={() => checkDone(careId, tracker._id, index)}
               disabled={tracker.done[index] >= times}
             >
-              <Image source={require('@assets/icons/plus.png')} style={styles.icon } />
+              <Image source={require('@assets/icons/increase.png')} style={styles.icon } />
             </TouchableOpacity>
             
           </View>
@@ -131,14 +134,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: 5,
   },
+  subCount: {
+    ...Typography.smallHeader,
+    color: 'black',
+    marginHorizontal: 10,
+  },
   countBox: {
     ...Spacing.flexRow,
-    marginVertical: 10
+    marginVertical: 10,
+  },
+  statusCon: {
+    ...Spacing.flexRow,
   },
   status: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    lineHeight: 35,
+    ...Typography.xSmallSubHeader,
+    margin: 0,
   },
   heartBtn: {
     ...Spacing.flexRow,
@@ -171,15 +181,13 @@ const styles = StyleSheet.create({
     marginVertical: 10
   },
   icon: {
-    width: 30,
-    height: 30,
+    ...Forms.smallIcon,
   },
   iconBtn: {
-    marginHorizontal: 10
+    marginHorizontal: 15,
   },
   ScrollChartIcon: {
-    width: 25,
-    height: 25,
+    ...Forms.xSmallIcon,
     transform: [{ rotate: '180deg' }]
   },
 })

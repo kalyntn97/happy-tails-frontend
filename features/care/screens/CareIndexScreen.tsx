@@ -2,12 +2,11 @@
 import { useEffect, useRef, useState } from "react"
 import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView, Image } from "react-native"
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
-import LottieView from "lottie-react-native"
 //components
-import { AddButton } from "@components/ButtonComponent"
 import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
 import EmptyList from "@components/EmptyList"
+import { RoundButton } from "@components/ButtonComponent"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import { getIconSource } from "@utils/ui"
@@ -28,17 +27,20 @@ type CareSection = {
 
 const CareItem = ({ care, navigation }) => {
   const iconSource = getIconSource(care.name)
-
+  
   return (
     <TouchableOpacity 
+      disabled={!care.repeat}
       onPress={() => navigation.navigate('Details', { care })}
       style={[styles.itemContainer,
-      { backgroundColor: Colors.multiArray3[care.color] }
-    ]}>
+      { backgroundColor: Colors.multiArray3[care.color], opacity: !care.repeat ? 0.5 : 1 }
+      ]}
+      
+    >
       <View style={styles.itemLeft}>
         <Image source={iconSource} style={styles.itemIcon} />
         <Text style={styles.itemText}>{care.name}</Text>
-        <Text style={styles.itemText}>{care.frequency}</Text>
+        <Text style={[styles.itemText, { color: 'gray' }]}>{care.frequency}</Text>
       </View>
       <Image source={require('@assets/icons/next2.png')} style={styles.rightIcon} />
     </TouchableOpacity>
@@ -118,7 +120,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   
   return (
     <View style={styles.container}>
-      <AddButton onPress={() => navigation.navigate('Create')} />
+      <RoundButton onPress={() => navigation.navigate('Create')} type='add' position="bottomRight"/>
       {isSuccess ?
         <>
           { !Object.values(cares).length && <PlaceHolder /> }

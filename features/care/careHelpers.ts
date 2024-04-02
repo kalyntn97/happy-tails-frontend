@@ -32,13 +32,13 @@ export const getTrackerIndex = (trackers: Tracker[], frequency: string, activeMo
   return activeIndex !== -1 ? activeIndex : (trackers.length - 1)
 }
 
-export const getTaskIndex = (frequency: string, activeDate: number | null, activeWeek: number | null, activeMonth: number | null, activeYear: number | null): number => {
+export const getTaskIndex = (frequency: string, activeDate: number | null, activeWeek: number | null, activeMonth: number | null): number => {
   const latestIndex = getCurrentTrackerIndex(frequency)
   const mapByFrequency = {
     Daily: activeDate,
     Weekly: activeWeek,
     Monthly: activeMonth,
-    Yearly: activeYear,
+    Yearly: 0,
   }
   return mapByFrequency[frequency] ?? latestIndex
 }

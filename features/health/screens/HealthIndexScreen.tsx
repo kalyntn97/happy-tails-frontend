@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView, Imag
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 //components
-import { AddButton, GoBackButton } from "@components/ButtonComponent"
+import { RoundButton } from "@components/ButtonComponent"
 import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
 //types & helpers
@@ -34,7 +34,7 @@ const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
 
   return (
     <TouchableOpacity 
-      onPress={() => navigation.navigate('Details', { health })}
+      onPress={() => navigation.navigate('Details', { healthId: health._id })}
       style={[styles.itemContainer,
       { backgroundColor: Colors.multiArray3[health.pet.color] }
     ]}>
@@ -117,10 +117,10 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
   
   return (
     <View style={styles.container}>
-      <AddButton onPress={() => navigation.navigate('Create')} />
+      <RoundButton onPress={() => navigation.navigate('Create')} type='add' position='bottomRight' />
       {isSuccess ?
         <>
-          { !healths.length && <PlaceHolder /> }
+          { !healths.length && <PlaceHolder navigation={navigation} /> }
           
           <SectionList
             ref={sectionListRef}

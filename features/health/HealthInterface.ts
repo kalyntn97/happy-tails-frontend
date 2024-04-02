@@ -21,6 +21,7 @@ export interface AddVisitNotesFormData {
   healthId: string
   visitId: string
   notes: string
+  due?: boolean
 }
 export interface Health {
   _id: string
@@ -31,7 +32,7 @@ export interface Health {
   times: number
   frequency: string
   lastDone: Visit[]
-  nextDue: Date
+  nextDue: Visit
 }
 
 export interface HealthFormData {
@@ -42,6 +43,6 @@ export interface HealthFormData {
   times?: number
   frequency?: string
   lastDone?: Visit[]
-  nextDue?: Date
+  nextDue?: Visit
   healthId?: string
 }

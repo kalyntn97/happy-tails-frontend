@@ -117,6 +117,12 @@ export const xSmallIcon: ImageStyle = {
   margin: 2
 }
 
+export const tinyIcon: ImageStyle = {
+  width: 15,
+  height: 15,
+  margin: 2
+}
+
 export const largeIcon: ImageStyle = {
   width: 60,
   height: 60,

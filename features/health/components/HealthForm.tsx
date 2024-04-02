@@ -15,8 +15,8 @@ import MultipleInputs from "@components/MultipleInputs"
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface HealthFormProps {
-  onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: VisitFormData[], nextDue: Date, healthId: string) => void
-  initialValues?: {pet?: Pet, type?: string, name?: string, vaccine?: string, times?: number, frequency?: string, lastDone?: Visit[], nextDue?: Date, healthId?: string}
+  onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: VisitFormData[], nextDue: VisitFormData, healthId: string) => void
+  initialValues?: {pet?: Pet, type?: string, name?: string, vaccine?: string, times?: number, frequency?: string, lastDone?: Visit[], nextDue?: Visit, healthId?: string}
   navigation: any
   status: string
 }
@@ -31,7 +31,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   const [times, setTimes] = useState<number>(initialValues?.times ?? null)
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
   const [lastDone, setLastDone] = useState<Visit[] | VisitFormData[]>(initialValues?.lastDone ?? [])
-  const [nextDue, setNextDue] = useState<Date>(initialValues?.nextDue ?? null)
+  const [nextDue, setNextDue] = useState<Visit | VisitFormData>(initialValues?.nextDue ?? null)
 
   const [species, setSpecies] = useState<string>(null)
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
@@ -135,7 +135,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       {allowManualDueDate &&
           <View style={styles.rowContainer}>
             <Text style={styles.label}>Next Due</Text>
-            <RNDateTimePicker value={new Date(nextDue) ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue(selectedDate) }}/>
+            <RNDateTimePicker value={new Date(nextDue.date) ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue({ date: selectedDate, notes: '' }) }}/>
           </View>
 
       }

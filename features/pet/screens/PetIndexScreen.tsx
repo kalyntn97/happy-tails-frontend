@@ -4,7 +4,7 @@ import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 //components
 import PetCard from '../components/PetCard'
-import { AddButton } from '@components/ButtonComponent'
+import { RoundButton } from '@components/ButtonComponent'
 import Loader from '@components/Loader'
 import PlaceHolder from '@components/PlaceHolder'
 //store & queries
@@ -155,7 +155,7 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
         
       </> } 
       
-      <AddButton onPress={() => navigation.navigate('Create')} />
+      <RoundButton onPress={() => navigation.navigate('Create')} type='add' position='bottomRight' />
     </View>
   )
 }

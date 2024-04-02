@@ -2,7 +2,17 @@ import { Image, Pressable, Text, TouchableOpacity, View, ViewStyle } from "react
 import { Spacing, Colors, Typography, Forms } from "@styles/index"
 import { FC } from "react"
 
-export const BoxHeader: FC<{ title: string, onPress: () => void }> = ({ title, onPress }) => (
+type BoxHeaderProps = {
+  title: string
+  onPress?: () => void
+  titleColor?: string
+}
+
+interface BoxProps extends BoxHeaderProps {
+  content: any
+}
+
+export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor }) => (
   <Pressable style={{
     ...Spacing.flexRow,
     borderBottomWidth: 1,
@@ -12,11 +22,14 @@ export const BoxHeader: FC<{ title: string, onPress: () => void }> = ({ title, o
   }}
     onPress={onPress}
   >
-    <Text style={{
+    <Text style={[
+      {
       ...Typography.xSmallHeader,
       margin: 0,
+      marginLeft: 2,
       textAlign: 'left',
-    }}>
+    }, titleColor && { color: titleColor }
+    ]}>
       { title }
     </Text>
     <Image source={require('@assets/icons/next3.png')} style={{
@@ -26,11 +39,15 @@ export const BoxHeader: FC<{ title: string, onPress: () => void }> = ({ title, o
   </Pressable>
 )
 
-export const BoxWithHeader = ({ title, onPress, content }) => (
+export const BoxWithHeader: FC<BoxProps> = ({ title, onPress, content, titleColor }) => (
   <View style={{
     ...Forms.roundedCon,
   }}>
-    <BoxHeader title={title} onPress={onPress} />
-    { content }
+    <BoxHeader title={title} onPress={onPress} titleColor={titleColor} />
+    <View style={{
+      width: '100%', alignItems: 'center'
+    }}>
+      { content }
+    </View>
   </View>
 )

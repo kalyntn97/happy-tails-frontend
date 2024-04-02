@@ -2,9 +2,10 @@
 import { FC, useEffect, useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
+//components
+import { RoundButton  } from '@components/ButtonComponent'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { SmallAddButton, SmallRemoveButton } from '@components/ButtonComponent'
 
 type MultipleInputsProps = {
   initials?: any[]
@@ -52,14 +53,14 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPres
             value={selected} 
           />
         }
-        <SmallAddButton onPress={() => handleAddInput()} />
+        <RoundButton onPress={() => handleAddInput()} size='small' type='add' />
       </View>
 
       {inputs.length > 0 &&
         <View style={styles.rowCon}>
           {inputs.map((val: string, index: number) =>
             <View style={styles.initial} key={index}>
-              <SmallRemoveButton onPress={() => handleRemoveInput(val)} />
+              <RoundButton onPress={() => handleRemoveInput(val)} size='small' type='remove' />
               <Text>
                 { type === 'Date' ? new Date(val).toLocaleDateString() : val }
               </Text>

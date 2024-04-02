@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { PROFILE_BASE_URL } from '@services/urls'
-import { Profile } from './ProfileInterface'
+import { Profile, Streak } from './ProfileInterface'
 
 
 const BASE_URL = PROFILE_BASE_URL
@@ -33,3 +33,6 @@ export async function update(name: string, bio: string, photoData: { uri: string
   return result
 }
 
+export async function updateStreak(): Promise<Streak> {
+  return (await axios.patch<Streak>(`${BASE_URL}/streak`)).data
+}

@@ -5,7 +5,9 @@ import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, 
 import { Care } from "@care/CareInterface"
 import { Health } from "@health/HealthInterface"
 //store & queries
+import { useUpdateStreak } from "@profile/profileQueries"
 import { useActiveDate, useCurrentIsActive, useReminderInterval, useSetActions } from "@store/store"
+import { AlertForm } from "@utils/ui"
 //components
 import CareCard from "@care/components/CareCard"
 import { CloseButton } from "../../../components/ButtonComponent"
@@ -15,7 +17,7 @@ import NestedList from './NestedList';
 import HealthCard from "@health/components/HealthCard"
 //utils & store
 import { useUserQueries } from "../homeQueries"
-import { getMonth } from "@utils/datetime"
+import { countDaysBetween, getMonth } from "@utils/datetime"
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
 
@@ -34,11 +36,12 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const [clickedTask, setClickedTask] = useState<ClickedTask>(null)
   //queries
   const [profile, pets, cares, healths] = useUserQueries()
-  const { setPets, setCares, setHealths, setReminderInterval } = useSetActions()
-  //store
+  const updateStreakMutation = useUpdateStreak()
   const isLoading = useUserQueries().some(query => query.isLoading)
   const isSuccess = useUserQueries().every(query => query.isSuccess)
   const isError = useUserQueries().some(query => query.isError)
+  //store
+  const { setPets, setCares, setHealths, setReminderInterval } = useSetActions()
   
   const reminderInterval = useReminderInterval()
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
@@ -58,6 +61,18 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       setCares(Object.values(cares.data).flat())
       setHealths(healths.data)
       setReminderInterval(profile.data.reminderInterval)
+      
+      const daysElapsed = countDaysBetween(profile.data.streak.lastDate, new Date())
+      if (daysElapsed >= 1) {
+        updateStreakMutation.mutate(null, {
+          // onSuccess: () => {
+
+          // },
+          onError: (error) => {
+            return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+          }
+        })
+      }
     }
   }, [pets.data, cares.data, healths.data, profile.data])
 
@@ -108,23 +123,26 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           </View>
 
           <View style={styles.taskListContainer}>
-            {!Object.keys(cares.data).length && <PlaceHolder /> }
+            {Object.keys(cares.data).length ?
+              <>
+                {selected === 'day' &&
+                  <NestedList data={[...cares.data['Daily'] ?? [], ...cares.data['Others'] ?? []]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+                }
+                
+                {selected === 'week' &&
+                  <NestedList data={cares.data['Weekly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+                }
 
-            {selected === 'day' &&
-              <NestedList data={[...cares.data['Daily'], ...cares.data['Others'] ?? []]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
-            }
-            
-            {selected === 'week' &&
-              <NestedList data={cares.data['Weekly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
-            }
+                {selected === 'month' && 
+                  <NestedList data={cares.data['Monthly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+                }
 
-            {selected === 'month' && 
-              <NestedList data={cares.data['Monthly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
-            }
+                {selected === 'year' && 
+                  <NestedList data={cares.data['Yearly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+                }
+              </>
+            : <PlaceHolder navigation={navigation}/> }
 
-            {selected === 'year' && 
-              <NestedList data={cares.data['Yearly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
-            }
           </View>
         </>
       }

@@ -11,7 +11,7 @@ import { useDeleteCareCard } from '@home/hooks'
 //components
 import { useActiveDate } from '@store/store'
 import { AlertForm } from '@utils/ui'
-import { SquareButton } from '@components/ButtonComponent'
+import { IconButton } from '@components/ButtonComponent'
 import PetList from '@components/PetInfo/PetList'
 //styles
 import { styles } from '@styles/SwipeableTaskStyles'
@@ -36,7 +36,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
   if (care.repeat) {
     trackerIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeMonth, activeYear)
     //set task index
-    index = careHelpers.getTaskIndex(care.frequency, activeDate, activeWeek, activeMonth, activeYear)
+    index = careHelpers.getTaskIndex(care.frequency, activeDate, activeWeek, activeMonth)
     //get task status
     done = careHelpers.getTaskStatus(care, trackerIndex, index)
   } else {
@@ -74,17 +74,17 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
   
   const rightSwipeActions = () => (
     <View style={styles.squareBtnContainer}>
-      <SquareButton title='Edit' onPress={() => {
+      <IconButton type='edit' size='medium' onPress={() => {
         navigation.navigate('Care', { screen: 'Edit', params: { care }, initial: false })
         closeSwipeable()
       }} />
       {care.repeat &&
-        <SquareButton title='Details' onPress={() => {
+        <IconButton type='details' size='medium' onPress={() => {
           navigation.navigate('Care', { screen: 'Details', params: { care }, initial: false })
           closeSwipeable()
         }} />
       }
-      <SquareButton title='Delete' onPress={() => showDeleteConfirmDialog(care, handleDeleteCareCard)} />
+      <IconButton type='delete' size='medium' onPress={() => showDeleteConfirmDialog(care, handleDeleteCareCard)} />
     </View>
   )
 
