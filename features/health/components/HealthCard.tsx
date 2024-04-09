@@ -3,7 +3,7 @@ import { FC } from 'react'
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 //types & utils
 import { Health } from '@health/HealthInterface'
-import { getIconSource } from '@utils/ui'
+import { getHealthIconSource } from '@utils/ui'
 import { useShallowPetColor } from '@home/hooks'
 //components
 import PetInfo from '@components/PetInfo/PetInfo'
@@ -20,15 +20,16 @@ interface HealthCardProps {
 }
 
 const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activeDateObj }) => {
-  const iconSource = getIconSource(health.name)
-  const { petIdToColor } = useShallowPetColor()
-  const petColor = Colors.multiArray3[petIdToColor(health.pet._id) ?? health.pet.color]
+  const iconSource = getHealthIconSource(health.name)
+  const petIdToColor = useShallowPetColor()
+  const petColor = Colors.multi.lightest[petIdToColor(health.pet._id) ?? health.pet.color]
 
   const pastDue = new Date(health.nextDue.date) < new Date()
-  const done = health.lastDone.some(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth())
-  const doneDate = done && health.lastDone.find(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth()).date
-  //handle when latest visit is not in the same month
-  const lastDoneDate = health.lastDone.length > 0 && new Date(health.lastDone[0].date)
+  const lastDoneReversed = [...health.lastDone].reverse()
+  const done = lastDoneReversed.some(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth())
+  const doneDate = done && lastDoneReversed.find(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth()).date
+  //? handle when latest visit is not in the same month
+  const lastDoneDate = lastDoneReversed.length > 0 && new Date(lastDoneReversed[0].date)
 
   const handleNavigate = () => {
     onNavigate && onNavigate()
@@ -70,10 +71,11 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
         <Text style={styles.subTitle}>
           {pastDue ? 'Past due!' : 'Due on'}
         </Text>
-        <Text style={[styles.title, { color: pastDue ? Colors.red : Colors.green }]}>{new Date(health.nextDue.date).toDateString()}</Text>
+        <Text style={[styles.title, { color: pastDue ? Colors.red.reg : Colors.green.reg }]}>{new Date(health.nextDue.date).toDateString()}</Text>
         
         <Text style={styles.subTitle}>Latest Visit</Text>
-          
+        <Text style={styles.bodyText}>{lastDoneDate ? new Date(lastDoneDate).toDateString() : 'No prior visits'}</Text>
+        
         <TransparentButton title='See more' onPress={handleNavigate} top={15} bottom={0} size='small' />
     
       </View>

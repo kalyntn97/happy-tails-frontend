@@ -1,29 +1,38 @@
 //npm modules
 import { useState } from "react"
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ImageStyle } from "react-native"
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ImageStyle, ScrollView } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
+import RNDateTimePicker from "@react-native-community/datetimepicker"
 //components
-import { MainButton, SubButton } from '@components/ButtonComponent'
+import { CheckboxButton, MainButton, SubButton } from '@components/ButtonComponent'
 import Dropdown from "@components/Dropdown/Dropdown"
+import ColorPickingPanel from "@components/ColorPickingPanel"
+
 //styles
 import { Buttons, Spacing, Forms, Colors } from '@styles/index'
-import ColorPickingPanel from "@components/ColorPickingPanel"
-import { ScrollView } from "react-native-gesture-handler"
+import { STATUS } from "@pet/petHelpers"
 
 interface PetFormProps {
-  onSubmit: (name: string, age: number | '', species: string, breed: string, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
-  initialValues?: { name?: string, age?: number, species?: string, breed?: string, color?: number, photo?: string | null, petId?: string }
+  onSubmit: (name: string, species: string, breed: string | null, dob: Date | null, firstMet: Date | null, altered: {value: boolean, date: Date | null}, status: {value: string, date: Date | null, show: boolean }, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
+  initialValues?: { name?: string, species?: string, breed?: string, dob?: Date, firstMet?: Date, altered?: {value: boolean, date: Date }, status?: {value: string, date: Date, show: boolean }, color?: number, photo?: string, petId?: string }
+  formStatus: string
   navigation: any
-  status: string
 }
 
-const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
-  const [photo, setPhoto] = useState<string | null>(initialValues?.photo ?? null)
+const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, formStatus }) => {
   const [name, setName] = useState<string>(initialValues?.name ?? null)
-  const [age, setAge] = useState<number>(initialValues?.age ?? null)
   const [species, setSpecies] = useState<string>(initialValues?.species ?? null)
   const [breed, setBreed] = useState<string>(initialValues?.breed ?? null)
+  const [dob, setDob] = useState<Date>(initialValues?.dob)
+  const [showDob, setShowDob] = useState<boolean>(initialValues?.dob ? true : false)
+  const [firstMet, setFirstMet] = useState<Date>(initialValues?.firstMet ?? null)
+  const [showFirstMet, setShowFirstMet] = useState<boolean>(initialValues?.firstMet ? true : false)
+  const [altered, setAltered] = useState<{ value: boolean, date: Date }>(initialValues?.altered ?? { value: false, date: null })
+  const [showAlteredDate, setShowAlteredDate] = useState<boolean>(initialValues?.altered?.date === null ? false : true)
+  const [status, setStatus] = useState<{ value: string, date: Date, show: boolean }>(initialValues?.status ?? { value: STATUS[0], date: null, show: true })
+  const [showPassedDate, setShowPassedDate] = useState<boolean>(initialValues?.status?.date === null ? false : true)
   const [color, setColor] = useState<number>(initialValues?.color ?? 0)
+  const [photo, setPhoto] = useState<string | null>(initialValues?.photo ?? null)
   const [errorMsg, setErrorMsg] = useState<string>('')
 
   const petId: string | null = initialValues?.petId ?? null
@@ -48,7 +57,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
     } else {
       setErrorMsg('')
       if (species === 'Others') setBreed(null)
-      await onSubmit(name, age, species, breed, color, photoData, petId)
+      await onSubmit(name, species, breed, dob, firstMet, altered, status, color, photoData, petId)
     }
   }
 
@@ -61,11 +70,11 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
           <View style={styles.uploadBtnContainer}>
             <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
               <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
-              <Image source={require('@assets/icons/camera.png')} style={styles.cameraIcon } />
+              <Image source={require('@assets/icons/action-camera.png')} style={styles.cameraIcon } />
             </TouchableOpacity>
           </View>
         </View>
-        <Text style={{ color: Colors.red, fontWeight: 'bold' }}>{errorMsg}</Text>
+        <Text style={{ color: Colors.red.dark, fontWeight: 'bold' }}>{errorMsg}</Text>
         <TextInput 
           style={styles.input} 
           placeholder='Pet Name' 
@@ -73,13 +82,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
           value={name} 
           autoCapitalize="words"
         />
-        <TextInput 
-          style={styles.input} 
-          placeholder='Age' 
-          onChangeText={(text: string) => setAge(Number(text))} 
-          value={(age || '').toString()} 
-          keyboardType="numeric"
-        />
+
         {!!species && <Text>Select Type</Text>}
         <Dropdown 
           label={species ? species : 'Select Type'} 
@@ -118,8 +121,66 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
             onSelect={setBreed} 
           />
         }
+        <View style={{ ...Spacing.flexColumn, marginTop: 20 }}>
+          <View style={styles.dateCon}>
+            <Text>Date of birth</Text>
+            <View style={styles.rowCon}>
+              <CheckboxButton onPress={() => { setShowDob(!showDob); setDob(null) }} initial={!showDob} />
+              <Text>Unknown</Text>
+            </View>
+          </View>
+          {showDob && <RNDateTimePicker value={new Date(dob ?? new Date())} onChange={(event, selectedDate) => { setDob(selectedDate) }} /> }
+          <View style={styles.dateCon}>
+            <Text>Date you first met</Text>
+            <View style={styles.rowCon}>
+              <CheckboxButton onPress={() => { setShowFirstMet(!showFirstMet); setFirstMet(null) }} initial={!showFirstMet} />
+              <Text>Unknown</Text>
+            </View>
+          </View>
+          {showFirstMet && <RNDateTimePicker value={new Date(firstMet ?? new Date())} onChange={(event, selectedDate) => { setFirstMet(selectedDate) }} /> }
+        </View>
+
+        <View style={styles.dateCon}>
+          <Text>Neutered/ Spayed?</Text>
+          <CheckboxButton onPress={() => { setAltered(prev => ({ ...prev, value: !prev.value })) }} initial={altered.value} />
+        </View>
+
+        {altered.value && 
+          <>
+            <View style={styles.dateCon}>
+              <Text>Surgery Date</Text>
+                <View style={styles.rowCon}>
+                  <CheckboxButton onPress={() => { setShowAlteredDate(!showAlteredDate); setAltered(prev => ({...prev, date: null })) }} initial={!showAlteredDate} />
+                  <Text>Unknown</Text>
+                </View>
+            </View>
+            {showAlteredDate && <RNDateTimePicker value={new Date(altered.date ?? new Date())} onChange={(event, selectedDate) => { setAltered({ value: true, date: selectedDate }) }} /> }
+          </>
+        }
+        <View style={styles.dateCon}>
+          <Text>Status?</Text>
+          <Dropdown label='' dataType="petStatus" initial={STATUS[0]} onSelect={(value) => setStatus(prev => ({...prev, value: value}))} width={140} />
+        </View>
+
+        {status.value === STATUS[1] && 
+          <>
+            <View style={styles.dateCon}>
+              <Text>Date</Text>
+                <View style={styles.rowCon}>
+                  <CheckboxButton onPress={() => { setShowPassedDate(!showPassedDate); setStatus(prev => ({...prev, date: null })) }} initial={!!status.date} />
+                  <Text>Unknown</Text>
+                </View>
+            </View>
+            {showPassedDate && <RNDateTimePicker value={new Date(status.date ?? new Date())} onChange={(event, selectedDate) => { setStatus(prev => ({...prev, value: STATUS[1], date: selectedDate })) }} /> }
+          </>
+        }
+        <View style={styles.dateCon}>
+          <Text>Archive?</Text>
+          <CheckboxButton onPress={() => setStatus(prev => ({ ...prev, show: !prev.show }))} initial={!status.show} />
+        </View>
+
         <ColorPickingPanel onPress={setColor} initial={initialValues?.color} />
-        <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting' : initialValues?.name ? 'Save' : 'Add Pet'} top={0} bottom={10} />
+        <MainButton onPress={handleSubmit} title={formStatus === 'pending' ? 'Submitting' : initialValues?.name ? 'Save' : 'Add Pet'} top={0} bottom={10} />
         <SubButton onPress={ () => {
           navigation.canGoBack() ? navigation.goBack() : navigation.reset({ index: 0, routeName: 'Index'})
         }}
@@ -141,12 +202,12 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
     margin: 20,
-    backgroundColor: Colors.lightPink,
+    backgroundColor: Colors.pink.light,
     elevation: 2,
   },
   input: {
     ...Forms.input,
-    borderColor: Colors.pink,
+    borderColor: Colors.pink.reg,
   },
   image: {
     ...Spacing.fullWH,
@@ -156,7 +217,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     bottom: 0,
-    backgroundColor: Colors.pink,
+    backgroundColor: Colors.pink.reg,
     width: '100%',
     height: '25%',
   },
@@ -167,7 +228,17 @@ const styles = StyleSheet.create({
   cameraIcon: {
     width: 20,
     height: 20,
-  }
+  },
+  dateCon: {
+    ...Spacing.flexRow,
+    justifyContent: "space-between",
+    width: 270,
+    marginVertical: 20,
+  },
+  rowCon: {
+    ...Spacing.flexRow,
+    marginHorizontal: 10,
+  },
 })
 
 export default PetForm

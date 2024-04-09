@@ -13,7 +13,7 @@ import { StatButton } from "@components/ButtonComponent"
 import { BoxHeader, BoxWithHeader } from "@components/HeaderComponent"
 //hooks & utils
 import { AlertForm } from "@utils/ui"
-import { useCaresByFrequency, useSelectPhoto } from "@home/hooks"
+import { useCaresByFrequency, useSelectPhoto, useTaskCounts } from "@home/hooks"
 //styles
 import { Care } from "@care/CareInterface"
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
@@ -23,17 +23,17 @@ const ProfileScreen = ({ navigation, route }) => {
   const [banner, setBanner] = useState<string>(profile.banner ?? null)
 
   const pets: PetBasic[] = useShallowPetBasics()
-  const { caresByFrequency } = useCaresByFrequency('Daily')
-  
+  const { careCounts, healthCounts } = useTaskCounts()
+  const careCounter = careCounts(new Date())
+  const healthCounter = healthCounts()
+ 
   const addBannerMutation = useAddBanner()
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
-    require('@assets/icons/micon1.png'),
-    require('@assets/icons/micon2.png'),
-    require('@assets/icons/micon3.png'),
-    require('@assets/icons/ficon1.png'),
-    require('@assets/icons/ficon2.png'),
-    require('@assets/icons/ficon3.png'),
+    require('@assets/icons/profile-1.png'),
+    require('@assets/icons/profile-2.png'),
+    require('@assets/icons/profile-3.png'),
+    require('@assets/icons/profile-4.png'),
   ]
   const randomIdx = Math.floor(Math.random() * randomProfilePhotos.length)
 
@@ -57,7 +57,7 @@ const ProfileScreen = ({ navigation, route }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <Pressable style={styles.bannerCon} onPress={addBanner}>
         <View style={styles.cameraIcon}>
-          <Image source={require('@assets/icons/camera.png')} style={{...Forms.smallIcon}} />
+          <Image source={require('@assets/icons/action-camera.png')} style={{...Forms.smallIcon}} />
         </View>
         { banner && <Image source={{ uri: banner }} style={[
             styles.banner,
@@ -79,8 +79,8 @@ const ProfileScreen = ({ navigation, route }) => {
               
             <View style={{...Forms.rowCon}}>
               <StatButton item={ {header: 'streak', stat: profile.streak.streak, body: 'days'}} />
-              <StatButton item={ {header: 'tasks', stat: caresByFrequency().length, body: 'today'}} />
-              <StatButton item={ {header: '♥︎', stat: pets.length, body: 'pets'}} />
+              <StatButton item={ {header: 'tasks', stat: careCounts(new Date()) , body: 'today'}} />
+              <StatButton item={ {header: 'visit due', stat: Math.abs(healthCounter), body: `days ${healthCounter < 0 && 'ago'}`}} color={healthCounter < 0 && Colors.red.reg} />
             </View>
           </View>
 
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    backgroundColor: Colors.lightPink,
+    backgroundColor: Colors.pink.light,
     overflow: 'hidden',
   },
   banner: {
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     top: 150,
     left: 0,
     zIndex: 3,
-    backgroundColor: Colors.transparent,
+    backgroundColor: Colors.transparent.light,
     padding: 8,
     width: 50,
     height: 50,
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   profilePhoto: {
     ...Forms.smallPhoto,
-    backgroundColor: Colors.lightPink,
+    backgroundColor: Colors.pink.light,
     margin: 10,
   },
   bioBox: {

@@ -5,7 +5,7 @@ export const ButtonStyles = {
   height: 60, 
   margin: 30, 
   borderRadius: '50%', 
-  backgroundColor: Colors.pink, 
+  backgroundColor: Colors.pink.reg, 
   textColor: Colors.white
 }
 

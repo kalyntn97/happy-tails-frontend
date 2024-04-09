@@ -1,6 +1,7 @@
 //npm modules
 import React, { useState } from 'react'
 import { View, StyleSheet, TextInput, Pressable, Text, Alert, SafeAreaView } from 'react-native'
+import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from '@auth/AuthContext'
 //components
@@ -34,8 +35,8 @@ const RegisterScreen = ({ navigation }) => {
 
   return ( 
     <SafeAreaView style={styles.container}>
-      {/* <LottieView source={require('@assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} /> */}
-      <GoBackButton top={50} onPress={() => navigation.goBack()}/>
+      <LottieView source={require('@assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
+      <GoBackButton position='topLeft' top={50} onPress={() => navigation.goBack()}/>
       <Text style={styles.header}>Create Account</Text>
       <View style={styles.form}>
         <TextInput 
@@ -77,20 +78,20 @@ const styles = StyleSheet.create({
     ...Spacing.centered,
     ...Spacing.fullScreenDown
   },
-  // catAnimation: {
-  //   width: '60%',
-  // },
+  catAnimation: {
+    width: '50%',
+  },
   header: {
     ...Typography.mainHeader,
-    marginTop: '20%',
-    color: Colors.darkPink,
+    marginTop: 0,
+    color: Colors.pink.dark,
   },
   form: {
     ...Forms.form,
   },
   input: {
     ...Forms.input,
-    borderColor: Colors.pink,
+    borderColor: Colors.pink.reg,
   },
 })
 

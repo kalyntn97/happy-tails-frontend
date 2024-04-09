@@ -7,16 +7,16 @@ import LottieView from "lottie-react-native"
 import { RoundButton } from "@components/ButtonComponent"
 import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
+import EmptyList from "@components/EmptyList"
 //types & helpers
+import PetInfo from "@components/PetInfo/PetInfo"
 import { Health } from "@health/HealthInterface"
-import { getIconSource } from "@utils/ui"
+import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 //queries
+import { usePetIds, useShallowPetBasics } from "@store/storeUtils"
 import { useGetAllHealths } from "@health/healthQueries"
 //styles
 import { Buttons, Spacing, Typography, Colors, Forms } from '@styles/index'
-import { usePetIds, useShallowPetBasics } from "@store/storeUtils"
-import PetInfo from "@components/PetInfo/PetInfo"
-import EmptyList from "@components/EmptyList"
 
 type HealthIndexProps = {
   navigation: any
@@ -30,13 +30,13 @@ type HealthItemProps = {
 
 
 const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
-  const iconSource = getIconSource(health.name)
+  const iconSource = getHealthIconSource(health.name)
 
   return (
     <TouchableOpacity 
       onPress={() => navigation.navigate('Details', { healthId: health._id })}
       style={[styles.itemContainer,
-      { backgroundColor: Colors.multiArray3[health.pet.color] }
+      { backgroundColor: Colors.multi.light[health.pet.color] }
     ]}>
       <View style={styles.itemLeft}>
         <Image source={iconSource} style={styles.itemIcon} />
@@ -45,15 +45,16 @@ const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
           <PetInfo pet={health.pet} size='mini' />
         </View>
       </View>
-      <Image source={require('@assets/icons/next2.png')} style={{...Forms.smallIcon, marginRight: 10 }} />
+      <Image source={getActionIconSource('nextRound')} style={{...Forms.smallIcon, marginRight: 10 }} />
     </TouchableOpacity>
   )
 }
 
 const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
   const { data: healths, isLoading, isSuccess, isError} = useGetAllHealths()
-  const [filtered, setFiltered] = useState<string[]>([])
   const pets = useShallowPetBasics()
+  const petIds = pets.map(pet => pet._id)
+  const [filtered, setFiltered] = useState<string[]>(petIds)
 
   const petIdToPet = (petId: string) => {
     return pets.find(pet => pet._id === petId)
@@ -64,7 +65,7 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
   const healthIndex: { title: string; data: Health[] }[] = sortOrder.map(petId => ({
     title: petId,
     data: healths.filter(health => 
-      health.pet._id === petId && !filtered.includes(health.pet._id)
+      health.pet._id === petId && filtered.includes(health.pet._id)
     ) || []
   }))
   
@@ -95,9 +96,14 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
       horizontal
       contentContainerStyle={styles.listHeader}
       showsHorizontalScrollIndicator={false}
-    >
+    > 
+      <TouchableOpacity style={[styles.allBtn, filtered.length < pets.length && { opacity: 0.3 }]} onPress={() => setFiltered(prev => prev.length === pets.length ? [] : petIds)}>
+        {/* <Text style={styles.headerCount}>{section.data.length}</Text> */}
+        <Image source={require('@assets/icons/pets.png')} style={styles.allBtnIcon} />
+        <Text style={styles.allBtnText}>All</Text>
+      </TouchableOpacity>
       {healthIndex.map((section, idx) => 
-        <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn, filtered.includes(section.title) && { opacity: 0.3 }]} onPress={() => handleHeaderPress(section.title)}>
+        <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn, !filtered.includes(section.title) && { opacity: 0.3 }]} onPress={() => handleHeaderPress(section.title)}>
           {/* <Text style={styles.headerCount}>{section.data.length}</Text> */}
           <PetInfo pet={petIdToPet(section.title)} size='small' />
         </TouchableOpacity>
@@ -147,15 +153,25 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
   },
-  mainBtn: {
-    ...Buttons.longSquare,
-    backgroundColor: Colors.pink,
-  },
   subBtn: {
     width: 80,
   },
-  btnText: {
-    ...Buttons.buttonText
+  allBtn: {
+    width: 80,
+    ...Spacing.flexColumn,
+    alignSelf: 'center',
+  },
+  allBtnIcon: {
+    width: 50,
+    height: 50,
+    backgroundColor: Colors.pink.light,
+    borderRadius: 99,
+    marginBottom: 7,
+    marginTop: 5,
+  },
+  allBtnText: {
+    ...Typography.xSmallHeader,
+    margin: 0,
   },
   headerCon: {
     width: '100%',
@@ -171,7 +187,7 @@ const styles = StyleSheet.create({
     ...Forms.xxSmallPhoto,
   },
   headerCount: {
-    color: Colors.red,
+    color: Colors.red.reg,
     fontWeight: 'bold',
     position: 'absolute',
     right: '10%',

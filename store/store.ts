@@ -17,10 +17,15 @@ const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & Hea
     get month() { return get().activeDate.month + 1 === getDateInfo(new Date()).month },
     get year() { return get().activeDate.year === getDateInfo(new Date()).year },
   },
+  activeTaskCounts: {
+    care: 0,
+    health: 0,
+  },
   setActions: {
     setProfile: profile => set({ profile: profile }),
     setReminderInterval: interval => set({ reminderInterval: interval }),
     setActiveDate: dateObj => set({ activeDate: dateObj }),
+    setActiveTaskCounts: activeTaskObj => set({ activeTaskCounts: activeTaskObj }),
     setPets: pets => set({ pets: pets }),
     setCares: cares => set({ cares: cares}),
     setHealths: healths => set({ healths: healths }),
@@ -70,6 +75,7 @@ export const useBoundStore= create<ProfileSlice & PetSlice & CareSlice & HealthS
 export const useProfile = () => useBoundStore(state => state.profile)
 export const useReminderInterval = () => useBoundStore(state => state.reminderInterval)
 export const useActiveDate = () => useBoundStore(state => state.activeDate)
+export const useActiveTaskCounts = () => useBoundStore(state => state.activeTaskCounts)
 export const useCurrentIsActive = () => useBoundStore(state => state.currentIsActive)
 export const usePets = () => useBoundStore(state => state.pets)
 export const useCares = () => useBoundStore(state => state.cares)

@@ -18,9 +18,11 @@ import EditProfileScreen from "@profile/screens/EditProfileScreen"
 import ProfileScreen from "@profile/screens/ProfileScreen"
 import SettingsScreen from "@profile/screens/SettingsScreen"
 //styles
-import { Colors, Forms } from "@styles/index"
+import { Colors, Forms, Typography } from "@styles/index"
 import EditHealthScreen from "@health/screens/EditHealthScreen"
 import HealthDetailsScreen from "@health/screens/HealthDetails"
+import { getNavigationIconSource } from "@utils/ui"
+import NewStatScreen from "features/stat/NewStatScreen"
 
 const PrivateApp = () => {
   const Tab = createBottomTabNavigator()
@@ -30,6 +32,7 @@ const PrivateApp = () => {
   const HealthStack = createNativeStackNavigator()
   //PetTab
   const PetStack = createNativeStackNavigator()
+  const DetailStack = createNativeStackNavigator()
   //AccountTab
   const ProfileStack = createNativeStackNavigator()
   
@@ -44,26 +47,15 @@ const PrivateApp = () => {
           switch (route.name) {
             case 'Home': name = 'Home'; break
             case 'Pets': name = 'Pets'; break
-            case 'Account': name = 'Profile'; break
-            case 'User': name = 'Account'; break
+            case 'Account': name = 'Account'; break
+            case 'User': name = 'Profile'; break
             default: name = 'Home'
           }
-          return <Text style={[styles.iconLabel, { color: focused ? Colors.darkPink : 'black'}]}>{name}</Text>
+          return <Text style={[styles.iconLabel, focused ? {...Typography.focused} : {...Typography.unFocused}]}>{name}</Text>
         },
         tabBarIcon: ({ focused }) => {
-          let icon:any
-
-          if (route.name === 'Home') {
-            icon = focused ? require('@assets/icons/home-active.png') : require('@assets/icons/home-inactive.png')
-          } else if (route.name === 'Pets') {
-            icon = focused ? require('@assets/icons/pets-active.png') : require('@assets/icons/pets-inactive.png')
-          } else if (route.name === 'Account') {
-            icon = focused ? require('@assets/icons/profile-active.png') : require('@assets/icons/profile-inactive.png')
-          } else if (route.name === 'User') {
-            icon = focused ? require('@assets/icons/login-active.png') : require('@assets/icons/login-inactive.png')
-          }
-
-          return <Image source={icon} style={styles.icon } />
+          const iconSource = getNavigationIconSource(route.name, focused ? 'active' : 'inactive')
+          return <Image source={iconSource} style={styles.icon } />
         },
       })}
     >
@@ -108,8 +100,15 @@ const PrivateApp = () => {
             <PetStack.Screen name='Index' component={PetIndexScreen} options={{ title: 'All Pets' }}/>
             <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }}
             />
-            <PetStack.Screen name='Details' component={PetDetailsScreen} options={{ title: 'Details' }} />
-            <PetStack.Screen name='Edit' component={EditPetScreen} options={({ route }) => ({ title: `${route.params.pet.name ?? 'Edit'}` })}/>
+            <PetStack.Screen name='Edit' component={EditPetScreen} options={({ route }) => ({ title: `${route.params.pet.name ?? 'Edit'}` })} />
+            <PetStack.Screen name='Details' options={{ headerShown: false }}>
+              {() => (
+                <DetailStack.Navigator screenOptions={{ ...stackOptions }}>
+                  <DetailStack.Screen name='Index' component={PetDetailsScreen} options={{ title: 'Details' }} />
+                  <DetailStack.Screen name='Create' component={NewStatScreen} options={{ title: 'New Log' }} />
+                </DetailStack.Navigator>
+              )}
+            </PetStack.Screen>
           </PetStack.Navigator>
         )}
       </Tab.Screen>
@@ -119,7 +118,6 @@ const PrivateApp = () => {
         listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) } */>
         {() => (
           <ProfileStack.Navigator screenOptions={{ 
-            // headerBackImageSource: require('@assets/icons/undo.png'),
             ...stackOptions
           }}>
             <ProfileStack.Screen name='Profile' component={ProfileScreen} options={{ title: 'Profile', headerShown: false }} />
@@ -142,13 +140,13 @@ const styles = StyleSheet.create({
 })
 
 const headerStyle: any = {
-  headerStyle: { backgroundColor: Colors.lightPink },
+  headerStyle: { backgroundColor: Colors.pink.light },
   headerTitleStyle: { fontSize: 20, fontWeight: 'bold' },
-  headerTintColor: Colors.darkPink,
+  headerTintColor: Colors.pink.dark,
 }
 
 const contentStyle: NativeStackNavigationOptions = {
-  contentStyle: { backgroundColor: Colors.lightestPink }
+  contentStyle: { backgroundColor: Colors.shadow.lightest }
 }
 
 const stackOptions: NativeStackNavigationOptions = {

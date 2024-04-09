@@ -2,6 +2,7 @@ import { StyleSheet, TouchableOpacity, Text, View, Image, ImageStyle } from "rea
 import { useState } from "react"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { getActionIconSource } from "@utils/ui"
 
 interface FormProps {
   visible: string
@@ -14,8 +15,8 @@ const ToggleableForm: React.FC<FormProps> = ({ visible, title, content }) => {
   return (
     <View style={styles.container}>
       <View style={styles.mainBtn}>
-        <Image source={require('@assets/icons/dropdownRound.png')} style={styles.icon } />
-        <Text style={[styles.btnText, { color: visible === title ? Colors.darkPink : 'black' }]}>
+        <Image source={getActionIconSource('downThin')} style={styles.icon } />
+        <Text style={[styles.btnText, { color: visible === title ? Colors.pink.dark : 'black' }]}>
           {title}
         </Text>
       </View>

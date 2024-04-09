@@ -16,11 +16,11 @@ const ColorPickingPanel: FC<Props> = ({ onPress, initial }) => {
   }
 
   let colorOptions = []
-  for (let i = 0; i < Colors.multiArray3.length; i++) {
+  for (let i = 0; i < Colors.multi.light.length; i++) {
     colorOptions.push(
       <TouchableOpacity 
         key={i}
-        style={[styles.circle, { backgroundColor: Colors.multiArray3[i]}]}
+        style={[styles.circle, { backgroundColor: Colors.multi.light[i]}]}
         onPress={() => onSelect(i)}
       >
         { selected === i && <Text style={styles.check}>✔︎</Text> }

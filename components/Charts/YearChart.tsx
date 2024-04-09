@@ -5,6 +5,7 @@ import * as careHelpers from "@care/careHelpers"
 import { getDateInfo } from "@utils/datetime"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { getStatIconSource } from "@utils/ui"
 
 interface YearChartProps {
   tracker: any
@@ -22,7 +23,7 @@ const YearChart: React.FC<YearChartProps> = ({ tracker, times }) => {
       progressContainer.push(
         <Image 
           key={`done-${i}`}
-          source={require('@assets/icons/heart-filled.png')} 
+          source={getStatIconSource('paw', 1)} 
           style={[styles.heart , { width: 40, height: 40 }]} 
         />
       )
@@ -31,7 +32,7 @@ const YearChart: React.FC<YearChartProps> = ({ tracker, times }) => {
       progressContainer.push(
         <Image 
           key={`pending-${i}`} 
-          source={require('@assets/icons/heart-gray.png')} 
+          source={getStatIconSource('paw', 0)} 
           style={[styles.heart , { width: 40, height: 40 }]} 
         />
       )
@@ -39,7 +40,7 @@ const YearChart: React.FC<YearChartProps> = ({ tracker, times }) => {
 
   return (  
     <View style={styles.container}>
-      <Text style={[styles.header,isCurrent ? { color: Colors.darkPink } : {}]}>{currYear}</Text>
+      <Text style={[styles.header,isCurrent ? { color: Colors.pink.dark } : {}]}>{currYear}</Text>
     
       <View style={[ styles.progress, { maxWidth: size === 'large' ? 200 : 140} ]}>
         {progressContainer}

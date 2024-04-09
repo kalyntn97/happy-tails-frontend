@@ -14,19 +14,18 @@ export const roundedBase = {
   alignItems: 'center',
   justifyContent: 'center',
   borderRadius: 99,
-  backgroundColor: Colors.pink
+  backgroundColor: Colors.pink.reg
 }
 
 export const solid: ViewStyle = {
   ...base,
   ...boxShadow,
-  backgroundColor: Colors.pink,
+  backgroundColor: Colors.pink.reg,
 }
 
 export const transparent: ViewStyle = {
   ...base,
   borderWidth: 2,
-  backgroundColor: Colors.transparent,
 }
 
 export const sub: ViewStyle = {
@@ -45,13 +44,13 @@ export const whiteBtnText: TextStyle = {
   color: Colors.white,
 }
 //sizes: ViewStyle
-export const xSmall = {width: 100,height: 40 }
+export const xSmall = {width: 100, height: 40 }
 
-export const xxSmall = {width: 80,height: 30 }
+export const xxSmall = {width: 80, height: 30 }
 
-export const small = {width: 120,height: 50 }
+export const small = {width: 120, height: 50 }
 
-export const long = {width: 250,height: 50 }
+export const long = {width: 250, height: 50 }
 
 export const rounded: ViewStyle = { borderRadius: 30 }
 
@@ -60,14 +59,17 @@ export const lessRounded: ViewStyle= { borderRadius: 15 }
 export const square: ViewStyle = { borderRadius: 8 }
 //buttons
 export const smallRoundedSolid: ViewStyle = { ...small, ...solid, ...lessRounded }
+export const longSquareSolid: ViewStyle = { ...long, ...solid, ...square }
 
 export const smallRoundedTransparent: ViewStyle = { ...small, ...rounded, ...transparent }
-
 export const xSmallRoundedTransparent: ViewStyle = { ...xSmall, ...rounded, ...transparent }
+export const longRoundedTransparent: ViewStyle = { ...long, ...transparent, ...rounded }
+export const xxSmallRoundedSolid: ViewStyle = { ...xxSmall, ...solid, ...rounded }
 
 export const smallSubButton: ViewStyle = { ...sub, ...base }
 
 export const xSmallSquareButton: ViewStyle = { ...xSmall, ...square, ...solid }
+export const xSmallRoundButton: ViewStyle = { ...xSmall, ...rounded, ...solid }
 
 export const roundButton = { ...solid, ...roundedBase, width: 60, height: 60 }
 

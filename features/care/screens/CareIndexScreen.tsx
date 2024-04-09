@@ -9,11 +9,11 @@ import EmptyList from "@components/EmptyList"
 import { RoundButton } from "@components/ButtonComponent"
 //types & helpers
 import { Care } from "@care/CareInterface"
-import { getIconSource } from "@utils/ui"
+import { getActionIconSource, getCareIconSource } from "@utils/ui"
 //queries
 import { useGetAllCares } from "@care/careQueries"
 //styles
-import { Buttons, Spacing, Typography, Colors, Forms } from '@styles/index'
+import { Buttons, Spacing, Colors, Forms } from '@styles/index'
 
 type CareIndexProps = {
   navigation: any
@@ -26,14 +26,14 @@ type CareSection = {
 }
 
 const CareItem = ({ care, navigation }) => {
-  const iconSource = getIconSource(care.name)
+  const iconSource = getCareIconSource(care.name)
   
   return (
     <TouchableOpacity 
       disabled={!care.repeat}
       onPress={() => navigation.navigate('Details', { care })}
       style={[styles.itemContainer,
-      { backgroundColor: Colors.multiArray3[care.color], opacity: !care.repeat ? 0.5 : 1 }
+      { backgroundColor: Colors.multi.light[care.color], opacity: !care.repeat ? 0.5 : 1 }
       ]}
       
     >
@@ -42,7 +42,7 @@ const CareItem = ({ care, navigation }) => {
         <Text style={styles.itemText}>{care.name}</Text>
         <Text style={[styles.itemText, { color: 'gray' }]}>{care.frequency}</Text>
       </View>
-      <Image source={require('@assets/icons/next2.png')} style={styles.rightIcon} />
+      <Image source={getActionIconSource('nextRound')} style={styles.rightIcon} />
     </TouchableOpacity>
   )
 }
@@ -64,8 +64,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   //     const { frequency } = care
   //     result[frequency] = result[frequency] || { title: frequency, data: [] }
   //     result[frequency].data.push(care)
-  //   }
-  //   return Object.values(result)
+  //   }n Object.values(result)
   // })()
   
   const sectionListRef = useRef<SectionList>(null)
@@ -98,7 +97,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
     >
       {careIndex.map((section: CareSection, idx: number) => 
         <TouchableOpacity key={`title-${idx}`} style={[
-          styles.subBtn, { backgroundColor: Colors.multiArray[idx] }, filtered.includes(section.title) && { opacity: 0.3 }
+          styles.subBtn, { backgroundColor: Colors.multi.light[idx] }, filtered.includes(section.title) && { opacity: 0.3 }
           ]} onPress={() => handleHeaderPress(section.title, idx)}
         >
           <Text>{section.title}</Text>
@@ -152,14 +151,12 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
   },
-  mainBtn: {
-    ...Buttons.longSquare,
-    backgroundColor: Colors.pink,
-  },
   subBtn: {
-    ...Buttons.xxSmallRounded,
-    margin: 5,
-    width: 85,
+    ...Buttons.xxSmallRoundedSolid,
+    marginHorizontal: 5,
+    marginVertical: 0,
+    
+    borderWidth: 0,
   },
   btnText: {
     ...Buttons.buttonText
@@ -169,7 +166,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   headerCount: {
-    color: Colors.red,
+    color: Colors.red.reg,
     fontWeight: 'bold',
     position: 'absolute',
     right: '10%',

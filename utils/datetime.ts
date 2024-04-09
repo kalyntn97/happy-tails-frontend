@@ -35,7 +35,7 @@ export const months = [
 
 export const getYears = () => {
   const { year } = getDateInfo(new Date())
-  let years = Array.from({length: year - 2023}, (_, index) => 2024 + index)
+  let years = Array.from({length: year - 2012}, (_, index) => 2015 + index)
   return years
 }
 
@@ -64,4 +64,10 @@ export const dateIsWithinRange = (start: Date, end: Date) => {
 export const countDaysBetween = (start: Date, end: Date) => {
   const timeElapsed = new Date(end).getTime() - new Date(start).getTime()
   return  Math.round(timeElapsed / (1000 * 3600 * 24))
+}
+
+export const countYearsBetween = (start: Date, end: Date) => {
+  const timeElapsed = new Date(end).getTime() - new Date(start).getTime()
+  const timeInYears = timeElapsed / (1000 * 60 * 60 * 24 * 365.25)
+  return parseFloat(timeInYears.toFixed(2))
 }

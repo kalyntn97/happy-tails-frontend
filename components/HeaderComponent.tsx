@@ -1,6 +1,7 @@
 import { Image, Pressable, Text, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Spacing, Colors, Typography, Forms } from "@styles/index"
 import { FC } from "react"
+import { getActionIconSource } from "@utils/ui"
 
 type BoxHeaderProps = {
   title: string
@@ -32,7 +33,7 @@ export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor }) =>
     ]}>
       { title }
     </Text>
-    <Image source={require('@assets/icons/next3.png')} style={{
+    <Image source={getActionIconSource('next')} style={{
       ...Forms.xSmallIcon,
       marginLeft: 'auto',
     }} />

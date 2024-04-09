@@ -1,11 +1,13 @@
 import { Image, StyleSheet, Text, View } from "react-native"
 import { getPetIconSource } from "@utils/ui"
 import { Spacing, Forms, Typography, Colors } from '@styles/index'
+import { countYearsBetween } from "@utils/datetime"
 
 interface PetInfoProps {
   pet: {
     name: string
-    age?: number
+    dob?: Date,
+    firstMet?: Date,
     species?: string 
     breed?: string
     photo: string | null
@@ -15,6 +17,7 @@ interface PetInfoProps {
 
 const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
   const iconSource = getPetIconSource(pet.species)
+  const petAge = countYearsBetween(pet.dob, new Date())
 
   return ( 
     <View style={styles.container}>
@@ -38,7 +41,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
       {size === 'expanded' && 
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{pet.name}</Text>
-          <Text style={styles.body}>{pet.age} {pet.age && (pet.age !== 1 ? 'years old' : 'year old')} {pet.breed}</Text>
+          <Text style={styles.body}>{!!petAge && petAge} {!!petAge && (petAge !== 1 ? 'years old' : 'year old')} {pet.breed}</Text>
           <View style={styles.details}>
           </View>
         </View>}
@@ -68,13 +71,12 @@ const styles = StyleSheet.create({
   petPhoto: {
     position: 'relative',
     margin: 10,
-    backgroundColor: Colors.lightPink
+    backgroundColor: Colors.shadow.lightest
   },
   petIcon: {
-    width: 60,
-    height: 60,
+    ...Forms.icon,
     position: 'absolute',
-    top: '55%',
+    top: '60%',
     left: '-7%',
     zIndex: 1,
   },

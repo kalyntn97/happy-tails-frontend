@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from "react"
 import {  TextInput, TouchableOpacity, Image, Text, View } from "react-native"
 //components
 import { IconButton } from "@components/ButtonComponent"
-import { AlertForm } from "@utils/ui"
+import { AlertForm, getActionIconSource } from "@utils/ui"
 //types & queries
 import { Visit } from "@health/HealthInterface"
 import { useAddVisitNotes } from "@health/healthQueries"
@@ -45,26 +45,26 @@ const NoteInput: FC<NoteInputProps> = ({ healthId, visit, due }) => {
 
   return (
     <TouchableOpacity onPress={() => toggleShowInput()} style={styles.noteInputCon}>
-        {showInput ?
-          <>
-            <View style={styles.smallBtnCon}>
-              <IconButton onPress={toggleShowInput} type='undo' size='small' />
-              <IconButton type='delete' size='small' />
-              <IconButton onPress={onSubmit} type='save' size='small' />
-            </View>
-            <TextInput 
-              style={styles.notesInput}
-              placeholder={notes || 'Enter visit notes'}
-              value={notes}
-              onChangeText={(text: string) => setNotes(text)}
-            />
-          </>
-        : 
-          <>
-            <Image source={require('@assets/icons/edit.png')} style={styles.miniIcon} />
-            <Text style={[styles.detailText, styles.notes, !notes && styles.emptyNote]}>{notes || 'No visit notes'}</Text>
-          </>
-        }
+      {showInput ?
+        <>
+          <View style={styles.smallBtnCon}>
+            <IconButton onPress={toggleShowInput} type='undo' size='small' />
+            <IconButton type='delete' size='small' />
+            <IconButton onPress={onSubmit} type='save' size='small' />
+          </View>
+          <TextInput 
+            style={styles.notesInput}
+            placeholder={notes || 'Enter visit notes'}
+            value={notes}
+            onChangeText={(text: string) => setNotes(text)}
+          />
+        </>
+      : 
+        <>
+          <Image source={getActionIconSource('edit')} style={styles.editIcon} />
+          <Text style={[styles.detailText, styles.notes, !notes && styles.emptyNote]}>{notes || 'No visit notes'}</Text>
+        </>
+      }
     </TouchableOpacity>
   )
 }

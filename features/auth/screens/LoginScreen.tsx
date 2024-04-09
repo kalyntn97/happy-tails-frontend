@@ -27,7 +27,7 @@ const LoginScreen: FC = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <GoBackButton top={50} onPress={() => navigation.goBack()}/>
+      <GoBackButton position ='topLeft' top={50} onPress={() => navigation.goBack()}/>
       <LottieView source={require('@assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
       <Text style={styles.header}>Sign in</Text>
       <View style={styles.form}>
@@ -64,18 +64,18 @@ const styles = StyleSheet.create({
   header: {
     ...Typography.mainHeader,
     marginTop: 0,
-    color: Colors.darkPink,
+    color: Colors.pink.dark,
   },
   form: {
     ...Forms.form,
   },
   errorMsg: {
-    color: Colors.red,
+    color: Colors.red.dark,
     fontWeight: 'bold'
   },
   input: {
     ...Forms.input,
-    borderColor: Colors.pink,
+    borderColor: Colors.pink.reg,
   },
 })
 

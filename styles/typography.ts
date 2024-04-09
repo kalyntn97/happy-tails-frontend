@@ -1,13 +1,20 @@
 import { TextStyle } from "react-native"
+import Colors from "./colors"
+
+const base = {
+  // color: Colors.shadow.darkest,
+}
 
 export const header: TextStyle = {
+  ...base,
   margin: 20,
   fontWeight: 'bold',
   letterSpacing: 1,
-  textAlign: 'center'
+  textAlign: 'center',
 }
 
 export const sub: TextStyle = {
+  ...base,
   margin: 10,
   textAlign: 'center',
   fontStyle: 'italic',
@@ -94,4 +101,12 @@ export const smallSubBody: TextStyle = {
   fontStyle: 'italic',
 }
 
+export const focused: TextStyle = {
+  fontWeight: 'bold',
+  color: Colors.shadow.darkest,
+}
+
+export const unFocused: TextStyle = {
+  color: Colors.shadow.reg,
+}
 

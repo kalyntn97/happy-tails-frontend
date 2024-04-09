@@ -11,6 +11,7 @@ import ScrollCalendar from "@home/components/ScrollCalendar"
 import Loader from "@components/Loader"
 //styles
 import { Buttons, Typography, Colors, Forms, Spacing } from '@styles/index'
+import { MainButton, SubButton, TransparentButton } from "@components/ButtonComponent"
 
 const HomeScreen: React.FC = ({ navigation }) => {
   const { authState } = useAuth()
@@ -55,28 +56,31 @@ const HomeScreen: React.FC = ({ navigation }) => {
             <LottieView source={require('@assets/animations/happy.json')} autoPlay loop style={styles.happyAnimation} />
             <View style={styles.headers}>
                 <Text style={styles.mainHeader}>
-                  <Text style={{ color: Colors.blue }}>Care.</Text>{'\n'}
-                  <Text style={{ color: Colors.green }}>Connection.</Text>{'\n'}
-                  <Text style={{ color: Colors.pink }}>Joy.</Text>
+                  <Text style={{ color: Colors.blue.reg }}>Care.</Text>{'\n'}
+                  <Text style={{ color: Colors.green.reg }}>Connection.</Text>{'\n'}
+                  <Text style={{ color: Colors.pink.reg }}>Joy.</Text>
                 </Text>
                 <Text style={styles.subHeader}>Ready to start a new journey with your furry friends?</Text>
             </View>
-            <TouchableOpacity onPress={() => navigation.navigate('User', { screen: 'Login' })} style={styles.mainBtn}>
-              <Text style={[styles.btnText, { color: Colors.lightestPink }]}>Get Started</Text>
-            </TouchableOpacity>
+            <TransparentButton title='Get Started' onPress={() => scrollToNext(1)} color={Colors.pink.reg} size='large' />
+            <SubButton title="Already have an account? Login here" size='small' color={Colors.shadow.dark} onPress={() => navigation.navigate('User', { screen: 'Login' })} />
+            
             <TouchableOpacity style={styles.link} onPress={() => scrollToNext(1)}>
               <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
             </TouchableOpacity>
           </View>
 
-          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.lightPink }]}>
+          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.pink.light }]}>
             <TouchableOpacity style={styles.link} onPress={() => scrollToNext(2)}>
+              <MainButton title='Continue' size='small' onPress={() => scrollToNext(2)} />
               <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
             </TouchableOpacity>
           </View>
 
-          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.yellow }]}>
+          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.yellow.light }]}>
+
             <TouchableOpacity style={styles.link} onPress={() => scrollToNext(0)}>
+              <MainButton title='Continue' size='small' bgColor={Colors.yellow.dark} />
               <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
             </TouchableOpacity>
           </View>
@@ -90,7 +94,7 @@ const styles = StyleSheet.create({
   screen: {
     width: '100%',
     alignItems: 'center',
-    backgroundColor: Colors.lightPink,
+    backgroundColor: Colors.shadow.lightest,
   },
   banner: {
     marginTop: 40,
@@ -118,13 +122,13 @@ const styles = StyleSheet.create({
   },
   happyAnimation: {
     width: '100%',
-    marginVertical: 20,
+    marginTop: 10,
   },
   mainBtn: {
     ...Buttons.longRounded,
     width: '80%',
     height: 50,
-    backgroundColor: Colors.pink,
+    backgroundColor: Colors.pink.reg,
     marginTop: 10,
     
   },
@@ -153,8 +157,8 @@ const styles = StyleSheet.create({
     marginTop: 'auto'
   },
   icon: {
-    width: 100, 
-    height: 100,
+    width: 80, 
+    height: 80,
   }
 })
  

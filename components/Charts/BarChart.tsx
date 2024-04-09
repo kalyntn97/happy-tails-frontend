@@ -43,7 +43,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
       <View style={[styles.header, { height: '30%' }]}>
           <Text style={[
             styles.headerText,
-            { color: isCurrent ? Colors.darkPink : 'black' },
+            { color: isCurrent ? Colors.pink.dark : 'black' },
             frequency === 'Weekly' 
             ? { fontSize: 15, width: chartHeight * 0.3 }
             : { fontSize: 30, width: chartHeight}
@@ -54,7 +54,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
         <View style={[styles.header, { height: '70%' }]}>
           <Text style={[
             styles.headerText,
-            { color: isCurrent ? Colors.darkPink : 'black' },
+            { color: isCurrent ? Colors.pink.dark : 'black' },
             { fontSize: 20, width: chartHeight * 0.7 }
           ]}>
             {trackerMonthName}
@@ -80,7 +80,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
               ( 
                 (currWeek === idx + 1 && isCurrent && frequency === 'Weekly') 
                 || (monthIdx === idx + 1 && isCurrent && frequency === 'Monthly') 
-              ) ? { color: Colors.darkPink, fontWeight: 'bold' } 
+              ) ? { color: Colors.pink.dark, fontWeight: 'bold' } 
               : {}
             ]}>
                 {frequency === 'Weekly' 
@@ -94,7 +94,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
               { fontSize: frequency === 'Weekly' ? 15 : 10 }
             ]}>
               {times === value && 
-                <Text style={{ fontSize: frequency === 'Weekly' ? 10 : 5, color: Colors.green }}>✔️</Text>
+                <Text style={{ fontSize: frequency === 'Weekly' ? 10 : 5, color: Colors.green.reg }}>✔️</Text>
               }
               {value !== 0 && value}
             </Text>

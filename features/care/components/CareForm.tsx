@@ -104,7 +104,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
 
         <View style={styles.rowCon}>
           <Text style={styles.rowText}>{repeat ? 'Start Date' : 'Date'}</Text>
-          <RNDateTimePicker value={new Date(date)} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.darkPink} />
+          <RNDateTimePicker value={new Date(date)} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.pink.dark} />
         </View>
 
         {repeat &&
@@ -133,7 +133,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         {repeat && ending &&
           <View style={styles.rowCon}>
             <Text style={styles.rowText}>End Date</Text>
-            <RNDateTimePicker value={new Date(endDate) ?? new Date()} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setEndDate(selectedDate) }} accentColor={Colors.darkPink} />
+            <RNDateTimePicker value={new Date(endDate) ?? new Date()} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setEndDate(selectedDate) }} accentColor={Colors.pink.dark} />
           </View>
         }
 
@@ -141,7 +141,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
           <View style={[styles.rowCon]}>
             <Text style={styles.rowText}>Repeat is</Text>
             <TouchableOpacity onPress={() => setRepeat(!repeat)}>
-              <Text style={[styles.rowTextFocus, { color: repeat ? Colors.green : Colors.red }]}>{repeat ? 'ON' : 'OFF'}</Text>
+              <Text style={[styles.rowTextFocus, { color: repeat ? Colors.green.reg : Colors.red.reg }]}>{repeat ? 'ON' : 'OFF'}</Text>
             </TouchableOpacity>
           </View>
           <ColorPickingPanel onPress={setColor} initial={initialValues?.color} />
@@ -160,11 +160,10 @@ const styles = StyleSheet.create({
   },
   header: {
     ...Typography.mainHeader,
-    color: Colors.darkPink
+    color: Colors.pink.dark
   },
   input: {
     ...Forms.input,
-    borderColor: Colors.pink,
   },
   error: {
     color: Colors.red,

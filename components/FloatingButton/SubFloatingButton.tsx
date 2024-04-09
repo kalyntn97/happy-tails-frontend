@@ -6,13 +6,13 @@ import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanima
 // styles
 import { ButtonStyles, Button, subBtn_tap_event } from "./constants"
 import { Spacing, Colors, Forms } from "@styles/index"
-import { getIconSource } from "@utils/ui"
+import { getActionIconSource } from "@utils/ui"
 
 
 const SubFloatingButton = ({ onPress, label, index, x }) => {
   const { width } = useWindowDimensions()
  
-  const iconSource = getIconSource(label)
+  const iconSource = getActionIconSource(label)
 
   const buttonOpacity = useSharedValue(1)
  
@@ -41,7 +41,7 @@ const SubFloatingButton = ({ onPress, label, index, x }) => {
     <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
       <Animated.View style={[
         styles.button, 
-        { backgroundColor: Colors.multiArray2[index] }, 
+        { backgroundColor: Colors.multi.dark[index + 1] }, 
         animatedStyles
       ]}>
         <Image style={styles.icon as ImageStyle} source={iconSource} />
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: ButtonStyles.width + 10,
     fontWeight: 'bold',
-    color: Colors.darkestPink,
+    color: Colors.pink.darkest,
     fontSize: 15,
   },
   icon: {

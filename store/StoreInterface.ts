@@ -20,10 +20,12 @@ export interface ProfileSlice {
     month: boolean, 
     year: boolean, 
   }
+  activeTaskCounts: { care: number, health: number }
   setActions : {
     setProfile: (profile: Profile) => void
     setReminderInterval: (interval: number) => void,
     setActiveDate: (dateObj: { date: number, week: number, month: number, year: number }) => void
+    setActiveTaskCounts: (activeTaskObj: { care: number, health: number }) => void
     setPets: (pets: Pet[]) => void
     setCares: (cares: Care[]) => void
     setHealths: (healths: Health[]) => void

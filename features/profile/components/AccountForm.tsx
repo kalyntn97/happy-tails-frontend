@@ -42,7 +42,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={[styles.container, { backgroundColor: showForm === 'password' ? Colors.white : showForm !== 'password' ? Colors.white : Colors.lightestPink }]}>
+      <View style={[styles.container, { backgroundColor: showForm === 'password' ? Colors.white : showForm !== 'password' ? Colors.white : Colors.pink.lightest }]}>
         <Text style={styles.errorMsg}>{errorMsg}</Text>
         <View style={styles.form}>
           <TextInput 
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10
   },
   errorMsg: {
-    color: Colors.red,
+    color: Colors.red.dark,
     fontWeight: 'bold',
     margin: 5,
     height: '3%'
@@ -111,14 +111,14 @@ const styles = StyleSheet.create({
     ...Forms.input,
     height: 40,
     margin: 5,
-    borderColor: Colors.pink,
-    backgroundColor: Colors.lightestPink,
+    borderColor: Colors.pink.reg,
+    backgroundColor: Colors.pink.lightest,
   },
   mainBtn: {
     ...Buttons.smallRounded,
     height: 40,
     margin: 10,
-    backgroundColor: Colors.pink
+    backgroundColor: Colors.pink.reg
   },
   subBtn: {
     ...Buttons.smallSub,
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     ...Buttons.buttonText,
-    color: Colors.darkestPink
+    color: Colors.pink.darkest
   },
   btnContainer: {
     ...Spacing.flexRow

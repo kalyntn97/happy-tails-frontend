@@ -23,7 +23,7 @@ export const inputBase: ViewStyle = {
   borderRadius: 8,
   borderWidth: 1,
   backgroundColor: '#FBFFFE',
-  borderColor: Colors.pink,
+  borderColor: Colors.pink.reg,
 }
 
 export const input: ViewStyle = {
@@ -129,11 +129,16 @@ export const largeIcon: ImageStyle = {
   margin: 5
 }
 
+export const xLargeIcon: ImageStyle = {
+  ...xSmall,
+  margin: 5,
+}
+
 export const modal: ViewStyle = {
   ...fullWH,
   ...centered,
   position: 'relative',
-  backgroundColor: Colors.transparent,
+  backgroundColor: Colors.transparent.light,
 }
 
 export const rowCon: ViewStyle = {

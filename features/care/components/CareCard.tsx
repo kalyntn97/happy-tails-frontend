@@ -4,13 +4,14 @@ import { View, StyleSheet, Text, Image, ImageStyle, ScrollView, TouchableOpacity
 //types & helpers
 import { Care } from "@care/CareInterface"
 import * as careHelpers from "@care/careHelpers"
-import { getIconSource } from "@utils/ui"
+import { getCareIconSource } from "@utils/ui"
 //components
 import PetList from "@components/PetInfo/PetList"
 import TrackerPanel from "./TrackerPanel"
 import { SubButton } from "@components/ButtonComponent"
 //styles
 import { styles } from "@styles/ModalCardStyles"
+import Colors from "@styles/colors"
 
 interface CareCardProps {
   care: Care
@@ -19,7 +20,7 @@ interface CareCardProps {
 }
 
 const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
-  const iconSource = getIconSource(care.name)
+  const iconSource = getCareIconSource(care.name)
   
   const handleNavigate = () => {
     onNavigate && onNavigate()
@@ -31,7 +32,7 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
       <View style={styles.header}>
         <View style={[
           styles.colorBox,
-          { backgroundColor: careHelpers.getTaskBackgroundColor(care.frequency) }
+          { backgroundColor: Colors.multi.lightest[care.color] }
         ]}>
           <View style={styles.titleContainer}>
             <Image source={iconSource} style={styles.icon } />

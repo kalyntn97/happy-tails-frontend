@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
   header: {
     ...Typography.subHeader,
     marginBottom: 0,
-    color: Colors.darkPink,
+    color: Colors.pink.dark,
   },
   petCon: {
     marginBottom: 15,
@@ -43,11 +43,11 @@ export const styles = StyleSheet.create({
   },
   smallBtnCon: {
     ...Spacing.flexRow,
-    marginTop: 5,
+    // marginTop: 5,
     position: 'absolute',
-    top: -35,
-    left: 60,
-    width: '90%',
+    top: -40,
+    left: 95,
+    width: '80%',
     justifyContent: 'space-evenly',
   },
   mainBtn: {
@@ -60,12 +60,12 @@ export const styles = StyleSheet.create({
   btnText: {
     ...Buttons.buttonText
   },
-  miniIcon: {
+  editIcon: {
     width: 20,
     height: 20,
     position: 'absolute',
-    top: -30,
-    right: 10,
+    top: -35,
+    right: 5,
   },
   detailText: {
     ...Typography.xSmallBody,
@@ -122,7 +122,7 @@ export const styles = StyleSheet.create({
     ...Typography.xSmallSubHeader,
   },
   pastDue: {
-    color: Colors.red, 
+    color: Colors.red.reg, 
     fontWeight: 'bold'
   }
 })

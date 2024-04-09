@@ -4,7 +4,7 @@ import { Swipeable } from 'react-native-gesture-handler'
 import React, { FC, useEffect, useRef, useState } from 'react'
 //components
 import { IconButton } from '@components/ButtonComponent'
-import { AlertForm } from '@utils/ui'
+import { AlertForm, getActionIconSource } from '@utils/ui'
 import PetInfo from '@components/PetInfo/PetInfo'
 //types & queries & hooks
 import { Health, Visit } from '@health/HealthInterface'
@@ -19,16 +19,16 @@ import { useShallowPetBasics } from '@store/storeUtils'
 interface SwipeableHealthTaskProps {
   health: Health
   onPress: any
-  done: boolean
   pastVisit: Visit
   navigation: any
 }
 
-const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, done, pastVisit, navigation }) => {
+const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, pastVisit, navigation }) => {
   const checkDoneMutation = useCheckDoneHealth()
   const uncheckDoneMutation = useUncheckDoneHealth()
   const { showDeleteConfirmDialog, handleDeleteHealthCard } = useDeleteHealthCard(navigation)
-  const { petIdToColor } = useShallowPetColor()
+  const petIdToColor = useShallowPetColor()
+  const petColor = petIdToColor(health.pet._id)
   
   const swipeableRef = useRef(null)
 
@@ -71,7 +71,7 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, do
         key={health._id}
         style={[
           styles.task, 
-          { backgroundColor: Colors.multiArray3[petIdToColor(health.pet._id) ?? health.pet.color] }
+          { backgroundColor: Colors.multi.light[petColor ?? health.pet.color] }
         ]} 
         onPress={onPress}
       > 
@@ -90,7 +90,7 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, do
         </View>
 
         <TouchableOpacity style={styles.bulletBtn} onPress={() => toggleDone()}>
-          {pastVisit && <Image source={require('@assets/icons/check.png')} style={styles.check} /> }
+          {pastVisit && <Image source={getActionIconSource('check')} style={styles.check} /> }
           {!pastVisit && <Text style={styles.bulletBtnText}>○</Text> }
         </TouchableOpacity>
 

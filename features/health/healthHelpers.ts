@@ -1,6 +1,17 @@
 //constants
-export const HEALTH_NAMES = ['Vaccine', 'Physical Exam', 'Dental Cleaning', 'Blood Testing', 'Urinalysis', 'Fecal Exam', 'Others']
-
+export const HEALTH_NAMES = {
+  'vax' : 'Vaccine', 
+  'physical' : 'Physical Exam', 
+  'dental' : 'Dental Cleaning',
+  'skin': 'Skin Exam',
+  'xray': 'X-ray Exam',
+  'ultra': 'Ultrasound',
+  'blood' : 'Blood Testing', 
+  'urine' : 'Urinalysis', 
+  'fecal' : 'Fecal Exam',
+  'iv': 'IV drip',
+  'others' : 'Others'
+}
 export const HEALTH_FREQ = ['day(s)', 'week(s)', 'month(s)', 'year(s)']
 
 export const HEALTH_TYPES = ['Routine', 'Sick', 'Emergency']

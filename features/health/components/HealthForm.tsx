@@ -9,7 +9,7 @@ import { Visit, VisitFormData } from "@health/HealthInterface"
 import * as healthHelpers from '@health/healthHelpers'
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
-import { MainButton, SubButton } from "@components/ButtonComponent"
+import { CheckboxButton, MainButton, SubButton } from "@components/ButtonComponent"
 import MultipleInputs from "@components/MultipleInputs"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
@@ -127,15 +127,13 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         }
         <View style={styles.checkboxContainer}>
           <Text>Or enter manually</Text>
-          <TouchableOpacity style={styles.checkbox} onPress={() => setAllowManualDueDate(!allowManualDueDate)}>
-            <Text style={styles.check}>{allowManualDueDate ? '✓' : ''}</Text>
-          </TouchableOpacity>
+          <CheckboxButton initial={allowManualDueDate} onPress={() => setAllowManualDueDate(!allowManualDueDate)} />
         </View>
 
       {allowManualDueDate &&
           <View style={styles.rowContainer}>
             <Text style={styles.label}>Next Due</Text>
-            <RNDateTimePicker value={new Date(nextDue.date) ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue({ date: selectedDate, notes: '' }) }}/>
+            <RNDateTimePicker value={new Date(nextDue?.date ?? new Date())} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue({ date: selectedDate, notes: '' }) }}/>
           </View>
 
       }
@@ -153,10 +151,10 @@ const styles = StyleSheet.create({
   },
   header: {
     ...Typography.mainHeader,
-    color: Colors.darkPink
+    color: Colors.pink.dark
   },
   error: {
-    color: Colors.red,
+    color: Colors.red.dark,
     fontWeight: 'bold'
   },
   input: {
@@ -169,16 +167,6 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   label: {
-    fontSize: 15,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 1,
-    ...Spacing.centered,
-    marginHorizontal: 10,
-  },
-  check: {
     fontSize: 15,
   },
   checkboxContainer: {

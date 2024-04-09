@@ -10,7 +10,7 @@ import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
 import { useDeleteCareCard } from '@home/hooks'
 //components
 import { useActiveDate } from '@store/store'
-import { AlertForm } from '@utils/ui'
+import { AlertForm, getActionIconSource } from '@utils/ui'
 import { IconButton } from '@components/ButtonComponent'
 import PetList from '@components/PetInfo/PetList'
 //styles
@@ -94,7 +94,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
         key={care._id}
         style={[
           styles.task, 
-          { backgroundColor: Colors.multiArray3[care.color] }
+          { backgroundColor: Colors.multi.light[care.color] }
         ]} 
         onPress={onPress}
       > 
@@ -113,7 +113,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
 
         <TouchableOpacity style={styles.bulletBtn} onPress={() => toggleAllDone()}>
           {done === times 
-          ? <Image source={require('@assets/icons/check.png')} style={styles.check}/>
+          ? <Image source={getActionIconSource('check')} style={styles.check}/>
           : <Text style={styles.bulletBtnText}>○</Text> }
         </TouchableOpacity>
 

@@ -3,7 +3,16 @@ import { Colors } from "@styles/index"
 import { Care, Tracker } from "@care/CareInterface"
 import { getMonth, getDateInfo } from "@utils/datetime"
 
-export const CARE_NAMES = ['Teeth Brushing', 'Nail Clipping', 'Walk', 'Grooming', 'Litter Box Cleaning', 'Others']
+export const CARE_NAMES = {
+  'nail' : 'Clip nail', 
+  'teeth' : 'Brush teeth', 
+  'walk' : 'Walk', 
+  'brush' : 'Brush', 
+  'litter' : 'Clean litter box', 
+  'groom' : 'Groom service', 
+  'bath' : 'Give bath', 
+  'others': 'Others'
+}
 
 export const CARE_FREQ = ['Daily', 'Weekly', 'Monthly', 'Yearly']
 
@@ -86,10 +95,10 @@ export const getTrackerInfo = (trackerName: string) => {
 
 export const getTaskBackgroundColor = (frequency: string) => {
   switch (frequency) {
-    case 'Daily': return Colors.multiArray[0]
-    case 'Weekly': return Colors.multiArray[1]
-    case 'Monthly': return Colors.multiArray[2]
-    default: return Colors.multiArray[3]
+    case 'Daily': return Colors.multi.light[0]
+    case 'Weekly': return Colors.multi.light[1]
+    case 'Monthly': return Colors.multi.light[2]
+    default: return Colors.multi.light[3]
   }
 }
 

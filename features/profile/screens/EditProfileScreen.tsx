@@ -80,12 +80,12 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
               <View style={styles.uploadBtnContainer}>
                 <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
                   <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
-                  <Image source={require('@assets/icons/camera.png')} style={styles.cameraIcon } />
+                  <Image source={require('@assets/icons/action-camera.png')} style={styles.cameraIcon } />
                 </TouchableOpacity>
               </View>
             </View>
 
-            <Text style={{ color: Colors.red, fontWeight: 'bold' }}>{errorMsg}</Text>
+            <Text style={{ color: Colors.red.dark, fontWeight: 'bold' }}>{errorMsg}</Text>
 
             <View style={styles.form}>
               <TextInput 
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
     margin: 20,
-    backgroundColor: Colors.lightPink,
+    backgroundColor: Colors.pink.light,
     elevation: 2,
   },
   form: {
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   input: {
     ...Forms.input,
-    borderColor: Colors.pink,
+    borderColor: Colors.pink.reg,
   },
   multiline: {
     height: 150
@@ -142,11 +142,11 @@ const styles = StyleSheet.create({
   mainButton: {
     ...Buttons.smallRounded,
     marginTop: 50,
-    backgroundColor: Colors.pink
+    backgroundColor: Colors.pink.reg
   },
   buttonText: {
     ...Buttons.buttonText,
-    color: Colors.darkestPink
+    color: Colors.pink.darkest
   },
   image: {
     ...Spacing.fullWH,
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     bottom: 0,
-    backgroundColor: Colors.pink,
+    backgroundColor: Colors.pink.reg,
     width: '100%',
     height: '25%',
   },

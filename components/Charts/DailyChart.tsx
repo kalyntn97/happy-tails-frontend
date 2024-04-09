@@ -71,7 +71,7 @@ const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
                 backgroundColor: getColor(times, value, colorArray),
                 width: squareWidth,
                 height: squareWidth,
-                borderColor: (currDate === idx + 1 && isCurrent) ? Colors.darkPink : Colors.white
+                borderColor: (currDate === idx + 1 && isCurrent) ? Colors.pink.dark : Colors.white
               }
             ]}>
               <Text style={styles.day}>{idx + 1}</Text>

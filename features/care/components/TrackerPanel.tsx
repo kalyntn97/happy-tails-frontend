@@ -12,7 +12,7 @@ import { getMonth } from "@utils/datetime"
 //styles
 import { Spacing, Typography, Colors, Forms } from '@styles/index'
 import { useCheckDoneCare,  useUncheckDoneCare } from "@care/careQueries"
-import { AlertForm } from "@utils/ui"
+import { AlertForm, getActionIconSource } from "@utils/ui"
 
 interface CurrentTrackerProps {
   care: Care
@@ -72,9 +72,6 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
         }
       </Text>
       <View style={styles.statusCon}>
-        {tracker.done[index] !== times && 
-          <Image source={require('@assets/icons/hand.png')} style={styles.ScrollChartIcon} />
-        }
         <Text style={[
           styles.status, 
           // { color: times === tracker.done[index] ? Colors.green : Colors.red }
@@ -96,10 +93,10 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
               onPress={() => uncheckDone(careId, tracker._id, index)}
               disabled={tracker.done[index] === 0}
             >
-              <Image source={require('@assets/icons/decrease.png')} style={styles.icon } />
+              <Image source={getActionIconSource('decrease')} style={styles.icon } />
             </TouchableOpacity>
 
-            <Text style={[styles.count, { color: times === tracker.done[index] ? Colors.green : Colors.red }]}>
+            <Text style={[styles.count, { color: times === tracker.done[index] ? Colors.green.reg : Colors.red.reg }]}>
               {tracker.done[index]}
             </Text>
               <Text style={styles.subCount}>of</Text> 
@@ -110,7 +107,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
               onPress={() => checkDone(careId, tracker._id, index)}
               disabled={tracker.done[index] >= times}
             >
-              <Image source={require('@assets/icons/increase.png')} style={styles.icon } />
+              <Image source={getActionIconSource('increase')} style={styles.icon } />
             </TouchableOpacity>
             
           </View>
@@ -165,7 +162,7 @@ const styles = StyleSheet.create({
   dateContainer: {
     width: 50,
     height: 60,
-    backgroundColor: Colors.lightestPink,
+    backgroundColor: Colors.pink.lightest,
     borderRadius: 8,
     justifyContent: 'space-around'
   },
@@ -176,7 +173,7 @@ const styles = StyleSheet.create({
   },
   ScrollChart: {
     width: 275,
-    height: '40%',
+    height: '45%',
     borderRadius: 8,
     marginVertical: 10
   },

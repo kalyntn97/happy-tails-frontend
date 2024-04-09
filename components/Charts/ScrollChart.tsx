@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, Text, View, Image, ImageStyle, TouchableOpacity
 import * as careHelpers from "@care/careHelpers"
 import { getDateInfo, getMonth, getDayOfWeek } from "@utils/datetime"
 //styles
+import { getStatQualIconSource } from "@utils/ui"
 import { Colors, Forms } from '@styles/index'
 
 const ScrollChart = ({ careId, tracker, index, onCheckDone, onUncheckDone, frequency }) => {
@@ -47,24 +48,24 @@ const ScrollChart = ({ careId, tracker, index, onCheckDone, onUncheckDone, frequ
         >
           {frequency === 'Daily' ?
             <>
-              <Text style={[styles.text, { color: i + 1 === currDate ? Colors.darkPink : 'black'}]}>
+              <Text style={[styles.text, { color: i + 1 === currDate ? Colors.pink.dark : 'black'}]}>
                 {getDayOfWeek(new Date(currYear, monthIdx - 1, i + 1)).slice(0, 3)}
               </Text>
-              <Text style={[styles.text, { color: i + 1 === currDate ? Colors.darkestPink : 'black', fontSize: 20, zIndex: 2 }]}>{i + 1}</Text>
+              <Text style={[styles.text, { color: i + 1 === currDate ? Colors.pink.darkest : 'black', fontSize: 20, zIndex: 2 }]}>{i + 1}</Text>
             </>
           : frequency === 'Weekly' ? 
-            <Text style={[styles.text, styles.topText, { color: i + 1 === currWeek ? Colors.darkPink : 'black' }]}>W{i + 1}</Text>
+            <Text style={[styles.text, styles.topText, { color: i + 1 === currWeek ? Colors.pink.dark : 'black' }]}>W{i + 1}</Text>
           : 
-            <Text style={[styles.text, styles.topText, { color: i + 1 === monthIdx ? Colors.darkPink : 'black'}]}>
+            <Text style={[styles.text, styles.topText, { color: i + 1 === monthIdx ? Colors.pink.dark : 'black'}]}>
               {getMonth(i + 1).slice(0, 3)}
             </Text>
           }
 
           {tracker.done[i] === 1
-            ? <Image source={require('@assets/icons/heart-filled.png')} 
+            ? <Image source={getStatQualIconSource('heart', 1)} 
                 style={[styles.heart, { opacity: frequency === 'Daily' ? 0.5 : 1 }]} 
               />
-            : <Image source={require('@assets/icons/heart-gray.png')} style={styles.heart } />
+            : <Image source={getStatQualIconSource('heart', 0)} style={styles.heart } />
           }
         </TouchableOpacity>
       )
@@ -97,8 +98,8 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: Colors.pink,
-    backgroundColor: Colors.lightestPink
+    borderColor: Colors.pink.reg,
+    backgroundColor: Colors.pink.lightest
   },
   square: {
     width: 55,
@@ -116,11 +117,11 @@ const styles = StyleSheet.create({
     top: 5,
   },
   heart: {
-    width: 35,
-    height: 35,
+    width: 40,
+    height: 40,
     position: 'absolute',
     bottom: 0,
-    left: 8,
+    left: 6
   },
 })
 

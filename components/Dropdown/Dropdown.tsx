@@ -7,6 +7,7 @@ import { usePetNames } from "@store/storeUtils"
 import * as petHelpers from '@pet/petHelpers'
 import * as careHelpers from '@care/careHelpers'
 import * as healthHelpers from '@health/healthHelpers'
+import { getActionIconSource } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -55,12 +56,13 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
         'birdSpecies': await petHelpers.getBirdSpeciesData(),
         'fishSpecies': petHelpers.FISH_SPECIES,
         'frequency': careHelpers.CARE_FREQ,
-        'care': careHelpers.CARE_NAMES,
-        'health': healthHelpers.HEALTH_NAMES,
+        'care': Object.values(careHelpers.CARE_NAMES),
+        'health': Object.values(healthHelpers.HEALTH_NAMES),
         'healthFrequency': healthHelpers.HEALTH_FREQ,
         'healthTypes': healthHelpers.HEALTH_TYPES,
         'dogVaccines': healthHelpers.DOG_VACCINE_NAMES,
         'catVaccines': healthHelpers.CAT_VACCINE_NAMES,
+        'petStatus': petHelpers.STATUS,
       }
       const result = typeToSource[dataType] || []
       setData(result)
@@ -91,7 +93,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
         </Modal>
       )}
       <Text style={styles.label}>{selected ?? label}</Text>
-      <Image source={require('@assets/icons/dropdown.png')} style={styles.icon} />
+      <Image source={getActionIconSource('downThin')} style={styles.icon} />
     </TouchableOpacity>
   )
 }
@@ -100,7 +102,7 @@ const styles = StyleSheet.create({
   dropDownBtn: {
     ...Spacing.flexRow,
     ...Forms.input,
-    borderColor: Colors.pink,
+    borderColor: Colors.pink.reg,
     justifyContent: 'space-between',
     zIndex: 1
   },
@@ -115,7 +117,7 @@ const styles = StyleSheet.create({
   },
   content: {
     position: 'absolute',
-    backgroundColor: Colors.lightestPink,
+    backgroundColor: Colors.pink.lightest,
     width: 250,
     height: 200,
     padding: 10,
@@ -129,7 +131,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1
   },
   selected: {
-    color: Colors.darkPink,
+    color: Colors.pink.dark,
     fontWeight: 'bold'
   }
 })

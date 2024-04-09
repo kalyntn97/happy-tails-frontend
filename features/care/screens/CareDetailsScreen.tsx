@@ -4,8 +4,9 @@ import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, Scr
 //types & helpers & queries
 import { Care, Tracker } from "@care/CareInterface"
 import { useDeleteCareCard } from "@home/hooks"
+import { getCurrentTrackerIndex } from "@care/careHelpers"
 //components
-import { AlertForm, getIconSource } from "@utils/ui"
+import { getCareIconSource } from "@utils/ui"
 import PetList from "@components/PetInfo/PetList"
 import DailyChart from "@components/Charts/DailyChart"
 import BarChart from "@components/Charts/BarChart"
@@ -13,11 +14,10 @@ import YearChart from "@components/Charts/YearChart"
 import FillChart from "@components/Charts/FillChart"
 import Loader from "@components/Loader"
 import { BoxHeader, BoxWithHeader } from "@components/HeaderComponent"
+import { StatButton } from "@components/ButtonComponent"
 //styles
 import { styles } from "@styles/DetailsScreenStyles"
 import { Colors, Forms } from '@styles/index'
-import { StatButton } from "@components/ButtonComponent"
-import { getCurrentTrackerIndex } from "@care/careHelpers"
 
 interface CareDetailsProps {
   navigation: any
@@ -31,13 +31,13 @@ const CareDetailsScreen = ({ navigation, route }) => {
   const trackers = care.trackers.reverse()
   const taskIndex = getCurrentTrackerIndex(care.frequency)
   
-  const iconSource = getIconSource(care.name)
+  const iconSource = getCareIconSource(care.name)
 
   
   return (
     <ScrollView
       style={[styles.scrollView,
-        { backgroundColor: Colors.multiArray4[care.color]}
+        { backgroundColor: Colors.multi.lightest[care.color]}
       ]}
       contentContainerStyle={styles.scrollContent}
       scrollEventThrottle={200}
@@ -49,7 +49,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
             <Text style={styles.header}>{care.name}</Text>
             <View style={[styles.itemInfo]}>
               <View style={styles.rowCon}>
-                <Image source={require('@assets/icons/date.png')} style={styles.itemIcon}/>
+                <Image source={require('@assets/icons/calendar-due.png')} style={styles.itemIcon}/>
                 <Text style={styles.subHeader}>
                   {new Date(care.date).toLocaleDateString()}
                   {care.endDate &&
@@ -84,7 +84,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
 
           <View style={{ ...Forms.roundedCon}}>
             <BoxHeader title='Update' onPress={() => navigation.navigate('Edit', { care: care })} />
-            <BoxHeader title='Delete' onPress={() => showDeleteConfirmDialog(care, handleDeleteCareCard)} titleColor={Colors.red} />
+            <BoxHeader title='Delete' onPress={() => showDeleteConfirmDialog(care, handleDeleteCareCard)} titleColor={Colors.red.reg} />
           </View>
 
           <BoxWithHeader 

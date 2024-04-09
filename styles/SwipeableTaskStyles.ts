@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
     flex: 4
   },
   taskStatus: {
-    flex: 2,
+    flex: 1.5,
     fontSize: 12,
   },
   taskPetList: {

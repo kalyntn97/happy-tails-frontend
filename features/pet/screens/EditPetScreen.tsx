@@ -1,3 +1,4 @@
+
 //npm modules
 import { useEffect } from "react"
 import { View } from "react-native"
@@ -25,9 +26,9 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
   const isFocused = useIsFocused()
 
   const initialValues: {
-    name: string, age: number, species: string, breed: string, color: number, photo: string | null, petId: string 
+    name: string,  species: string, breed: string, dob: Date, firstMet: Date, altered: { value: boolean, date: Date | null }, status: { value: string, date: Date | null, show: boolean }, color: number, photo: string | null, petId: string 
   } = {
-    name: pet.name, age: pet.age, species: pet.species, breed: pet.breed, color: pet.color, photo: pet.photo ? pet.photo : null, petId: pet._id
+    name: pet.name,  species: pet.species, breed: pet.breed, dob: pet.dob, firstMet: pet.firstMet, altered: pet.altered, status: pet.status, color: pet.color, photo: pet.photo ? pet.photo : null, petId: pet._id
   }
 
   const savedPetInfo = { name: initialValues.name, photo: initialValues.photo }
@@ -36,13 +37,13 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
     onUpdatePet(pet)
   }
 
-  const handleEditPet = async (name: string, age: number, species: string, breed: string, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string)  => {
-    updatePetMutation.mutate({ name, age, species, breed, color, photoData, petId }, {
+  const handleEditPet = async (name: string,  species: string, breed: string, dob: Date, firstMet: Date, altered: {value: boolean, date: Date | null}, status: {value: string, date: Date | null, show: boolean }, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string)  => {
+    updatePetMutation.mutate({ name, species, breed, dob, firstMet, altered, status, color, photoData, petId }, {
       onSuccess: (data) => {
         if (data.name !== savedPetInfo.name || data.photo !== savedPetInfo.photo) {
           updateGlobalPetInfo(data)
         }
-        navigation.navigate('Details', { pet: data })
+        navigation.navigate('Details', { screen: 'Index', params : { data } })
         return AlertForm({ body: 'Pet updated successfully', button: 'OK' })
       }, 
       onError: (error) => {
@@ -60,7 +61,7 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
   return (
     <View style={{flex: 1}}>
      { pet ?
-      <PetForm onSubmit={handleEditPet} initialValues={initialValues} navigation={navigation} status={updatePetMutation.status} />
+      <PetForm onSubmit={handleEditPet} initialValues={initialValues} navigation={navigation} formStatus={updatePetMutation.status} />
       : <Loader />
      }
     </View>

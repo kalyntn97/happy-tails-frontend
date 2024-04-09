@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
   title: {
     ...Typography.smallHeader,
     marginVertical: 0,
-    color: Colors.darkPink
+    color: Colors.pink.dark
   },
   freq: {
     fontWeight: 'bold',
@@ -49,7 +49,8 @@ export const styles = StyleSheet.create({
   subTitle: {
     ...Typography.xSmallHeader,
     // textDecorationLine: 'underline',
-    marginBottom: 0
+    marginBottom: 0,
+    marginTop: 10,
   },
   icon: {
     ...Forms.icon

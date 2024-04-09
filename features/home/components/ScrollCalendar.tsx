@@ -20,6 +20,9 @@ const ScrollCalendar = () => {
 
   const {date: activeDate, month: activeMonth, year: activeYear } = useActiveDate()
   const { date: currDateIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
+  const todayIsActive = currDateIsActive && currMonthIsActive && currYearIsActive
+  const pastIsActive = new Date(activeYear, activeMonth, activeDate + 1) < new Date() && new Date(activeYear, activeMonth, activeDate + 1).toDateString() !==  new Date().toDateString()
+
   const { setActiveDate } = useSetActions()
   const activeMonthName = getMonth(activeMonth + 1)
   
@@ -83,7 +86,7 @@ const ScrollCalendar = () => {
         <Text style={styles.middle}>{activeMonthName}</Text>
       {/* </View> */}
       
-      <TouchableOpacity style={[styles.headerBtnCon, styles.left]} 
+      <TouchableOpacity style={[todayIsActive && styles.activeHeaderBtnCon, styles.headerBtnCon, styles.left]} 
         onPress={() => {
           setActiveDate({ 
             date: currDate - 1, 
@@ -94,15 +97,15 @@ const ScrollCalendar = () => {
           scrollToPos(currDate - 1) 
         }
       }>
-        <Text style={styles.headerBtnText}>Today</Text>
-        <Text style={styles.headerBtnText}>▶︎</Text>
+        <Text style={[{ color: todayIsActive ? Colors.white : Colors.pink.reg }, styles.headerBtnText]}>Today</Text>
+        <Text style={[{ color: todayIsActive ? Colors.white : Colors.pink.reg }, styles.headerBtnText]}>▶︎</Text>
       </TouchableOpacity>
       
-      <TouchableOpacity style={[styles.headerBtnCon, styles.right]}
+      <TouchableOpacity style={[pastIsActive && styles.activeHeaderBtnCon, styles.headerBtnCon, styles.right]}
         onPress={() => setModalVisible(true)}
       >
-        <Text style={styles.headerBtnText}>◀︎</Text>
-        <Text style={styles.headerBtnText}>History</Text>
+        <Text style={[{ color: pastIsActive ? Colors.white : Colors.pink.reg }, styles.headerBtnText]}>◀︎</Text>
+        <Text style={[{ color: pastIsActive ? Colors.white : Colors.pink.reg }, styles.headerBtnText]}>History</Text>
       </TouchableOpacity>
 
       <FlatList
@@ -169,7 +172,6 @@ const styles = StyleSheet.create({
   container: {
     width: '90%',
     height: 70,
-    backgroundColor: Colors.lightPink,
   },
   scrollContent: {
     height: 60,
@@ -181,15 +183,15 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     ...Spacing.centered,
     borderWidth: 1,
-    borderColor: Colors.pink
+    borderColor: Colors.pink.reg
   },
   date: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: Colors.pink
+    color: Colors.pink.reg
   },
   day: {
-    color: Colors.pink
+    color: Colors.pink.reg
   },
   currDay: {
     color: Colors.white,
@@ -198,11 +200,11 @@ const styles = StyleSheet.create({
     color: Colors.white
   },
   activeCon: {
-    backgroundColor: Colors.pink,
+    backgroundColor: Colors.pink.reg,
     borderWidth: 0,
   },
   currCon: {
-    backgroundColor: Colors.purpleArray[2],
+    backgroundColor: Colors.purple.light,
     borderWidth: 0,
   },
   headerBtnCon: {
@@ -210,12 +212,15 @@ const styles = StyleSheet.create({
     top: -60,
     height: 30,
     width: 90,
-    backgroundColor: Colors.pink,
+    borderColor: Colors.pink.reg,
+    borderWidth: 1.3,
     ...Spacing.flexRow,
+  },
+  activeHeaderBtnCon: {
+    backgroundColor: Colors.pink.reg,
   },
   headerBtnText: {
     fontWeight: 'bold',
-    color: Colors.white,
     marginHorizontal: 7
   },
   left: {
@@ -234,12 +239,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    color: Colors.darkPink,
+    color: Colors.pink.dark,
   },
   modalCon: {
     ...Spacing.fullWH,
     ...Spacing.centered,
-    backgroundColor: Colors.lightestPink,
+    backgroundColor: Colors.pink.lightest,
   },
   modalItemCon: {
     width: '70%',

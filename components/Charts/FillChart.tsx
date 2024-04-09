@@ -38,7 +38,7 @@ const FillChart = ({ tracker, frequency, times }) => {
               borderColor: 
               ( (currWeek === index + 1 && isCurrent && frequency === 'Weekly') 
                 || (currMonth === index + 1 && isCurrent && frequency === 'Monthly') 
-              ) ? Colors.darkPink : Colors.white,
+              ) ? Colors.pink.dark : Colors.white,
               backgroundColor: getColor(times, value, colorArray),
             }
         
@@ -48,7 +48,7 @@ const FillChart = ({ tracker, frequency, times }) => {
               // { color: 
               //   ( (currWeek === index + 1 && isCurrent && frequency === 'Weekly') 
               //     || (currMonth === index + 1 && isCurrent && frequency === 'Monthly') 
-              //   ) ? Colors.darkPink : Colors.white
+              //   ) ? Colors.pink.dark : Colors.white
               // }
             ]}>
               {frequency === 'Monthly' ? getMonth(index + 1).slice(0, 3) : `Week ${index + 1}`}

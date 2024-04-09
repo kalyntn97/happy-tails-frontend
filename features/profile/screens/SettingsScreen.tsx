@@ -71,14 +71,14 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation, route }) => {
         <View style={styles.btnContainer}>
           <TouchableOpacity 
             onPress={() => setShowForm('password')} 
-            style={[styles.tabBtn, { backgroundColor: showForm === 'password' ? Colors.white : Colors.lightestPink}]}>
-            <Text style={[styles.btnText, { color: showForm === 'password' ? Colors.darkPink : 'black' }]}>Change {'\n'}Password</Text>
+            style={[styles.tabBtn, { backgroundColor: showForm === 'password' ? Colors.white : Colors.pink.lightest}]}>
+            <Text style={[styles.btnText, { color: showForm === 'password' ? Colors.pink.dark : 'black' }]}>Change {'\n'}Password</Text>
           </TouchableOpacity>
         
           <TouchableOpacity 
             onPress={() => setShowForm('username')} 
-            style={[styles.tabBtn, { backgroundColor: showForm === 'username' ? Colors.white : Colors.lightestPink}]}>
-            <Text style={[styles.btnText, { color: showForm === 'username' ? Colors.darkPink : 'black' }]}>Change Username</Text>
+            style={[styles.tabBtn, { backgroundColor: showForm === 'username' ? Colors.white : Colors.pink.lightest}]}>
+            <Text style={[styles.btnText, { color: showForm === 'username' ? Colors.pink.dark : 'black' }]}>Change Username</Text>
           </TouchableOpacity>
         </View>
 
@@ -123,7 +123,7 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation, route }) => {
           visible={visible}
           title={titleData[2]}
           content={
-            <TouchableOpacity onPress={logout} style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.darkPink }]}>
+            <TouchableOpacity onPress={logout} style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.pink.dark }]}>
               <Text style={styles.btnText}>Logout</Text>
             </TouchableOpacity>
           }
@@ -138,7 +138,7 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   scrollView: {
     width: '100%',
-    backgroundColor: Colors.lightestPink,
+    backgroundColor: Colors.pink.lightest,
   },
   scrollViewContent: {
     alignItems: 'center',

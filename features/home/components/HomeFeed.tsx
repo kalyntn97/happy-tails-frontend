@@ -6,8 +6,8 @@ import { Care } from "@care/CareInterface"
 import { Health } from "@health/HealthInterface"
 //store & queries
 import { useUpdateStreak } from "@profile/profileQueries"
-import { useActiveDate, useCurrentIsActive, useReminderInterval, useSetActions } from "@store/store"
-import { AlertForm } from "@utils/ui"
+import { useActiveDate, useActiveTaskCounts, useCurrentIsActive, useReminderInterval, useSetActions } from "@store/store"
+import { AlertForm, getCalendarIconSource, getNavigationIconSource } from "@utils/ui"
 //components
 import CareCard from "@care/components/CareCard"
 import { CloseButton } from "../../../components/ButtonComponent"
@@ -19,7 +19,7 @@ import HealthCard from "@health/components/HealthCard"
 import { useUserQueries } from "../homeQueries"
 import { countDaysBetween, getMonth } from "@utils/datetime"
 //styles
-import { Buttons, Spacing, Forms, Colors } from '@styles/index'
+import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
 
 interface HomeFeedProps {
   navigation: any
@@ -31,6 +31,7 @@ type ClickedTask = {
 }
 
 const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
+  const [feed, setFeed] = useState<string>('care')
   const [selected, setSelected] = useState<string>('day')
   const [modalVisible, setModalVisible] = useState(false)
   const [clickedTask, setClickedTask] = useState<ClickedTask>(null)
@@ -43,12 +44,12 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   //store
   const { setPets, setCares, setHealths, setReminderInterval } = useSetActions()
   
-  const reminderInterval = useReminderInterval()
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const activeDateObj = new Date(activeYear, activeMonth, activeDate + 1)
   const activeMonthName = getMonth(activeMonth + 1)
   
   const { date: currDateIsActive, week: currWeekIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
+  const activeTaskCounts = useActiveTaskCounts()
 
   const handleClickTask = (item: Care | Health, type: string) => {
     setClickedTask({ item, type })
@@ -78,67 +79,81 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
 
   return (  
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+      <View style={styles.headerCon}>  
+        <TouchableOpacity onPress={() => setFeed('care')} style={[
+          styles.iconHeaderCon, feed === 'care' && { borderColor: Colors.pink.reg },
+        ]}>
+          <Image source={getNavigationIconSource('care', feed === 'care' ? 'active' : 'inactive')} style={{...Forms.smallIcon}} />
+          <Text style={[styles.iconHeaderText, feed === 'care' && { color: Colors.pink.reg }]}>Pet care</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setFeed('health')} style={[
+          styles.iconHeaderCon,feed === 'health' && { borderColor: Colors.pink.reg },
+        ]}>
+          <Image source={getNavigationIconSource('health', feed === 'health' ? 'active' : 'inactive')} style={{...Forms.smallIcon}} />
+          <Text style={[styles.iconHeaderText, feed === 'health' && { color: Colors.pink.reg }]}>Pet health</Text>
+        </TouchableOpacity>
+      </View>
+
       { isLoading && <Loader /> }
       { isError && <Text>Error fetching data... </Text> }
-      { isSuccess && 
-        <>
-          <View style={styles.singleIconMenu}>
-            <Image source={require('@assets/icons/scheduled.png')} style={styles.icon} />
-            <Text style={styles.iconText}>Important</Text>
-          </View>
-          <View style={styles.taskListContainer}>
-            <NestedList data={healths.data} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Health' interval={reminderInterval} />
-          </View>
+      
+      {feed === 'health' && isSuccess &&
+        <View style={styles.taskListContainer}>
+          <NestedList data={healths.data} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='health' />
+        </View>
+      }
 
+      {feed === 'care' && isSuccess &&
+        <>
           <View style={styles.iconMenuContainer}>
             <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
-              <Text style={styles.taskCount}>{cares.data['Daily']?.length ?? 0}</Text>
-              <Image source={require('@assets/icons/day.png')} style={styles.icon } />
-              <Text style={[styles.iconText, selected === 'day' && styles.selected]}>
+              <Image source={getCalendarIconSource('day', selected === 'day' ? 'active' : 'inactive')} style={{...Forms.icon}} />
+              <Text style={[styles.iconText, selected === 'day' ? {...Typography.focused} : {...Typography.unFocused}]}>
                 { currDateIsActive && currMonthIsActive ? 'Today' : `${activeMonthName} ${activeDate + 1}` }
               </Text>
           
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('week')}>
-              <Text style={styles.taskCount}>{cares.data['Weekly']?.length ?? 0}</Text>
-              <Image source={require('@assets/icons/week.png')} style={styles.icon } />
-              <Text style={[styles.iconText, selected === 'week' && styles.selected]}>{ 
-                currWeekIsActive && currMonthIsActive ? 'This Week' 
-                : `Week ${activeWeek + 1}`
-              }</Text>
+              <Image source={getCalendarIconSource('week', selected === 'week' ? 'active' : 'inactive')} style={{...Forms.icon}} />
+              <Text style={[styles.iconText, selected === 'week' ? {...Typography.focused} : {...Typography.unFocused}]}>
+                { currWeekIsActive && currMonthIsActive ? 'This Week' 
+                : `Week ${activeWeek + 1}` }
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('month')}>
-              <Text style={styles.taskCount}>{cares.data['Monthly']?.length ?? 0}</Text>
-              <Image source={require('@assets/icons/month.png')} style={styles.icon } />
-              <Text style={[styles.iconText, selected === 'month' && styles.selected]}>{currMonthIsActive ? 'This Month' : activeMonthName}</Text>
+              <Image source={getCalendarIconSource('month', selected === 'month' ? 'active' : 'inactive')} style={{...Forms.icon}} />
+              <Text style={[styles.iconText, selected === 'month' ? {...Typography.focused} : {...Typography.unFocused}]}>       
+                {currMonthIsActive ? 'This Month' : activeMonthName}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('year')}>
-              <Text style={styles.taskCount}>{cares.data['Yearly']?.length ?? 0}</Text>
-              <Image source={require('@assets/icons/year.png')} style={styles.icon } />
-              <Text style={[styles.iconText, selected === 'year' && styles.selected]}>{currYearIsActive ? 'This Year' : activeYear}</Text>
+              <Image source={getCalendarIconSource('year', selected === 'year' ? 'active' : 'inactive')} style={{...Forms.icon}} />
+              <Text style={[styles.iconText, selected === 'year' ? {...Typography.focused} : {...Typography.unFocused}]}>
+                {currYearIsActive ? 'This Year' : activeYear}
+              </Text>
             </TouchableOpacity>
           </View>
-
+          
           <View style={styles.taskListContainer}>
             {Object.keys(cares.data).length ?
               <>
                 {selected === 'day' &&
-                  <NestedList data={[...cares.data['Daily'] ?? [], ...cares.data['Others'] ?? []]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+                  <NestedList data={[...cares.data['Daily'], ...cares.data['Others']]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
                 }
                 
                 {selected === 'week' &&
-                  <NestedList data={cares.data['Weekly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+                  <NestedList data={cares.data['Weekly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
                 }
 
                 {selected === 'month' && 
-                  <NestedList data={cares.data['Monthly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+                  <NestedList data={cares.data['Monthly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
                 }
 
                 {selected === 'year' && 
-                  <NestedList data={cares.data['Yearly'] ?? []} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='Care' />
+                  <NestedList data={cares.data['Yearly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
                 }
               </>
             : <PlaceHolder navigation={navigation}/> }
@@ -182,6 +197,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
+  headerCon: {
+    ...Spacing.flexRow,
+    width: '100%',
+    padding: 10,
+  },
+  iconHeaderCon: {
+    ...Spacing.flexRow,
+    width: '45%',
+    ...Spacing.centered,
+    marginHorizontal: 5,
+    borderBottomWidth: 1.5,
+    borderColor: Colors.shadow.darkest,
+  },
+  iconHeaderText: {
+    ...Typography.xSmallHeader,
+    color: Colors.shadow.darkest,
+    margin: 10,
+  },
   done: {
     textDecorationLine: 'line-through',
     fontStyle: 'italic',
@@ -200,22 +233,12 @@ const styles = StyleSheet.create({
     ...Spacing.flexColumn,
     flexBasis: '25%',
   },
-  icon: {
-    ...Forms.smallIcon,
-  },
   iconText: {
-
+    ...Typography.xSmallBody,
+    marginTop: -5,
   },
   taskCount: {
-    color: Colors.red,
-    fontWeight: 'bold',
-    position: 'absolute',
-    right: '25%',
-    top: '15%',
-  },
-  selected: {
-    color: Colors.red,
-    fontWeight: 'bold',
+    
   },
   taskListContainer : {
     width: '90%',
@@ -226,7 +249,7 @@ const styles = StyleSheet.create({
   },
   mainBtn: {
     ...Buttons.smallRounded,
-    backgroundColor: Colors.pink,
+    backgroundColor: Colors.pink.reg,
     marginTop: 50
   },
   btnText: {

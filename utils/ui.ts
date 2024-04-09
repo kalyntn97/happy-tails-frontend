@@ -1,20 +1,27 @@
 import { Alert, ImageSourcePropType } from "react-native"
 import { Colors } from "@styles/index"
+import { CARE_NAMES } from "@care/careHelpers"
+import { HEALTH_NAMES } from "@health/healthHelpers"
 
 export const getColorArray = (): string[] => {
   const colorArrays = [
-    Colors.greenArray, Colors.blueArray, Colors.pinkArray, Colors.yellowArray, Colors.purpleArray
+    Object.values(Colors.green),
+    Object.values(Colors.blue),
+    Object.values(Colors.pink),
+    Object.values(Colors.yellow),
+    Object.values(Colors.purple)
   ]
+  console.log(colorArrays)
   const randomIdx = Math.floor(Math.random() * colorArrays.length)
   return colorArrays[randomIdx]
 }
 
 export const getColor = (ref: number, value: number, colorArray: string[]): string => {
   const color = ref === value 
-    ? colorArray[0] 
+    ? colorArray[2]
     : value === 0 
-      ? colorArray[2] 
-      : colorArray[1]
+      ? colorArray[4] 
+      : colorArray[3]
   return color
 }
 
@@ -25,41 +32,169 @@ export const AlertForm = ({ body, button }) =>
     [{ text: button }]
   )
 
-const iconSource = {
-  //care
-  'Teeth Brushing': require('@assets/icons/toothbrush.png'),
-  'Nail Clipping': require('@assets/icons/clippers.png'),
-  'Walk': require('@assets/icons/leash-walk.png'),
-  'Grooming': require('@assets/icons/grooming.png'),
-  'Litter Box Cleaning': require('@assets/icons/litter-box.png'),
-  //health
-  'Dental Cleaning': require('@assets/icons/dental-cleaning.png'),
-  'Physical Exam': require('@assets/icons/physical-exam.png'),
-  'Vaccine': require('@assets/icons/vaccine.png'),
-  'Urinalysis': require('@assets/icons/urinalysis.png'),
-  'Fecal Exam': require('@assets/icons/fecal-exam.png'),
-  'Blood Testing': require('@assets/icons/blood-test.png'),
-  'Others': require('@assets/icons/misc-exam.png'),
-  //buttons
+const actionIconSource = {
+  close: require('@assets/icons/action-close.png'),
+  check: require('@assets/icons/action-check.png'),
+  increase: require('@assets/icons/action-increase.png'),
+  decrease: require('@assets/icons/action-decrease.png'),
+  edit: require('@assets/icons/action-edit.png'),
+  delete: require('@assets/icons/action-delete.png'),
+  details: require('@assets/icons/action-details.png'),
+  detailsPet: require('@assets/icons/pet-details.png'),
+  save: require('@assets/icons/action-save.png'),
+  undo: require('@assets/icons/action-undo.png'),
+  search: require('@assets/icons/action-search.png'),
+  down: require('@assets/icons/action-down.png'),
+  downThin: require('@assets/icons/action-down_thin.png'),
+  next: require('@assets/icons/action-next.png'),
+  nextThin: require('@assets/icons/action-next_thin.png'),
+  nextRound: require('@assets/icons/action-next_round.png'),
+  prev: require('@assets/icons/action-prev.png'),
+  prevThin: require('@assets/icons/action-prev_thin.png'),
+  prevRound: require('@assets/icons/action-prev_round.png'),
   'Add a Task':  require('@assets/icons/care-filled.png'),
-  'Add a Vet Visit':  require('@assets/icons/vet-filled.png'),
+  'Add a Vet Visit':  require('@assets/icons/health-filled.png'),
   'Add a Pet':  require('@assets/icons/pet-filled.png'),
 }
 
-const petIconSource = {
-  'Dog': require('@assets/icons/dog.png'),
-  'Cat': require('@assets/icons/cat.png'),
-  'Bird': require('@assets/icons/bird.png'),
-  'Fish': require('@assets/icons/fish.png'),
-  'Others': require('@assets/icons/animal.png'),
+const careIconSource = {
+  teeth: require('@assets/icons/care-brush_teeth.png'),
+  nail: require('@assets/icons/care-clip_nail.png'),
+  walk: require('@assets/icons/care-walk.png'),
+  groom: require('@assets/icons/care-groom.png'),
+  litter: require('@assets/icons/care-clean_litter_box.png'),
+  bath: require('@assets/icons/care-give_bath.png'),
+  brush: require('@assets/icons/care-brush_coat.png'),
+  others: require('@assets/icons/health-misc_exam.png'),
+}
+const healthIconSource = {
+  dental: require('@assets/icons/health-dental_cleaning.png'),
+  physical: require('@assets/icons/health-physical_exam.png'),
+  vax: require('@assets/icons/health-vaccine.png'),
+  skin: require('@assets/icons/health-skin_exam.png'),
+  urine: require('@assets/icons/health-urinalysis.png'),
+  fecal: require('@assets/icons/health-fecal_exam.png'),
+  blood: require('@assets/icons/health-blood_test.png'),
+  ultra: require('@assets/icons/health-ultrasound.png'),
+  xray: require('@assets/icons/health-xray.png'),
+  iv: require('@assets/icons/health-iv_drip.png'),
+  others: require('@assets/icons/health-misc_exam.png'),
 }
 
+const navigationIconSource = {
+  Home: {
+    'active': require('@assets/icons/home-active.png'),
+    'inactive': require('@assets/icons/home-inactive.png'),
+  },
+  Pets: {
+    'active': require('@assets/icons/pets-active.png'),
+    'inactive': require('@assets/icons/pets-inactive.png'),
+  },
+  User: {
+    'active': require('@assets/icons/profile-active.png'),
+    'inactive': require('@assets/icons/profile-inactive.png'),
+  },
+  Account: {
+    'active': require('@assets/icons/account-active.png'),
+    'inactive': require('@assets/icons/account-inactive.png'),
+  },
+  care: {
+    'active': require('@assets/icons/care-active.png'),
+    'inactive': require('@assets/icons/care-inactive.png'),
+  },
+  health: {
+    'active': require('@assets/icons/health-active.png'),
+    'inactive': require('@assets/icons/health-inactive.png'),
+  },
+}
 
-export const getIconSource = (name: string) => {
-  return iconSource[name] || require('@assets/icons/paw.png')
+const calendarIconSource = {
+  day: { 
+    'active': require('@assets/icons/calendar-day-active.png'),
+    'inactive': require('@assets/icons/calendar-day-inactive.png'),
+  },
+  week: { 
+    'active': require('@assets/icons/calendar-week-active.png'),
+    'inactive': require('@assets/icons/calendar-week-inactive.png'),
+  },
+  month: {
+    'active': require('@assets/icons/calendar-month-active.png'),
+    'inactive': require('@assets/icons/calendar-month-inactive.png'),
+  },
+  year: { 
+    'active': require('@assets/icons/calendar-year-active.png'),
+    'inactive': require('@assets/icons/calendar-year-inactive.png'),
+  },
+  others: {
+    'active': require('@assets/icons/calendar-others-active.png'),
+    'inactive': require('@assets/icons/calendar-others-inactive.png'),
+  },
+}
+
+export const statIconSource = {
+  mood: require('@assets/icons/stat-mood.png'),
+  appetite: require('@assets/icons/stat-appetite.png'),
+  energy: require('@assets/icons/stat-energy.png'),
+  sleep: require('@assets/icons/stat-sleep.png'),
+  vomit: require('@assets/icons/stat-vomit.png'),
+  urine: require('@assets/icons/stat-urine.png'),
+  feces: require('@assets/icons/stat-feces.png'),
+  water: require('@assets/icons/stat-water.png'),
+  weight: require('@assets/icons/stat-weight.png'),
+  dryFood: require('@assets/icons/stat-dry_food.png'),
+  wetFood: require('@assets/icons/stat-wet_food.png'),
+  treats: require('@assets/icons/stat-treats.png'),
+}
+
+export const statQualIconSource = {
+  heart: [
+    require('@assets/icons/stat-heart-0.png'),
+    require('@assets/icons/stat-heart-1.png'),
+  ],
+  paw: [
+    require('@assets/icons/stat-paw-0.png'),
+    require('@assets/icons/stat-paw-1.png'),
+  ],
+  mood: [
+    require('@assets/icons/stat-mood-0.png'),
+    require('@assets/icons/stat-mood-1.png'),
+    require('@assets/icons/stat-mood-2.png'),
+    require('@assets/icons/stat-mood-3.png'),
+    require('@assets/icons/stat-mood-4.png'),
+  ],
+}
+
+const petIconSource = {
+  'Dog': require('@assets/icons/pet-dog.png'),
+  'Cat': require('@assets/icons/pet-cat.png'),
+  'Bird': require('@assets/icons/pet-bird.png'),
+  'Fish': require('@assets/icons/pet-fish.png'),
+  'Others': require('@assets/icons/pet-animal.png'),
+}
+
+export const getActionIconSource = (name: string) => {
+  return actionIconSource[name]
+}
+
+export const getCareIconSource = (name: string) => {
+  return careIconSource[Object.keys(CARE_NAMES).find(key => CARE_NAMES[key] === name)]
+}
+export const getHealthIconSource = (name: string) => {
+  return healthIconSource[Object.keys(HEALTH_NAMES).find(key => HEALTH_NAMES[key] === name)]
+}
+
+export const getNavigationIconSource = (name: string, status: string) => {
+  return navigationIconSource[name][status] || require('@assets/icons/account-active.png')
 }
 
 export const getPetIconSource = (name: string) => {
-  return petIconSource[name] || require('@assets/icons/paw.png')
+  return petIconSource[name]
 }
 
+export const getCalendarIconSource = (name: string, status: string) => {
+  return calendarIconSource[name][status]
+}
+
+export const getStatQualIconSource = (name: string, value: number) => {
+  return statQualIconSource[name][value]
+}

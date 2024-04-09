@@ -1,13 +1,13 @@
 //npm modules
-import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native"
+import { StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView, useWindowDimensions } from "react-native"
 //types & context
 import { Pet } from "@pet/PetInterface"
 //components
 import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
 import {  BoxHeader } from "@components/HeaderComponent"
-import { StatButton } from "@components/ButtonComponent"
 import { AlertForm } from "@utils/ui"
+
 //store & queries
 import { useDeletePet } from "@pet/petQueries"
 import { usePetActions } from "@store/store"
@@ -22,12 +22,12 @@ interface PetDetailsProps {
 
 const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   const { pet } = route.params
-  const { onDeletePet } = usePetActions()
-  
-  const deletePetMutation = useDeletePet()
-  const { caresByPet } = useCaresByPet(pet._id)
-  const { healthDueByPet } = useHealthDueByPet(pet._id)
 
+  const windowHeight = useWindowDimensions().height
+
+  const { onDeletePet } = usePetActions()
+  const deletePetMutation = useDeletePet()
+  
   const handleDeletePet = async (petId: string) => {
     deletePetMutation.mutate(petId, {
       onSuccess: (data) => {
@@ -52,8 +52,12 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
     )
   }
 
-  return ( 
-    <View style={[styles.container, { backgroundColor: Colors.multiArray4[pet.color] }]}>
+  return (
+    <ScrollView
+      alwaysBounceVertical={false}
+      contentContainerStyle={styles.container}
+      style={{ backgroundColor: Colors.multi.light[pet.color] }}
+    >
       {pet ?
         <>
           <View style={[styles.infoCard, 
@@ -61,29 +65,25 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
             <View style={styles.petInfo}>
               <PetInfo pet={pet} size='expanded' />
             </View>
-            <View style={{...Forms.rowCon}}>
-              <StatButton item={ {header: 'vet visit', stat: healthDueByPet(), body: 'days'}} bgColor={Colors.multiArray3[pet.color]} />
-              <StatButton item={ {header: 'tasks', stat: caresByPet().length, body: 'today'}} bgColor={Colors.multiArray3[pet.color]} />
-              <StatButton item={ {header: 'status', iconUri: require('@assets/icons/very-good.png'), body: '12/30/24'}} bgColor={Colors.multiArray3[pet.color]} />
-            </View>
 
           </View>
 
           <View style={{ ...Forms.roundedCon }}>
-            <BoxHeader title="Update info" onPress={() => navigation.navigate('Edit', { pet: pet })} />
-            <BoxHeader title={deletePetMutation.isPending ? 'Deleting...' : 'Delete'} onPress={showDeleteConfirmDialog} />
+            <BoxHeader title="Update info" onPress={() => navigation.navigate('Edit', { pet })} />
+            <BoxHeader title='Log pet stats' onPress={() => navigation.navigate('Create', { pet: { _id: pet._id, name: pet.name } })} />
+            <BoxHeader title={deletePetMutation.isPending ? 'Deleting...' : 'Delete'} onPress={showDeleteConfirmDialog} titleColor={Colors.red.dark} />
           </View>
         </>
-      
         : <Loader />
       }
-    </View>
+    </ScrollView>
   )
 }
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown
+    ...Spacing.flexColumn,
+    paddingVertical: 20,
   },
   infoCard: {
     width: '90%',

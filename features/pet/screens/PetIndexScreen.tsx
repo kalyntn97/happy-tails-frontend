@@ -1,5 +1,5 @@
 //npm modules
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, FC } from 'react'
 import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image, ScrollView } from "react-native"
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 //components
@@ -11,12 +11,16 @@ import PlaceHolder from '@components/PlaceHolder'
 import { Pet } from '../PetInterface'
 import { useSetActions } from '@store/store'
 import { useGetAllPets } from '@pet/petQueries'
-import { AlertForm } from '@utils/ui'
+import { AlertForm, getActionIconSource } from '@utils/ui'
 //styles
 import { Buttons, Spacing, Typography, Colors, Forms } from '@styles/index'
 
+interface PetIndexProps {
+  navigation: any
+}
 
-const PetIndexScreen: React.FC = ({ navigation }) => {
+
+const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
   const [currCard, setCurrCard] = useState<number>(0)
 
   const {data: pets, isSuccess, isLoading, isError } = useGetAllPets()
@@ -36,9 +40,6 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
   const onScrollEnd = () => {
     const currentIndex = scrollX.value / width
     setCurrCard(currentIndex)
-    if (DotNavRef.current) {
-      (DotNavRef.current as any).scrollToIndex({ index: currentIndex })
-    }
   }
 
   const handleClickNext = () => {
@@ -46,43 +47,40 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     if (FlatListRef.current) {
       (FlatListRef.current as any).scrollToIndex({ index: nextCard })
     }
-    if (DotNavRef.current) {
-      (DotNavRef.current as any).scrollToIndex({ index: nextCard })
-    }
   }
   const handleClickPrev = () => {
     const prevCard = Math.max(currCard - 1, 0)
     if (FlatListRef.current) {
       (FlatListRef.current as any).scrollToIndex({ index: prevCard })
     }
-    if (DotNavRef.current) {
-      (DotNavRef.current as any).scrollToIndex({ index: prevCard })
-    }
   }
 
   const DotNav = ({ index }) => {
+    const currIndex = currCard === 0 ? 0 : currCard === pets.length - 1 ? 2 : 1
     const animatedDot = useAnimatedStyle(() => {
       const color = interpolate(
-        scrollX.value,
-        [(index - 1) * width, index * width, (index + 1) * width],
+        currIndex,
+        [index - 1, index , index + 1],
         [0, 1, 0],
         'clamp'
       )
+      const scale = interpolate(
+        currIndex,
+        [index - 1, index , index + 1],
+        [1, 1.3, 1],
+        'clamp'
+      )
+
+
       return {
-        color: color === 1 ? Colors.pink : 'black',
-        transform: [
-          { scale: interpolate(
-            scrollX.value,
-            [(index - 1) * width, index * width, (index + 1) * width],
-            [1, 1.5, 1],
-            'clamp'
-          )},
-        ]
+        backgroundColor: color === 1 ? Colors.pink.reg : 'black',
+        transform: [{ scale }],
+        
       }    
     })
 
     return (
-      <Animated.Text style={[styles.dot, animatedDot]}>•</Animated.Text>
+      <Animated.View style={[styles.dot, animatedDot, index === 1 && currCard > 1 && { width: 15 }]} />
     )
   }
 
@@ -125,31 +123,21 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
             style={[styles.prevBtn, currCard == 0 && styles.disabled]}
             disabled={currCard == 0}
           >
-            <Image source={require('@assets/icons/prev3.png')} style={{...Forms.smallIcon}}/> 
+            <Image source={getActionIconSource('prev')} style={{...Forms.smallIcon}}/> 
           </Pressable>
           
           <View style={styles.dotNav}>
-            <FlatList 
-              ref={DotNavRef}
-              horizontal 
-              data={pets}
-              keyExtractor={(item, index )=> index.toString()}
-              getItemLayout={(data, index) => (
-                {length: 14, offset: 14 * index - 1, index}
-              )}
-              renderItem={({ item, index }) => {
-                return <DotNav key={index} index={index} />
-              }}
-              showsHorizontalScrollIndicator={false}
-            />
+            {Array(3).fill(0).map((_, i) =>
+              <DotNav key={i} index={i} />
+            )}
           </View>
-
+          
           <Pressable 
             onPress={handleClickNext} 
             style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled]}
             disabled={currCard == petCount - 1}
           >
-            <Image source={require('@assets/icons/next3.png')} style={{ ...Forms.smallIcon }}/> 
+            <Image source={getActionIconSource('next')} style={{ ...Forms.smallIcon }}/> 
           </Pressable>
         </View>
         
@@ -184,17 +172,19 @@ const styles = StyleSheet.create({
   },
   carousel: {
     width: '100%',
-    height: '70%',
-    marginTop: 30,
+    height: '80%',
+    marginTop: 10,
   },
   dotNav: {
     ...Spacing.flexRow,
-    overflow: 'hidden',
-    width: 95,
+    width: 120,
+    justifyContent: 'space-between',
   },
   dot: {
     margin: 10,
-    fontSize: 30,
+    width: 8,
+    height: 8,
+    borderRadius: 99,
   },
   disabled: {
     opacity: 0.5

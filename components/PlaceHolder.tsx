@@ -7,7 +7,7 @@ const PlaceHolder = ({ navigation }) => {
   return (  
     <View style={styles.container}>
       <LottieView source={require('@assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
-      <TransparentButton title='Add task' onPress={() => navigation.navigate('Care', { screen: 'Create' })} color={Colors.darkPink} />
+      <TransparentButton title='Add task' onPress={() => navigation.navigate('Care', { screen: 'Create' })} color={Colors.pink.dark} />
       <Text style={styles.msg}>No tasks.</Text>
     </View>
   )

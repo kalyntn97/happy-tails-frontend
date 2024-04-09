@@ -83,7 +83,7 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
       </View>
     : <Text>{label}</Text>
     }
-    <Image source={require('@assets/icons/dropdown.png')} style={styles.icon } />
+    <Image source={require('@assets/icons/action-down_thin.png')} style={styles.icon } />
   </TouchableOpacity>
   )
 
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     ...Forms.input,
     height: 'auto',
-    borderColor: Colors.pink,
+    borderColor: Colors.pink.reg,
     justifyContent: 'space-between',
     zIndex: 1
   },
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   content: {
     position: 'absolute',
-    backgroundColor: Colors.lightestPink,
+    backgroundColor: Colors.pink.lightest,
     width: 250,
     height: 200,
     padding: 10,
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1
   },
   selected: {
-    color: Colors.darkPink,
+    color: Colors.pink.dark,
     fontWeight: 'bold'
   }
 })

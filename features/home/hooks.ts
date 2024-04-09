@@ -7,9 +7,11 @@ import { useDeleteCare } from "../care/careQueries"
 import { useDeleteHealth } from "@health/healthQueries"
 //types & helpers
 import { AlertForm } from "@utils/ui"
-import { useShallowCares, useShallowHealths, useShallowPetBasics } from "@store/storeUtils"
+import { usePetIds, useShallowCares, useShallowHealths, useShallowPetBasics } from "@store/storeUtils"
 import { countDaysBetween, dateIsWithinRange } from "@utils/datetime"
 import { Care } from "@care/CareInterface"
+import { shouldRenderCareTask } from "./helpers"
+import { useCares } from "@store/store"
 
 const showDeleteConfirmDialog = (item: any, handleDeleteItem: (itemId: string) => void) => {
   return Alert.alert(
@@ -66,7 +68,7 @@ export const useShallowPetColor = () => {
     }
   }
   
-  return { petIdToColor }
+  return petIdToColor
 }
 
 
@@ -85,19 +87,18 @@ export const useSelectPhoto = async  () => {
 }
 
 export const useCaresByPet = (petId: string) => {
-  const cares = useShallowCares()
+  const cares = useCares()
   
   const caresByPet = () => {
     const filtered = cares.filter(care => {
       const includesPet = care.pets.map(p => p._id).includes(petId)
-      const dueToday = care.frequency === 'Daily'
-        && dateIsWithinRange(care.date, care.endDate)
+      const dueToday = shouldRenderCareTask(care, new Date()) && care.frequency === 'Daily'
       return includesPet && dueToday
     })
     return filtered
   }
 
-  return { caresByPet }
+  return caresByPet
 }
 
 export const useCaresByFrequency = (frequency: string) => {
@@ -112,7 +113,7 @@ export const useCaresByFrequency = (frequency: string) => {
     }, {})
     return sorted[frequency] ?? []
   }
-  return { caresByFrequency }
+  return caresByFrequency
 }
 
 export const useHealthDueByPet = (petId: string) => {
@@ -122,12 +123,34 @@ export const useHealthDueByPet = (petId: string) => {
     let minDays = Infinity
     healths.filter(health => health.pet._id === petId).forEach(health => {
       if (health.nextDue) {
-        const daysToNextDue = countDaysBetween(new Date(), health.nextDue)
+        const daysToNextDue = countDaysBetween(new Date(), health.nextDue.date)
         if (daysToNextDue < minDays) minDays = daysToNextDue
       }
     })
     return minDays
   }
 
-  return { healthDueByPet }
+  return healthDueByPet
+}
+
+export const useTaskCounts = () => {
+  const cares = useCares()
+  //* num of tasks due today
+  const careCounts = (selectedDate: Date) => {
+    const filtered = cares.filter((care: Care) => shouldRenderCareTask(care, selectedDate) && care.frequency === 'Daily')
+    return filtered.length
+  }
+  //* num of days until the next vet visit
+  const healthCounts = () => {
+    const petIds = usePetIds()
+    let minDays = Infinity
+    petIds.forEach(pet => {
+      const healthDueByPet = useHealthDueByPet(pet._id)
+      const days = healthDueByPet()
+      if (days < minDays) minDays = days
+      return minDays
+    })
+    return minDays
+  }
+  return { careCounts, healthCounts }
 }

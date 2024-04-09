@@ -21,8 +21,8 @@ export const getAllPets = async () => {
 //   }
 // }
 
-export const create = async (name: string, age: number, species: string, breed: string, color: number, photoData: { uri: string, name: string, type: string } | null): Promise<Pet> => {
-  const result = (await axios.post<Pet>(BASE_URL, { name, age, species, breed, color })).data
+export const create = async (name: string, species: string, breed: string, dob: Date, firstMet: Date, altered: {value: boolean, date: Date | null}, status: {value: string, date: Date | null, show: boolean }, color: number, photoData: { uri: string, name: string, type: string } | null): Promise<Pet> => {
+  const result = (await axios.post<Pet>(BASE_URL, { name, species, breed, dob, firstMet, altered, status, color })).data
   if (photoData) {
     const url = await addPhoto(result._id, photoData)
     result.photo = url
@@ -36,8 +36,8 @@ export const addPhoto = async (petId: string, photoData: any): Promise<string> =
   return (await axios.patch<string>(`${BASE_URL}/${petId}/add-photo`, photoFormData)).data
 }
 
-export const update = async (name: string, age: number, species: string, breed: string, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string): Promise<Pet> => {
-    const result = (await axios.put<Pet>(`${BASE_URL}/${petId}`, { name, age, species, breed, color })).data
+export const update = async (name: string,  species: string, breed: string, dob: Date, firstMet: Date, altered: {value: boolean, date: Date | null}, status: {value: string, date: Date | null, show: boolean }, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string): Promise<Pet> => {
+    const result = (await axios.put<Pet>(`${BASE_URL}/${petId}`, { name, species, breed, dob, firstMet, altered, status, color })).data
     if (photoData) {
       const url = await addPhoto(result._id, photoData)
       result.photo = url
