@@ -48,7 +48,8 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         return ''
       } else {
         setAllowManualName(false)
-        return selected
+        const healthName: string = healthHelpers.healthNameFromKey[selected]
+        return healthName
       }
     })
   }
