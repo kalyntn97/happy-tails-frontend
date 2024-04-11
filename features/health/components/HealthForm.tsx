@@ -1,6 +1,6 @@
 //npm
 import { useState } from "react"
-import { Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 //store && types & helpers
 import { usePets } from "@store/store"
@@ -25,8 +25,8 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   const pets = usePets()
   const initialPetName = pets.find(p => p._id === initialValues?.pet._id)?.name ?? null
   const [pet, setPet] = useState<string>(initialValues?.pet._id ?? null)
-  const [name, setName] = useState<string>(initialValues?.name ?? null)
-  const [vaccine, setVaccine] = useState<string>(initialValues?.vaccine ?? null)
+  const [name, setName] = useState<string>(healthHelpers.HEALTHS[initialValues?.name] ?? null)
+  const [vaccine, setVaccine] = useState<string>(healthHelpers.VACCINES[initialValues?.vaccine]?.name ?? null)
   const [type, setType] = useState<string>(initialValues?.type ?? 'Routine')
   const [times, setTimes] = useState<number>(initialValues?.times ?? null)
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
@@ -48,8 +48,8 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         return ''
       } else {
         setAllowManualName(false)
-        const healthName: string = healthHelpers.healthNameFromKey[selected]
-        return healthName
+        const healthKey: string = healthHelpers.healthKeyFromName[selected]
+        return healthKey
       }
     })
   }
@@ -81,68 +81,65 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView 
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={styles.header}>{initialValues?.name ? 'Edit' : 'Add'} a Vet Record</Text>
+    <ScrollView
+      keyboardShouldPersistTaps='handled'
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
+      {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
 
-        {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
+      <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} />
 
-        <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} />
+      <Dropdown label={'Select Type'} dataType="healthTypes" onSelect={setType} initial={type} />
+    
+      {!!name && <Text>Enter Name</Text>}
+      <Dropdown label={'Select Name'} dataType="health" onSelect={handleSelectName} initial={name} />
 
-        <Dropdown label={'Select Type'} dataType="healthTypes" onSelect={setType} initial={type} />
+      {allowManualName && 
+        <TextInput 
+          style={styles.input}
+          placeholder="Specify name"
+          onChangeText={(text: string) => setName(text)}
+          value={name}
+          autoCapitalize="words"
+        />
+      }
+      {(name === 'vax' && (species === 'Cat' || species === 'Dog')) || vaccine &&
+        <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={handleSaveVaccine} initial={vaccine} />
+      }
       
-        {!!name && <Text>Enter Name</Text>}
-        <Dropdown label={'Select Name'} dataType="health" onSelect={handleSelectName} initial={name} />
+      <Text style={styles.subText}>(Press + to add, - to remove dates)</Text>
+      <MultipleInputs label='Last Done' type='Date' initials={initialVisits} onPress={addPastVisits}/>
 
-        {allowManualName && 
-          <TextInput 
-            style={styles.input}
-            placeholder="Specify name"
-            onChangeText={(text: string) => setName(text)}
-            value={name}
-            autoCapitalize="words"
+      {!allowManualDueDate && 
+        <View style={styles.rowContainer}>
+          <Text style={styles.label}>Due In</Text>
+          <TextInput
+            style={[Forms.inputBase, { width: 50 }]}
+            placeholder='1' 
+            onChangeText={(text: string) => setTimes(Number(text))} 
+            value={(times ?? '').toString()} 
+            keyboardType="numeric"
           />
-        }
-        {name === 'Vaccine' && (species === 'Cat' || species === 'Dog') &&
-          <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={handleSaveVaccine} initial={vaccine} />
-        }
-        
-        <Text style={styles.subText}>(Press + to add, - to remove dates)</Text>
-        <MultipleInputs label='Last Done' type='Date' initials={initialVisits} onPress={addPastVisits}/>
+          <Dropdown label='...' dataType="healthFrequency" onSelect={setFrequency} width={120} initial={frequency} />
+        </View>
+      }
+      <View style={styles.checkboxContainer}>
+        <Text>Or enter manually</Text>
+        <CheckboxButton initial={allowManualDueDate} onPress={() => setAllowManualDueDate(!allowManualDueDate)} />
+      </View>
 
-        {!allowManualDueDate && 
-          <View style={styles.rowContainer}>
-            <Text style={styles.label}>Due In</Text>
-            <TextInput
-              style={[Forms.inputBase, { width: 50 }]}
-              placeholder='1' 
-              onChangeText={(text: string) => setTimes(Number(text))} 
-              value={(times ?? '').toString()} 
-              keyboardType="numeric"
-            />
-            <Dropdown label='...' dataType="healthFrequency" onSelect={setFrequency} width={120} initial={frequency} />
-          </View>
-        }
-        <View style={styles.checkboxContainer}>
-          <Text>Or enter manually</Text>
-          <CheckboxButton initial={allowManualDueDate} onPress={() => setAllowManualDueDate(!allowManualDueDate)} />
+    {allowManualDueDate &&
+        <View style={styles.rowContainer}>
+          <Text style={styles.label}>Next Due</Text>
+          <RNDateTimePicker value={new Date(nextDue?.date ?? new Date())} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue({ date: selectedDate, notes: '' }) }}/>
         </View>
 
-      {allowManualDueDate &&
-          <View style={styles.rowContainer}>
-            <Text style={styles.label}>Next Due</Text>
-            <RNDateTimePicker value={new Date(nextDue?.date ?? new Date())} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue({ date: selectedDate, notes: '' }) }}/>
-          </View>
+    }
+      <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
+      <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
 
-      }
-        <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
-        <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
-
-      </ScrollView>
-    </TouchableWithoutFeedback>
+    </ScrollView>
   )
 }
 

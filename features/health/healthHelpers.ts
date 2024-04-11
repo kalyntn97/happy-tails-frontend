@@ -114,7 +114,7 @@ const keyFromName = (data: { [key: string]: string }) => {
   return map
 }
 
-export const healthNameFromKey = keyFromName(HEALTHS)
+export const healthKeyFromName = keyFromName(HEALTHS)
 
 export const vaccineKeyFromName = nameToKey(VACCINES)
 

@@ -2,7 +2,7 @@
 import { FC, useRef, useState } from "react"
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList } from "react-native"
 //utils & store
-import { getCurrentDate, getDateInfo, getDayOfWeek, getDaysInMonth, getMonth, getWeekIndex, getYears, months } from "@utils/datetime"
+import { getDateInfo, getDayOfWeek, getDaysInMonth, getMonth, getWeekIndex, getYears, months } from "@utils/datetime"
 import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
 //components
 import ScrollSelector from "../../../components/ScrollSelector"
@@ -97,15 +97,15 @@ const ScrollCalendar = () => {
           scrollToPos(currDate - 1) 
         }
       }>
-        <Text style={[{ color: todayIsActive ? Colors.white : Colors.pink.reg }, styles.headerBtnText]}>Today</Text>
-        <Text style={[{ color: todayIsActive ? Colors.white : Colors.pink.reg }, styles.headerBtnText]}>▶︎</Text>
+        <Text style={[{ color: todayIsActive ? Colors.white : Colors.pink.dark }, styles.headerBtnText]}>Today</Text>
+        <Text style={[{ color: todayIsActive ? Colors.white : Colors.pink.dark }, styles.headerBtnText]}>▶︎</Text>
       </TouchableOpacity>
       
       <TouchableOpacity style={[pastIsActive && styles.activeHeaderBtnCon, styles.headerBtnCon, styles.right]}
         onPress={() => setModalVisible(true)}
       >
-        <Text style={[{ color: pastIsActive ? Colors.white : Colors.pink.reg }, styles.headerBtnText]}>◀︎</Text>
-        <Text style={[{ color: pastIsActive ? Colors.white : Colors.pink.reg }, styles.headerBtnText]}>History</Text>
+        <Text style={[{ color: pastIsActive ? Colors.white : Colors.pink.dark }, styles.headerBtnText]}>◀︎</Text>
+        <Text style={[{ color: pastIsActive ? Colors.white : Colors.pink.dark }, styles.headerBtnText]}>History</Text>
       </TouchableOpacity>
 
       <FlatList
@@ -183,15 +183,15 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     ...Spacing.centered,
     borderWidth: 1,
-    borderColor: Colors.pink.reg
+    borderColor: Colors.pink.dark
   },
   date: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: Colors.pink.reg
+    color: Colors.pink.dark
   },
   day: {
-    color: Colors.pink.reg
+    color: Colors.pink.dark
   },
   currDay: {
     color: Colors.white,
@@ -200,11 +200,11 @@ const styles = StyleSheet.create({
     color: Colors.white
   },
   activeCon: {
-    backgroundColor: Colors.pink.reg,
+    backgroundColor: Colors.pink.dark,
     borderWidth: 0,
   },
   currCon: {
-    backgroundColor: Colors.purple.light,
+    backgroundColor: Colors.purple.lightest,
     borderWidth: 0,
   },
   headerBtnCon: {
@@ -212,12 +212,12 @@ const styles = StyleSheet.create({
     top: -60,
     height: 30,
     width: 90,
-    borderColor: Colors.pink.reg,
+    borderColor: Colors.pink.dark,
     borderWidth: 1.3,
     ...Spacing.flexRow,
   },
   activeHeaderBtnCon: {
-    backgroundColor: Colors.pink.reg,
+    backgroundColor: Colors.pink.dark,
   },
   headerBtnText: {
     fontWeight: 'bold',
@@ -244,7 +244,6 @@ const styles = StyleSheet.create({
   modalCon: {
     ...Spacing.fullWH,
     ...Spacing.centered,
-    backgroundColor: Colors.pink.lightest,
   },
   modalItemCon: {
     width: '70%',

@@ -1,6 +1,6 @@
 //npm
 import { useState } from "react"
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ScrollView, useWindowDimensions } from "react-native"
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWindowDimensions } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
@@ -8,8 +8,8 @@ import MultiselectDropdown from "@components/Dropdown/MultiselectDropdown"
 import { MainButton, SubButton } from "@components/ButtonComponent"
 //types
 import { Pet } from "@pet/PetInterface"
+import { CARES, careKeyFromName } from "@care/careHelpers"
 //store
-import { usePets } from "@store/store"
 import { usePetIds } from "@store/storeUtils"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
@@ -28,7 +28,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   const pets = usePetIds()
   const height = useWindowDimensions().height
 
-  const [name, setName] = useState<string>(initialValues?.name ?? null)
+  const [name, setName] = useState<string>(CARES[initialValues?.name] ?? null)
   const [petData, setPetData] = useState<string[]>(initialPets ?? [])
   const [repeat, setRepeat] = useState<boolean>(initialValues?.repeat ?? false)
   const [ending, setEnding] = useState<boolean>(initialValues?.ending ?? false)
@@ -48,13 +48,12 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         setAllowManualName(true)
         return ''
       } else {
-        setAllowManualName(false)
-        return selected
+        setAllowManualName(false)       
+        const careKey = careKeyFromName[selected]
+        return careKey
       }
     })
   }
-
-
   // handle select multiple pets
   const handleSelectPets = (selected: string[]) => {
     // convert names into ids before submitting
@@ -73,84 +72,80 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       if (!ending) {
         setEndDate(null)
       }
-      await onSubmit(name, petData, repeat, ending, date, endDate, frequency, times, color, careId)
+      onSubmit(name, petData, repeat, ending, date, endDate, frequency, times, color, careId)
     }
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <ScrollView
+      keyboardShouldPersistTaps='handled'
+      contentContainerStyle={[styles.container, { minHeight: height * 0.75}]}
+      showsVerticalScrollIndicator={false}
+      alwaysBounceVertical={false}
+    >
+      {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
 
-      <ScrollView
-        contentContainerStyle={[styles.container, { minHeight: height * 0.75}]}
-        showsVerticalScrollIndicator={false}
-        alwaysBounceVertical={false}
-      >
-        <Text style={styles.header}>{initialValues?.name ? 'Edit' : 'Add'} Tracker</Text>
+      {!!name && <Text>Enter Name</Text>}
+      <Dropdown label={'Select Name'} dataType="care" onSelect={handleSelectName} initial={name} />
+      {allowManualName && 
+        <TextInput 
+          style={styles.input}
+          placeholder="Specify name"
+          onChangeText={(text: string) => setName(text)}
+          value={name}
+          autoCapitalize="words"
+        />
+      }
+      <MultiselectDropdown label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialPetNames} />
 
-        {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
+      <View style={styles.rowCon}>
+        <Text style={styles.rowText}>{repeat ? 'Start Date' : 'Date'}</Text>
+        <RNDateTimePicker value={new Date(date)} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.pink.dark} />
+      </View>
 
-        {!!name && <Text>Enter Name</Text>}
-        <Dropdown label={'Select Name'} dataType="care" onSelect={handleSelectName} initial={name} />
-        {allowManualName && 
+      {repeat &&
+        <>
+          {!!frequency && <Text>Select Frequency</Text>}
+          <Dropdown label={'Select Frequency'} dataType="frequency" onSelect={setFrequency} initial={frequency} />
+          
           <TextInput 
-            style={styles.input}
-            placeholder="Specify name"
-            onChangeText={(text: string) => setName(text)}
-            value={name}
-            autoCapitalize="words"
+            style={styles.input} 
+            placeholder='Enter Times' 
+            onChangeText={(text: string) => setTimes(Number(text))} 
+            value={(times ?? '').toString()} 
+            keyboardType="numeric"
           />
-        }
-        <MultiselectDropdown label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialPetNames} />
-
+        </>
+      }
+      
+      {repeat &&
         <View style={styles.rowCon}>
-          <Text style={styles.rowText}>{repeat ? 'Start Date' : 'Date'}</Text>
-          <RNDateTimePicker value={new Date(date)} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.pink.dark} />
+          <Text style={styles.rowText}>Set end date? (optional)</Text>
+          <TouchableOpacity onPress={() => setEnding(!ending)}>
+            <Text style={styles.rowTextFocus}>{ending ? '☑︎' : '☐'}</Text>
+          </TouchableOpacity>
         </View>
-
-        {repeat &&
-          <>
-            {!!frequency && <Text>Select Frequency</Text>}
-            <Dropdown label={'Select Frequency'} dataType="frequency" onSelect={setFrequency} initial={frequency} />
-            
-            <TextInput 
-              style={styles.input} 
-              placeholder='Enter Times' 
-              onChangeText={(text: string) => setTimes(Number(text))} 
-              value={(times ?? '').toString()} 
-              keyboardType="numeric"
-            />
-          </>
-        }
-        
-        {repeat &&
-          <View style={styles.rowCon}>
-            <Text style={styles.rowText}>Set end date? (optional)</Text>
-            <TouchableOpacity onPress={() => setEnding(!ending)}>
-              <Text style={styles.rowTextFocus}>{ending ? '☑︎' : '☐'}</Text>
-            </TouchableOpacity>
-          </View>
-        }
-        {repeat && ending &&
-          <View style={styles.rowCon}>
-            <Text style={styles.rowText}>End Date</Text>
-            <RNDateTimePicker value={new Date(endDate) ?? new Date()} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setEndDate(selectedDate) }} accentColor={Colors.pink.dark} />
-          </View>
-        }
-
-        <View style={styles.bottomCon}>
-          <View style={[styles.rowCon]}>
-            <Text style={styles.rowText}>Repeat is</Text>
-            <TouchableOpacity onPress={() => setRepeat(!repeat)}>
-              <Text style={[styles.rowTextFocus, { color: repeat ? Colors.green.reg : Colors.red.reg }]}>{repeat ? 'ON' : 'OFF'}</Text>
-            </TouchableOpacity>
-          </View>
-          <ColorPickingPanel onPress={setColor} initial={initialValues?.color} />
-          <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
-          <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
+      }
+      {repeat && ending &&
+        <View style={styles.rowCon}>
+          <Text style={styles.rowText}>End Date</Text>
+          <RNDateTimePicker value={new Date(endDate) ?? new Date()} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setEndDate(selectedDate) }} accentColor={Colors.pink.dark} />
         </View>
+      }
 
-      </ScrollView>
-    </TouchableWithoutFeedback>  
+      <View style={styles.bottomCon}>
+        <View style={[styles.rowCon]}>
+          <Text style={styles.rowText}>Repeat is</Text>
+          <TouchableOpacity onPress={() => setRepeat(!repeat)}>
+            <Text style={[styles.rowTextFocus, { color: repeat ? Colors.green.reg : Colors.red.reg }]}>{repeat ? 'ON' : 'OFF'}</Text>
+          </TouchableOpacity>
+        </View>
+        <ColorPickingPanel onPress={setColor} initial={initialValues?.color} />
+        <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
+        <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
+      </View>
+
+    </ScrollView>
   )
 }
 

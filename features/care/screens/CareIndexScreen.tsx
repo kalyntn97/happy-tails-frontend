@@ -9,6 +9,7 @@ import EmptyList from "@components/EmptyList"
 import { RoundButton } from "@components/ButtonComponent"
 //types & helpers
 import { Care } from "@care/CareInterface"
+import { CARES } from "@care/careHelpers"
 import { getActionIconSource, getCareIconSource } from "@utils/ui"
 //queries
 import { useGetAllCares } from "@care/careQueries"
@@ -39,7 +40,7 @@ const CareItem = ({ care, navigation }) => {
     >
       <View style={styles.itemLeft}>
         <Image source={iconSource} style={styles.itemIcon} />
-        <Text style={styles.itemText}>{care.name}</Text>
+        <Text style={styles.itemText}>{CARES[care.name] ?? care.name}</Text>
         <Text style={[styles.itemText, { color: 'gray' }]}>{care.frequency}</Text>
       </View>
       <Image source={getActionIconSource('nextRound')} style={styles.rightIcon} />

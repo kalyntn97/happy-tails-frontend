@@ -1,4 +1,5 @@
 import { Colors, Spacing, Forms } from "@styles/index";
+import { ViewStyle } from "react-native";
 
 export const ButtonStyles = {
   width: 60, 
@@ -9,7 +10,7 @@ export const ButtonStyles = {
   textColor: Colors.white
 }
 
-export const Button = {
+export const Button: ViewStyle = {
   width: ButtonStyles.width,
   height: ButtonStyles.height,
   backgroundColor: ButtonStyles.backgroundColor,

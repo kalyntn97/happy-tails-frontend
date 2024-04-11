@@ -21,14 +21,19 @@ export const sub: TextStyle = {
   // fontWeight: 'bold',
 }
 
-export const large: TextStyle = {
+export const xLarge: TextStyle = {
   fontSize: 40,
   lineHeight: 55,
 }
 
+export const large: TextStyle = {
+  fontSize: 30,
+  lineHeight: 30,
+}
+
 export const medium: TextStyle = {
   fontSize: 25,
-  lineHeight: 40,
+  lineHeight: 35,
 }
 
 export const small: TextStyle = {
@@ -48,12 +53,17 @@ export const xxSmall: TextStyle = {
 
 export const mainHeader = {
   ...header,
-  ...large,
+  ...xLarge,
 }
 
 export const subHeader = {
   ...header,
-  ...medium,
+  ...large,
+}
+
+export const mediumHeader = {
+  ...header,
+  ...medium
 }
 
 export const smallHeader ={

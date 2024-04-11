@@ -3,8 +3,9 @@ import { FC, useState } from "react"
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native"
 //helpers
 import { getActionIconSource, statQualIconSource } from "@utils/ui"
+import { STATS, STAT_QUAL_VALUES } from "../statHelpers"
 //styles
-import { Forms, Spacing } from "@styles/index"
+import { Forms, Spacing, Typography } from "@styles/index"
 
 interface LogFormProps {
   name: string
@@ -12,7 +13,7 @@ interface LogFormProps {
   onSelect: (item: { name: string, value: number }) => void
 }
 
-const LogForm: FC<LogFormProps> = ({ name, initialValues, onSelect }) => {
+const IconStatForm: FC<LogFormProps> = ({ name, initialValues, onSelect }) => {
   const [value, setValue] = useState<number>(initialValues?.value ?? null)
 
   const options = statQualIconSource[name]
@@ -21,20 +22,24 @@ const LogForm: FC<LogFormProps> = ({ name, initialValues, onSelect }) => {
 
   for (let i = options.length - 1; i >=0; i--) {
     optionCon.push(
-      <TouchableOpacity key={i} onPress={() => {
+      <TouchableOpacity key={i} style={{ ...Spacing.flexColumn, margin: 10 }} onPress={() => {
         value === i ? setValue(null) : setValue(i)
         onSelect({ name: name, value: i })
       }}>
-        {value === i &&
-          <Image source={getActionIconSource('check')} style={styles.selected} /> 
-        }
         <Image source={options[i]} style={{ ...Forms.xLargeIcon, margin: 10 }} />
+        {value === i &&
+          <>
+            <Image source={getActionIconSource('check')} style={styles.selected} />
+            <Text style={styles.label}>{STAT_QUAL_VALUES[i]}</Text>
+          </>
+        }
       </TouchableOpacity>
     )
   }
 
   return (
     <View style={styles.container}>
+      <Text style={{ ...Typography.mediumHeader }}>{STATS[name].name}</Text>
       {initialValues?.date && 
         <Text>{new Date(initialValues.date).toLocaleString()}</Text>
       }
@@ -45,7 +50,7 @@ const LogForm: FC<LogFormProps> = ({ name, initialValues, onSelect }) => {
 
 const styles = StyleSheet.create({
   container: {
-
+    width: '100%',
   },
   optionCon: {
     width: '100%',
@@ -60,6 +65,10 @@ const styles = StyleSheet.create({
     top: 5,
     right: 0,
   },
+  label: {
+    position: 'absolute',
+    bottom: -5,
+  },
 })
 
-export default LogForm
+export default IconStatForm

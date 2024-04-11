@@ -3,18 +3,16 @@ import { StyleSheet } from "react-native"
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 export const styles = StyleSheet.create({
-  scrollView: {
-    width: '100%'
-  },
   scrollContent: {
-    alignItems: 'center' 
+    ...Spacing.flexColumn,
+    paddingVertical: 20,
   },
   headerContainer: {
     ...Spacing.flexColumn,
     width: '100%',
   },
   header: {
-    ...Typography.subHeader,
+    ...Typography.mediumHeader,
     marginBottom: 0,
     color: Colors.pink.dark,
   },

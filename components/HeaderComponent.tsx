@@ -7,13 +7,15 @@ type BoxHeaderProps = {
   title: string
   onPress?: () => void
   titleColor?: string
+  arrow?: string
+  mode?: 'light'
 }
 
 interface BoxProps extends BoxHeaderProps {
   content: any
 }
 
-export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor }) => (
+export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor, arrow, mode }) => (
   <Pressable style={{
     ...Spacing.flexRow,
     borderBottomWidth: 1,
@@ -24,27 +26,24 @@ export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor }) =>
     onPress={onPress}
   >
     <Text style={[
-      {
-      ...Typography.xSmallHeader,
-      margin: 0,
-      marginLeft: 2,
-      textAlign: 'left',
-    }, titleColor && { color: titleColor }
+      { ...Typography.xSmallHeader, margin: 0, marginLeft: 2, textAlign: 'left', }, 
+    titleColor && { color: titleColor },
+    mode === 'light' && { fontWeight: 'normal' },
     ]}>
       { title }
     </Text>
-    <Image source={getActionIconSource('next')} style={{
+    <Image source={arrow === 'down' ? getActionIconSource('down') : getActionIconSource('next')} style={{
       ...Forms.xSmallIcon,
       marginLeft: 'auto',
     }} />
   </Pressable>
 )
 
-export const BoxWithHeader: FC<BoxProps> = ({ title, onPress, content, titleColor }) => (
+export const BoxWithHeader: FC<BoxProps> = ({ title, onPress, content, titleColor, arrow }) => (
   <View style={{
     ...Forms.roundedCon,
   }}>
-    <BoxHeader title={title} onPress={onPress} titleColor={titleColor} />
+    <BoxHeader title={title} onPress={onPress} titleColor={titleColor} arrow={arrow} />
     <View style={{
       width: '100%', alignItems: 'center'
     }}>

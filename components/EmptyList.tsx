@@ -1,3 +1,4 @@
+import { Typography } from "@styles/index"
 import { FC } from "react"
 import { StyleSheet, Text } from "react-native"
 
@@ -7,10 +8,7 @@ const EmptyList: FC  = () => (
 
 const styles = StyleSheet.create({
   empty: {
-    margin: 20,
-    fontSize: 15,
-    fontWeight: 'bold',
-    textAlign: 'center'
+    ...Typography.smallSubHeader
   },
 })
 

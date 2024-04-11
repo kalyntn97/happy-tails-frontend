@@ -7,12 +7,13 @@ import { usePetNames } from "@store/storeUtils"
 import * as petHelpers from '@pet/petHelpers'
 import * as careHelpers from '@care/careHelpers'
 import * as healthHelpers from '@health/healthHelpers'
+import * as statHelpers from '@stat/statHelpers'
 import { getActionIconSource } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface DropdownProps {
-  label: string
+  label?: string
   dataType: string
   onSelect: (item: string ) => void
   width?: number
@@ -31,10 +32,12 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
   //measure the btn pos and set the dropdown pos
   const DropdownBtn = useRef(null)
   const [dropdownTop, setDropdownTop] = useState(0)
+  const [dropdownLeft, setDropdownLeft] = useState(0)
  
   const openDropDown = (): void => {
-    DropdownBtn.current.measure((_fx, _fy, _w, h, _px, py) => {
+    DropdownBtn.current.measure((_fx, _fy, _w, h, px, py) => {
       setDropdownTop(py + h)
+      setDropdownLeft(px)
     })
     setVisible(true)
   }
@@ -63,6 +66,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
         'dogVaccines': healthHelpers.DOG_VACCINE_NAMES,
         'catVaccines': healthHelpers.CAT_VACCINE_NAMES,
         'petStatus': petHelpers.STATUS,
+        'weight': statHelpers.WEIGHT_UNITS,
       }
       const result = typeToSource[dataType] || []
       setData(result)
@@ -76,7 +80,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
       {visible && (
         <Modal visible={visible} transparent animationType="none">
           <TouchableOpacity style={styles.overlay} onPress={() => setVisible(false)}>
-            <View style={[styles.content, { top: dropdownTop }]}>
+            <View style={[styles.content, data.length > 4 && { height: 200 }, { top: dropdownTop, left: dropdownLeft, width: width ?? 250 }]}>
               <FlatList 
                 data={data} 
                 keyExtractor={(item, idx) => idx.toString()}
@@ -107,9 +111,9 @@ const styles = StyleSheet.create({
     zIndex: 1
   },
   icon: {
-    width: 30,
-    height: 30,
-    marginHorizontal: 10
+    width: 20,
+    height: 20,
+    marginHorizontal: 5
   },
   overlay: {
     ...Spacing.fullWH,
@@ -118,8 +122,6 @@ const styles = StyleSheet.create({
   content: {
     position: 'absolute',
     backgroundColor: Colors.pink.lightest,
-    width: 250,
-    height: 200,
     padding: 10,
     ...Forms.boxShadow
   },

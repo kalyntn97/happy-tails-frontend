@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, Scr
 //types & helpers & queries
 import { Care, Tracker } from "@care/CareInterface"
 import { useDeleteCareCard } from "@home/hooks"
-import { getCurrentTrackerIndex } from "@care/careHelpers"
+import { CARES, getCurrentTrackerIndex } from "@care/careHelpers"
 //components
 import { getCareIconSource } from "@utils/ui"
 import PetList from "@components/PetInfo/PetList"
@@ -36,9 +36,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
   
   return (
     <ScrollView
-      style={[styles.scrollView,
-        { backgroundColor: Colors.multi.lightest[care.color]}
-      ]}
+      style={{ backgroundColor: Colors.multi.lightest[care.color]}}
       contentContainerStyle={styles.scrollContent}
       scrollEventThrottle={200}
       decelerationRate="fast" 
@@ -46,7 +44,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
       {care ?
         <>
           <View style={styles.headerContainer}>
-            <Text style={styles.header}>{care.name}</Text>
+            <Text style={styles.header}>{CARES[care.name] ?? care.name}</Text>
             <View style={[styles.itemInfo]}>
               <View style={styles.rowCon}>
                 <Image source={require('@assets/icons/calendar-due.png')} style={styles.itemIcon}/>

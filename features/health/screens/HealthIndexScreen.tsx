@@ -12,6 +12,7 @@ import EmptyList from "@components/EmptyList"
 import PetInfo from "@components/PetInfo/PetInfo"
 import { Health } from "@health/HealthInterface"
 import { getActionIconSource, getHealthIconSource } from "@utils/ui"
+import { HEALTHS } from "@health/healthHelpers"
 //queries
 import { usePetIds, useShallowPetBasics } from "@store/storeUtils"
 import { useGetAllHealths } from "@health/healthQueries"
@@ -28,7 +29,6 @@ type HealthItemProps = {
   navigation: any
 }
 
-
 const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
   const iconSource = getHealthIconSource(health.name)
 
@@ -40,7 +40,7 @@ const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
     ]}>
       <View style={styles.itemLeft}>
         <Image source={iconSource} style={styles.itemIcon} />
-        <Text>{health.name}</Text>
+        <Text>{HEALTHS[health.name] ?? health.name}</Text>
         <View style={{ flex: 1 }}>
           <PetInfo pet={health.pet} size='mini' />
         </View>

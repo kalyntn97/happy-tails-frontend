@@ -71,14 +71,9 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
         : new Date(care.date).toLocaleDateString()
         }
       </Text>
-      <View style={styles.statusCon}>
-        <Text style={[
-          styles.status, 
-          // { color: times === tracker.done[index] ? Colors.green : Colors.red }
-        ]}>
-          {tracker.done[index] === times ? 'You did it! ' : `Only ${times - tracker.done[index]} more to go! `}
-        </Text>
-      </View>
+      <Text style={styles.status}>
+        {tracker.done[index] === times ? 'You did it! ' : `Only ${times - tracker.done[index]} more to go! `}
+      </Text>
       {care.repeat && times === 1 && freq !== 'Yearly'
         ? <>
             <View style={styles.ScrollChart}>

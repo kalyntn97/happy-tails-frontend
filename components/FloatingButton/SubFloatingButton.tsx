@@ -1,6 +1,6 @@
 // npm
 import { useEffect, useState } from "react"
-import { Text, View, StyleSheet, DeviceEventEmitter, useWindowDimensions, Image, ImageStyle } from "react-native"
+import { Text, View, StyleSheet, DeviceEventEmitter, useWindowDimensions, Image, ImageStyle, ViewStyle } from "react-native"
 import { State, TapGestureHandler } from "react-native-gesture-handler"
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated"
 // styles

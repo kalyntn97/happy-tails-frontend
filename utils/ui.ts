@@ -1,7 +1,5 @@
 import { Alert, ImageSourcePropType } from "react-native"
 import { Colors } from "@styles/index"
-import { CARE_NAMES } from "@care/careHelpers"
-import { HEALTH_NAMES } from "@health/healthHelpers"
 
 export const getColorArray = (): string[] => {
   const colorArrays = [
@@ -11,7 +9,6 @@ export const getColorArray = (): string[] => {
     Object.values(Colors.yellow),
     Object.values(Colors.purple)
   ]
-  console.log(colorArrays)
   const randomIdx = Math.floor(Math.random() * colorArrays.length)
   return colorArrays[randomIdx]
 }
@@ -41,9 +38,12 @@ const actionIconSource = {
   delete: require('@assets/icons/action-delete.png'),
   details: require('@assets/icons/action-details.png'),
   detailsPet: require('@assets/icons/pet-details.png'),
+  logPet: require('@assets/icons/pet-log.png'),
+  repeat: require('@assets/icons/action-repeat.png'),
   save: require('@assets/icons/action-save.png'),
   undo: require('@assets/icons/action-undo.png'),
   search: require('@assets/icons/action-search.png'),
+  back: require('@assets/icons/action-back.png'),
   down: require('@assets/icons/action-down.png'),
   downThin: require('@assets/icons/action-down_thin.png'),
   next: require('@assets/icons/action-next.png'),
@@ -54,7 +54,7 @@ const actionIconSource = {
   prevRound: require('@assets/icons/action-prev_round.png'),
   'Add a Task':  require('@assets/icons/care-filled.png'),
   'Add a Vet Visit':  require('@assets/icons/health-filled.png'),
-  'Add a Pet':  require('@assets/icons/pet-filled.png'),
+  'Manage Pets':  require('@assets/icons/pet-filled.png'),
 }
 
 const careIconSource = {
@@ -78,7 +78,6 @@ const healthIconSource = {
   ultra: require('@assets/icons/health-ultrasound.png'),
   xray: require('@assets/icons/health-xray.png'),
   iv: require('@assets/icons/health-iv_drip.png'),
-  others: require('@assets/icons/health-misc_exam.png'),
 }
 
 const navigationIconSource = {
@@ -162,6 +161,18 @@ export const statQualIconSource = {
     require('@assets/icons/stat-mood-3.png'),
     require('@assets/icons/stat-mood-4.png'),
   ],
+  appetite: [
+    require('@assets/icons/stat-appetite-0.png'),
+    require('@assets/icons/stat-appetite-1.png'),
+  ],
+  energy: [
+    require('@assets/icons/stat-energy-0.png'),
+    require('@assets/icons/stat-energy-1.png'),
+  ],
+  sleep: [
+    require('@assets/icons/stat-sleep-0.png'),
+    require('@assets/icons/stat-sleep-1.png'),
+  ],
 }
 
 const petIconSource = {
@@ -170,6 +181,8 @@ const petIconSource = {
   'Bird': require('@assets/icons/pet-bird.png'),
   'Fish': require('@assets/icons/pet-fish.png'),
   'Others': require('@assets/icons/pet-animal.png'),
+  'DogProfile': require('@assets/icons/pet-dog_profile.png'),
+  'CatProfile': require('@assets/icons/pet-cat_profile.png'),
 }
 
 export const getActionIconSource = (name: string) => {
@@ -177,10 +190,10 @@ export const getActionIconSource = (name: string) => {
 }
 
 export const getCareIconSource = (name: string) => {
-  return careIconSource[Object.keys(CARE_NAMES).find(key => CARE_NAMES[key] === name)]
+  return careIconSource[name] || require('@assets/icons/care-others.png')
 }
 export const getHealthIconSource = (name: string) => {
-  return healthIconSource[Object.keys(HEALTH_NAMES).find(key => HEALTH_NAMES[key] === name)]
+  return healthIconSource[name] || require('@assets/icons/health-misc_exam.png')
 }
 
 export const getNavigationIconSource = (name: string, status: string) => {
@@ -192,7 +205,11 @@ export const getPetIconSource = (name: string) => {
 }
 
 export const getCalendarIconSource = (name: string, status: string) => {
-  return calendarIconSource[name][status]
+  return calendarIconSource[name][status] || calendarIconSource['others'][status]
+}
+
+export const getStatIconSource = (name: string) => {
+  return statIconSource[name]
 }
 
 export const getStatQualIconSource = (name: string, value: number) => {

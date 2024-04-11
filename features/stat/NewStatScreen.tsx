@@ -1,16 +1,18 @@
 //npm
-import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { FC, useEffect, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 //helpers & types
-import { getActionIconSource, statIconSource } from '@utils/ui'
-import { STATS, STAT_TYPES } from './statHelpers'
+import { getStatIconSource, statIconSource } from '@utils/ui'
+import { STATS } from './statHelpers'
 import { Pet } from '@pet/PetInterface'
 //components
 import { CheckboxButton, MainButton, TransparentButton } from '../../components/ButtonComponent'
-import LogForm from './LogForm'
+import IconStatForm from './components/IconStatForm'
 //styles
 import { Colors, Forms, Spacing, Typography } from '@styles/index'
+import RatingForm from './components/RatingForm'
+import InputForm from './components/InputForm'
 
 interface NewStatScreenProps {
   route:{ params: { pet: {_id: string, name: string } } }
@@ -27,21 +29,19 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
     logs.find(prevItem => prevItem.name === item.name) 
       ? setLogs(prev => prev.filter(i => i.name !== item.name))
       : setLogs(prev => [...prev, item])
-    console.log(logs)
   }
-  
   return (
-    <View style={styles.container}>
-      <Text style={{ ...Typography.subHeader }}>Log {pet.name.split(' ')[0]} values</Text>
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps='handled' alwaysBounceVertical={false}>
+      <Text style={{ ...Typography.mediumHeader }}>{pet.name.split(' ')[0]}'s Today Log</Text>
       <View style={styles.typeCon}>
         {Object.keys(STATS).map((stat, index )=>
           <View key={index} style={styles.typeItem}>
-            <CheckboxButton initial={names.includes(stat)} onPress={() => {
+            <CheckboxButton bgColor={names.includes(stat) ? Colors.green.reg : Colors.shadow.light} initial={names.includes(stat)} onPress={() => {
               names.includes(stat)
                 ? setNames(prev => prev.filter(n => n !== stat))
                 : setNames(prev => [...prev, stat])
             }} />
-            <Image source={statIconSource[stat]} style={{ ...Forms.icon }} />
+            <Image source={getStatIconSource(stat)} style={{ ...Forms.icon }} />
             <Text style={styles.typeText}>{STATS[stat].name}</Text>
           </View>
         )}
@@ -50,11 +50,20 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
       {index > 0 && 
         names.map((name, i) =>
           <View key={name} style={[{ zIndex: i === index - 1 ? 1 : 0 }, styles.itemOverlay]}>
-            <LogForm name={name} onSelect={addLog} />
+            { name === 'mood' 
+              ? <IconStatForm name={name} onSelect={addLog} /> 
+              : Object.keys(STATS).filter(key => STATS[key].type === 'qual').includes(name) && name !== 'mood' 
+              ? <RatingForm name={name} onSelect={addLog} />
+              : <InputForm name={name} onSelect={addLog} />
+            }
           </View>
       )}
 
       <View style={{ ...Spacing.flexRow, height: '20%', marginTop: 'auto' }}>
+        {index === 0 &&
+          <TransparentButton title='Cancel' size='small' onPress={() => navigation.goBack()} />
+        }
+        {index > 1 && <Image source={getStatIconSource(names[index - 2])} style={{ ...Forms.smallIcon }} /> }
         {index > 0 &&
           <TransparentButton title='Back' size='small' onPress={() => {setIndex(prev => prev - 1)}} />
         }
@@ -64,15 +73,17 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
         {index !== 0 && index === names.length &&
           <MainButton title='Submit' size='smallRound' />
         }
+       {index < names.length && <Image source={getStatIconSource(names[index])} style={{ ...Forms.smallIcon }} /> }
       </View>
      
-    </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.flexColumn,
+    flexGrow: 1,
     position: 'relative',
   },
   itemOverlay: {

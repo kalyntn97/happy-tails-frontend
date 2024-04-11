@@ -1,10 +1,11 @@
 const Colors = {
   white: '#FBFFFE',
+  black: '#3D3D3D',
   transparent: {
-    light: 'rgba(255, 255, 255, 0.5)', dark: 'rgba(0, 0, 0, 0.5)',
+    light: 'rgba(255, 255, 255, 0.3)', dark: 'rgba(0, 0, 0, 0.3)',
   },
   shadow: {
-    darkest: '#777777', dark: '#aaaaaa', reg: '#d1d1d1', light: '#f2f2f2', lightest: '#f7f7f7',
+    darkest: '#777777', dark: '#aaaaaa', reg: '#d1d1d1', light: '#dbdbdb', lightest: '#f7f7f7',
   },
   pink: {
     darkest: '#f27ba7', dark: '#fc9fc1', reg: '#ffb7db', light: '#ffdbec', lightest: '#ffeaf4', semiTransparent: 'rgba(255, 183, 219, 0.6)', transparent: 'rgba(255, 183, 219, 0.2)',

@@ -1,10 +1,11 @@
 //npm
 import { useState } from "react"
 import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native"
-//types & hel[rtd]
+//types & helpers
 import { Visit } from "@health/HealthInterface"
 import { countDaysBetween } from "@utils/datetime"
 import { useGetHealthById } from "@health/healthQueries"
+import { HEALTHS } from "@health/healthHelpers"
 //queries & hooks
 import { useDeleteHealthCard, useShallowPetColor } from "@home/hooks"
 import { getHealthIconSource } from "@utils/ui"
@@ -67,7 +68,7 @@ const HealthDetailsScreen = ({ navigation, route }) => {
 
   return (
     <ScrollView
-      style={[styles.scrollView,
+      style={[
         isSuccess && { backgroundColor: Colors.multi.lightest[petIdToColor(health.pet._id)] },
       ]}
       contentContainerStyle={styles.scrollContent}
@@ -79,7 +80,7 @@ const HealthDetailsScreen = ({ navigation, route }) => {
       { isSuccess &&
         <>
           <View style={styles.headerContainer}>
-            <Text style={styles.header}>{health.name}</Text>
+            <Text style={styles.header}>{ HEALTHS[health.name] ?? health.name }</Text>
             <View style={styles.petCon}>
               <PetInfo pet={health.pet} size='small' />
             </View>

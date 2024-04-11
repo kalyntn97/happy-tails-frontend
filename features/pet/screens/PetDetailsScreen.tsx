@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.flexColumn,
     paddingVertical: 20,
+    marginTop: 20,
   },
   infoCard: {
     width: '90%',

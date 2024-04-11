@@ -1,6 +1,6 @@
 //npm modules
 import { useEffect, useState } from "react"
-import { StyleSheet, Text, View, Image, TouchableOpacity, ImageStyle, TextInput, TouchableWithoutFeedback, Keyboard } from "react-native"
+import { StyleSheet, Text, View, Image, TouchableOpacity, ImageStyle, TextInput, ScrollView } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 import { useIsFocused } from "@react-navigation/native"
 //types & store & queries
@@ -71,53 +71,51 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
   }, [navigation, isFocused])
   
   return ( 
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        {profile ? 
-          <>
-            <View style={styles.photoUpload}>
-              <Image source={{ uri: photo ?? null }} style={styles.image as ImageStyle} />
-              <View style={styles.uploadBtnContainer}>
-                <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
-                  <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
-                  <Image source={require('@assets/icons/action-camera.png')} style={styles.cameraIcon } />
-                </TouchableOpacity>
-              </View>
+    <ScrollView contentContainerStyle={styles.container} alwaysBounceVertical={false} keyboardShouldPersistTaps='handled'>
+      {profile ? 
+        <>
+          <View style={styles.photoUpload}>
+            <Image source={{ uri: photo ?? null }} style={styles.image as ImageStyle} />
+            <View style={styles.uploadBtnContainer}>
+              <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
+                <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
+                <Image source={require('@assets/icons/action-camera.png')} style={styles.cameraIcon } />
+              </TouchableOpacity>
             </View>
+          </View>
 
-            <Text style={{ color: Colors.red.dark, fontWeight: 'bold' }}>{errorMsg}</Text>
+          <Text style={{ color: Colors.red.dark, fontWeight: 'bold' }}>{errorMsg}</Text>
 
-            <View style={styles.form}>
-              <TextInput 
-                style={styles.input}
-                value={name}
-                placeholder="Name"
-                onChangeText={(text: string) => setName(text)}
-                autoCapitalize="words"
-              />
-              <TextInput 
-                style={[styles.input, styles.multiline]}
-                value={bio}
-                placeholder="Enter Bio"
-                onChangeText={(text: string) => setBio(text)}
-                multiline
-              />
+          <View style={styles.form}>
+            <TextInput 
+              style={styles.input}
+              value={name}
+              placeholder="Name"
+              onChangeText={(text: string) => setName(text)}
+              autoCapitalize="words"
+            />
+            <TextInput 
+              style={[styles.input, styles.multiline]}
+              value={bio}
+              placeholder="Enter Bio"
+              onChangeText={(text: string) => setBio(text)}
+              multiline
+            />
 
-              <MainButton title={updateProfileMutation.isPending ? 'Submitting' : 'Save'} onPress={() => handleSubmit(name, bio, photo)} top={40} bottom={0} />
-              <SubButton title='Cancel' onPress={() => navigation.goBack()} top={0} bottom={0} />
+            <MainButton title={updateProfileMutation.isPending ? 'Submitting' : 'Save'} onPress={() => handleSubmit(name, bio, photo)} top={40} bottom={0} />
+            <SubButton title='Cancel' onPress={() => navigation.goBack()} top={0} bottom={0} />
 
-            </View>
-          </>
-          : <Loader />
-        }
-      </View>
-    </TouchableWithoutFeedback>
+          </View>
+        </>
+        : <Loader />
+      }
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown
+    ...Spacing.fullScreenDown,
   },
   photoUpload: {
     ...Forms.photo,

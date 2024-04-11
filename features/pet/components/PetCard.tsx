@@ -67,7 +67,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
         </View>
 
         <Image 
-          source={pet.photo ? {uri: pet.photo} : require('@assets/icons/pet-profile.png')} 
+          source={pet.photo ? {uri: pet.photo} : pet.species && getPetIconSource(`${pet.species}Profile`)} 
           style={styles.petPhoto } 
         />
         <View style={{...Forms.rowCon, marginTop: 'auto'}}>
@@ -76,16 +76,21 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
           <StatButton item={ {header: 'status', iconUri: require('@assets/icons/stat-mood-4.png'), body: '12/30/24'}} bgColor={Colors.multi.light[pet.color]} />
         </View>
 
-        <TouchableOpacity>
+        <View style={{ ...Spacing.flexRow, marginTop: 'auto' }}>
+          <TransparentButton title={ 
+            <View style={styles.detailBtnCon}>
+              <Image source={getActionIconSource('logPet')} style={{ ...Forms.smallIcon }} /> 
+              <Text style={styles.detailBtnText}>Log</Text>
+            </View>
+          } onPress={() => navigation.navigate('Details', { screen: 'Create', params : { pet } })} color={Colors.multi.transparent[pet.color]} bgColor={Colors.multi.semiTransparent[pet.color]} />
 
-        </TouchableOpacity>
-        
-        <TransparentButton title={ 
-          <View style={{ ...Spacing.flexRow, ...Spacing.centered, paddingTop: 5 }}>
-            <Image source={getActionIconSource('detailsPet')} style={{ ...Forms.icon }} /> 
-            {/* <Text style={{ marginHorizontal: 5 }}>See more</Text> */}
-          </View>
-        } onPress={() => navigation.navigate('Details', { screen: 'Index', params : { pet } })} top='auto' bottom={20} color={Colors.multi.transparent[pet.color]} bgColor={Colors.multi.semiTransparent[pet.color]} />
+          <TransparentButton title={ 
+            <View style={styles.detailBtnCon}>
+              <Image source={getActionIconSource('detailsPet')} style={{ ...Forms.smallIcon }} /> 
+              <Text style={styles.detailBtnText}>Details</Text>
+            </View>
+          } onPress={() => navigation.navigate('Details', { screen: 'Index', params : { pet } })} color={Colors.multi.transparent[pet.color]} bgColor={Colors.multi.semiTransparent[pet.color]} />
+        </View>  
 
       </View>
 
@@ -131,6 +136,15 @@ const styles = StyleSheet.create({
     ...Forms.photo,
     borderRadius: 100,
     backgroundColor: Colors.pink.light
+  },
+  detailBtnCon: {
+    ...Spacing.flexRow, 
+    ...Spacing.centered, 
+    paddingTop: 5
+  },
+  detailBtnText: {
+    ...Buttons.smallButtonText,
+    marginHorizontal: 5,
   },
 })
  

@@ -122,8 +122,8 @@ const FloatingButton = ({ navigation }) => {
           
           {opened &&
             <Animated.View style={[styles.children, animatedChildrenStyles]}>
-              <SubFloatingButton label='Add a Pet' index={2} x={positionX.value} 
-                onPress={() => navigation.navigate('Pets', { screen: 'Create' })} 
+              <SubFloatingButton label='Manage Pets' index={2} x={positionX.value} 
+                onPress={() => navigation.navigate('Pets', { screen: 'Index' })} 
               />
               <SubFloatingButton label='Add a Vet Visit' index={1} x={positionX.value} 
                 onPress={() => navigation.navigate('Health', { screen: 'Create', initial: false })} 

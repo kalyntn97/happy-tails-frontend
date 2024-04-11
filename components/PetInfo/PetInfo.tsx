@@ -26,7 +26,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
           <Image source={iconSource} style={styles.petIcon } />
         }
         <Image 
-          source={pet.photo ? {uri: pet.photo} : require('@assets/icons/pet-profile.png')} 
+          source={pet.photo ? {uri: pet.photo} : pet.species && getPetIconSource(`${pet.species}Profile`)} 
           style={[
             styles.petPhoto , 
             size === 'expanded' ? {...Forms.smallPhoto} 
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     ...Spacing.flexColumn,
   },
   name: {
-    ...Typography.subHeader,
+    ...Typography.mediumHeader,
     fontSize: 18,
     padding: 10,
     margin: 0,

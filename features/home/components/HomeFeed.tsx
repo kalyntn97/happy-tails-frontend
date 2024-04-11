@@ -1,12 +1,12 @@
 //npm
 import { useEffect, useState } from "react"
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Modal, TouchableWithoutFeedback, Pressable, ListRenderItem } from "react-native"
+import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Modal, Pressable } from "react-native"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import { Health } from "@health/HealthInterface"
 //store & queries
 import { useUpdateStreak } from "@profile/profileQueries"
-import { useActiveDate, useActiveTaskCounts, useCurrentIsActive, useReminderInterval, useSetActions } from "@store/store"
+import { useActiveDate, useActiveTaskCounts, useCurrentIsActive, useSetActions } from "@store/store"
 import { AlertForm, getCalendarIconSource, getNavigationIconSource } from "@utils/ui"
 //components
 import CareCard from "@care/components/CareCard"
@@ -81,16 +81,16 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.headerCon}>  
         <TouchableOpacity onPress={() => setFeed('care')} style={[
-          styles.iconHeaderCon, feed === 'care' && { borderColor: Colors.pink.reg },
+          styles.iconHeaderCon, feed === 'care' && { borderColor: Colors.pink.dark },
         ]}>
           <Image source={getNavigationIconSource('care', feed === 'care' ? 'active' : 'inactive')} style={{...Forms.smallIcon}} />
-          <Text style={[styles.iconHeaderText, feed === 'care' && { color: Colors.pink.reg }]}>Pet care</Text>
+          <Text style={[styles.iconHeaderText, feed === 'care' && { color: Colors.pink.dark }]}>Pet care</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setFeed('health')} style={[
-          styles.iconHeaderCon,feed === 'health' && { borderColor: Colors.pink.reg },
+          styles.iconHeaderCon,feed === 'health' && { borderColor: Colors.pink.dark },
         ]}>
           <Image source={getNavigationIconSource('health', feed === 'health' ? 'active' : 'inactive')} style={{...Forms.smallIcon}} />
-          <Text style={[styles.iconHeaderText, feed === 'health' && { color: Colors.pink.reg }]}>Pet health</Text>
+          <Text style={[styles.iconHeaderText, feed === 'health' && { color: Colors.pink.dark }]}>Pet health</Text>
         </TouchableOpacity>
       </View>
 
@@ -171,7 +171,6 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       >
         <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={styles.modalContainer}> 
           <View style={styles.detailContainer}>
-            <CloseButton onPress={() => setModalVisible(false)} />
             {clickedTask &&
               <>
                 {clickedTask.type === 'Care' ?

@@ -3,16 +3,28 @@ import { Colors } from "@styles/index"
 import { Care, Tracker } from "@care/CareInterface"
 import { getMonth, getDateInfo } from "@utils/datetime"
 
-export const CARE_NAMES = {
-  'nail' : 'Clip nail', 
-  'teeth' : 'Brush teeth', 
-  'walk' : 'Walk', 
-  'brush' : 'Brush', 
-  'litter' : 'Clean litter box', 
-  'groom' : 'Groom service', 
-  'bath' : 'Give bath', 
-  'others': 'Others'
+export const CARES = {
+  nail: 'Clip nail', 
+  teeth: 'Brush teeth', 
+  walk: 'Walk', 
+  brush: 'Brush', 
+  litter: 'Clean litter box', 
+  groom: 'Groom service', 
+  bath: 'Give bath', 
+  others: 'Others'
 }
+
+export const CARE_NAMES = Object.keys(CARES).map(key => CARES[key])
+
+const keyFromName = (data: {[key: string]: string}) => {
+  const map = {}
+  for (const key in data) {
+    const name = data[key]
+    map[name] = key
+  }
+  return map
+} 
+export const careKeyFromName = keyFromName(CARES)
 
 export const CARE_FREQ = ['Daily', 'Weekly', 'Monthly', 'Yearly']
 

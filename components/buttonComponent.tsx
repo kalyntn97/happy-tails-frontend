@@ -72,16 +72,19 @@ export const IconButton: FC<IconButtonProps> = ({ onPress, type, size }) => (
   </TouchableOpacity>
 )
 
-export const CloseButton: FC<BaseButtonProps> = ({ onPress }) => (
-  <TouchableOpacity onPress={onPress} style={{
-    width: 60,
-    height: 60,
-  }}>
-    <Image source={getActionIconSource('close')} style={{
-      width: 40,
-      height: 40,
-      margin: 10
-    }} />
+interface CornerButtonProps extends BaseButtonProps {
+  position?: string
+  top?: number
+  left?: number
+  right?: number
+  bottom?: number
+}
+
+export const CloseButton: FC<CornerButtonProps> = ({ onPress, size, position }) => (
+  <TouchableOpacity onPress={onPress} style={[position === 'topRight' && { position: 'absolute', top: 10, right: 10 }, { zIndex: 1 }]}>
+    <Image source={getActionIconSource('close')} style={[
+      size === 'small' ? { width: 25, height: 25, margin: 5 } : { width: 40, height: 40, margin: 10 },
+    ]} />
   </TouchableOpacity>
 )
 
@@ -139,23 +142,16 @@ export const SubButton: FC<BaseButtonProps> = ({ onPress, title, color, top, bot
   </TouchableOpacity>
 )
 
-interface GoBackButtonProps extends BaseButtonProps {
-  position: string
-  top: number
-}
-
-export const GoBackButton: FC<GoBackButtonProps> = ({ onPress, top, position }) => (
+export const GoBackButton: FC<CornerButtonProps> = ({ onPress, top, left, position }) => (
   <TouchableOpacity onPress={onPress} style={[
-    position === 'topLeft' && top && { position: 'absolute', top: top, left: 15,
+    position === 'topLeft' && { position: 'absolute', top: top ?? 5, left: left ?? 5,
   }]}>     
-    <Image source={getActionIconSource('undo')} style={{
+    <Image source={getActionIconSource('back')} style={{
       ...Forms.smallIcon,
     }}
     />
   </TouchableOpacity>
 )
-
-
 
 interface StatButtonProps extends BaseButtonProps {
   item: { header: string, stat?: number, iconUri?: any, body: string }
@@ -204,7 +200,7 @@ interface CheckboxButtonProps extends BaseButtonProps {
   initial: boolean
 }
 
-export const CheckboxButton: FC<CheckboxButtonProps> = ({ onPress, size, initial }) => {
+export const CheckboxButton: FC<CheckboxButtonProps> = ({ onPress, size, initial, bgColor, color }) => {
   const [check, setCheck] = useState<boolean>(initial)
 
   const handlePress = () => {
@@ -213,14 +209,13 @@ export const CheckboxButton: FC<CheckboxButtonProps> = ({ onPress, size, initial
   }
 
   return (  
-    <TouchableOpacity onPress={handlePress} style={{
-      width: 20,
-      height: 20,
-      borderWidth: 1,
-      ...Spacing.centered,
-      marginHorizontal: 10
-    }}>
-      <Text style={{ fontSize: size === 'small' ? 10 : 15 }}>
+    <TouchableOpacity onPress={handlePress} style={[
+      { width: 20, height: 20, borderRadius: 4, borderWidth: 1, ...Spacing.centered, marginHorizontal: 10 },
+      bgColor && { backgroundColor: bgColor, borderColor: bgColor },
+    ]}>
+      <Text style={[
+        { fontSize: size === 'small' ? 10 : 15, fontWeight: 'bold' }, color && { color: color }
+      ]}>
         {check ? '✓' : ''}
       </Text>
     </TouchableOpacity>

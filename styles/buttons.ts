@@ -32,17 +32,27 @@ export const sub: ViewStyle = {
   borderBottomWidth: 2
 }
 //text
-export const buttonText: TextStyle = {
+export const baseButtonText: TextStyle = {
+  fontWeight: 'bold',
+}
+export const smallText: TextStyle = {
+  fontSize: 12,
+  lineHeight: 15,
+  letterSpacing: 0.15,
+}
+export const mediumText: TextStyle = {
   fontSize: 16,
   lineHeight: 21,
-  fontWeight: 'bold',
   letterSpacing: 0.25,
 }
 
-export const whiteBtnText: TextStyle = {
-  ...buttonText,
-  color: Colors.white,
-}
+export const whiteText: TextStyle = { color: Colors.white }
+
+export const buttonText = { ...baseButtonText, ...mediumText }
+
+export const smallButtonText = { ...baseButtonText, ...smallText }
+
+export const whiteButtonText = { ...smallButtonText, ...whiteText }
 //sizes: ViewStyle
 export const xSmall = {width: 100, height: 40 }
 

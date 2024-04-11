@@ -3,8 +3,7 @@ import { useEffect, useState } from "react"
 import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 //component
-import AccountForm from "@profile/components/AccountForm"
-import ToggleableForm from "@components/ToggleableForm"
+import { BoxHeader } from "@components/HeaderComponent"
 //context
 import { useAuth } from "@auth/AuthContext"
 //styles
@@ -14,15 +13,20 @@ interface AccountProps {
   navigation: any
   route: { params: {  } }
 }
+export const settingTitles = {
+  update: 'Update account information', 
+  delete: 'Delete account and all pet profiles', 
+  logout: 'Sign out of account', 
+  weight: 'Change display unit: Weight', 
+  food: 'Change display unit: Food', 
+}
 
-const SettingsScreen: React.FC<AccountProps> = ({ navigation, route }) => {
+const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
   const { onLogout, onDeleteAccount } = useAuth()
-  const [visible, setVisible] = useState<string>('')
+  const [weightUnit, setWeightUnit] = useState<string>('kg')
+  const [foodUnit, setFoodUnit] = useState<string>('g')
 
   const isFocused = useIsFocused()
-
-  const titleData = ['Update account information', 'Delete account and all pet profiles', 'Log out of account']
-
 
   const logout = async () => {
     const { status, error } = await onLogout!()
@@ -33,161 +37,56 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation, route }) => {
     )
   }
 
-  const DeleteAccountForm = () => {
-    const deleteProfile = async (username: string, password: string) => {
-      await onDeleteAccount!(username, password)
-    }
-
-    const showDeleteConfirmDialog = (username: string, password: string) => {
-      return Alert.alert(
-        'Are you sure?',
-        `Delete your account? This is irreversible.`, 
-        [
-          { text: 'Yes', onPress: () => { deleteProfile(username, password) }},
-          { text: 'No' }
-        ]
-      )
-    }
-
-    return (
-      <View style={styles.deleteForm}>
-        <AccountForm showForm="delete" onSubmit={showDeleteConfirmDialog}/>
-      </View>
+  const showLogoutConfirmDialog = () => {
+    return Alert.alert(
+      'Are you sure?',
+      'Log out of your account?', 
+      [
+        { text: 'Yes', onPress: () => { onLogout() }},
+        { text: 'No' }
+      ]
     )
   }
-
-  const UpdateAccountForm = () => {
-    const [showForm, setShowForm] = useState<string>('password')
-    
-    const handleUpdateAccount = async (username: string, password: string) => {
-      showForm === 'password'
-        ? await onChangePassword!(username, password)
-        : await onChangeUsername!(username, password)
-      navigation.navigate('Settings')
-    }
-
-    return (
-      <View style={styles.updateForm}>
-        <View style={styles.btnContainer}>
-          <TouchableOpacity 
-            onPress={() => setShowForm('password')} 
-            style={[styles.tabBtn, { backgroundColor: showForm === 'password' ? Colors.white : Colors.pink.lightest}]}>
-            <Text style={[styles.btnText, { color: showForm === 'password' ? Colors.pink.dark : 'black' }]}>Change {'\n'}Password</Text>
-          </TouchableOpacity>
-        
-          <TouchableOpacity 
-            onPress={() => setShowForm('username')} 
-            style={[styles.tabBtn, { backgroundColor: showForm === 'username' ? Colors.white : Colors.pink.lightest}]}>
-            <Text style={[styles.btnText, { color: showForm === 'username' ? Colors.pink.dark : 'black' }]}>Change Username</Text>
-          </TouchableOpacity>
-        </View>
-
-        <AccountForm showForm={showForm} onSubmit={handleUpdateAccount}/>
-        
-      </View>
-    )
-  }
-
-  useEffect(() => {
-    if (!isFocused) {
-      navigation.goBack()
-    }
-  }, [navigation, isFocused])
 
   return (
     <ScrollView 
       contentContainerStyle={styles.scrollViewContent}
-      style={styles.scrollView}
-      scrollEventThrottle={200}
-      decelerationRate="fast"
-      pagingEnabled
-    >
-      <Pressable style={styles.headingBtn} onPress={() => setVisible(visible === titleData[0] ? '' : titleData[0])}>
-        <ToggleableForm
-          visible={visible}
-          title={titleData[0]}
-          content={ <UpdateAccountForm /> } 
-        />
-      </Pressable>
-
-      <Pressable style={styles.headingBtn} onPress={() => setVisible(visible === titleData[1] ? '' : titleData[1])}>
-        <ToggleableForm
-          visible={visible}
-          title={titleData[1]}
-          content={ <DeleteAccountForm /> }
-        />
-      </Pressable>
-
-      <Pressable style={styles.headingBtn} onPress={() => setVisible(visible === titleData[2] ? '' : titleData[2])}>
-        <ToggleableForm
-          visible={visible}
-          title={titleData[2]}
-          content={
-            <TouchableOpacity onPress={logout} style={[styles.mainBtn, styles.warn, { backgroundColor: Colors.pink.dark }]}>
-              <Text style={styles.btnText}>Logout</Text>
-            </TouchableOpacity>
-          }
-        />
-      </Pressable>
       
+    > 
+      <Text style={styles.sectionHeader}>Account settings</Text>
+      <View style={{ ...Forms.roundedCon }}>
+        <BoxHeader title={settingTitles['update']} mode='light' onPress={() => navigation.navigate('Account', { form: 'update' })} />
+        <BoxHeader title={settingTitles['delete']} mode='light' onPress={() => navigation.navigate('Account', { form: 'delete' })} />
+        <BoxHeader title={settingTitles['logout']} mode='light' onPress={showLogoutConfirmDialog} />
+      </View>
 
+      <Text style={styles.sectionHeader}>Display settings</Text>
+      <View style={{ ...Forms.roundedCon }}>
+        <BoxHeader title={settingTitles['weight']} mode='light' onPress={() => setWeightUnit(prev => prev === 'kg' ? 'lb' : 'kg')}/>
+        <Text style={[styles.unit, { top: 25 }]}>{weightUnit}</Text>
+        <BoxHeader title={settingTitles['food']} mode='light' onPress={() => setFoodUnit(prev => prev === 'g' ? 'oz' : 'g')}/>
+        <Text style={[styles.unit, { bottom: 35 }]}>{foodUnit}</Text>
+  
+      </View>
+    
     </ScrollView>
   )
 }
  
 const styles = StyleSheet.create({
-  scrollView: {
-    width: '100%',
-    backgroundColor: Colors.pink.lightest,
-  },
   scrollViewContent: {
-    alignItems: 'center',
-    width: '100%',
-    marginTop: 30,
+    ...Spacing.flexColumn,
+    flexGrow: 1,
   },
-  headingBtn: {
-    width: '100%',
-    alignItems: 'center',
+  unit: { 
+    position: 'absolute', 
+    right: 50, 
   },
-  updateForm: {
-    width: '90%',
-    height: 400,
-    alignItems: 'center',
-  },
-  deleteForm: {
-    width: '90%',
-    height: 350,
-    justifyContent: 'center',
-  },
-  btnText: {
+  sectionHeader: {
     ...Typography.xSmallHeader,
-    margin: 0,
-    padding: 5,
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
+    marginBottom: 0,
   },
-  btnContainer: {
-    width: '100%',
-    height: '20%',
-    ...Spacing.flexRow,
-  },
-  tabBtn: {
-    width: '50%',
-    height: '100%',
-    justifyContent: 'center',
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-  },
-   mainBtn: {
-    ...Spacing.flexRow,
-    margin: 10
-   },
-   icon: {
-    ...Forms.smallIcon
-   },
-   warn: {
-    ...Buttons.xSmallSquare,
-    width: '80%',
-   },
 })
 
 export default SettingsScreen

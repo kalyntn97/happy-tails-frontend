@@ -15,10 +15,10 @@ const ToggleableForm: React.FC<FormProps> = ({ visible, title, content }) => {
   return (
     <View style={styles.container}>
       <View style={styles.mainBtn}>
-        <Image source={getActionIconSource('downThin')} style={styles.icon } />
         <Text style={[styles.btnText, { color: visible === title ? Colors.pink.dark : 'black' }]}>
           {title}
         </Text>
+        <Image source={getActionIconSource('downThin')} style={styles.icon } />
       </View>
       {visible === title && content}
     </View>
@@ -34,8 +34,10 @@ const styles = StyleSheet.create({
   },
   mainBtn: {
     ...Spacing.flexRow,
-    margin: 5,
     alignSelf: 'flex-start',
+    justifyContent: 'space-between',
+    width: '100%',
+    backgroundColor: Colors.pink.reg,
   },
   btnText: {
     ...Typography.xSmallHeader,
@@ -44,7 +46,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   icon: {
-    ...Forms.smallIcon
+    ...Forms.xSmallIcon
   },
 })
  
