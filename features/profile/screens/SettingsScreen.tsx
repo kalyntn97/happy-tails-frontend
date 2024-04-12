@@ -5,7 +5,10 @@ import { useIsFocused } from "@react-navigation/native"
 //component
 import { BoxHeader } from "@components/HeaderComponent"
 //context
+import { useDisplayUnits, useSetActions } from "@store/store"
 import { useAuth } from "@auth/AuthContext"
+//helpers
+import { FOOD_UNITS, WEIGHT_UNITS } from "@stat/statHelpers"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -22,11 +25,10 @@ export const settingTitles = {
 }
 
 const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
+  const displayUnits = useDisplayUnits()
+  const { weight, food } = displayUnits
+  const { setDisplayUnits } = useSetActions()
   const { onLogout, onDeleteAccount } = useAuth()
-  const [weightUnit, setWeightUnit] = useState<string>('kg')
-  const [foodUnit, setFoodUnit] = useState<string>('g')
-
-  const isFocused = useIsFocused()
 
   const logout = async () => {
     const { status, error } = await onLogout!()
@@ -42,7 +44,7 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
       'Are you sure?',
       'Log out of your account?', 
       [
-        { text: 'Yes', onPress: () => { onLogout() }},
+        { text: 'Yes', onPress: () => { logout() }},
         { text: 'No' }
       ]
     )
@@ -62,10 +64,10 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
 
       <Text style={styles.sectionHeader}>Display settings</Text>
       <View style={{ ...Forms.roundedCon }}>
-        <BoxHeader title={settingTitles['weight']} mode='light' onPress={() => setWeightUnit(prev => prev === 'kg' ? 'lb' : 'kg')}/>
-        <Text style={[styles.unit, { top: 25 }]}>{weightUnit}</Text>
-        <BoxHeader title={settingTitles['food']} mode='light' onPress={() => setFoodUnit(prev => prev === 'g' ? 'oz' : 'g')}/>
-        <Text style={[styles.unit, { bottom: 35 }]}>{foodUnit}</Text>
+        <BoxHeader title={settingTitles['weight']} mode='light' onPress={() => setDisplayUnits({ ...displayUnits, weight: weight === WEIGHT_UNITS[0] ? WEIGHT_UNITS[1] : WEIGHT_UNITS[0] })} />
+        <Text style={[styles.unit, { top: 25 }]}>{weight}</Text>
+        <BoxHeader title={settingTitles['food']} mode='light' onPress={() => setDisplayUnits({ ...displayUnits, food: food === FOOD_UNITS[0] ? FOOD_UNITS[1]: FOOD_UNITS[0] })} />
+        <Text style={[styles.unit, { bottom: 35 }]}>{food}</Text>
   
       </View>
     

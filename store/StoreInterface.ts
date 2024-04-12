@@ -2,30 +2,27 @@ import { Profile } from '@profile/ProfileInterface'
 import { Pet } from '@pet/PetInterface'
 import { Care } from '@care/CareInterface'
 import { Health } from '@health/HealthInterface'
+export interface SettingSlice {
+  activeDate: { date: number, week: number, month: number, year: number }
+  currentIsActive: { date: boolean, week: boolean, month: boolean, year: boolean }
+  activeTaskCounts: { care: number, health: number }
+  reminderInterval: number
+  displayUnits: { weight: string, food: string, water: string }
+}
 
-interface DateObject {
-  date: number | null, 
-  week: number | null, 
-  month: number | null, 
-  year: number | null
+export interface PersistSettingSlice {
+  reminderInterval: number
+  displayUnits: { weight: string, food: string, water: string }
 }
 
 export interface ProfileSlice {
   profile: Profile | {}
-  reminderInterval: number
-  activeDate: DateObject
-  currentIsActive: { 
-    date: boolean, 
-    week: boolean, 
-    month: boolean, 
-    year: boolean, 
-  }
-  activeTaskCounts: { care: number, health: number }
   setActions : {
     setProfile: (profile: Profile) => void
-    setReminderInterval: (interval: number) => void,
     setActiveDate: (dateObj: { date: number, week: number, month: number, year: number }) => void
     setActiveTaskCounts: (activeTaskObj: { care: number, health: number }) => void
+    setReminderInterval: (interval: number) => void,
+    setDisplayUnits: (displayUnitObj: { weight: string, food: string, water: string }) => void
     setPets: (pets: Pet[]) => void
     setCares: (cares: Care[]) => void
     setHealths: (healths: Health[]) => void

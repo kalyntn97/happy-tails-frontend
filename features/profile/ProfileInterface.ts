@@ -13,8 +13,6 @@ export interface Profile {
   photo: string | null
   banner: string | null
   bio: string
-  reminderInterval: number
-  streak: Streak
 }
 
 export interface ProfileFormData {

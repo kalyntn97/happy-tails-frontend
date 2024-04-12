@@ -35,13 +35,13 @@ export const useAddBanner = () => {
   })
 }
 
-export const useUpdateStreak = () => {
-  const queryClient = useQueryClient()
+// export const useUpdateStreak = () => {
+//   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: () => profileService.updateStreak(),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...profileKeyFactory.profile] })
-    }
-  })
-}
+//   return useMutation({
+//     mutationFn: () => profileService.updateStreak(),
+//     onSuccess: () => {
+//       return queryClient.invalidateQueries({ queryKey: [...profileKeyFactory.profile] })
+//     }
+//   })
+// }

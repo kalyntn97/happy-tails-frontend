@@ -138,7 +138,7 @@ export const modal: ViewStyle = {
   ...fullWH,
   ...centered,
   position: 'relative',
-  backgroundColor: Colors.transparent.light,
+  backgroundColor: Colors.transparent.semiLight,
 }
 
 export const rowCon: ViewStyle = {

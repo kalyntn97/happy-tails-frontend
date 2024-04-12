@@ -2,29 +2,30 @@
 import { StyleSheet, Text, View, TextInput, Image } from 'react-native'
 import React, { FC, useState } from 'react'
 //helpers
-import { STATS, weightConverter } from '../statHelpers'
+import { STATS, getUnitKey, statConverter, weightConverter } from '../statHelpers'
 //styles
 import { Forms, Spacing, Colors, Typography } from '@styles/index'
 import Dropdown from '@components/Dropdown/Dropdown'
 import { getStatIconSource } from '@utils/ui'
+import { useDisplayUnits } from '@store/store'
 
 
 
 interface InputFormProps {
   name: string
   initialValues?: { name: string, value: number, date: Date, unit: string }
-  onSelect: (item: { name: string, value: number }) => void
+  onSelect: (item: { name: string, value: number, unit: string }) => void
 }
 
 const InputForm: FC<InputFormProps> = ({ name, initialValues, onSelect }) => {
   const [value, setValue] = useState<string>(initialValues?.value.toString() ?? null)
-  const [unit, setUnit] = useState<string>(initialValues?.unit ?? STATS[name].unit)
-
-  const onChangeUnit = (unit: string) => {
-    setUnit(unit)
-    const converted = unit === 'lb' ? weightConverter(value, 'lbs') : weightConverter(value, 'kg')
-    setValue(converted)
-    onSelect({ name: name, value: Number(converted) })
+  const displayUnits = useDisplayUnits()
+  const unit = displayUnits[getUnitKey(name)]
+  
+  const convertToDefaultUnit = (value: any) => {
+    const converted = unit === STATS[name].unit ? value : statConverter(name, value, unit)
+    console.log(converted)
+    onSelect({ name: name, value: Number(converted), unit: STATS[name].unit })
   }
 
   return (
@@ -42,9 +43,9 @@ const InputForm: FC<InputFormProps> = ({ name, initialValues, onSelect }) => {
             setValue(text)
           }}
           value={(value ?? '').toString()}
-          onEndEditing={() => onSelect({ name: name, value: Number(value) })}
+          onEndEditing={() => convertToDefaultUnit(value)}
         />
-        <Dropdown initial={unit} dataType='weight' onSelect={onChangeUnit} width={70} />
+        <Text>{unit}</Text>
       </View>
     </View>
   )

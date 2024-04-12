@@ -11,7 +11,7 @@ import { Health, Visit } from '@health/HealthInterface'
 import { getDateConstructor, getDateInfo, getStartDate } from '@utils/datetime'
 //styles
 import { Spacing } from '@styles/index'
-import { useActiveTaskCounts, useReminderInterval, useSetActions } from '@store/store'
+import { useReminderInterval } from '@store/store'
 import { shouldRenderCareTask, shouldRenderHealthTask } from '@home/helpers'
 
 interface NestedListProps {

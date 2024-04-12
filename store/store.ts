@@ -1,9 +1,26 @@
 import { create, StateCreator } from 'zustand'
-import { CareSlice, HealthSlice, PetSlice, ProfileSlice } from './StoreInterface'
+import { CareSlice, HealthSlice, PersistSettingSlice, PetSlice, ProfileSlice, SettingSlice } from './StoreInterface'
 import { getDateInfo } from '@utils/datetime'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { persist, createJSONStorage } from 'zustand/middleware'
 
-const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & HealthSlice, [], [], ProfileSlice> = (set, get) => ({
+
+const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & HealthSlice & SettingSlice, [], [], ProfileSlice> = (set) => ({
   profile: {},
+  setActions: {
+    setProfile: profile => set({ profile: profile }),
+    setReminderInterval: interval => set({ reminderInterval: interval }),
+    setActiveDate: dateObj => set({ activeDate: dateObj }),
+    setActiveTaskCounts: activeTaskObj => set({ activeTaskCounts: activeTaskObj }),
+    setDisplayUnits: displayUnitObj => set({ displayUnits: displayUnitObj }),
+    setPets: pets => set({ pets: pets }),
+    setCares: cares => set({ cares: cares}),
+    setHealths: healths => set({ healths: healths }),
+    onUpdateProfile: profile => set({ profile: profile}),    
+  }
+})
+
+const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
   reminderInterval: 30,
   activeDate: { 
     date: getDateInfo(new Date()).date - 1, 
@@ -21,17 +38,13 @@ const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & Hea
     care: 0,
     health: 0,
   },
-  setActions: {
-    setProfile: profile => set({ profile: profile }),
-    setReminderInterval: interval => set({ reminderInterval: interval }),
-    setActiveDate: dateObj => set({ activeDate: dateObj }),
-    setActiveTaskCounts: activeTaskObj => set({ activeTaskCounts: activeTaskObj }),
-    setPets: pets => set({ pets: pets }),
-    setCares: cares => set({ cares: cares}),
-    setHealths: healths => set({ healths: healths }),
-    onUpdateProfile: profile => set({ profile: profile}),    
+  displayUnits: { 
+    weight: 'kg',
+    food: 'g',
+    water: 'ml',
   }
 })
+
 
 const createPetSlice: StateCreator<PetSlice> = (set) => ({
   pets: [],
@@ -64,12 +77,21 @@ const createHealthSlice: StateCreator<HealthSlice> = (set) => ({
   }
 })
 
-export const useBoundStore= create<ProfileSlice & PetSlice & CareSlice & HealthSlice>()((...a) => ({
-  ...createProfileSlice(...a),
-  ...createPetSlice(...a),
-  ...createCareSlice(...a),
-  ...createHealthSlice(...a),
-}))
+export const useBoundStore= create<ProfileSlice & PetSlice & CareSlice & HealthSlice & SettingSlice>()(
+  persist(
+    (...a) => ({
+    ...createProfileSlice(...a),
+    ...createPetSlice(...a),
+    ...createCareSlice(...a),
+    ...createHealthSlice(...a),
+    ...createSettingSlice(...a),
+    }), {
+      name: 'setting-storage',
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({ reminderInterval: state.reminderInterval, displayUnits: state.displayUnits }),
+    }
+  )
+)
 
 //states
 export const useProfile = () => useBoundStore(state => state.profile)
@@ -77,6 +99,7 @@ export const useReminderInterval = () => useBoundStore(state => state.reminderIn
 export const useActiveDate = () => useBoundStore(state => state.activeDate)
 export const useActiveTaskCounts = () => useBoundStore(state => state.activeTaskCounts)
 export const useCurrentIsActive = () => useBoundStore(state => state.currentIsActive)
+export const useDisplayUnits = () => useBoundStore(state => state.displayUnits)
 export const usePets = () => useBoundStore(state => state.pets)
 export const useCares = () => useBoundStore(state => state.cares)
 export const useHealths = () => useBoundStore(state => state.healths)

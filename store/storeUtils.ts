@@ -1,5 +1,5 @@
 import { useShallow } from 'zustand/react/shallow'
-import { useBoundStore, usePets } from './store'
+import { useBoundStore } from './store'
 
 export const usePetNames = () => useBoundStore(useShallow(state => state.pets.map(pet => pet.name)))
 

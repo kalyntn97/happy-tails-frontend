@@ -25,7 +25,7 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
   const [logs, setLogs] = useState([])
   const { pet } = route.params
   
-  const addLog = (item: { name: string, value: number }) => {
+  const addLog = (item: { name: string, value: number, unit: string }) => {
     logs.find(prevItem => prevItem.name === item.name) 
       ? setLogs(prev => prev.filter(i => i.name !== item.name))
       : setLogs(prev => [...prev, item])

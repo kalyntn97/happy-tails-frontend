@@ -66,7 +66,6 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
         'dogVaccines': healthHelpers.DOG_VACCINE_NAMES,
         'catVaccines': healthHelpers.CAT_VACCINE_NAMES,
         'petStatus': petHelpers.STATUS,
-        'weight': statHelpers.WEIGHT_UNITS,
       }
       const result = typeToSource[dataType] || []
       setData(result)

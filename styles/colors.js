@@ -2,7 +2,7 @@ const Colors = {
   white: '#FBFFFE',
   black: '#3D3D3D',
   transparent: {
-    light: 'rgba(255, 255, 255, 0.3)', dark: 'rgba(0, 0, 0, 0.3)',
+    light: 'rgba(255, 255, 255, 0.4)', dark: 'rgba(0, 0, 0, 0.4)', semiLight: 'rgba(255, 255, 255, 0.9)', semiDark: 'rgba(0, 0, 0, 0.9)',
   },
   shadow: {
     darkest: '#777777', dark: '#aaaaaa', reg: '#d1d1d1', light: '#dbdbdb', lightest: '#f7f7f7',

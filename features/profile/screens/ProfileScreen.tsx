@@ -78,7 +78,7 @@ const ProfileScreen = ({ navigation, route }) => {
             </View>
               
             <View style={{...Forms.rowCon}}>
-              <StatButton item={ {header: 'streak', stat: profile.streak.streak, body: 'days'}} />
+              <StatButton item={ {header: 'streak', stat: 0, body: 'days'}} />
               <StatButton item={ {header: 'tasks', stat: careCounts(new Date()) , body: 'today'}} />
               <StatButton item={ {header: 'visit due', stat: Math.abs(healthCounter), body: `days ${healthCounter < 0 && 'ago'}`}} color={healthCounter < 0 && Colors.red.reg} />
             </View>
