@@ -25,7 +25,7 @@ export const solid: ViewStyle = {
 
 export const transparent: ViewStyle = {
   ...base,
-  borderWidth: 2,
+  borderWidth: 1.5,
 }
 
 export const sub: ViewStyle = {

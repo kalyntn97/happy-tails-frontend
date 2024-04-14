@@ -1,3 +1,6 @@
+import { compareDates, getDateFromRange, getDateInfo, isSameDates } from "@utils/datetime"
+import { Record } from "./statInterface"
+
 export const DEFAULT_WEIGHT_UNIT = 'kg'
 export const DEFAULT_FOOD_UNIT = 'g'
 export const DEFAULT_WATER_UNIT = 'ml'
@@ -7,6 +10,21 @@ export const STAT_QUAL_VALUES = ['Very bad', 'Bad', 'Okay', 'Good', 'Very good']
 export const WEIGHT_UNITS = [DEFAULT_WEIGHT_UNIT, 'lb']
 export const FOOD_UNITS = [DEFAULT_FOOD_UNIT, 'oz']
 export const WATER_UNITS = [DEFAULT_WATER_UNIT, 'oz']
+
+export const CHART_PARAMS = {
+  range: ['All', '1D', '1W', '1M', '1Y', '5Y'],
+}
+
+const unitName = { D: 'day', W: 'week', M: 'month', Y: 'year' }
+
+export const filterByRange = (range: string, records: Record[]) => {
+  if (range === 'All') return records
+  //* range format 'count-unit'
+  const count = Number(range[0])
+  const unit = unitName[range[1]]
+  const endDate = getDateFromRange('today', unit, count, -1).toString()
+  return records.filter(record => compareDates(record.createdAt, endDate) >= 0)
+}
 
 export const STATS = {
   mood: { name: 'Mood', type: 'qual' },
@@ -34,15 +52,15 @@ export const getUnitKey = (name: string) => {
   return map[name]
 }
 
-export const statConverter = (key: string, input: string, unit: string) => {
+export const statConverter = (key: string, input: string, outputUnit: string) => {
   const map = {
-    weight: weightConverter(input, unit),
+    weight: weightConverter(input, outputUnit),
   }
   return map[key]
 }
 
 export const weightConverter = (input: string, outputUnit: string) => {
-  if (outputUnit === 'lbs') {
+  if (outputUnit === 'lb') {
     return (Number(input) * 2.2046).toFixed(1)
   } else {
     return (Number(input) / 2.2046).toFixed(1)

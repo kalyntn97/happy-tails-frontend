@@ -64,10 +64,15 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
 
       <Text style={styles.sectionHeader}>Display settings</Text>
       <View style={{ ...Forms.roundedCon }}>
-        <BoxHeader title={settingTitles['weight']} mode='light' onPress={() => setDisplayUnits({ ...displayUnits, weight: weight === WEIGHT_UNITS[0] ? WEIGHT_UNITS[1] : WEIGHT_UNITS[0] })} />
-        <Text style={[styles.unit, { top: 25 }]}>{weight}</Text>
-        <BoxHeader title={settingTitles['food']} mode='light' onPress={() => setDisplayUnits({ ...displayUnits, food: food === FOOD_UNITS[0] ? FOOD_UNITS[1]: FOOD_UNITS[0] })} />
-        <Text style={[styles.unit, { bottom: 35 }]}>{food}</Text>
+        <BoxHeader title={settingTitles['weight']} mode='light' 
+          onPress={() => setDisplayUnits({ ...displayUnits, weight: weight === WEIGHT_UNITS[0] ? WEIGHT_UNITS[1] : WEIGHT_UNITS[0] })} 
+          rightContent={ <Text>{weight}</Text> } 
+        />
+        <BoxHeader title={settingTitles['food']} mode='light' 
+          onPress={() => setDisplayUnits({ ...displayUnits, food: food === FOOD_UNITS[0] ? FOOD_UNITS[1]: FOOD_UNITS[0] })} 
+          rightContent={ <Text>{food}</Text> }
+        />
+        
   
       </View>
     
@@ -79,10 +84,6 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     ...Spacing.flexColumn,
     flexGrow: 1,
-  },
-  unit: { 
-    position: 'absolute', 
-    right: 50, 
   },
   sectionHeader: {
     ...Typography.xSmallHeader,

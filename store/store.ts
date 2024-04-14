@@ -23,16 +23,16 @@ const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & Hea
 const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
   reminderInterval: 30,
   activeDate: { 
-    date: getDateInfo(new Date()).date - 1, 
-    week: getDateInfo(new Date()).week - 1, 
-    month: getDateInfo(new Date()).month - 1, 
-    year: getDateInfo(new Date()).year 
+    date: getDateInfo('today').date - 1, 
+    week: getDateInfo('today').week - 1, 
+    month: getDateInfo('today').month - 1, 
+    year: getDateInfo('today').year 
   },
   currentIsActive: {
-    get date() { return get().activeDate.date + 1 === getDateInfo(new Date()).date },
-    get week() { return get().activeDate.week + 1 === getDateInfo(new Date()).week },
-    get month() { return get().activeDate.month + 1 === getDateInfo(new Date()).month },
-    get year() { return get().activeDate.year === getDateInfo(new Date()).year },
+    get date() { return get().activeDate.date + 1 === getDateInfo('today').date },
+    get week() { return get().activeDate.week + 1 === getDateInfo('today').week },
+    get month() { return get().activeDate.month + 1 === getDateInfo('today').month },
+    get year() { return get().activeDate.year === getDateInfo('today').year },
   },
   activeTaskCounts: {
     care: 0,

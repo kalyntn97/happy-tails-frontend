@@ -8,7 +8,7 @@ import { useGetHealthById } from "@health/healthQueries"
 import { HEALTHS } from "@health/healthHelpers"
 //queries & hooks
 import { useDeleteHealthCard, useShallowPetColor } from "@home/hooks"
-import { getHealthIconSource } from "@utils/ui"
+import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 //components
 import Loader from "@components/Loader"
 import PetInfo from "@components/PetInfo/PetInfo"
@@ -43,8 +43,8 @@ const HealthDetailsScreen = ({ navigation, route }) => {
     
     lastDoneReversed= [...health.lastDone].reverse() ?? []
     iconSource = getHealthIconSource(health.name)
-    daysToDue = countDaysBetween(new Date(), health.nextDue.date)
-    daysFromDone = countDaysBetween(lastDoneReversed[0]?.date, new Date())
+    daysToDue = countDaysBetween('today', health.nextDue.date)
+    daysFromDone = countDaysBetween(lastDoneReversed[0]?.date, 'today')
   }
 
   const VisitItem = ({ visit, due }: VisitItem) => (
@@ -53,7 +53,7 @@ const HealthDetailsScreen = ({ navigation, route }) => {
       due && { backgroundColor: petColor }
     ]}>
       <View style={styles.rowCon}>
-        <Image source={due ? require('@assets/icons/calendar-due.png') : require('@assets/icons/calendar-done.png')} style={styles.itemIcon} />
+        <Image source={getActionIconSource(due ? 'due': 'done')} style={styles.itemIcon} />
         <View>
           <Text style={styles.detailText}>{new Date(visit.date).toLocaleDateString()}</Text>   
           {due && 
@@ -86,7 +86,7 @@ const HealthDetailsScreen = ({ navigation, route }) => {
             </View>
             <View style={styles.itemInfo}>
               <View style={styles.rowCon}>
-                <Image source={require('@assets/icons/calendar-due.png')} style={styles.itemIcon} />
+                <Image source={getActionIconSource('due')} style={styles.itemIcon} />
                 {health.nextDue &&
                   <Text style={styles.subHeader}>{new Date(health.nextDue.date).toLocaleDateString()}</Text>
                 }

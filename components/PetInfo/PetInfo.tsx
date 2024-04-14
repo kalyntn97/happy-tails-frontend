@@ -6,7 +6,7 @@ import { countYearsBetween } from "@utils/datetime"
 interface PetInfoProps {
   pet: {
     name: string
-    dob?: Date,
+    dob?: string,
     firstMet?: Date,
     species?: string 
     breed?: string
@@ -17,7 +17,7 @@ interface PetInfoProps {
 
 const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
   const iconSource = getPetIconSource(pet.species)
-  const petAge = countYearsBetween(pet.dob, new Date())
+  const petAge = countYearsBetween(pet.dob, 'today')
 
   return ( 
     <View style={styles.container}>

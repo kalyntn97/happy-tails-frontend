@@ -92,7 +92,7 @@ export const useCaresByPet = (petId: string) => {
   const caresByPet = () => {
     const filtered = cares.filter(care => {
       const includesPet = care.pets.map(p => p._id).includes(petId)
-      const dueToday = shouldRenderCareTask(care, new Date()) && care.frequency === 'Daily'
+      const dueToday = shouldRenderCareTask(care, 'today') && care.frequency === 'Daily'
       return includesPet && dueToday
     })
     return filtered
@@ -123,7 +123,7 @@ export const useHealthDueByPet = (petId: string) => {
     let minDays = Infinity
     healths.filter(health => health.pet._id === petId).forEach(health => {
       if (health.nextDue) {
-        const daysToNextDue = countDaysBetween(new Date(), health.nextDue.date)
+        const daysToNextDue = countDaysBetween('today', health.nextDue.date)
         if (daysToNextDue < minDays) minDays = daysToNextDue
       }
     })
@@ -136,7 +136,7 @@ export const useHealthDueByPet = (petId: string) => {
 export const useTaskCounts = () => {
   const cares = useCares()
   //* num of tasks due today
-  const careCounts = (selectedDate: Date) => {
+  const careCounts = (selectedDate: string) => {
     const filtered = cares.filter((care: Care) => shouldRenderCareTask(care, selectedDate) && care.frequency === 'Daily')
     return filtered.length
   }

@@ -3,16 +3,18 @@ import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from '
 import React, { FC, useEffect, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 //helpers & types
-import { getStatIconSource, statIconSource } from '@utils/ui'
-import { STATS } from './statHelpers'
+import { AlertForm, getStatIconSource, statIconSource } from '@utils/ui'
+import { STATS } from '../statHelpers'
 import { Pet } from '@pet/PetInterface'
 //components
-import { CheckboxButton, MainButton, TransparentButton } from '../../components/ButtonComponent'
-import IconStatForm from './components/IconStatForm'
+import { CheckboxButton, MainButton, TransparentButton } from '../../../components/ButtonComponent'
+import IconStatForm from '../components/IconStatForm'
 //styles
 import { Colors, Forms, Spacing, Typography } from '@styles/index'
-import RatingForm from './components/RatingForm'
-import InputForm from './components/InputForm'
+import RatingForm from '../components/RatingForm'
+import InputForm from '../components/InputForm'
+import { useAddStats } from '../statQueries'
+import { LogData, StatFormData } from '../statInterface'
 
 interface NewStatScreenProps {
   route:{ params: { pet: {_id: string, name: string } } }
@@ -22,14 +24,29 @@ interface NewStatScreenProps {
 const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
   const [names, setNames] = useState<string[]>([])
   const [index, setIndex] = useState<number>(0)
-  const [logs, setLogs] = useState([])
+  const [logs, setLogs] = useState<LogData[]>([])
   const { pet } = route.params
+  const addStatsMutation = useAddStats()
   
-  const addLog = (item: { name: string, value: number, unit: string }) => {
+  const addLog = (item: LogData) => {
     logs.find(prevItem => prevItem.name === item.name) 
       ? setLogs(prev => prev.filter(i => i.name !== item.name))
       : setLogs(prev => [...prev, item])
   }
+
+  const handleSubmit = (petId: string, logs: LogData[]) => {
+    
+    addStatsMutation.mutate({ petId, logs }, {
+      onSuccess: () => {
+        navigation.goBack()
+        return AlertForm({ body: `Submitted successfully`, button: 'OK' })
+      },
+      onError: (error) => {
+        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+      },
+    })
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps='handled' alwaysBounceVertical={false}>
       <Text style={{ ...Typography.mediumHeader }}>{pet.name.split(' ')[0]}'s Today Log</Text>
@@ -71,7 +88,7 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
           <MainButton title='Next' size='smallRound' onPress={() => {setIndex(prev => prev + 1)}} />
         }
         {index !== 0 && index === names.length &&
-          <MainButton title='Submit' size='smallRound' />
+          <MainButton title='Submit' size='smallRound' onPress={() => handleSubmit(pet._id, logs)} />
         }
        {index < names.length && <Image source={getStatIconSource(names[index])} style={{ ...Forms.smallIcon }} /> }
       </View>

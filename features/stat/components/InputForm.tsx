@@ -24,14 +24,13 @@ const InputForm: FC<InputFormProps> = ({ name, initialValues, onSelect }) => {
   
   const convertToDefaultUnit = (value: any) => {
     const converted = unit === STATS[name].unit ? value : statConverter(name, value, unit)
-    console.log(converted)
     onSelect({ name: name, value: Number(converted), unit: STATS[name].unit })
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.iconCon}>
-        <Image source={getStatIconSource(name)} style={{ ...Forms.largeIcon }} />
+      <View style={{ ...Forms.roundedIconCon }}>
+        <Image source={getStatIconSource(name)} />
       </View>
       <Text style={{ ...Typography.mediumHeader }}>{STATS[name].name}</Text>
       <View style={styles.inputCon}>
@@ -63,15 +62,6 @@ const styles = StyleSheet.create({
   inputCon: {
     ...Spacing.flexRow,
     justifyContent: 'space-between',
-  },
-  iconCon: {
-    borderRadius: 99,
-    backgroundColor: Colors.shadow.reg,
-    marginVertical: 20,
-    padding: 10,
-    width: 90,
-    height: 90,
-    ...Spacing.centered,
   },
 })
 

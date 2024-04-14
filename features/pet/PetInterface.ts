@@ -21,10 +21,10 @@ export interface Pet {
   name: string
   species: string 
   breed: string
-  dob: Date | null
-  firstMet: Date | null
-  altered: { value: boolean, date: Date | null}
-  status: { value: string, date: Date | null, show: boolean }
+  dob: string | null
+  firstMet: string | null
+  altered: { value: boolean, date: string | null}
+  status: { value: string, date: string | null, show: boolean }
   photo: string | null
   // icon: number | null
   color: number

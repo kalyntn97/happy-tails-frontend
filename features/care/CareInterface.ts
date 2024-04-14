@@ -15,8 +15,8 @@ export interface Care {
   pets: Pet[]
   repeat: boolean
   ending: boolean
-  date: Date
-  endDate?: Date
+  date: string
+  endDate?: string
   frequency?: string
   times?: number
   color: number

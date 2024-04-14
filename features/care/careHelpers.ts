@@ -29,7 +29,7 @@ export const careKeyFromName = keyFromName(CARES)
 export const CARE_FREQ = ['Daily', 'Weekly', 'Monthly', 'Yearly']
 
 export const getCurrentTrackerIndex = (frequency: string): number => {
-  const { date, week, month } = getDateInfo(new Date())
+  const { date, week, month } = getDateInfo('today')
   switch (frequency) {
     case 'Daily':
       return date - 1 //current date, all 0-index
@@ -78,7 +78,7 @@ export const getTaskStatus = (task: Care, trackerIndex: number, taskIndex: numbe
 }
 
 export const getTrackerDisplayName = (frequency: string, activeDate: number | null, activeWeek: number | null, activeMonthName: string | null, activeYear: number | null): string => {
-  const { date, week, monthName, year } = getDateInfo(new Date())
+  const { date, week, monthName, year } = getDateInfo('today')
   const mapByFrequency = {
     Daily: activeDate + 1 === date ? 'Today' : `${activeMonthName} ${activeDate + 1}`,
     Weekly: activeWeek + 1 === week ? 'This week' : `Week ${activeWeek + 1}`,
@@ -90,7 +90,7 @@ export const getTrackerDisplayName = (frequency: string, activeDate: number | nu
 
 export const getTrackerInfo = (trackerName: string) => {
   let trackerMonth: number, trackerMonthName: string, trackerYear: number, isCurrent: boolean
-  const { month: currMonth, year: currYear } = getDateInfo(new Date())
+  const { month: currMonth, year: currYear } = getDateInfo('today')
   // tracker name: 'mm-yyyy'
   if (trackerName.includes('-')) { // tracker is monthly-based, new tracker every month
     const splitName = trackerName.split('-') // output 'mm' & 'yyyy'

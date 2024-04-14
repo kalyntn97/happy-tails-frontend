@@ -2,7 +2,7 @@ import { Pet } from "@pet/PetInterface"
 
 export interface Visit {
   _id: string
-  date: Date
+  date: string
   notes: string
 }
 

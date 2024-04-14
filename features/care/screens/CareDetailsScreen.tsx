@@ -6,7 +6,7 @@ import { Care, Tracker } from "@care/CareInterface"
 import { useDeleteCareCard } from "@home/hooks"
 import { CARES, getCurrentTrackerIndex } from "@care/careHelpers"
 //components
-import { getCareIconSource } from "@utils/ui"
+import { getActionIconSource, getCareIconSource } from "@utils/ui"
 import PetList from "@components/PetInfo/PetList"
 import DailyChart from "@components/Charts/DailyChart"
 import BarChart from "@components/Charts/BarChart"
@@ -47,7 +47,7 @@ const CareDetailsScreen = ({ navigation, route }) => {
             <Text style={styles.header}>{CARES[care.name] ?? care.name}</Text>
             <View style={[styles.itemInfo]}>
               <View style={styles.rowCon}>
-                <Image source={require('@assets/icons/calendar-due.png')} style={styles.itemIcon}/>
+                <Image source={getActionIconSource('due')} style={styles.itemIcon}/>
                 <Text style={styles.subHeader}>
                   {new Date(care.date).toLocaleDateString()}
                   {care.endDate &&

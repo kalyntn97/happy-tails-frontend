@@ -11,7 +11,7 @@ import { SubButton } from "../../../components/ButtonComponent"
 import { Colors, Spacing, Typography } from "@styles/index"
 
 const ScrollCalendar = () => {
-  const { date: currDate, month: currMonth, year: currYear, week: currWeek, daysInMonth: currMonthDays, monthName: currMonthName } = getDateInfo(new Date())
+  const { date: currDate, month: currMonth, year: currYear, week: currWeek, daysInMonth: currMonthDays, monthName: currMonthName } = getDateInfo('today')
   const years = getYears()
 
   const [selectedMonth, setSelectedMonth] = useState<number>(currMonth - 1)

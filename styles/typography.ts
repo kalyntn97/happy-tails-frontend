@@ -117,6 +117,7 @@ export const focused: TextStyle = {
 }
 
 export const unFocused: TextStyle = {
+  fontWeight: 'normal',
   color: Colors.shadow.reg,
 }
 

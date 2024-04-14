@@ -1,5 +1,5 @@
-export const getDateInfo = (input: Date) => {
-  const inputDate = new Date(input)
+export const getDateInfo = (input: string) => {
+  const inputDate = input === 'today' ? new Date() : new Date(input)
   const date = inputDate.getDate()
   const month = inputDate.getMonth() + 1 //0-index 
   const year = inputDate.getFullYear()
@@ -16,15 +16,19 @@ export const getDateInfo = (input: Date) => {
   const weeksPassed = Math.floor(daysPassed / 7)
   const week = weeksPassed + 1
   
-  return { date, month, monthName, year, day, week, firstDayOfMonth, lastDayOfMonth, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
+  return { inputDate, date, month, monthName, year, day, week, firstDayOfMonth, lastDayOfMonth, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
 }
 
-export const getDateConstructor = (dateString: Date): Date => {
-  return new Date(
-    new Date(dateString).getFullYear(),
-    new Date(dateString).getMonth(),
-    new Date(dateString).getDate(),
-  )
+export const getDateConstructor = (dateString: string): Date => {
+  const date = new Date(dateString)
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
+export const compareDates = (string1: string, string2: string): number => {
+  const date1 = string1 === 'today' ? new Date() : new Date(string1)
+  const date2 = string2 === 'today' ? new Date() : new Date(string2)
+  return date1.toISOString().localeCompare(date2.toISOString())
 }
 
 export const months = [
@@ -34,7 +38,7 @@ export const months = [
 ]
 
 export const getYears = () => {
-  const { year } = getDateInfo(new Date())
+  const { year } = getDateInfo('today')
   let years = Array.from({length: year - 2012}, (_, index) => 2015 + index)
   return years
 }
@@ -52,8 +56,9 @@ export const getDaysInMonth = (month: number, year: number) => {
 
 export const getWeekIndex = (date: number) => Math.round(date / 7)
 
-export const getStartDate = (inputDate: Date, interval: number) => {
-  return new Date(inputDate.getTime() - (interval * 24 * 60 * 60 * 1000))
+export const getStartDate = (inputDate: string, interval: number) => {
+  const date = getDateConstructor(inputDate)
+  return new Date(date.getTime() - (interval * 24 * 60 * 60 * 1000))
 }
 
 export const dateIsWithinRange = (start: Date, end: Date) => {
@@ -61,13 +66,31 @@ export const dateIsWithinRange = (start: Date, end: Date) => {
   && (!end || new Date(end) >= new Date())
 }
 
-export const countDaysBetween = (start: Date, end: Date) => {
-  const timeElapsed = new Date(end).getTime() - new Date(start).getTime()
+export const countDaysBetween = (start: string, end: string) => {
+  const startDate = start === 'today' ? new Date() : new Date(start)
+  const endDate = end === 'today' ? new Date() : new Date(end)
+  const timeElapsed = endDate.getTime() - startDate.getTime()
   return  Math.round(timeElapsed / (1000 * 3600 * 24))
 }
 
-export const countYearsBetween = (start: Date, end: Date) => {
-  const timeElapsed = new Date(end).getTime() - new Date(start).getTime()
+export const countYearsBetween = (start: string, end: string) => {
+  const startDate = start === 'today' ? new Date() : new Date(start)
+  const endDate = end === 'today' ? new Date() : new Date(end)
+  const timeElapsed = endDate.getTime() - startDate.getTime()
   const timeInYears = timeElapsed / (1000 * 60 * 60 * 24 * 365.25)
   return parseFloat(timeInYears.toFixed(2))
+}
+
+export const getDateFromRange = (input: string, unit: string, count: number, direction: number) => {
+  //* direction is forward (1) or backward (-) from date
+  const { inputDate: output, date, month, year } = getDateInfo(input)
+  const outputMap: Record<string, () => void> = {
+    day: () => output.setDate(date + count * direction),
+    week: () => output.setDate(date + 7 * count * direction),
+    month: () => output.setMonth(month + count * direction),
+    year: () => output.setFullYear(year + count * direction),
+  }
+  const getOutputDate = outputMap[unit]
+  if (getOutputDate) getOutputDate()
+  return output
 }

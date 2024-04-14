@@ -6,14 +6,17 @@ import { Pet } from "@pet/PetInterface"
 import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
 import {  BoxHeader } from "@components/HeaderComponent"
-import { AlertForm } from "@utils/ui"
+import { AlertForm, getStatIconSource } from "@utils/ui"
 
 //store & queries
-import { useDeletePet } from "@pet/petQueries"
+import { useDeletePet, useGetPetById } from "@pet/petQueries"
 import { usePetActions } from "@store/store"
 //styles
-import { Buttons, Spacing, Forms, Colors } from '@styles/index'
+import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
 import { useCaresByPet, useHealthDueByPet } from "@home/hooks"
+import StatDetails from "@stat/screens/StatDetails"
+import { STATS } from "@stat/statHelpers"
+import { Stat } from "@stat/statInterface"
 
 interface PetDetailsProps {
   navigation: any
@@ -21,7 +24,8 @@ interface PetDetailsProps {
 }
 
 const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
-  const { pet } = route.params
+  
+  const {data: pet, isSuccess, isLoading, isError} = useGetPetById(route.params.pet._id, route.params.pet)
 
   const windowHeight = useWindowDimensions().height
 
@@ -56,26 +60,39 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
     <ScrollView
       alwaysBounceVertical={false}
       contentContainerStyle={styles.container}
-      style={{ backgroundColor: Colors.multi.light[pet.color] }}
+      style={{ backgroundColor: Colors.multi.lightest[pet.color] }}
     >
-      {pet ?
+      { isLoading && <Loader /> }
+      { isError && <Text>Error fetching pets...</Text> }
+      
+      <View style={[styles.infoCard, 
+      ]}>
+        <View style={styles.petInfo}>
+          <PetInfo pet={pet} size='expanded' />
+        </View>
+
+      </View>
+
+      {isSuccess && pet.stats.length > 0 &&
         <>
-          <View style={[styles.infoCard, 
-          ]}>
-            <View style={styles.petInfo}>
-              <PetInfo pet={pet} size='expanded' />
-            </View>
-
-          </View>
-
+          <Text style={styles.sectionHeader}>Logs</Text>
           <View style={{ ...Forms.roundedCon }}>
-            <BoxHeader title="Update info" onPress={() => navigation.navigate('Edit', { pet })} />
-            <BoxHeader title='Log pet stats' onPress={() => navigation.navigate('Create', { pet: { _id: pet._id, name: pet.name } })} />
-            <BoxHeader title={deletePetMutation.isPending ? 'Deleting...' : 'Delete'} onPress={showDeleteConfirmDialog} titleColor={Colors.red.dark} />
+            { pet.stats.map((stat: Stat, index: number) =>
+              <BoxHeader key={index} mode='light' onPress={() => navigation.navigate('Stat', { stat })} 
+                title={STATS[stat.name]?.name}
+                titleIconSource={getStatIconSource(stat.name)}
+              />
+            )}
           </View>
         </>
-        : <Loader />
       }
+
+      <View style={{ ...Forms.roundedCon }}>
+        <BoxHeader title='Log pet stats' onPress={() => navigation.navigate('Create', { pet: { _id: pet._id, name: pet.name } })} />
+        <BoxHeader title="Update pet info" onPress={() => navigation.navigate('Edit', { pet })} />
+        <BoxHeader title={deletePetMutation.isPending ? 'Deleting...' : 'Delete pet profile'} onPress={showDeleteConfirmDialog} titleColor={Colors.red.dark} />
+      </View>
+
     </ScrollView>
   )
 }
@@ -97,6 +114,12 @@ const styles = StyleSheet.create({
   petInfo: {
     width: '100%',
     height: '60%'
+  },
+  sectionHeader: {
+    ...Typography.xSmallHeader,
+    alignSelf: 'flex-start',
+    marginBottom: 0,
+    paddingLeft: 10,
   },
 })
 export default PetDetailsScreen

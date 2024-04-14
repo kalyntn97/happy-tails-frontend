@@ -148,7 +148,7 @@ export const rowCon: ViewStyle = {
   marginVertical: 10,
 }
 
-export const roundedCon: ViewStyle ={
+export const roundedCon: ViewStyle = {
   width: '90%',
   backgroundColor: Colors.white,
   borderRadius: 20,
@@ -157,4 +157,13 @@ export const roundedCon: ViewStyle ={
   paddingBottom: 20,
   // paddingVertical: 10,
   marginVertical: 10,
+}
+
+export const roundedIconCon: ViewStyle = {
+  ...centered,
+  padding: 10,
+  borderRadius: 99,
+  backgroundColor: Colors.shadow.light,
+  width: 100,
+  height: 100,
 }

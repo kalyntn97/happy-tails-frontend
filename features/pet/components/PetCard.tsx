@@ -18,7 +18,7 @@ interface PetCardProps {
 }
 
 const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) => {
-  const petAge = countYearsBetween(pet.dob, new Date())
+  const petAge = countYearsBetween(pet.dob, 'today')
   const caresByPet = useCaresByPet(pet._id)
   const healthDueByPet = useHealthDueByPet(pet._id)
 
@@ -77,19 +77,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
         </View>
 
         <View style={{ ...Spacing.flexRow, marginTop: 'auto' }}>
-          <TransparentButton title={ 
-            <View style={styles.detailBtnCon}>
-              <Image source={getActionIconSource('logPet')} style={{ ...Forms.smallIcon }} /> 
-              <Text style={styles.detailBtnText}>Log</Text>
-            </View>
-          } onPress={() => navigation.navigate('Details', { screen: 'Create', params : { pet } })} color={Colors.multi.transparent[pet.color]} bgColor={Colors.multi.semiTransparent[pet.color]} />
+          <TransparentButton title='Log' icon="logPet" onPress={() => navigation.navigate('Details', { screen: 'Create', params : { pet } })} bgColor={Colors.multi.semiTransparent[pet.color]} />
 
-          <TransparentButton title={ 
-            <View style={styles.detailBtnCon}>
-              <Image source={getActionIconSource('detailsPet')} style={{ ...Forms.smallIcon }} /> 
-              <Text style={styles.detailBtnText}>Details</Text>
-            </View>
-          } onPress={() => navigation.navigate('Details', { screen: 'Index', params : { pet } })} color={Colors.multi.transparent[pet.color]} bgColor={Colors.multi.semiTransparent[pet.color]} />
+          <TransparentButton title='Details' icon='detailsPet' onPress={() => navigation.navigate('Details', { screen: 'Index', params : { pet } })} bgColor={Colors.multi.semiTransparent[pet.color]} />
         </View>  
 
       </View>

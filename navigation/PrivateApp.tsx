@@ -16,11 +16,12 @@ import PetDetailsScreen from "@pet/screens/PetDetailsScreen"
 import PetIndexScreen from "@pet/screens/PetIndexScreen"
 import EditProfileScreen from "@profile/screens/EditProfileScreen"
 import ProfileScreen from "@profile/screens/ProfileScreen"
+import EditAccountScreen from "@profile/screens/EditAccountScreen"
 import SettingsScreen from "@profile/screens/SettingsScreen"
 import EditHealthScreen from "@health/screens/EditHealthScreen"
 import HealthDetailsScreen from "@health/screens/HealthDetails"
-import NewStatScreen from "@stat/NewStatScreen"
-import EditAccountScreen from "@profile/screens/EditAccountScreen"
+import NewStatScreen from "@stat/screens/NewStatScreen"
+import StatDetails from "@stat/screens/StatDetails"
 //components
 import { GoBackButton } from "@components/ButtonComponent"
 //helpers
@@ -128,6 +129,7 @@ const PrivateApp = () => {
                     )
                   } }} />
                   <DetailStack.Screen name='Create' component={NewStatScreen} options={{ title: 'New Log' }} />
+                  <DetailStack.Screen name='Stat' component={StatDetails} options={{ title: 'Details' }} />
                 </DetailStack.Navigator>
               )}
             </PetStack.Screen>

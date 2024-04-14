@@ -7,20 +7,6 @@ export const getAllPets = async () => {
   return (await axios.get<Pet[]>(BASE_URL)).data
 }
 
-// export async function create(name: string, age: number, species: string, breed: string, photoData: { uri: string, name: string, type: string } | null): Promise<any> {
-//   try {
-//     const result = await axios.post(BASE_URL, { name, age, species, breed, photoData })
-//     if (photoData) {
-//       const url = await addPhoto(result.data._id, photoData)
-//       result.data.photo = url
-//     }
-//     return result.data
-//   } catch (error) {
-//     console.error(error)
-//     return { error }
-//   }
-// }
-
 export const create = async (name: string, species: string, breed: string, dob: Date, firstMet: Date, altered: {value: boolean, date: Date | null}, status: {value: string, date: Date | null, show: boolean }, color: number, photoData: { uri: string, name: string, type: string } | null): Promise<Pet> => {
   const result = (await axios.post<Pet>(BASE_URL, { name, species, breed, dob, firstMet, altered, status, color })).data
   if (photoData) {
@@ -45,7 +31,7 @@ export const update = async (name: string,  species: string, breed: string, dob:
     return result
 }
 
-export async function getPet(petId: string): Promise<any> {
+export async function getPetById(petId: string): Promise<any> {
   return (await axios.get<Pet>(`${BASE_URL}/${petId}`)).data
 }
 

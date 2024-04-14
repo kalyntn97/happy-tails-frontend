@@ -16,16 +16,13 @@ export const useGetAllPets = () => {
   })
 } 
 
-// export const useGetPetById = (
-//   petId: string,
-//   options?: UseQueryOptions<Pet, AxiosError, Pet, readonly (string)[]>
-// ) => {
-//   return useQuery({
-//     queryKey: [...petKeyFactory.petById(petId)],
-//     queryFn: () => getPetById(petId), 
-//     ...options
-//   })
-// } 
+export const useGetPetById = (petId: string, initialPet: Pet) => {
+  return useQuery({
+    queryKey: [...petKeyFactory.petById(petId)],
+    queryFn: () => petService.getPetById(petId),
+    initialData: initialPet,
+  })
+} 
 
 export const useAddPet = () => {
   const queryClient = useQueryClient()

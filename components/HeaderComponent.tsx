@@ -2,20 +2,23 @@ import { Image, Pressable, Text, TouchableOpacity, View, ViewStyle } from "react
 import { Spacing, Colors, Typography, Forms } from "@styles/index"
 import { FC } from "react"
 import { getActionIconSource } from "@utils/ui"
+import { ImageSourcePropType } from "react-native"
 
 type BoxHeaderProps = {
   title: string
+  titleIconSource?: ImageSourcePropType
   onPress?: () => void
   titleColor?: string
   arrow?: string
   mode?: 'light'
+  rightContent?: any
 }
 
 interface BoxProps extends BoxHeaderProps {
   content: any
 }
 
-export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor, arrow, mode }) => (
+export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor, arrow, mode, titleIconSource, rightContent }) => (
   <Pressable style={{
     ...Spacing.flexRow,
     borderBottomWidth: 1,
@@ -25,17 +28,18 @@ export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor, arro
   }}
     onPress={onPress}
   >
+    { titleIconSource && <Image source={titleIconSource} style={{ ...Forms.smallIcon }} /> }
     <Text style={[
-      { ...Typography.xSmallHeader, margin: 0, marginLeft: 2, textAlign: 'left', }, 
+      { ...Typography.xSmallHeader, margin: 0, marginLeft: titleIconSource ? 7 : 2, textAlign: 'left', }, 
     titleColor && { color: titleColor },
     mode === 'light' && { fontWeight: 'normal' },
     ]}>
       { title }
     </Text>
-    <Image source={arrow === 'down' ? getActionIconSource('down') : getActionIconSource('next')} style={{
-      ...Forms.xSmallIcon,
-      marginLeft: 'auto',
-    }} />
+    <View style={{ ...Spacing.flexRow, marginLeft: 'auto' }}>
+      { rightContent && rightContent }
+      <Image source={arrow === 'down' ? getActionIconSource('down') : getActionIconSource('next')} style={{ ...Forms.xSmallIcon, marginLeft: 10 }} />
+    </View>
   </Pressable>
 )
 
