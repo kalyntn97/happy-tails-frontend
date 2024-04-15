@@ -31,17 +31,19 @@ const LoginScreen: FC = ({ navigation }) => {
       <LottieView source={require('@assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
       <Text style={styles.header}>Sign in</Text>
       <View style={styles.form}>
-        <Text style={styles.errorMsg}>{errorMsg}</Text>
+        <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
         <TextInput 
           style={styles.input} 
-          placeholder='Username' 
+          placeholder='Username'
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setUserName(text)} 
           value={username} 
           autoCapitalize='none'
         />
         <TextInput 
           style={styles.input} 
-          placeholder='Password' 
+          placeholder='Password'
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setPassword(text)} 
           value={password} 
           secureTextEntry={true}
@@ -68,10 +70,6 @@ const styles = StyleSheet.create({
   },
   form: {
     ...Forms.form,
-  },
-  errorMsg: {
-    color: Colors.red.dark,
-    fontWeight: 'bold'
   },
   input: {
     ...Forms.input,

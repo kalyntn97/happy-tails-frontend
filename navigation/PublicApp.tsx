@@ -22,7 +22,7 @@ const PublicApp = () => {
           <LoginStack.Navigator
             screenOptions={{ 
               headerShown: false,
-              contentStyle: { backgroundColor: Colors.pink.lightest }
+              contentStyle: { backgroundColor: Colors.shadow.lightest }
             }}
           >
             <LoginStack.Screen name='Login' component={LoginScreen} options={{ title: 'Sign in' }}/>

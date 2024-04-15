@@ -83,7 +83,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       showsVerticalScrollIndicator={false}
       alwaysBounceVertical={false}
     >
-      {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
+      {errorMsg && <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>}
 
       {!!name && <Text>Enter Name</Text>}
       <Dropdown label={'Select Name'} dataType="care" onSelect={handleSelectName} initial={name} />
@@ -91,6 +91,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         <TextInput 
           style={styles.input}
           placeholder="Specify name"
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setName(text)}
           value={name}
           autoCapitalize="words"
@@ -111,6 +112,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
           <TextInput 
             style={styles.input} 
             placeholder='Enter Times' 
+            placeholderTextColor={Colors.shadow.reg}
             onChangeText={(text: string) => setTimes(Number(text))} 
             value={(times ?? '').toString()} 
             keyboardType="numeric"
@@ -159,10 +161,6 @@ const styles = StyleSheet.create({
   },
   input: {
     ...Forms.input,
-  },
-  error: {
-    color: Colors.red,
-    fontWeight: 'bold'
   },
   rowCon: {
     ...Spacing.flexRow,

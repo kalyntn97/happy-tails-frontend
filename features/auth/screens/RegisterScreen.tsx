@@ -41,27 +41,31 @@ const RegisterScreen = ({ navigation }) => {
       <View style={styles.form}>
         <TextInput 
           style={styles.input} 
-          placeholder='Name' 
+          placeholder='Name'
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setName(text)} 
           value={name} 
         />
         <TextInput 
           style={styles.input} 
-          placeholder='Username' 
+          placeholder='Username'
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setUserName(text)} 
           value={username} 
           autoCapitalize='none'
         />
         <TextInput 
           style={styles.input} 
-          placeholder='Password' 
+          placeholder='Password'
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setPassword(text)} 
           value={password} 
           secureTextEntry={true}
         />
         <TextInput 
           style={styles.input} 
-          placeholder='Confirm Password' 
+          placeholder='Confirm Password'
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setPasswordConf(text)} 
           value={passwordConf} 
           secureTextEntry={true}

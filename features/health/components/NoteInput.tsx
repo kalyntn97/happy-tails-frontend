@@ -9,6 +9,7 @@ import { Visit } from "@health/HealthInterface"
 import { useAddVisitNotes } from "@health/healthQueries"
 //styles
 import { styles } from "@styles/DetailsScreenStyles"
+import Colors from "@styles/colors"
 
 interface NoteInputProps {
   healthId: string
@@ -55,6 +56,7 @@ const NoteInput: FC<NoteInputProps> = ({ healthId, visit, due }) => {
           <TextInput 
             style={styles.notesInput}
             placeholder={notes || 'Enter visit notes'}
+            placeholderTextColor={Colors.shadow.reg}
             value={notes}
             onChangeText={(text: string) => setNotes(text)}
           />

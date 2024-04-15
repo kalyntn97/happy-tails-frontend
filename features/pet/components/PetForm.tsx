@@ -7,11 +7,11 @@ import RNDateTimePicker from "@react-native-community/datetimepicker"
 import { CheckboxButton, MainButton, SubButton } from '@components/ButtonComponent'
 import Dropdown from "@components/Dropdown/Dropdown"
 import ColorPickingPanel from "@components/ColorPickingPanel"
-
-//styles
-import { Buttons, Spacing, Forms, Colors } from '@styles/index'
+//helpers & utils
 import { STATUS } from "@pet/petHelpers"
 import { getPetIconSource } from "@utils/ui"
+//styles
+import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
 
 interface PetFormProps {
   onSubmit: (name: string, species: string, breed: string | null, dob: Date | null, firstMet: Date | null, altered: {value: boolean, date: Date | null}, status: {value: string, date: Date | null, show: boolean }, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
@@ -73,10 +73,11 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={{ color: Colors.red.dark, fontWeight: 'bold' }}>{errorMsg}</Text>
+      <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
       <TextInput 
         style={styles.input} 
-        placeholder='Pet Name' 
+        placeholder='Pet Name'
+        placeholderTextColor={Colors.shadow.reg}
         onChangeText={(text: string) => setName(text)} 
         value={name} 
         autoCapitalize="words"

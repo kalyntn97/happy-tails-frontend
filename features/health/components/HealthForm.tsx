@@ -86,7 +86,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
+      {errorMsg && <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>}
 
       <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} />
 
@@ -99,6 +99,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         <TextInput 
           style={styles.input}
           placeholder="Specify name"
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setName(text)}
           value={name}
           autoCapitalize="words"
@@ -116,7 +117,8 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
           <Text style={styles.label}>Due In</Text>
           <TextInput
             style={[Forms.inputBase, { width: 50 }]}
-            placeholder='1' 
+            placeholder='1'
+            placeholderTextColor={Colors.shadow.reg}
             onChangeText={(text: string) => setTimes(Number(text))} 
             value={(times ?? '').toString()} 
             keyboardType="numeric"
@@ -150,10 +152,6 @@ const styles = StyleSheet.create({
   header: {
     ...Typography.mainHeader,
     color: Colors.pink.dark
-  },
-  error: {
-    color: Colors.red.dark,
-    fontWeight: 'bold'
   },
   input: {
     ...Forms.input,

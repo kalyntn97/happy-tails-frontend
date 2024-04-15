@@ -6,22 +6,24 @@ import { STATS, STAT_QUAL_VALUES } from '../statHelpers'
 import { getStatQualIconSource } from '@utils/ui'
 //styles
 import { Colors, Spacing, Typography, Forms, Buttons } from '@styles/index'
+import NoteForm from './NoteForm'
 
 interface RatingFormProps {
   name: string
-  initialValues?: { name: string, value: number, date: Date }
-  onSelect: (item: { name: string, value: number }) => void
+  initialValues?: { name: string, value: number, notes: string, date: string }
+  onSelect: (item: { name: string, value: number, notes: string }) => void
 }
 
 const RatingForm: FC<RatingFormProps> = ({ name, initialValues, onSelect }) => {
   const [value, setValue] = useState<number>(initialValues?.value ?? null)
+  const [notes, setNotes] = useState<string>(initialValues?.notes ?? null)
 
   let optionCon = []
   for (let i = 0; i < 5; i++) {
     optionCon.push(
       <TouchableOpacity key={i} style={styles.dotCon} onPress={() => {
         value === i ? setValue(null) : setValue(i)
-        onSelect({ name: name, value: i })
+        onSelect({ name, value: i, notes })
       }}>
         <View style={[
           styles.dot, i === 0 || i === 4 ? styles.large : i === 2 ? styles.small : styles.medium, value === i && styles.selected
@@ -41,6 +43,8 @@ const RatingForm: FC<RatingFormProps> = ({ name, initialValues, onSelect }) => {
         <Image source={getStatQualIconSource(name, 1)} style={{ ...Forms.largeIcon }} />
       </View>
       <View style={styles.optionCon}>{ optionCon }</View>
+
+      <NoteForm onAddNote={setNotes} />
     </View>
   )
 }
@@ -48,7 +52,8 @@ const RatingForm: FC<RatingFormProps> = ({ name, initialValues, onSelect }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    ...Spacing.fullScreenDown,
+    ...Spacing.centered,
   },
   optionCon: {
     width: '100%',
@@ -89,6 +94,7 @@ const styles = StyleSheet.create({
   },
   iconCon: {
     ...Spacing.flexRow,
+    width: '90%',
     justifyContent: 'space-between',
     margin: 20
   },

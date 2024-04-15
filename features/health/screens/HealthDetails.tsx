@@ -108,12 +108,12 @@ const HealthDetailsScreen = ({ navigation, route }) => {
               <StatButton item={{ header: 'total', stat: health.lastDone.length, body: 'visits' }} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
             </View>
             <View style={{...Forms.roundedCon}}>
-              <BoxHeader title='Update' onPress={() => navigation.navigate('Edit', { health: health })} />
-              <BoxHeader title="Delete" onPress={() => showDeleteConfirmDialog(health, handleDeleteHealthCard)} titleColor={Colors.red.reg} />
+              <BoxHeader title='Update' titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('Edit', { health: health })} />
+              <BoxHeader title="Delete" titleIconSource={getActionIconSource('deleteSquare')} onPress={() => showDeleteConfirmDialog(health, handleDeleteHealthCard)} titleColor={Colors.red.reg} />
             </View>
           </View>
           <View style={{...Forms.roundedCon}}>
-            <BoxHeader title='All logs' />
+            <BoxHeader title='All logs' titleIconSource={getActionIconSource('noteSquare')}/>
             {lastDoneReversed.length > 1 && 
               <TouchableOpacity style={styles.showButton} onPress={() => setShowAllVisits(!showAllVisits)}>
                 <Text style={{...Typography.xSmallSubHeader}}>{showAllVisits ? 'Hide ': 'Show all'} ({lastDoneReversed.length + 1})</Text>

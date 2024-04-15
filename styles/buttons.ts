@@ -6,7 +6,8 @@ import { boxShadow } from "./forms"
 export const base: ViewStyle = {
   alignItems: 'center',
   justifyContent: 'center',
-  margin: 10
+  margin: 10,
+  padding: 5
 }
 
 export const roundedBase = {
@@ -68,7 +69,7 @@ export const lessRounded: ViewStyle= { borderRadius: 15 }
 
 export const square: ViewStyle = { borderRadius: 8 }
 //buttons
-export const smallRoundedSolid: ViewStyle = { ...small, ...solid, ...lessRounded }
+export const smallRoundedSolid: ViewStyle = { ...small, ...solid, ...rounded }
 export const longSquareSolid: ViewStyle = { ...long, ...solid, ...square }
 
 export const smallRoundedTransparent: ViewStyle = { ...small, ...rounded, ...transparent }

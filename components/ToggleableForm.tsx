@@ -9,11 +9,12 @@ interface FormProps {
   title: string
   buttonColor?: string
   buttonBgColor?: string
+  buttonSize?: string
   content: ReactNode
   onPress?: () => void
 }
 
-const ToggleableForm: React.FC<FormProps> = ({ title, content, onPress, buttonColor, buttonBgColor }) => {
+const ToggleableForm: React.FC<FormProps> = ({ title, content, onPress, buttonSize, buttonColor, buttonBgColor }) => {
   const [visible, setVisible] = useState(false)
 
   const handlePress = () => {
@@ -23,7 +24,7 @@ const ToggleableForm: React.FC<FormProps> = ({ title, content, onPress, buttonCo
   
   return (
     <View style={styles.container}>
-      <TransparentButton title={title} onPress={handlePress} icon='downThin' color={buttonColor} bgColor={buttonBgColor} />
+      <TransparentButton title={title} onPress={handlePress} icon='downThin' color={buttonColor} bgColor={buttonBgColor} size={buttonSize} />
       {visible && content}
     </View>
   )

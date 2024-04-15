@@ -36,7 +36,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
             <View style={{ height: windowHeight * 0.22, justifyContent: 'flex-end' }}>
               <ScrollCalendar />
             </View>
-            {/* <Image source={require('@assets/images/happy-tails-banner.png')} style={[styles.banner, { width: windowWidth, height: windowHeight * 0.2 }]} /> */}
+
             <View style={[styles.body, { width: windowWidth, height: windowHeight * 0.7 }]}>
               <HomeFeed navigation={navigation} />
             </View>
@@ -63,7 +63,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
                 <Text style={styles.subHeader}>Ready to start a new journey with your furry friends?</Text>
             </View>
             <TransparentButton title='Get Started' onPress={() => scrollToNext(1)} color={Colors.pink.reg} size='large' />
-            <SubButton title="Already have an account? Login here" size='small' color={Colors.shadow.dark} onPress={() => navigation.navigate('User', { screen: 'Login' })} />
+            <SubButton title="Already have an account? Login here" size='small' color={Colors.shadow.darkest} onPress={() => navigation.navigate('User', { screen: 'Login' })} />
             
             <TouchableOpacity style={styles.link} onPress={() => scrollToNext(1)}>
               <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
@@ -96,9 +96,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.shadow.lightest,
   },
-  banner: {
-    marginTop: 40,
-  },
   body: {
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -117,40 +114,12 @@ const styles = StyleSheet.create({
   subHeader: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: 'gray',
+    color: Colors.shadow.darkest,
     marginBottom: 20
   },
   happyAnimation: {
     width: '100%',
     marginTop: 10,
-  },
-  mainBtn: {
-    ...Buttons.longRounded,
-    width: '80%',
-    height: 50,
-    backgroundColor: Colors.pink.reg,
-    marginTop: 10,
-    
-  },
-  emptyMsgBtn: {
-    ...Spacing.flexRow,
-  },
-  btnText: {
-    ...Buttons.buttonText,
-    fontSize: 20,
-  },
-  msgIcon: {
-    ...Forms.smallIcon,
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    transform: [{rotate: '-30deg'}]
-  },
-  msg: {
-    ...Typography.xSmallHeader,
-  },
-  emptyMsgContainer: {
-    ...Spacing.flexColumn,
   },
   link: {
     ...Buttons.base,

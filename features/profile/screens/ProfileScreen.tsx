@@ -12,7 +12,7 @@ import Loader from "@components/Loader"
 import { StatButton } from "@components/ButtonComponent"
 import { BoxHeader, BoxWithHeader } from "@components/HeaderComponent"
 //hooks & utils
-import { AlertForm } from "@utils/ui"
+import { AlertForm, getActionIconSource } from "@utils/ui"
 import { useCaresByFrequency, useSelectPhoto, useTaskCounts } from "@home/hooks"
 //styles
 import { Care } from "@care/CareInterface"
@@ -85,7 +85,7 @@ const ProfileScreen = ({ navigation, route }) => {
           </View>
 
           <View style={styles.bodyCon}>
-            <BoxWithHeader title='All Pets' onPress={() => navigation.navigate('Pets', { screen: 'Index' })} content={
+            <BoxWithHeader title='All Pets' titleIconSource={getActionIconSource('home')} onPress={() => navigation.navigate('Pets', { screen: 'Index' })} content={
               pets ?
                 <>
                   <PetList petArray={pets} size='compact' />
@@ -96,10 +96,10 @@ const ProfileScreen = ({ navigation, route }) => {
               
             } />
             <View style={{...Forms.roundedCon}}>
-              <BoxHeader title="All pet care tasks" onPress={() => navigation.navigate('Care', { screen: 'Index', initial: false})} />
-              <BoxHeader title="All vet visits" onPress={() => navigation.navigate('Health', { screen: 'Index', initial: false})} />
-              <BoxHeader title="Update profile" onPress={() => navigation.navigate('Edit', { profile : profile })} />
-              <BoxHeader title="Settings" onPress={() => navigation.navigate('Settings', { profile : profile })} />
+              <BoxHeader title="All pet care tasks" titleIconSource={getActionIconSource('care')} onPress={() => navigation.navigate('Care', { screen: 'Index', initial: false})} />
+              <BoxHeader title="All vet visits" titleIconSource={getActionIconSource('health')} onPress={() => navigation.navigate('Health', { screen: 'Index', initial: false})} />
+              <BoxHeader title="Update profile" titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('Edit', { profile : profile })} />
+              <BoxHeader title="Settings" titleIconSource={getActionIconSource('settings')} onPress={() => navigation.navigate('Settings', { profile : profile })} />
             </View>
             
           </View>

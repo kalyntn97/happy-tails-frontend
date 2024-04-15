@@ -6,15 +6,18 @@ import { getActionIconSource, statQualIconSource } from "@utils/ui"
 import { STATS, STAT_QUAL_VALUES } from "../statHelpers"
 //styles
 import { Forms, Spacing, Typography } from "@styles/index"
+import { TextInput } from "react-native-gesture-handler"
+import NoteForm from "./NoteForm"
 
 interface LogFormProps {
   name: string
-  initialValues?: { name: string, value: number, date: Date }
-  onSelect: (item: { name: string, value: number }) => void
+  initialValues?: { name: string, value: number, date: string, notes: string }
+  onSelect: (item: { name: string, value: number, notes: string }) => void
 }
 
 const IconStatForm: FC<LogFormProps> = ({ name, initialValues, onSelect }) => {
   const [value, setValue] = useState<number>(initialValues?.value ?? null)
+  const [notes, setNotes] = useState<string>(initialValues?.notes ?? null)
 
   const options = statQualIconSource[name]
   
@@ -24,7 +27,7 @@ const IconStatForm: FC<LogFormProps> = ({ name, initialValues, onSelect }) => {
     optionCon.push(
       <TouchableOpacity key={i} style={{ ...Spacing.flexColumn, margin: 10 }} onPress={() => {
         value === i ? setValue(null) : setValue(i)
-        onSelect({ name: name, value: i })
+        onSelect({ name, value: i, notes })
       }}>
         <Image source={options[i]} style={{ ...Forms.xLargeIcon, margin: 10 }} />
         {value === i &&
@@ -44,19 +47,24 @@ const IconStatForm: FC<LogFormProps> = ({ name, initialValues, onSelect }) => {
         <Text>{new Date(initialValues.date).toLocaleString()}</Text>
       }
       <View style={styles.optionCon}>{ optionCon }</View>
+
+      <NoteForm onAddNote={setNotes} />
+      
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    ...Spacing.fullScreenDown,
+    ...Spacing.centered,
   },
   optionCon: {
     width: '100%',
     ...Spacing.flexRow,
     flexWrap: 'wrap',
     justifyContent: 'center',
+    marginBottom: 40,
   },
   selected: {
     ...Forms.smallIcon,
@@ -69,6 +77,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -5,
   },
+  input: {
+    ...Forms.input,
+  }
 })
 
 export default IconStatForm

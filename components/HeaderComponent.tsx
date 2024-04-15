@@ -43,11 +43,11 @@ export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor, arro
   </Pressable>
 )
 
-export const BoxWithHeader: FC<BoxProps> = ({ title, onPress, content, titleColor, arrow }) => (
+export const BoxWithHeader: FC<BoxProps> = ({ title, titleIconSource, onPress, content, titleColor, arrow }) => (
   <View style={{
     ...Forms.roundedCon,
   }}>
-    <BoxHeader title={title} onPress={onPress} titleColor={titleColor} arrow={arrow} />
+    <BoxHeader title={title} onPress={onPress} titleColor={titleColor} arrow={arrow} titleIconSource={titleIconSource}/>
     <View style={{
       width: '100%', alignItems: 'center'
     }}>

@@ -48,7 +48,8 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPres
           <RNDateTimePicker value={selected ?? new Date()} maximumDate={new Date()} accentColor={Colors.pink.dark} onChange={(event, selectedDate) => setSelected(selectedDate)} />
         : <TextInput 
             style={[Forms.inputBase, { width: 100 }]}
-            placeholder={label} 
+            placeholder={label}
+            placeholderTextColor={Colors.shadow.reg}
             onChangeText={(text: string) => setSelected(text)} 
             value={selected} 
           />

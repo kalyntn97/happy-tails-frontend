@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   header: {
     ...Typography.mediumHeader,
     marginBottom: 0,
-    color: Colors.pink.dark,
+    color: Colors.shadow.darkest,
   },
   petCon: {
     marginBottom: 15,

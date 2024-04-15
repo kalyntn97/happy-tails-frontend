@@ -84,13 +84,14 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
             </View>
           </View>
 
-          <Text style={{ color: Colors.red.dark, fontWeight: 'bold' }}>{errorMsg}</Text>
+          <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
 
           <View style={styles.form}>
             <TextInput 
               style={styles.input}
               value={name}
               placeholder="Name"
+              placeholderTextColor={Colors.shadow.reg}
               onChangeText={(text: string) => setName(text)}
               autoCapitalize="words"
             />
@@ -98,6 +99,7 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
               style={[styles.input, styles.multiline]}
               value={bio}
               placeholder="Enter Bio"
+              placeholderTextColor={Colors.shadow.reg}
               onChangeText={(text: string) => setBio(text)}
               multiline
             />

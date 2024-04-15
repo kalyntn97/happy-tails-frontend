@@ -20,6 +20,7 @@ type BaseButtonProps = {
   bottom?: number | 'auto'
   bgColor?: string
   color?: string
+  bdColor?: string
   size?: string
 }
 
@@ -94,9 +95,10 @@ interface BaseWithIconButtonProps extends BaseButtonProps {
 
 export const MainButton: FC<BaseWithIconButtonProps> = ({ onPress, title, top, bottom, bgColor, color, size, icon }) => (
   <TouchableOpacity onPress={onPress} style={[
-    size === 'smallRound' ? { ...Buttons.xSmallRoundButton } :
-    size === 'small' ? { ...Buttons.xSmallSquareButton } : 
-    size === 'large' ? { ...Buttons.longSquareSolid } : { ...Buttons.smallRoundedSolid },
+    size === 'small' ? { ...Buttons.xSmallRoundButton } 
+    : size === 'smallSquare' ? { ...Buttons.xSmallSquareButton } 
+    : size === 'large' ? { ...Buttons.longSquareSolid } 
+    : { ...Buttons.smallRoundedSolid },
     { backgroundColor: bgColor ?? Colors.pink.reg },
     top && { marginTop: top },
     bottom && { marginBottom: bottom },
@@ -113,16 +115,18 @@ export const MainButton: FC<BaseWithIconButtonProps> = ({ onPress, title, top, b
   </TouchableOpacity>
 )
 
-export const TransparentButton: FC<BaseWithIconButtonProps> = ({ title, onPress, size, top, bottom, color, bgColor, icon }) => (
+export const TransparentButton: FC<BaseWithIconButtonProps> = ({ title, onPress, size, top, bottom, color, bgColor, bdColor, icon }) => (
   <TouchableOpacity onPress={onPress} style={[
-    { ...Spacing.flexRow, borderColor: bgColor ?? Colors.transparent.dark, backgroundColor: bgColor ?? Colors.transparent.light },
+    { ...Spacing.flexRow, borderColor: bdColor ?? Colors.transparent.dark, backgroundColor: bgColor ?? Colors.transparent.light, },
     size === 'small' ? { ...Buttons.xSmallRoundedTransparent } 
       : size === 'large' ? { ...Buttons.longRoundedTransparent }
       : { ...Buttons.smallRoundedTransparent },
     top && { marginTop: top },
     bottom && { marginBottom: bottom },
   ]}>
-    {icon && <Image source={getActionIconSource(icon)} style={{ ...Forms.smallIcon, marginRight: 5 }} />}
+    {icon && <Image source={getActionIconSource(icon)} style={[
+      { marginRight: 5 }, size === 'small' ? Forms.xSmallIcon : Forms.smallIcon
+    ]} />}
     <Text style={[
       { ...Buttons.buttonText, color: color ?? Colors.shadow.darkest, fontSize: icon ? 12 : 15 },
       // size === 'small' && { fontSize: icon ? 12 : 15 },

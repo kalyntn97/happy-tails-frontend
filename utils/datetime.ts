@@ -61,9 +61,8 @@ export const getStartDate = (inputDate: string, interval: number) => {
   return new Date(date.getTime() - (interval * 24 * 60 * 60 * 1000))
 }
 
-export const dateIsWithinRange = (start: Date, end: Date) => {
-  return new Date(start) <= new Date()
-  && (!end || new Date(end) >= new Date())
+export const dateIsWithinRange = (start: string, end: string, date: string) => {
+  return compareDates(start, date) <= 0 && compareDates(date, end) <= 0
 }
 
 export const countDaysBetween = (start: string, end: string) => {
@@ -78,7 +77,7 @@ export const countYearsBetween = (start: string, end: string) => {
   const endDate = end === 'today' ? new Date() : new Date(end)
   const timeElapsed = endDate.getTime() - startDate.getTime()
   const timeInYears = timeElapsed / (1000 * 60 * 60 * 24 * 365.25)
-  return parseFloat(timeInYears.toFixed(2))
+  return parseFloat(timeInYears.toFixed(1))
 }
 
 export const getDateFromRange = (input: string, unit: string, count: number, direction: number) => {
@@ -87,7 +86,7 @@ export const getDateFromRange = (input: string, unit: string, count: number, dir
   const outputMap: Record<string, () => void> = {
     day: () => output.setDate(date + count * direction),
     week: () => output.setDate(date + 7 * count * direction),
-    month: () => output.setMonth(month + count * direction),
+    month: () => output.setMonth(month + count * direction - 1),
     year: () => output.setFullYear(year + count * direction),
   }
   const getOutputDate = outputMap[unit]

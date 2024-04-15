@@ -121,3 +121,9 @@ export const unFocused: TextStyle = {
   color: Colors.shadow.reg,
 }
 
+export const errorMsg: TextStyle = {
+  ...focused,
+  color: Colors.red.dark,
+  fontSize: 15,
+  margin: 5,
+}

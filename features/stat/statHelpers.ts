@@ -1,4 +1,4 @@
-import { compareDates, getDateFromRange, getDateInfo, isSameDates } from "@utils/datetime"
+import { compareDates, dateIsWithinRange, getDateFromRange, getDateInfo, isSameDates } from "@utils/datetime"
 import { Record } from "./statInterface"
 
 export const DEFAULT_WEIGHT_UNIT = 'kg'
@@ -12,18 +12,20 @@ export const FOOD_UNITS = [DEFAULT_FOOD_UNIT, 'oz']
 export const WATER_UNITS = [DEFAULT_WATER_UNIT, 'oz']
 
 export const CHART_PARAMS = {
-  range: ['All', '1D', '1W', '1M', '1Y', '5Y'],
+  range: ['All', '1D', '1W', '1M', '3M', '6M', '1Y', '5Y'],
 }
 
 const unitName = { D: 'day', W: 'week', M: 'month', Y: 'year' }
 
-export const filterByRange = (range: string, records: Record[]) => {
-  if (range === 'All') return records
+export const filterByRange = (range: string, records: Record[], startDate: string) => {
+  if (range === 'All') return { filtered: records, endDate: null }
   //* range format 'count-unit'
   const count = Number(range[0])
   const unit = unitName[range[1]]
-  const endDate = getDateFromRange('today', unit, count, -1).toString()
-  return records.filter(record => compareDates(record.createdAt, endDate) >= 0)
+  const endDate = getDateFromRange(startDate ?? 'today', unit, count, -1)
+  //* records are sorted desc
+  const filtered = records.filter(record => dateIsWithinRange( endDate.toString(), startDate, record.createdAt)) 
+  return { filtered, endDate }
 }
 
 export const STATS = {
@@ -65,4 +67,9 @@ export const weightConverter = (input: string, outputUnit: string) => {
   } else {
     return (Number(input) / 2.2046).toFixed(1)
   }
+}
+
+export const getAverageValue = (arr: Array<number>) => {
+  const sum = arr.reduce((acc, curr) => acc + curr, 0)
+  return (sum / arr.length).toFixed(1)
 }

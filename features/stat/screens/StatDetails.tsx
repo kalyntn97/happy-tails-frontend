@@ -3,12 +3,14 @@ import React, { FC, useState } from 'react'
 //helpers & types
 import { Stat } from '@stat/statInterface'
 import { getActionIconSource, getStatIconSource, getStatQualIconSource } from '@utils/ui'
-import { CHART_PARAMS, STATS, filterByRange, getUnitKey, statConverter } from '@stat/statHelpers'
+import { CHART_PARAMS, STATS, filterByRange, getAverageValue, getUnitKey, statConverter } from '@stat/statHelpers'
 //store & queries
 import { useDisplayUnits } from '@store/store'
 //styles
 import { Typography, Forms, Spacing, Colors } from '@styles/index'
 import ToggleableForm from '@components/ToggleableForm'
+import RNDateTimePicker from '@react-native-community/datetimepicker'
+import { compareDates } from '@utils/datetime'
 
 interface StatDetailsProps {
   navigation: any
@@ -20,15 +22,24 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
   const name = STATS[stat.name].name
   const records = [...stat.records].reverse()
   const ranges = CHART_PARAMS.range
-  const [selectedRange, setSelectedRange] = useState('All')
-  const [filtered, setFiltered] = useState(records)
+  const initialAvg = getAverageValue(records.map(r => r.value))
   const displayUnits = useDisplayUnits()
   const unit = displayUnits[getUnitKey(stat.name)]
   const defaultUnit = STATS[stat.name].unit
 
+  const [selectedRange, setSelectedRange] = useState('All')
+  const [filtered, setFiltered] = useState(records)
+  const [startDate, setStartDate] = useState(new Date())
+  const [endDate, setEndDate] = useState(null)
+  const [avg, setAvg] = useState<string>(initialAvg)
+
   const changeRange = (range: string) => {
     setSelectedRange(range)
-    setFiltered(filterByRange(range, records))
+    const { filtered, endDate } = filterByRange(range, records, startDate.toString())
+    setFiltered(filtered)
+    setEndDate(endDate ? endDate.toDateString().slice(4) : null)
+    const avgValue = getAverageValue(filtered.map(r => r.value))
+    setAvg(Number.isNaN(Number(avgValue)) ? '0' : avgValue)
   }
 
   return (
@@ -38,18 +49,36 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
       </View>
       <Text style={{ ...Typography.mediumHeader }}>{name}</Text>
 
+      <ToggleableForm title='See graph' content={
+        <Text>This is a graph</Text>
+      } />
+
       <View style={styles.filterBtnCon}>
-        {CHART_PARAMS.range.map((range, index) =>
+        {ranges.map((range, index) =>
           <Pressable key={range} onPress={() => changeRange(range)}>
-            <Text style={selectedRange === range ? Typography.focused : Typography.unFocused}>{range}</Text>
+            <Text style={[selectedRange === range ? Typography.focused : Typography.unFocused, { fontSize: 15 }]}>{range}</Text>
           </Pressable>
         )}
       </View>
 
-      <ToggleableForm title='See graph' content={
-        <Text>This is a graph</Text>
-      } 
-      />
+      <View style={styles.rangeCon}>
+        <View style={styles.dateRangeCon}>
+          <RNDateTimePicker value={startDate} themeVariant='light' accentColor={Colors.pink.darkest} maximumDate={new Date()} onChange={(event, selectedDate) => {
+            setStartDate(selectedDate)
+            changeRange(selectedRange)
+          }} />
+          <Text> - </Text>
+          <View style={styles.endDate}>
+            <Text style={[{ fontSize: 17 }, !endDate && { ...Typography.unFocused, fontStyle: 'italic' }]}>{endDate ?? 'M D Y'}</Text>
+          </View>
+        </View>
+        <View style={{ ...Spacing.flexRow }}>
+          <Text>Avg: </Text>
+          <Text style={{ ...Typography.focused, fontSize: 25 }}>{avg}</Text>
+          <Text>{ STATS[stat.name].type === 'qual' && ' / 5' }</Text>
+        </View>
+
+      </View>
 
       <View style={[styles.rowCon, styles.tableHeaderCon]}>
         <View style={[styles.columnCon, styles.leftColumn]}>
@@ -60,6 +89,7 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
           <Text>{name}{unit && <Text> ({unit})</Text>}</Text>
         </View>
       </View>
+
       {filtered.map((record, index) =>
         <View key={record._id} style={styles.rowCon}>
           <View style={[styles.columnCon, styles.leftColumn]}>
@@ -115,14 +145,28 @@ const styles = StyleSheet.create({
   },
   filterBtnCon: {
     ...Spacing.flexRow,
-    width: '70%',
+    width: '100%',
     justifyContent: 'space-evenly',
-    borderRadius: 15,
-    // borderWidth: 1,
     padding: 10,
     marginBottom: 10,
-    backgroundColor: Colors.white,
-  }, 
+  },
+  rangeCon: {
+    ...Spacing.flexRow,
+    width: '100%',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    marginBottom: 30,
+  },
+  dateRangeCon: {
+    ...Spacing.flexRow,
+  },
+  endDate: { 
+    borderColor: Colors.shadow.light, 
+    paddingVertical: 6, 
+    paddingHorizontal: 10, 
+    borderRadius: 8, 
+    borderWidth: 2 
+  }
 })
 
 export default StatDetails

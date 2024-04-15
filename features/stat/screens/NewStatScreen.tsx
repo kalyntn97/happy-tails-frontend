@@ -25,6 +25,8 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
   const [names, setNames] = useState<string[]>([])
   const [index, setIndex] = useState<number>(0)
   const [logs, setLogs] = useState<LogData[]>([])
+  const [errorMsg, setErrorMsg] = useState<string>(null)
+
   const { pet } = route.params
   const addStatsMutation = useAddStats()
   
@@ -35,16 +37,20 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
   }
 
   const handleSubmit = (petId: string, logs: LogData[]) => {
-    
-    addStatsMutation.mutate({ petId, logs }, {
-      onSuccess: () => {
-        navigation.goBack()
-        return AlertForm({ body: `Submitted successfully`, button: 'OK' })
-      },
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      },
-    })
+    if (logs.length !== names.length) {
+      setErrorMsg('Please enter all selected values.')
+    } else {
+      setErrorMsg(null)
+      // addStatsMutation.mutate({ petId, logs }, {
+      //   onSuccess: () => {
+      //     navigation.goBack()
+      //     return AlertForm({ body: `Submitted successfully`, button: 'OK' })
+      //   },
+      //   onError: (error) => {
+      //     return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+      //   },
+      // })
+    }
   }
 
   return (
@@ -76,23 +82,26 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
           </View>
       )}
 
-      <View style={{ ...Spacing.flexRow, height: '20%', marginTop: 'auto' }}>
-        {index === 0 &&
-          <TransparentButton title='Cancel' size='small' onPress={() => navigation.goBack()} />
-        }
-        {index > 1 && <Image source={getStatIconSource(names[index - 2])} style={{ ...Forms.smallIcon }} /> }
-        {index > 0 &&
-          <TransparentButton title='Back' size='small' onPress={() => {setIndex(prev => prev - 1)}} />
-        }
-        {index < names.length &&
-          <MainButton title='Next' size='smallRound' onPress={() => {setIndex(prev => prev + 1)}} />
-        }
-        {index !== 0 && index === names.length &&
-          <MainButton title='Submit' size='smallRound' onPress={() => handleSubmit(pet._id, logs)} />
-        }
-       {index < names.length && <Image source={getStatIconSource(names[index])} style={{ ...Forms.smallIcon }} /> }
+      <View style={styles.footerCon}>
+        <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
+        <View style={{ ...Spacing.flexRow }}>
+          {index === 0 &&
+            <TransparentButton title='Cancel' size='small' onPress={() => navigation.goBack()} />
+          }
+          {index > 1 && <Image source={getStatIconSource(names[index - 2])} style={{ ...Forms.smallIcon }} /> }
+          {index > 0 &&
+            <TransparentButton title='Back' size='small' onPress={() => {setIndex(prev => prev - 1)}} />
+          }
+          {index < names.length &&
+            <MainButton title='Next' size='small' onPress={() => {setIndex(prev => prev + 1)}} />
+          }
+          {index !== 0 && index === names.length &&
+            <MainButton title='Submit' size='small' onPress={() => handleSubmit(pet._id, logs)} />
+          }
+        {index < names.length && <Image source={getStatIconSource(names[index])} style={{ ...Forms.smallIcon }} /> }
+        </View>
       </View>
-     
+
     </ScrollView>
   )
 }
@@ -102,6 +111,11 @@ const styles = StyleSheet.create({
     ...Spacing.flexColumn,
     flexGrow: 1,
     position: 'relative',
+  },
+  footerCon: {
+    ...Spacing.flexColumn,
+    height: '20%',
+    marginTop: 'auto',
   },
   itemOverlay: {
     position: 'absolute', 

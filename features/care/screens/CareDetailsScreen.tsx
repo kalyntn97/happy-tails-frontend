@@ -81,12 +81,13 @@ const CareDetailsScreen = ({ navigation, route }) => {
           </View>
 
           <View style={{ ...Forms.roundedCon}}>
-            <BoxHeader title='Update' onPress={() => navigation.navigate('Edit', { care: care })} />
-            <BoxHeader title='Delete' onPress={() => showDeleteConfirmDialog(care, handleDeleteCareCard)} titleColor={Colors.red.reg} />
+            <BoxHeader title='Update' titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('Edit', { care: care })} />
+            <BoxHeader title='Delete' titleIconSource={getActionIconSource('deleteSquare')} onPress={() => showDeleteConfirmDialog(care, handleDeleteCareCard)} titleColor={Colors.red.reg} />
           </View>
 
           <BoxWithHeader 
             title='History'
+            titleIconSource={getActionIconSource('chart')}
             content={
               trackers.map((tracker: Tracker, idx: number) =>
                 <React.Fragment key={`tracker-${idx}`}>

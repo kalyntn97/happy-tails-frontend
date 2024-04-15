@@ -43,11 +43,12 @@ const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
 
   return (
     <View style={[styles.container, { backgroundColor: showForm === 'password' ? Colors.white : showForm !== 'password' ? Colors.white : Colors.pink.lightest }]}>
-      <Text style={styles.errorMsg}>{errorMsg}</Text>
+      <Text style={{ ...Typogrpahy.errorMsg }}>{errorMsg}</Text>
       <View style={styles.form}>
         <TextInput 
           style={styles.input}
           placeholder={showForm === 'username' ? 'New Username' : 'Current Username'}
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setUsername(text)}
           value={username}
           autoComplete="off"
@@ -56,6 +57,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
           <TextInput 
             style={styles.input}
             placeholder={'Confirm New Username'}
+            placeholderTextColor={Colors.shadow.reg}
             onChangeText={(text: string) => setUsernameConf(text)}
             value={usernameConf}
             autoComplete="off"
@@ -65,6 +67,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
         <TextInput
           style={styles.input}
           placeholder={showForm === 'password' ? 'New Password' : 'Current Password'}
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setPassword(text)}
           value={password}
           secureTextEntry={true}
@@ -72,11 +75,12 @@ const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
         <TextInput 
           style={styles.input}
           placeholder={showForm === 'password' ? 'Confirm New Password' : 'Confirm Current Password'}
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setPasswordConf(text)}
           value={passwordConf}
           secureTextEntry={true}
         />
-        <MainButton title='Submit' size='smallRound' onPress={handleSubmit} />
+        <MainButton title='Submit' size='small' onPress={handleSubmit} />
       </View>
     </View>
   )
@@ -90,12 +94,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10
   },
-  errorMsg: {
-    color: Colors.red.dark,
-    fontWeight: 'bold',
-    margin: 5,
-    height: '3%'
-  },
   form: {
     ...Forms.form,
     width: '100%',
@@ -108,8 +106,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.pink.reg,
     backgroundColor: Colors.pink.lightest,
   },
- 
-
 })
 
 export default AccountForm

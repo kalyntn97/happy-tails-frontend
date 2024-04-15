@@ -8,7 +8,7 @@ import { useDeleteHealth } from "@health/healthQueries"
 //types & helpers
 import { AlertForm } from "@utils/ui"
 import { usePetIds, useShallowCares, useShallowHealths, useShallowPetBasics } from "@store/storeUtils"
-import { countDaysBetween, dateIsWithinRange } from "@utils/datetime"
+import { countDaysBetween } from "@utils/datetime"
 import { Care } from "@care/CareInterface"
 import { shouldRenderCareTask } from "./helpers"
 import { useCares } from "@store/store"
@@ -92,7 +92,7 @@ export const useCaresByPet = (petId: string) => {
   const caresByPet = () => {
     const filtered = cares.filter(care => {
       const includesPet = care.pets.map(p => p._id).includes(petId)
-      const dueToday = shouldRenderCareTask(care, 'today') && care.frequency === 'Daily'
+      const dueToday = shouldRenderCareTask(care, new Date()) && care.frequency === 'Daily'
       return includesPet && dueToday
     })
     return filtered
@@ -136,7 +136,7 @@ export const useHealthDueByPet = (petId: string) => {
 export const useTaskCounts = () => {
   const cares = useCares()
   //* num of tasks due today
-  const careCounts = (selectedDate: string) => {
+  const careCounts = (selectedDate: Date) => {
     const filtered = cares.filter((care: Care) => shouldRenderCareTask(care, selectedDate) && care.frequency === 'Daily')
     return filtered.length
   }

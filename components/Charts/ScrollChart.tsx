@@ -98,8 +98,8 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: Colors.pink.reg,
-    backgroundColor: Colors.pink.lightest
+    borderColor: Colors.transparent.dark,
+    backgroundColor: Colors.transparent.light,
   },
   square: {
     width: 55,
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     borderRightWidth: 3,
-    borderColor: Colors.white
+    borderColor: Colors.transparent.semiLight,
   },
   text: {
     fontWeight: 'bold'
