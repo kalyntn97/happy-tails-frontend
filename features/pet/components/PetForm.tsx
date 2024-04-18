@@ -8,10 +8,11 @@ import { CheckboxButton, MainButton, SubButton } from '@components/ButtonCompone
 import Dropdown from "@components/Dropdown/Dropdown"
 import ColorPickingPanel from "@components/ColorPickingPanel"
 //helpers & utils
-import { STATUS } from "@pet/petHelpers"
+import { SPECIES, STATUS } from "@pet/petHelpers"
 import { getPetIconSource } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
+import { styles } from "@styles/FormStyles"
 
 interface PetFormProps {
   onSubmit: (name: string, species: string, breed: string | null, dob: Date | null, firstMet: Date | null, altered: {value: boolean, date: Date | null}, status: {value: string, date: Date | null, show: boolean }, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
@@ -23,13 +24,14 @@ interface PetFormProps {
 const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, formStatus }) => {
   const [name, setName] = useState<string>(initialValues?.name ?? null)
   const [species, setSpecies] = useState<string>(initialValues?.species ?? null)
+  const [allowManualSpecies, setAllowManualSpecies] = useState<boolean>((initialValues && !SPECIES.includes(initialValues?.species)) ?? false)
   const [breed, setBreed] = useState<string>(initialValues?.breed ?? null)
   const [dob, setDob] = useState<Date>(initialValues?.dob)
-  const [showDob, setShowDob] = useState<boolean>(initialValues?.dob ? true : false)
+  const [showDob, setShowDob] = useState<boolean>(initialValues && !initialValues.dob ? false : true)
   const [firstMet, setFirstMet] = useState<Date>(initialValues?.firstMet ?? null)
-  const [showFirstMet, setShowFirstMet] = useState<boolean>(initialValues?.firstMet ? true : false)
+  const [showFirstMet, setShowFirstMet] = useState<boolean>(initialValues && !initialValues.firstMet ? false : true)
   const [altered, setAltered] = useState<{ value: boolean, date: Date }>(initialValues?.altered ?? { value: false, date: null })
-  const [showAlteredDate, setShowAlteredDate] = useState<boolean>(initialValues?.altered?.date === null ? false : true)
+  const [showAlteredDate, setShowAlteredDate] = useState<boolean>(initialValues && !initialValues.altered?.date ? false : true)
   const [status, setStatus] = useState<{ value: string, date: Date, show: boolean }>(initialValues?.status ?? { value: STATUS[0], date: null, show: true })
   const [showPassedDate, setShowPassedDate] = useState<boolean>(initialValues?.status?.date === null ? false : true)
   const [color, setColor] = useState<number>(initialValues?.color ?? 0)
@@ -47,6 +49,16 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
     })
     if (!_image.canceled) {
       setPhoto(_image.assets[0].uri)
+    }
+  }
+
+  const handleSelectSpecies = (selected: string) => {
+    if (selected === 'Others') {
+      setAllowManualSpecies(true)
+      setSpecies(null)
+    } else {
+      setAllowManualSpecies(false)
+      setSpecies(selected)
     }
   }
 
@@ -74,107 +86,87 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
         </View>
       </View>
       <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
+      <Text style={styles.label}>Pet Name</Text>
       <TextInput 
         style={styles.input} 
-        placeholder='Pet Name'
+        placeholder='Enter pet name'
         placeholderTextColor={Colors.shadow.reg}
         onChangeText={(text: string) => setName(text)} 
         value={name} 
         autoCapitalize="words"
       />
 
-      {!!species && <Text>Select Type</Text>}
-      <Dropdown 
-        label={species ? species : 'Select Type'} 
-        dataType='species' 
-        onSelect={setSpecies} 
-      />
-
+      <Text style={styles.label}>Pet Type</Text>
       {!!breed && species !== 'Others' && 
         <Text>{species === 'Dog' || species === 'Cat' ? 'Select Breed' : 'Select Species'}</Text>
       }
-      {species === 'Dog' && 
-        <Dropdown 
-          label={breed ? breed : 'Select Breed'} 
-          dataType='dogBreed' 
-          onSelect={setBreed} 
-        />
-      }
-      {species === 'Cat' && 
-        <Dropdown 
-          label={breed ? breed : 'Select Breed'} 
-          dataType='catBreed' 
-          onSelect={setBreed} 
-        />
-      }
-      {species === 'Bird' && 
-        <Dropdown 
-          label={breed ? breed : 'Select Species'} 
-          dataType='birdSpecies' 
-          onSelect={setBreed} 
-        />
-      }
-      {species === 'Fish' && 
-        <Dropdown 
-          label={breed ? breed : 'Select Species'} 
-          dataType='fishSpecies' 
-          onSelect={setBreed} 
-        />
-      }
-      <View style={{ ...Spacing.flexColumn, marginTop: 20 }}>
-        <View style={styles.dateCon}>
-          <Text>Date of birth</Text>
-          <View style={styles.rowCon}>
-            <CheckboxButton onPress={() => { setShowDob(!showDob); setDob(null) }} initial={!showDob} />
-            <Text>Unknown</Text>
-          </View>
-        </View>
-        {showDob && <RNDateTimePicker value={new Date(dob ?? new Date())} onChange={(event, selectedDate) => { setDob(selectedDate) }} /> }
-        <View style={styles.dateCon}>
-          <Text>Date you first met</Text>
-          <View style={styles.rowCon}>
-            <CheckboxButton onPress={() => { setShowFirstMet(!showFirstMet); setFirstMet(null) }} initial={!showFirstMet} />
-            <Text>Unknown</Text>
-          </View>
-        </View>
-        {showFirstMet && <RNDateTimePicker value={new Date(firstMet ?? new Date())} onChange={(event, selectedDate) => { setFirstMet(selectedDate) }} /> }
+      <View style={styles.rowCon}>
+        <Dropdown label={species ? species : 'Select Type'} dataType='species' onSelect={handleSelectSpecies} width={species === 'Others' ? 300 : 130} />
+        {species !== 'Others' && <Dropdown label={breed ? breed : 'Select Breed'} dataType={species} onSelect={setBreed} width={165} />}
       </View>
+      {allowManualSpecies &&
+        <TextInput 
+          style={styles.input} 
+          placeholder='Enter pet species'
+          placeholderTextColor={Colors.shadow.reg}
+          onChangeText={(text: string) => setSpecies(text)} 
+          value={species} 
+          autoCapitalize="words"
+      />
+      }
 
-      <View style={styles.dateCon}>
+        <View style={styles.labelCon}>
+          <Text>Date of birth</Text>
+          <View style={{ ...Spacing.flexRow}}>
+            <Text>Unknown</Text>
+            <CheckboxButton onPress={() => { setShowDob(!showDob); setDob(null) }} initial={!showDob} />
+          </View>
+        </View>
+        {showDob && <RNDateTimePicker themeVariant='light' value={new Date(dob ?? new Date())} onChange={(event, selectedDate) => { setDob(selectedDate) }} /> }
+        <View style={styles.labelCon}>
+          <Text>Date you first met</Text>
+          <View style={{ ...Spacing.flexRow }}>
+            <Text>Unknown</Text>
+            <CheckboxButton onPress={() => { setShowFirstMet(!showFirstMet); setFirstMet(null) }} initial={!showFirstMet} />
+          </View>
+        </View>
+        {showFirstMet && <RNDateTimePicker themeVariant="light" value={new Date(firstMet ?? new Date())} onChange={(event, selectedDate) => { setFirstMet(selectedDate) }} /> }
+
+      <View style={styles.labelCon}>
         <Text>Neutered/ Spayed?</Text>
         <CheckboxButton onPress={() => { setAltered(prev => ({ ...prev, value: !prev.value })) }} initial={altered.value} />
       </View>
 
       {altered.value && 
         <>
-          <View style={styles.dateCon}>
+          <View style={styles.labelCon}>
             <Text>Surgery Date</Text>
-              <View style={styles.rowCon}>
-                <CheckboxButton onPress={() => { setShowAlteredDate(!showAlteredDate); setAltered(prev => ({...prev, date: null })) }} initial={!showAlteredDate} />
+              <View style={{ ...Spacing.flexRow }}>
                 <Text>Unknown</Text>
+                <CheckboxButton onPress={() => { setShowAlteredDate(!showAlteredDate); setAltered(prev => ({...prev, date: null })) }} initial={!showAlteredDate} />
               </View>
           </View>
-          {showAlteredDate && <RNDateTimePicker value={new Date(altered.date ?? new Date())} onChange={(event, selectedDate) => { setAltered({ value: true, date: selectedDate }) }} /> }
+          {showAlteredDate && <RNDateTimePicker themeVariant='light' value={new Date(altered.date ?? new Date())} onChange={(event, selectedDate) => { setAltered({ value: true, date: selectedDate }) }} /> }
         </>
       }
-      <View style={styles.dateCon}>
+      <View style={styles.labelCon}>
         <Text>Status?</Text>
         <Dropdown label='' dataType="petStatus" initial={STATUS[0]} onSelect={(value) => setStatus(prev => ({...prev, value: value}))} width={140} />
       </View>
 
       {status.value === STATUS[1] && 
         <>
-          <View style={styles.dateCon}>
+          <View style={styles.labelCon}>
             <Text>Date</Text>
-              <View style={styles.rowCon}>
-                <CheckboxButton onPress={() => { setShowPassedDate(!showPassedDate); setStatus(prev => ({...prev, date: null })) }} initial={!!status.date} />
+              <View style={{ ...Spacing.flexRow }}>
                 <Text>Unknown</Text>
+                <CheckboxButton onPress={() => { setShowPassedDate(!showPassedDate); setStatus(prev => ({...prev, date: null })) }} initial={!!status.date} />
               </View>
           </View>
-          {showPassedDate && <RNDateTimePicker value={new Date(status.date ?? new Date())} onChange={(event, selectedDate) => { setStatus(prev => ({...prev, value: STATUS[1], date: selectedDate })) }} /> }
+          {showPassedDate && <RNDateTimePicker themeVariant="light" value={new Date(status.date ?? new Date())} onChange={(event, selectedDate) => { setStatus(prev => ({...prev, value: STATUS[1], date: selectedDate })) }} /> }
         </>
       }
-      <View style={styles.dateCon}>
+      <View style={styles.labelCon}>
         <Text>Archive?</Text>
         <CheckboxButton onPress={() => setStatus(prev => ({ ...prev, show: !prev.show }))} initial={!status.show} />
       </View>
@@ -191,53 +183,5 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
 
   )
 }
- 
-const styles = StyleSheet.create({
-  container: {
-    ...Forms.form,
-  },
-  photoUpload: {
-    ...Forms.photo,
-    position: 'relative',
-    overflow: 'hidden',
-    margin: 20,
-    backgroundColor: Colors.pink.light,
-    elevation: 2,
-  },
-  input: {
-    ...Forms.input,
-    borderColor: Colors.pink.reg,
-  },
-  image: {
-    ...Spacing.fullWH,
-  },
-  uploadBtnContainer: {
-    opacity: 0.7,
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    backgroundColor: Colors.pink.reg,
-    width: '100%',
-    height: '25%',
-  },
-  uploadBtn: {
-    display: 'flex',
-    ...Spacing.centered
-  },
-  cameraIcon: {
-    width: 20,
-    height: 20,
-  },
-  dateCon: {
-    ...Spacing.flexRow,
-    justifyContent: "space-between",
-    width: 270,
-    marginVertical: 20,
-  },
-  rowCon: {
-    ...Spacing.flexRow,
-    marginHorizontal: 10,
-  },
-})
 
 export default PetForm

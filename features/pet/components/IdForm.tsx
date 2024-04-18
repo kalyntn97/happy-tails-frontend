@@ -7,6 +7,7 @@ import Dropdown from '@components/Dropdown/Dropdown'
 import { MainButton, TransparentButton } from '@components/ButtonComponent'
 //styles
 import { Colors, Typography, Spacing, Forms } from '@styles/index'
+import { styles } from '@styles/FormStyles'
 
 interface IdFormProps {
   onSave: (idFormData: Id) => void
@@ -43,7 +44,11 @@ const IdForm : FC<IdFormProps> = ({ onSave, onHide }) => {
   return (
     <View style={styles.container}>
       <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
-      <View style={{ ...Spacing.flexRow }}>
+      <View style={styles.labelCon}>
+        <Text>ID type</Text>
+        <Text>Registry name</Text>
+      </View>
+      <View style={styles.rowCon}>
         <Dropdown label='Select ID type' dataType='petIds' onSelect={handleSelectName} width={140} />
         <TextInput 
           style={[styles.input, styles.rightInput]}
@@ -53,7 +58,11 @@ const IdForm : FC<IdFormProps> = ({ onSave, onHide }) => {
           onChangeText={(text: string) => setRegistry(text)}
         />
       </View>
-      <View style={{ ...Spacing.flexRow }}>
+      <View style={styles.labelCon}>
+        {allowManualName && <Text>ID type</Text>}
+        <Text>Notes (optional)</Text>
+      </View>
+      <View style={styles.rowCon}>
         {allowManualName && <TextInput 
           style={[styles.input, styles.leftInput]}
           placeholder='Enter ID type'
@@ -62,48 +71,28 @@ const IdForm : FC<IdFormProps> = ({ onSave, onHide }) => {
           onChangeText={(text: string) => setName(text)}
         />}
         <TextInput 
-          style={[styles.input, allowManualName ? styles.rightInput : styles.fullInput]}
-          placeholder='Enter notes (optional)'
+          style={[styles.input, allowManualName && styles.rightInput]}
+          placeholder='Enter notes'
           placeholderTextColor={Colors.shadow.reg}
           value={notes}
           onChangeText={(text: string) => setNotes(text)}
         />
       </View>
-
+      <Text style={styles.label}>ID number</Text>
       <TextInput 
-          style={[styles.input, styles.fullInput]}
+          style={styles.input}
           placeholder='Enter ID no.'
           placeholderTextColor={Colors.shadow.reg}
           value={no}
           onChangeText={(text: string) => setNo(text)}
         />
 
-      <View style={{ ...Spacing.flexRow }}>
+      <View style={styles.btnCon}>
         <MainButton title='Add' size='small' onPress={handleSave} />
         <TransparentButton title='Cancel' size='small' onPress={onHide} />
       </View>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.flexColumn,
-    width: '90%',
-  },
-  input: {
-    ...Forms.input,
-    margin: 5,
-  },
-    fullInput: {
-    width: 320,
-  },
-    leftInput: {
-    width: 140,
-  },
-    rightInput: {
-    width: 170,
-  },
-})
 
 export default IdForm

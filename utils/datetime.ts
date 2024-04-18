@@ -28,7 +28,8 @@ export const getDateConstructor = (dateString: string): Date => {
 export const compareDates = (string1: string, string2: string): number => {
   const date1 = string1 === 'today' ? new Date() : new Date(string1)
   const date2 = string2 === 'today' ? new Date() : new Date(string2)
-  return date1.toISOString().localeCompare(date2.toISOString())
+  if (date1.toLocaleDateString === date2.toLocaleDateString) return 0
+  else return date1.toISOString().localeCompare(date2.toISOString())
 }
 
 export const months = [

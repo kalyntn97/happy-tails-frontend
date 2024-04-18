@@ -1,6 +1,6 @@
 import { ViewStyle, ImageStyle } from "react-native"
 import Colors from "./colors"
-import { fullWH, centered, flexRow } from "./spacing"
+import { fullWH, centered, flexRow, flexColumn } from "./spacing"
 
 export const boxShadow: ViewStyle = {
   elevation: 3,
@@ -11,8 +11,8 @@ export const boxShadow: ViewStyle = {
 }
 
 export const form: ViewStyle = {
-  alignItems: 'center',
-  justifyContent: 'center'
+  ...flexColumn,
+  width: '90%',
 }
 
 export const inputBase: ViewStyle = {
@@ -28,7 +28,7 @@ export const inputBase: ViewStyle = {
 
 export const input: ViewStyle = {
   ...inputBase,
-  width: 250,
+  width: 300,
 }
 
 export const card: ViewStyle = {

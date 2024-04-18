@@ -1,10 +1,15 @@
 import { Pet } from "@pet/PetInterface"
 
+
+type Done = {
+  value: number
+  notes: string
+}
 export interface Tracker {
   _id: string
   name: string
   total: number
-  done: number[]
+  done: Done[]
   skipped: number
   left: number
 }

@@ -72,7 +72,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
         }
       </Text>
       <Text style={styles.status}>
-        {tracker.done[index] === times ? 'You did it! ' : `Only ${times - tracker.done[index]} more to go! `}
+        {tracker.done[index].value === times ? 'You did it! ' : `Only ${times - tracker.done[index].value} more to go! `}
       </Text>
       {care.repeat && times === 1 && freq !== 'Yearly'
         ? <>
@@ -86,13 +86,13 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
             <TouchableOpacity 
               style={styles.iconBtn}
               onPress={() => uncheckDone(careId, tracker._id, index)}
-              disabled={tracker.done[index] === 0}
+              disabled={tracker.done[index].value === 0}
             >
               <Image source={getActionIconSource('decrease')} style={styles.icon } />
             </TouchableOpacity>
 
-            <Text style={[styles.count, { color: times === tracker.done[index] ? Colors.green.reg : Colors.red.reg }]}>
-              {tracker.done[index]}
+            <Text style={[styles.count, { color: times === tracker.done[index].value ? Colors.green.reg : Colors.red.reg }]}>
+              {tracker.done[index].value}
             </Text>
               <Text style={styles.subCount}>of</Text> 
             <Text style={styles.count}>{times}</Text>
@@ -100,7 +100,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
             <TouchableOpacity 
               style={styles.iconBtn} 
               onPress={() => checkDone(careId, tracker._id, index)}
-              disabled={tracker.done[index] >= times}
+              disabled={tracker.done[index].value >= times}
             >
               <Image source={getActionIconSource('increase')} style={styles.icon } />
             </TouchableOpacity>

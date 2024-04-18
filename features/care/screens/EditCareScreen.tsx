@@ -26,7 +26,7 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   const updateCareMutation = useUpdateCare()
 
   const initialValues: {
-    name: string, pets: Pet[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string | null, times: number | null, color: number, careId: string
+    name: string, pets: Pet[], repeat: boolean, ending: boolean, date: string, endDate: string | null, frequency: string | null, times: number | null, color: number, careId: string
   } = {
     name: care.name, pets: care.pets, repeat: care.repeat, ending: care.ending, date: care.date, endDate: care.endDate, frequency: care.frequency, times: care.times, color: care.color, careId: care._id
   }

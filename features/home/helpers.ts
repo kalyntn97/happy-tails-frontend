@@ -4,13 +4,13 @@ import { useReminderInterval } from "@store/store"
 import { compareDates, getDateConstructor, getStartDate } from "@utils/datetime"
 
 export const shouldRenderCareTask = (item: Care, selectedDate: Date) => {
-  const { date, endDate, repeat } = item
+  const { date: startDate, endDate, repeat } = item
   const selectedDateString = selectedDate.toString()
   const isRepeating = repeat
-    && compareDates(selectedDate.toString(), date) === 1
+    && compareDates(selectedDateString, startDate) >= 0
     && (!endDate || compareDates(selectedDateString, endDate) === -1)
   const isOneTime = !item.repeat
-    && compareDates(selectedDateString, date) === 0
+    && compareDates(selectedDateString, startDate) === 0
   return isRepeating || isOneTime
 }
 

@@ -89,21 +89,21 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     >
       {errorMsg && <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>}
 
-      <Text style={[styles.label, styles.long]}>Pet</Text>
+      <Text style={styles.label}>Pet</Text>
       <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} width={300} />
 
-      <View style={[styles.labelCon, styles.long]}>
+      <View style={styles.labelCon}>
         <Text>Name</Text>
         <Text>Type</Text>
       </View>
-      <View style={[styles.rowCon, styles.long]}>
+      <View style={styles.rowCon}>
         <Dropdown label={'Select Name'} dataType="health" onSelect={handleSelectName} initial={name} width={175} />
         <Dropdown label={'Select Type'} dataType="healthTypes" onSelect={setType} initial={type} width={120} />
       </View>
     
       {allowManualName && 
         <TextInput 
-          style={[styles.input, styles.long]}
+          style={styles.input}
           placeholder="Specify name"
           placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setName(text)}
@@ -114,10 +114,10 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       {((name === 'vax' && (species === 'Cat' || species === 'Dog')) || vaccine) &&
         <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={handleSaveVaccine} initial={vaccine} width={300} />
       }
-      <Text style={[styles.label, styles.long]}>Previous visits</Text>
+      <Text style={styles.label}>Previous visits</Text>
       <MultipleInputs label='Last Done' type='Date' initials={initialVisits} onPress={addPastVisits} width={300} />
 
-      <View style={[styles.labelCon, styles.long]}>
+      <View style={styles.labelCon}>
         <Text>Next visit due in</Text>
         <View style={{ ...Spacing.flexRow }}>
           <Text>Enter manually</Text>
@@ -126,7 +126,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       </View>
 
       {!allowManualDueDate && 
-        <View style={[styles.rowCon, styles.long]}>
+        <View style={styles.rowCon}>
           <TextInput
             style={[styles.input, { width: 110 }]}
             placeholder='Enter times'

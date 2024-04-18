@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
+import { StyleSheet, Text, View, Image, Pressable, ScrollView } from 'react-native'
 import React, { FC, useState } from 'react'
 //components
 import IdForm from '@pet/components/IdForm'
@@ -31,11 +31,11 @@ const EditPetDetailsScreen: FC<EditPetDetailsScreenProps> = ({}) => {
   }
   
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.formHeaderCon}>
         <Text style={{ ...Typography.xSmallHeader, margin: 0 }}>Pet identifications</Text>
-        <Pressable onPress={() => setShowIdForm(true)}>
-          <Image source={getActionIconSource('add')} style={{ ... Forms.smallIcon }} />
+        <Pressable onPress={() => setShowIdForm(!showIdForm)}>
+          <Image source={getActionIconSource(showIdForm ? 'hide' : 'show')} style={{ ... Forms.smallIcon }} />
         </Pressable>
       </View>
       {ids.map((id, index) =>
@@ -63,13 +63,14 @@ const EditPetDetailsScreen: FC<EditPetDetailsScreenProps> = ({}) => {
       {showMedForm && <MedicationForm />}
 
       <MainButton title='Save' top='auto' />
-    </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.flexColumn,
+    width: '100%',
     paddingBottom: 20,
   },
   formHeaderCon: {

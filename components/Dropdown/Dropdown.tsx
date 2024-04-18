@@ -53,11 +53,11 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
     const fetchData = async (dataType: string) => {
       const typeToSource = {
         'petNames': PET_NAMES,
-        'species': petHelpers.SPECIES,
-        'dogBreed': await petHelpers.getDogBreedData(),
-        'catBreed': await petHelpers.getCatBreedData(),
-        'birdSpecies': await petHelpers.getBirdSpeciesData(),
-        'fishSpecies': petHelpers.FISH_SPECIES,
+        'species': petHelpers.SPECIES_OPTIONS,
+        'Dog': await petHelpers.getDogBreedData(),
+        'Cat': await petHelpers.getCatBreedData(),
+        'Bird': await petHelpers.getBirdSpeciesData(),
+        'Fish': petHelpers.FISH_SPECIES,
         'frequency': careHelpers.CARE_FREQ,
         'care': Object.values(careHelpers.CARE_NAMES),
         'health': Object.values(healthHelpers.HEALTH_NAMES),
@@ -114,7 +114,6 @@ const styles = StyleSheet.create({
   icon: {
     width: 20,
     height: 20,
-    marginHorizontal: 5
   },
   overlay: {
     ...Spacing.fullWH,

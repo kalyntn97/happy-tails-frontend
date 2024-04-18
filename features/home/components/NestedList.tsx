@@ -29,7 +29,7 @@ const NestedList: FC<NestedListProps> = ({ data, type, navigation, activeDateObj
   
   const renderItem = (item: any) => {
     if (type === 'care' && shouldRenderCareTask(item, activeDateObj)) {
-      return <SwipeableCareTask key={item._id} care={item} navigation={navigation} onPress={() => onPressTask(item, 'Care')} />
+      return <SwipeableCareTask key={item._id} care={item} navigation={navigation} onPress={() => onPressTask(item, 'care')} />
 
     } else if (type === 'health' && shouldRenderHealthTask(item, activeDateObj, reminderInterval)) {
       //*show future tasks based on user's selected interval, show completed tasks for the whole month
@@ -38,7 +38,7 @@ const NestedList: FC<NestedListProps> = ({ data, type, navigation, activeDateObj
       ).sort((a: Visit, b: Visit) => new Date(b.date).getTime() - new Date(a.date).getTime())
       const pastVisit: Visit = filteredVisits.length > 1 ? filteredVisits.find(visit => activeDateObj > new Date(visit.date)) : filteredVisits[0]
       
-      return <SwipeableHealthTask key={item._id} health={item} navigation={navigation} onPress={() => onPressTask(item, 'Health')} pastVisit={pastVisit} />
+      return <SwipeableHealthTask key={item._id} health={item} navigation={navigation} onPress={() => onPressTask(item, 'health')} pastVisit={pastVisit} />
     } else {
       return null
     }

@@ -48,13 +48,13 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const activeMonthName = getMonth(activeMonth + 1)
   
   const { date: currDateIsActive, week: currWeekIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
-  const activeTaskCounts = useActiveTaskCounts()
 
   const handleClickTask = (item: Care | Health, type: string) => {
     setClickedTask({ item, type })
     setModalVisible(true)
   }
   
+
   useEffect(() => {
     if (isSuccess) {
       setPets(pets.data)
@@ -137,7 +137,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           </View>
           
           <View style={styles.taskListContainer}>
-            {Object.keys(cares.data).length ?
+            {Object.values(cares.data).length > 0 ?
               <>
                 {selected === 'day' &&
                   <NestedList data={[...cares.data['Daily'], ...cares.data['Others']]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
@@ -172,10 +172,10 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           <View style={styles.detailContainer}>
             {clickedTask &&
               <>
-                {clickedTask.type === 'Care' ?
+                {clickedTask.type === 'care' ?
                   <CareCard care={clickedTask.item as Care} navigation={navigation} onNavigate={() => setModalVisible(false)}/>
                 :
-                clickedTask.type === 'Health' ?
+                clickedTask.type === 'health' ?
                   <HealthCard health={clickedTask.item as Health} navigation={navigation} onNavigate={() => setModalVisible(false)} activeDateObj = {activeDateObj} />
                 : 
                   null}

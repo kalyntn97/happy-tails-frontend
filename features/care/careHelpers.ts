@@ -67,13 +67,13 @@ export const getTaskIndex = (frequency: string, activeDate: number | null, activ
 export const getTaskStatus = (task: Care, trackerIndex: number, taskIndex: number) => {
   switch (task.frequency) {
     case 'Daily': 
-      return task.trackers[trackerIndex].done[taskIndex]
+      return task.trackers[trackerIndex].done[taskIndex].value
     case 'Weekly': 
-      return task.trackers[trackerIndex].done[taskIndex]
+      return task.trackers[trackerIndex].done[taskIndex].value
     case 'Monthly':
-      return task.trackers[trackerIndex].done[taskIndex]
+      return task.trackers[trackerIndex].done[taskIndex].value
     case 'Yearly':
-      return task.trackers[trackerIndex].done[0]
+      return task.trackers[trackerIndex].done[0].value
   }
 }
 

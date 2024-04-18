@@ -70,6 +70,11 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       setErrorMsg('Please enter all fields.')
     } else {
       setErrorMsg('')
+      if (!repeat) {
+        setFrequency(null)
+        setTimes(null)
+        setEndDate(null)
+      }
       if (!ending) {
         setEndDate(null)
       }
@@ -117,7 +122,9 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         }
       </View>
       <View style={styles.rowCon}>
-        <RNDateTimePicker themeVariant="light" value={new Date(date)} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.pink.dark} />
+        <View style={(!repeat || !ending) && { width: 300, alignItems: 'center' }}>
+          <RNDateTimePicker themeVariant="light" value={new Date(date)} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.pink.dark} />
+        </View>
         { repeat && ending &&
           <>
             <Text style={{ marginLeft: 15 }}> - </Text>
@@ -133,11 +140,11 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       </View>}
       
       {repeat &&
-        <View style={[styles.rowCon, { width: 280 }]}>
-          <Dropdown label={'Select Frequency'} dataType="frequency" onSelect={setFrequency} initial={frequency} width={160} />
+        <View style={styles.rowCon}>
+          <Dropdown label={'Select Frequency'} dataType="frequency" onSelect={setFrequency} initial={frequency} width={195} />
           
           <TextInput 
-            style={[styles.input, { width: 70, textAlign: 'right' }]} 
+            style={[styles.input, { width: 100, textAlign: 'right' }]} 
             placeholder='Times' 
             placeholderTextColor={Colors.shadow.reg}
             onChangeText={(text: string) => setTimes(Number(text))} 

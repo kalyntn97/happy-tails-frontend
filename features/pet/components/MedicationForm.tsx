@@ -1,7 +1,11 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { FC, useState } from 'react'
-import { Colors, Forms, Spacing } from '@styles/index'
+//components
 import Dropdown from '@components/Dropdown/Dropdown'
+//styles
+import { styles } from '@styles/FormStyles'
+import { Colors, Forms, Spacing } from '@styles/index'
+import { ToggleButton } from '@components/ButtonComponent'
 
 interface MedicationFormProps {
   initialValues?: { name: string, amount: string, times: number, frequency: string, repeat: boolean, ending: boolean, startDate: string, endDate?: string, refill?: { times: number, frequency: string, dates?: string[] }, status: string, reminder: boolean }
@@ -23,59 +27,45 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues }) => {
   const [reminder, setReminder] = useState<boolean>(initialValues?.reminder ?? true)
   
   return (
-    <View>
+    <View style={styles.container}>
+      <Text style={styles.label}>Medication name</Text>
       <TextInput 
-        style={[styles.input, styles.fullInput]}
-        placeholder='Enter medication name'
+        style={styles.input}
+        placeholder='Enter name'
         placeholderTextColor={Colors.shadow.reg}
         value={name}
         onChangeText={(text: string) => setName(text)}
       />
+      <Text style={styles.label}>Medication amount</Text>
       <TextInput 
-        style={[styles.input, styles.fullInput]}
-        placeholder='Enter medication amount'
+        style={styles.input}
+        placeholder='Enter amount'
         placeholderTextColor={Colors.shadow.reg}
         value={amount}
         onChangeText={(text: string) => setAmount(text)}
       />
-      <View style={{ ...Spacing.flexRow }}>
-        <Text style={styles.label}>Given every</Text>
+      <Text style={styles.label}>Frequency</Text>
+      <View style={styles.rowCon}>
         <TextInput
-          style={[Forms.inputBase, { width: 50 }]}
-          placeholder='1'
+          style={[Forms.inputBase, styles.leftInput, { marginRight: 5 }]}
+          placeholder='Enter times'
           placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setTimes(Number(text))} 
           value={(times ?? '').toString()} 
           keyboardType="numeric"
         />
-        <Dropdown label='...' dataType="frequency" onSelect={setFrequency} width={120} initial={frequency} />
+        <Dropdown label='...' dataType="frequency" onSelect={setFrequency} width={styles.rightInput.width} initial={frequency} />
       </View>
+      <View style={styles.labelCon}>
+        <Text>Reminder</Text>
+        <ToggleButton initial={reminder} onPress={() => setReminder(!reminder)} />
+      </View>
+
 
       
 
     </View>
   )
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.flexColumn,
-    width: '90%',
-  },
-  input: {
-    ...Forms.input,
-    margin: 5,
-  },
-  fullInput: {
-    width: 320,
-  },
-    leftInput: {
-    width: 140,
-  },
-    rightInput: {
-    width: 170,
-  },
-})
 
 export default MedicationForm

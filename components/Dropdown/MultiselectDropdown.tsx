@@ -10,7 +10,7 @@ interface MultiselectDropdownProps {
   dataType: 'petNames'
   onSelect: (items: string[]) => void
   initials?: string[]
-  width: number
+  width?: number
 }
 
 const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataType, onSelect, initials, width }) => {
@@ -56,7 +56,7 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
   }, [petNames])
 
   return (  
-    <TouchableOpacity style={[styles.dropDownBtn, { width: width ?? 250 }]} onPress={toggleDropdown} ref={DropdownBtn}>
+    <TouchableOpacity style={[styles.dropDownBtn, width && { width: width }]} onPress={toggleDropdown} ref={DropdownBtn}>
       {visible && (
         <Modal visible={visible} transparent animationType="none">
           <TouchableOpacity style={styles.overlay} onPress={() => setVisible(false)}>

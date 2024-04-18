@@ -40,6 +40,8 @@ const actionIconSource = {
   editSquare: require('@assets/icons/action-edit_square.png'),
   delete: require('@assets/icons/action-delete.png'),
   deleteSquare: require('@assets/icons/action-delete_square.png'),
+  show: require('@assets/icons/action-show.png'),
+  hide: require('@assets/icons/action-hide.png'),
   details: require('@assets/icons/action-details.png'),
   detailsPet: require('@assets/icons/pet-details.png'),
   logPet: require('@assets/icons/pet-log.png'),

@@ -42,7 +42,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
   } else {
     trackerIndex = 0
     index = 0
-    done = care.trackers[trackerIndex].done[0]
+    done = care.trackers[trackerIndex].done[0].value
   }
 
   const careId = care._id
