@@ -5,7 +5,7 @@ import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Health } from '@health/HealthInterface'
 import { getActionIconSource, getHealthIconSource } from '@utils/ui'
 import { useShallowPetColor } from '@home/hooks'
-import { HEALTHS } from '@health/healthHelpers'
+import { HEALTHS, VACCINES } from '@health/healthHelpers'
 //components
 import PetInfo from '@components/PetInfo/PetInfo'
 import { CloseButton, TransparentButton } from '@components/ButtonComponent'
@@ -26,11 +26,11 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
   const petIdToColor = useShallowPetColor()
   const petColor = Colors.multi.lightest[petIdToColor(health.pet._id) ?? health.pet.color]
   const pastDue = new Date(health.nextDue.date) < new Date()
-  const lastDoneReversed = [...health.lastDone].reverse()
-  const done = lastDoneReversed.some(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth())
-  const doneDate = done && lastDoneReversed.find(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth()).date
+  
+  const done = health.lastDone.some(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth())
+  const doneDate = done && health.lastDone.find(visit => new Date(visit.date).getMonth() === activeDateObj.getMonth()).date
   //? handle when latest visit is not in the same month
-  const lastDoneDate = lastDoneReversed.length > 0 && new Date(lastDoneReversed[0].date)
+  const lastDoneDate = health.lastDone.length > 0 && health.lastDone[0].date
 
   const handleNavigate = () => {
     onNavigate && onNavigate()
@@ -43,10 +43,15 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
       <View style={styles.header}>
         <Image source={iconSource} style={styles.icon } />
         <Text style={styles.title}>
-          { health.vaccine && health.vaccine }
           { HEALTHS[health.name] ?? health.name }
-        </Text>            
+        </Text>   
       </View>
+
+      { health.name === 'vax' && 
+        <View style={styles.vaxCon}>
+          <Text style={styles.vax}>{VACCINES[health.vaccine].name}</Text>
+        </View>
+      }
 
       <View style={styles.subHeader}>
         <View style={{ width: 80, height: 100 }}>

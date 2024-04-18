@@ -54,7 +54,7 @@ const DOG_VACCINES: Record<string, { name: string, info: string }> = {
 
 const CAT_VACCINES: Record<string, { name: string, info: string }> = {
   fvrcp: {
-    name: 'Feline Viral Rhinotracheitis, Calicivirus, and Panleukopenia (FVRCP) vaccine',
+    name: 'Feline Viral Rhinotracheitis, Calicivirus, and Panleukopenia (FVRCP) Vaccine',
     info: `The FVRCP vaccine is an extremely effective way to protect your kitty against 3 highly contagious and life-threatening feline diseases, Feline Viral Rhinotracheitis (that's the FVR part of the vaccine name), Feline Calicivirus (represented by the C), and Feline Panleukopenia (the P at the end of the vaccine name).`,
     // abbr: 'FVRCP',
   },

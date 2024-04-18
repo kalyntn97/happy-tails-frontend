@@ -1,19 +1,18 @@
 import { ViewStyle, TextStyle } from "react-native"
 import Colors from "./colors"
 import { boxShadow } from "./forms"
+import { centered } from "./spacing"
 
 //base
 export const base: ViewStyle = {
-  alignItems: 'center',
-  justifyContent: 'center',
+  ...centered,
   margin: 10,
   padding: 5
 }
 
 export const roundedBase = {
   marginHorizontal: 10,
-  alignItems: 'center',
-  justifyContent: 'center',
+  ...centered,
   borderRadius: 99,
   backgroundColor: Colors.pink.reg
 }
@@ -85,3 +84,6 @@ export const xSmallRoundButton: ViewStyle = { ...xSmall, ...rounded, ...solid }
 export const roundButton = { ...solid, ...roundedBase, width: 60, height: 60 }
 
 export const smallRoundButton = { ...solid, ...roundedBase, width: 20, height: 20 }
+
+export const mediumRoundButton = { ...solid, ...roundedBase, width: 30, height: 30 }
+

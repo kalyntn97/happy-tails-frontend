@@ -19,7 +19,7 @@ export const inputBase: ViewStyle = {
   height: 50,
   paddingHorizontal: 10,
   paddingVertical: 10,
-  margin: 10,
+  marginVertical: 10,
   borderRadius: 8,
   borderWidth: 1,
   backgroundColor: '#FBFFFE',
@@ -166,4 +166,24 @@ export const roundedIconCon: ViewStyle = {
   backgroundColor: Colors.shadow.light,
   width: 100,
   height: 100,
+}
+
+export const leftRounded: ViewStyle = {
+  borderTopLeftRadius: 8,
+  borderBottomLeftRadius: 8,
+}
+
+export const rightRounded: ViewStyle = {
+  borderTopRightRadius: 8,
+  borderBottomRightRadius: 8,
+}
+
+export const leftMoreRounded: ViewStyle = {
+  borderTopLeftRadius: 15,
+  borderBottomLeftRadius: 15,
+}
+
+export const rightMoreRounded: ViewStyle = {
+  borderTopRightRadius: 15,
+  borderBottomRightRadius: 15,
 }

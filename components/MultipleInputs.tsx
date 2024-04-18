@@ -12,9 +12,10 @@ type MultipleInputsProps = {
   type: string
   label: string
   onPress: React.Dispatch<React.SetStateAction<any[]>>
+  width?: number
 }
 
-const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPress }) => {
+const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPress, width }) => {
   const [inputs, setInputs] = useState<any[]>(initials ?? [])
   const [selected, setSelected] = useState<any>(type === 'Date' && new Date())
 
@@ -41,11 +42,10 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPres
   }
 
   return (
-    <View>
+    <View style={{ width: width ?? 250 }}>
       <View style={styles.rowCon}>
-        <Text style={styles.label}>{label}</Text>
         {type === 'Date' ?
-          <RNDateTimePicker value={selected ?? new Date()} maximumDate={new Date()} accentColor={Colors.pink.dark} onChange={(event, selectedDate) => setSelected(selectedDate)} />
+          <RNDateTimePicker themeVariant='light' value={selected ?? new Date()} maximumDate={new Date()} accentColor={Colors.pink.dark} onChange={(event, selectedDate) => setSelected(selectedDate)} />
         : <TextInput 
             style={[Forms.inputBase, { width: 100 }]}
             placeholder={label}
@@ -54,21 +54,19 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPres
             value={selected} 
           />
         }
-        <RoundButton onPress={() => handleAddInput()} size='small' type='add' />
+        <RoundButton onPress={() => handleAddInput()} size='medium' type='add' />
       </View>
 
-      {inputs.length > 0 &&
+      {inputs.length > 0 ?
         <View style={styles.rowCon}>
           {inputs.map((val: string, index: number) =>
             <View style={styles.initial} key={index}>
+              <Text>{ type === 'Date' ? new Date(val).toLocaleDateString() : val }</Text>
               <RoundButton onPress={() => handleRemoveInput(val)} size='small' type='remove' />
-              <Text>
-                { type === 'Date' ? new Date(val).toLocaleDateString() : val }
-              </Text>
             </View>
           )}
         </View>
-      }
+      : <Text style={styles.empty}>Nothing added. Press + to add and - to remove</Text>} 
     </View>
   )
 }
@@ -78,15 +76,20 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     justifyContent: 'space-evenly',
     flexWrap: 'wrap',
-    width: 270,
     marginVertical: 7,
+    width: '100%',
   },
   initial: {
     ...Spacing.flexRow,
-    margin: 5,
+    marginVertical: 10,
   },
   label: {
     fontSize: 15,
+  },
+  empty: {
+    ...Typography.xSmallSubBody,
+    margin: 0,
+    textAlign: 'center',
   },
 })
 

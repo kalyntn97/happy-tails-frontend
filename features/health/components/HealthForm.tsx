@@ -13,6 +13,7 @@ import { CheckboxButton, MainButton, SubButton } from "@components/ButtonCompone
 import MultipleInputs from "@components/MultipleInputs"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { styles } from "@styles/FormStyles"
 
 interface HealthFormProps {
   onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: VisitFormData[], nextDue: VisitFormData, healthId: string) => void
@@ -88,16 +89,21 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     >
       {errorMsg && <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>}
 
-      <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} />
+      <Text style={[styles.label, styles.long]}>Pet</Text>
+      <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} width={300} />
 
-      <Dropdown label={'Select Type'} dataType="healthTypes" onSelect={setType} initial={type} />
+      <View style={[styles.labelCon, styles.long]}>
+        <Text>Name</Text>
+        <Text>Type</Text>
+      </View>
+      <View style={[styles.rowCon, styles.long]}>
+        <Dropdown label={'Select Name'} dataType="health" onSelect={handleSelectName} initial={name} width={175} />
+        <Dropdown label={'Select Type'} dataType="healthTypes" onSelect={setType} initial={type} width={120} />
+      </View>
     
-      {!!name && <Text>Enter Name</Text>}
-      <Dropdown label={'Select Name'} dataType="health" onSelect={handleSelectName} initial={name} />
-
       {allowManualName && 
         <TextInput 
-          style={styles.input}
+          style={[styles.input, styles.long]}
           placeholder="Specify name"
           placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setName(text)}
@@ -105,38 +111,39 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
           autoCapitalize="words"
         />
       }
-      {(name === 'vax' && (species === 'Cat' || species === 'Dog')) || vaccine &&
-        <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={handleSaveVaccine} initial={vaccine} />
+      {((name === 'vax' && (species === 'Cat' || species === 'Dog')) || vaccine) &&
+        <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={handleSaveVaccine} initial={vaccine} width={300} />
       }
-      
-      <Text style={styles.subText}>(Press + to add, - to remove dates)</Text>
-      <MultipleInputs label='Last Done' type='Date' initials={initialVisits} onPress={addPastVisits}/>
+      <Text style={[styles.label, styles.long]}>Previous visits</Text>
+      <MultipleInputs label='Last Done' type='Date' initials={initialVisits} onPress={addPastVisits} width={300} />
+
+      <View style={[styles.labelCon, styles.long]}>
+        <Text>Next visit due in</Text>
+        <View style={{ ...Spacing.flexRow }}>
+          <Text>Enter manually</Text>
+          <CheckboxButton initial={allowManualDueDate} onPress={() => setAllowManualDueDate(!allowManualDueDate)} />
+        </View>
+      </View>
 
       {!allowManualDueDate && 
-        <View style={styles.rowContainer}>
-          <Text style={styles.label}>Due In</Text>
+        <View style={[styles.rowCon, styles.long]}>
           <TextInput
-            style={[Forms.inputBase, { width: 50 }]}
-            placeholder='1'
+            style={[styles.input, { width: 110 }]}
+            placeholder='Enter times'
             placeholderTextColor={Colors.shadow.reg}
             onChangeText={(text: string) => setTimes(Number(text))} 
             value={(times ?? '').toString()} 
             keyboardType="numeric"
           />
-          <Dropdown label='...' dataType="healthFrequency" onSelect={setFrequency} width={120} initial={frequency} />
+          <Dropdown label='Select Frequency' dataType="healthFrequency" onSelect={setFrequency} width={185} initial={frequency} />
         </View>
       }
-      <View style={styles.checkboxContainer}>
-        <Text>Or enter manually</Text>
-        <CheckboxButton initial={allowManualDueDate} onPress={() => setAllowManualDueDate(!allowManualDueDate)} />
-      </View>
+      
 
     {allowManualDueDate &&
-        <View style={styles.rowContainer}>
-          <Text style={styles.label}>Next Due</Text>
-          <RNDateTimePicker value={new Date(nextDue?.date ?? new Date())} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue({ date: selectedDate, notes: '' }) }}/>
-        </View>
-
+      <View style={{ marginTop: 15 }}>
+        <RNDateTimePicker themeVariant='light' value={new Date(nextDue?.date ?? new Date())} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue({ date: selectedDate, notes: '' }) }} />
+      </View>
     }
       <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
       <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
@@ -144,34 +151,5 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    ...Forms.form,
-  },
-  header: {
-    ...Typography.mainHeader,
-    color: Colors.pink.dark
-  },
-  input: {
-    ...Forms.input,
-  },
-  rowContainer: {
-    ...Spacing.flexRow,
-    justifyContent: 'space-between',
-    width: 270,
-    marginVertical: 15,
-  },
-  label: {
-    fontSize: 15,
-  },
-  checkboxContainer: {
-    ...Spacing.flexRow,
-    margin: 10,
-  },
-  subText: {
-    ...Typography.smallSubBody,
-  }
-})
 
 export default HealthForm

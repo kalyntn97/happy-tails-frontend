@@ -30,10 +30,12 @@ export const AlertForm = ({ body, button }) =>
   )
 
 const actionIconSource = {
+  actionSquare: require('@assets/icons/action-action_square.png'),
   close: require('@assets/icons/action-close.png'),
   check: require('@assets/icons/action-check.png'),
   increase: require('@assets/icons/action-increase.png'),
   decrease: require('@assets/icons/action-decrease.png'),
+  add: require('@assets/icons/action-add.png'),
   edit: require('@assets/icons/action-edit.png'),
   editSquare: require('@assets/icons/action-edit_square.png'),
   delete: require('@assets/icons/action-delete.png'),
@@ -42,7 +44,9 @@ const actionIconSource = {
   detailsPet: require('@assets/icons/pet-details.png'),
   logPet: require('@assets/icons/pet-log.png'),
   repeat: require('@assets/icons/action-repeat.png'),
+  repeatSquare: require('@assets/icons/action-repeat_square.png'),
   save: require('@assets/icons/action-save.png'),
+  saveSquare: require('@assets/icons/action-save_square.png'),
   undo: require('@assets/icons/action-undo.png'),
   search: require('@assets/icons/action-search.png'),
   back: require('@assets/icons/action-back.png'),
@@ -62,13 +66,14 @@ const actionIconSource = {
   chart: require('@assets/icons/action-chart.png'),
   note: require('@assets/icons/action-note.png'),
   noteSquare: require('@assets/icons/action-note_square.png'),
+  log: require('@assets/icons/action-log.png'),
   health: require('@assets/icons/action-health.png'),
   care: require('@assets/icons/action-care.png'),
   home: require('@assets/icons/action-home.png'),
   settings: require('@assets/icons/action-settings.png'),
-  'Add a Task':  require('@assets/icons/care-filled.png'),
-  'Add a Vet Visit':  require('@assets/icons/health-filled.png'),
-  'Manage Pets':  require('@assets/icons/pet-filled.png'),
+  'Add a Task': require('@assets/icons/care-filled.png'),
+  'Add a Vet Visit': require('@assets/icons/health-filled.png'),
+  'Manage Pets': require('@assets/icons/pet-filled.png'),
 }
 
 const careIconSource = {
@@ -190,13 +195,22 @@ export const statQualIconSource = {
 }
 
 const petIconSource = {
-  'Dog': require('@assets/icons/pet-dog.png'),
-  'Cat': require('@assets/icons/pet-cat.png'),
-  'Bird': require('@assets/icons/pet-bird.png'),
-  'Fish': require('@assets/icons/pet-fish.png'),
-  'Others': require('@assets/icons/pet-animal.png'),
-  'DogProfile': require('@assets/icons/pet-dog_profile.png'),
-  'CatProfile': require('@assets/icons/pet-cat_profile.png'),
+  Dog: require('@assets/icons/pet-dog.png'),
+  Cat: require('@assets/icons/pet-cat.png'),
+  Bird: require('@assets/icons/pet-bird.png'),
+  Fish: require('@assets/icons/pet-fish.png'),
+  Others: require('@assets/icons/pet-animal.png'),
+  DogProfile: require('@assets/icons/pet-dog_profile.png'),
+  CatProfile: require('@assets/icons/pet-cat_profile.png'),
+  allergy: require('@assets/icons/pet-allergy.png'),
+  disease: require('@assets/icons/pet-disease.png'),
+  petId: require('@assets/icons/pet-id_square.png'),
+  med: require('@assets/icons/pet-med.png'),
+  service: require('@assets/icons/pet-service.png'),
+  Microchip: require('@assets/icons/pet-microchip.png'),
+  Passport: require('@assets/icons/pet-passport.png'),
+  License: require('@assets/icons/pet-license.png'),
+  Id: require('@assets/icons/pet-id.png')
 }
 
 export const getActionIconSource = (name: string) => {

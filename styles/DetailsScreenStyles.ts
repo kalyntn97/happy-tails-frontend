@@ -71,7 +71,7 @@ export const styles = StyleSheet.create({
   },
   notesInput: {
     width: '100%',
-    ...Typography.smallSubBody,
+    ...Typography.xSmallSubBody,
     margin: 5,
   },
   overlay: {
@@ -111,7 +111,7 @@ export const styles = StyleSheet.create({
     opacity: 0.5
   },
   visitStatus: {
-    ...Typography.smallSubBody,
+    ...Typography.xSmallSubBody,
     fontSize: 10,
     marginHorizontal: 5,
     color: 'gray',

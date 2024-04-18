@@ -10,7 +10,7 @@ import PetInfo from '@components/PetInfo/PetInfo'
 import { Health, Visit } from '@health/HealthInterface'
 import { useCheckDoneHealth, useUncheckDoneHealth } from '@health/healthQueries'
 import { useDeleteHealthCard, useShallowPetColor } from '@home/hooks'
-import { HEALTHS, healthNameFromKey } from '@health/healthHelpers'
+import { HEALTHS, VACCINES, healthNameFromKey } from '@health/healthHelpers'
 import { useShallowPetBasics } from '@store/storeUtils'
 //styles
 import { styles } from '@styles/SwipeableTaskStyles'
@@ -80,7 +80,6 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, pa
           <Text style={[
             styles.taskTitle,
           ]}>
-            { health.vaccine && health.vaccine }
             { HEALTHS[health.name] ?? health.name }
           </Text>
           {pastVisit && <Text style={styles.taskStatus}>{new Date(pastVisit.date).toLocaleDateString()}</Text>}

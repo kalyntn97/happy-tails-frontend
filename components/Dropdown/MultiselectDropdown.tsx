@@ -10,9 +10,10 @@ interface MultiselectDropdownProps {
   dataType: 'petNames'
   onSelect: (items: string[]) => void
   initials?: string[]
+  width: number
 }
 
-const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataType, onSelect, initials }) => {
+const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataType, onSelect, initials, width }) => {
   const [visible, setVisible] = useState<boolean>(false)
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>(initials ? initials : [])
@@ -55,11 +56,11 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
   }, [petNames])
 
   return (  
-    <TouchableOpacity style={styles.dropDownBtn} onPress={toggleDropdown} ref={DropdownBtn}>
+    <TouchableOpacity style={[styles.dropDownBtn, { width: width ?? 250 }]} onPress={toggleDropdown} ref={DropdownBtn}>
       {visible && (
         <Modal visible={visible} transparent animationType="none">
           <TouchableOpacity style={styles.overlay} onPress={() => setVisible(false)}>
-            <View style={[styles.content, { top: dropdownTop }]}>
+            <View style={[styles.content, { top: dropdownTop, width: width ?? 250 }]}>
               <FlatList 
                 data={data} 
                 keyExtractor={(item, idx) => idx.toString()}
@@ -97,7 +98,8 @@ const styles = StyleSheet.create({
     height: 'auto',
     borderColor: Colors.pink.reg,
     justifyContent: 'space-between',
-    zIndex: 1
+    zIndex: 1,
+    margin: 5,
   },
   icon: {
     width: 30,
@@ -111,7 +113,6 @@ const styles = StyleSheet.create({
   content: {
     position: 'absolute',
     backgroundColor: Colors.pink.lightest,
-    width: 250,
     height: 200,
     padding: 10,
     ...Forms.boxShadow

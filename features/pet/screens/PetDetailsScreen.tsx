@@ -1,11 +1,11 @@
 //npm modules
-import { StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView, useWindowDimensions } from "react-native"
+import { StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView, useWindowDimensions, Pressable } from "react-native"
 //types & context
 import { Pet } from "@pet/PetInterface"
 //components
 import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
-import {  BoxHeader } from "@components/HeaderComponent"
+import {  BoxHeader, BoxWithHeader } from "@components/HeaderComponent"
 import { AlertForm, getActionIconSource, getStatIconSource } from "@utils/ui"
 
 //store & queries
@@ -18,6 +18,8 @@ import StatDetails from "@stat/screens/StatDetails"
 import { STATS } from "@stat/statHelpers"
 import { Stat } from "@stat/statInterface"
 import { Image } from "react-native"
+import { CloseButton, IconButton } from "@components/ButtonComponent"
+import { useState } from "react"
 
 interface PetDetailsProps {
   navigation: any
@@ -27,7 +29,7 @@ interface PetDetailsProps {
 const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   
   const {data: pet, isSuccess, isLoading, isError} = useGetPetById(route.params.pet._id, route.params.pet)
-
+  const [showMsg, setShowMsg] = useState<boolean>(true)
   const windowHeight = useWindowDimensions().height
 
   const { onDeletePet } = usePetActions()
@@ -74,6 +76,30 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
 
       </View>
 
+      <View style={styles.sectionHeaderCon}>
+        <Image source={getActionIconSource('saveSquare')} style={{ ...Forms.smallIcon }} />
+        <Text style={styles.sectionHeader}>Important</Text>
+      </View>
+      <View style={{ ...Forms.roundedCon }}>
+        {!pet.ids.length && !pet.medications.length && !pet.services.length && !pet.diseases.length && showMsg &&
+          <View>
+            <Pressable style={{ ...Spacing.flexRow, width: '100%', padding: 5 }} onPress={() => navigation.navigate('Edit')}>
+              <CloseButton size="xSmall" onPress={() => setShowMsg(false)} />
+              <Text style={{ ...Typography.xSmallSubBody, marginLeft: 5 }}>Enter details such as microchip, medications, allergies, any health conditions, and contacts.</Text>
+            </Pressable>
+          </View>
+        }
+        {pet.ids.length > 0 && <BoxHeader title='Identifications' titleIconSource={getActionIconSource('petId')} mode="light" />}
+        {pet.medications.length > 0 && <BoxHeader title='Medications' titleIconSource={getActionIconSource('med')} mode="light" />}
+        {pet.diseases.length > 0 &&
+          <>
+            <BoxHeader title='Allergies' titleIconSource={getActionIconSource('allergy')} mode="light" />
+            <BoxHeader title='Health conditions' titleIconSource={getActionIconSource('disease')} mode="light" />
+          </>
+        }  
+        {pet.services.length > 0 && <BoxHeader title='Services' titleIconSource={getActionIconSource('service')} mode="light" />}
+      </View>
+
       {isSuccess && pet.stats.length > 0 &&
         <>
           <View style={styles.sectionHeaderCon}>
@@ -91,9 +117,13 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
         </>
       }
 
+      <View style={styles.sectionHeaderCon}>
+        <Image source={getActionIconSource('actionSquare')} style={{ ...Forms.smallIcon }} />
+        <Text style={styles.sectionHeader}>Actions</Text>
+      </View>
       <View style={{ ...Forms.roundedCon }}>
-        <BoxHeader title='Log pet stats' titleIconSource={getActionIconSource('noteSquare')} onPress={() => navigation.navigate('Create', { pet: { _id: pet._id, name: pet.name } })} />
-        <BoxHeader title="Update pet info" titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('Edit', { pet })} />
+        <BoxHeader title='Log pet stats' titleIconSource={getActionIconSource('log')} mode='light' onPress={() => navigation.navigate('Create', { pet: { _id: pet._id, name: pet.name } })} />
+        <BoxHeader title="Update pet info" titleIconSource={getActionIconSource('editSquare')} mode='light' onPress={() => navigation.navigate('Edit', { pet })} />
         <BoxHeader title={deletePetMutation.isPending ? 'Deleting...' : 'Delete pet profile'} titleIconSource={getActionIconSource('deleteSquare')} onPress={showDeleteConfirmDialog} titleColor={Colors.red.dark} />
       </View>
 

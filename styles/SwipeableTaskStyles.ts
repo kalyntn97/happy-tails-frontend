@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
     flex: 4
   },
   taskStatus: {
-    flex: 1.5,
+    flex: 1.7,
     fontSize: 12,
   },
   taskPetList: {
@@ -48,5 +48,5 @@ export const styles = StyleSheet.create({
   check: {
     width: 25,
     height: 25,
-  }
+  },
 })

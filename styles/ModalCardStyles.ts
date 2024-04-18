@@ -28,11 +28,11 @@ export const styles = StyleSheet.create({
     marginVertical: 0,
   },
   freq: {
-    ...Typography.xSmallSubHeader,
+    ...Typography.smallSubBody,
+    marginLeft: 5,
   },
   subTitle: {
     ...Typography.xSmallHeader,
-    // textDecorationLine: 'underline',
     marginBottom: 0,
     marginTop: 10,
   },
@@ -55,5 +55,14 @@ export const styles = StyleSheet.create({
     marginTop: 'auto', 
     alignItems: 'flex-start', 
     width: '100%' 
-  }
+  },
+  vaxCon: {
+    width: '100%',
+    padding: 10,
+  },
+  vax: {
+    ...Typography.xSmallSubHeader,
+    margin: 0,
+    marginTop: -15,
+  },
 })

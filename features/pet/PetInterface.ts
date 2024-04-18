@@ -1,20 +1,48 @@
-type License = {
-  name: string
-  number: string
-}
-
 type Service = {
   name: string
   contact: { address?: string, phone?: string, fax?: string } | null
   notes?: string
 }
-
 type Stat = {
   name: string
   date: Date
   record: number
   unit: string
   notes?: string
+}
+export type Id = { 
+  name: string, 
+  registry: string, 
+  no: string, 
+  notes: string 
+}
+type Dose = {
+  date: string
+  notes: string
+}
+export type Medication = {
+  name: string
+  dosage: { amount: string, times: number, frequency: string, repeat: boolean, startDate: string, endDate: string }
+  refill: { times: number, frequency: string, dates: string[] }
+  doses: Dose[]
+  status: string
+  reminder: boolean
+}
+type Timeline = {
+  startDate: string
+  endDate: string
+}
+type Note = {
+  content: string
+  createdAt: string
+}
+type Disease = {
+  name: string
+  type: string
+  timeline: Timeline[]
+  description: string
+  notes: Note[]
+  status: string
 }
 export interface Pet {
   _id: string
@@ -28,9 +56,10 @@ export interface Pet {
   photo: string | null
   // icon: number | null
   color: number
-  microchip: string | null
-  licenses: License[]
+  ids: Id[]
   services: Service[]
+  medications: Medication[]
+  diseases: Disease[]
   stats: Stat[]
 }
 

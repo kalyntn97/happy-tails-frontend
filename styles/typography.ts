@@ -16,9 +16,10 @@ export const header: TextStyle = {
 export const sub: TextStyle = {
   ...base,
   margin: 10,
+  fontWeight: 'normal',
   textAlign: 'center',
   fontStyle: 'italic',
-  // fontWeight: 'bold',
+  letterSpacing: 0.5,
 }
 
 export const xLarge: TextStyle = {
@@ -100,12 +101,18 @@ export const smallBody = {
   ...body,
 }
 
+export const smallSubBody: TextStyle = {
+  ...xSmall,
+  ...body,
+  fontStyle: 'italic',
+}
+
 export const xSmallBody = {
   ...xxSmall,
   ...body,
 }
 
-export const smallSubBody: TextStyle = {
+export const xSmallSubBody: TextStyle = {
   ...xxSmall,
   ...body,
   fontStyle: 'italic',

@@ -43,7 +43,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
 
   return (
     <View style={[styles.container, { backgroundColor: showForm === 'password' ? Colors.white : showForm !== 'password' ? Colors.white : Colors.pink.lightest }]}>
-      <Text style={{ ...Typogrpahy.errorMsg }}>{errorMsg}</Text>
+      <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
       <View style={styles.form}>
         <TextInput 
           style={styles.input}

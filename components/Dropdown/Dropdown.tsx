@@ -66,6 +66,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
         'dogVaccines': healthHelpers.DOG_VACCINE_NAMES,
         'catVaccines': healthHelpers.CAT_VACCINE_NAMES,
         'petStatus': petHelpers.STATUS,
+        'petIds': petHelpers.IDS,
       }
       const result = typeToSource[dataType] || []
       setData(result)
@@ -107,7 +108,8 @@ const styles = StyleSheet.create({
     ...Forms.input,
     borderColor: Colors.pink.reg,
     justifyContent: 'space-between',
-    zIndex: 1
+    marginVertical: 5,
+    zIndex: 1,
   },
   icon: {
     width: 20,
@@ -120,9 +122,10 @@ const styles = StyleSheet.create({
   },
   content: {
     position: 'absolute',
-    backgroundColor: Colors.pink.lightest,
+    backgroundColor: Colors.white,
     padding: 10,
-    ...Forms.boxShadow
+    ...Forms.boxShadow,
+    borderRadius: 8,
   },
   label: {
     maxWidth: 180,

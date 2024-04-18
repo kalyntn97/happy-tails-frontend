@@ -18,7 +18,7 @@ export const shouldRenderHealthTask = (item: Health, selectedDate: Date, reminde
   const startDate = getStartDate(item.nextDue.date, reminderInterval) //start date to show task
   let filteredVisits: Visit[] = item.lastDone.filter((visit: Visit) => 
     new Date(visit.date).getMonth() === selectedDate.getMonth() && new Date(visit.date).getFullYear() === selectedDate.getFullYear()
-  ).sort((a: Visit, b: Visit) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  ).sort((a: Visit, b: Visit) => new Date(b.date).getTime() - new Date(a.date).getTime())
   const due: boolean = selectedDate >= startDate
   const done: boolean = filteredVisits.length >= 1
   return due || done

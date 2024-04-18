@@ -35,12 +35,12 @@ const roundButtonTypes = {
 
 export const RoundButton: FC<RoundButtonProps> = ({ onPress, size, bgColor, color, type, position }) => (
   <TouchableOpacity onPress={onPress} style={[
-    size === 'small' ? { ...Buttons.smallRoundButton as ViewStyle } : { ...Buttons.roundButton as ViewStyle },
+    size === 'small' ? { ...Buttons.smallRoundButton as ViewStyle, margin: 0 } : size === 'medium' ? { ...Buttons.mediumRoundButton as ViewStyle } : { ...Buttons.roundButton as ViewStyle },
     bgColor && { backgroundColor: bgColor },
     position === 'bottomRight' && { position: 'absolute', bottom: 10, right: 10, zIndex: 2, }
   ]}>
     <Text style={[
-      { ...whiteBtnTextStyles, fontSize: size === 'small' ? 15 : 30 },
+      { ...whiteBtnTextStyles, fontSize: size === 'small' ? 9 : size === 'medium' ? 15 : 30 },
       color && { color: color }
     ]}>
       {roundButtonTypes[type]}
@@ -84,7 +84,8 @@ interface CornerButtonProps extends BaseButtonProps {
 export const CloseButton: FC<CornerButtonProps> = ({ onPress, size, position }) => (
   <TouchableOpacity onPress={onPress} style={[position === 'topRight' && { position: 'absolute', top: 10, right: 10 }, { zIndex: 1 }]}>
     <Image source={getActionIconSource('close')} style={[
-      size === 'small' ? { width: 25, height: 25, margin: 5 } : { width: 40, height: 40, margin: 10 },
+      size === 'small' ? { width: 25, height: 25, margin: 5 } 
+      : size === 'xSmall' ? { width: 15, height: 15, margin: 2 } : { width: 40, height: 40, margin: 10 },
     ]} />
   </TouchableOpacity>
 )
@@ -221,7 +222,7 @@ export const CheckboxButton: FC<CheckboxButtonProps> = ({ onPress, size, initial
 
   return (  
     <TouchableOpacity onPress={handlePress} style={[
-      { width: 20, height: 20, borderRadius: 4, borderWidth: 1, ...Spacing.centered, marginHorizontal: 10 },
+      { width: 20, height: 20, borderRadius: 4, borderWidth: 1, ...Spacing.centered, marginLeft: 10 },
       bgColor && { backgroundColor: bgColor, borderColor: bgColor },
     ]}>
       <Text style={[
@@ -230,5 +231,27 @@ export const CheckboxButton: FC<CheckboxButtonProps> = ({ onPress, size, initial
         {check ? '✓' : ''}
       </Text>
     </TouchableOpacity>
+  )
+}
+
+export const ToggleButton: FC<CheckboxButtonProps> = ({ onPress, size, initial, bgColor }) => {
+  const [on, setOn] = useState<boolean>(initial)
+
+  const handlePress = () => {
+    onPress()
+    setOn(!on)
+  }
+
+  const circleStyles = {
+    borderRadius: 99, width: size === 'small' ? 20 : size === 'large' ? 40 : 30, height: size === 'small' ? 20 : size === 'large' ? 40 : 30,
+  }
+
+  return (
+    <Pressable onPress={handlePress} style={{
+      ...Spacing.flexRow, borderRadius: 30, backgroundColor: bgColor ?? Colors.shadow.light, padding: 2
+    }}>
+      <View style={[circleStyles, !on && { backgroundColor: Colors.shadow.reg }]} />
+      <View style={[circleStyles, on && { backgroundColor: Colors.green.reg }]} />            
+    </Pressable>
   )
 }

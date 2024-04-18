@@ -1,11 +1,12 @@
 //npm
 import { useState } from "react"
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWindowDimensions } from "react-native"
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWindowDimensions, Pressable } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
 import MultiselectDropdown from "@components/Dropdown/MultiselectDropdown"
-import { MainButton, SubButton } from "@components/ButtonComponent"
+import { CheckboxButton, MainButton, SubButton, ToggleButton } from "@components/ButtonComponent"
+import ColorPickingPanel from "@components/ColorPickingPanel"
 //types
 import { Pet } from "@pet/PetInterface"
 import { CARES, careKeyFromName } from "@care/careHelpers"
@@ -13,7 +14,7 @@ import { CARES, careKeyFromName } from "@care/careHelpers"
 import { usePetIds } from "@store/storeUtils"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import ColorPickingPanel from "@components/ColorPickingPanel"
+import { styles } from "@styles/FormStyles"
 
 interface CareFormProps {
   onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, color: number, careId: string | null) => void
@@ -85,7 +86,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
     >
       {errorMsg && <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>}
 
-      {!!name && <Text>Enter Name</Text>}
+      <Text style={styles.label}>Name</Text>
       <Dropdown label={'Select Name'} dataType="care" onSelect={handleSelectName} initial={name} />
       {allowManualName && 
         <TextInput 
@@ -97,51 +98,56 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
           autoCapitalize="words"
         />
       }
+
+      <Text style={styles.label}>Pets</Text>
       <MultiselectDropdown label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialPetNames} />
 
+      <View style={[styles.labelCon]}>
+          <Text style={styles.rowText}>Repeat</Text>
+          <ToggleButton onPress={() => setRepeat(!repeat)} initial={repeat} size='small' />
+        </View>
+
+      <View style={styles.labelCon}>
+        <Text style={styles.rowText}>Date(s)</Text>
+        {repeat &&
+          <View style={{ ...Spacing.flexRow }}>
+            <Text style={styles.rowText}>End</Text>
+            <CheckboxButton onPress={() => setEnding(!ending)} initial={ending} />
+          </View>
+        }
+      </View>
       <View style={styles.rowCon}>
-        <Text style={styles.rowText}>{repeat ? 'Start Date' : 'Date'}</Text>
-        <RNDateTimePicker value={new Date(date)} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.pink.dark} />
+        <RNDateTimePicker themeVariant="light" value={new Date(date)} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.pink.dark} />
+        { repeat && ending &&
+          <>
+            <Text style={{ marginLeft: 15 }}> - </Text>
+            <RNDateTimePicker themeVariant='light' value={new Date(endDate) ?? new Date()} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setEndDate(selectedDate) }} accentColor={Colors.pink.dark} />
+          </>
+        }
       </View>
 
+      
+      {repeat && <View style={styles.labelCon}>
+        <Text>Frequency</Text>
+        <Text>Times</Text>
+      </View>}
+      
       {repeat &&
-        <>
-          {!!frequency && <Text>Select Frequency</Text>}
-          <Dropdown label={'Select Frequency'} dataType="frequency" onSelect={setFrequency} initial={frequency} />
+        <View style={[styles.rowCon, { width: 280 }]}>
+          <Dropdown label={'Select Frequency'} dataType="frequency" onSelect={setFrequency} initial={frequency} width={160} />
           
           <TextInput 
-            style={styles.input} 
-            placeholder='Enter Times' 
+            style={[styles.input, { width: 70, textAlign: 'right' }]} 
+            placeholder='Times' 
             placeholderTextColor={Colors.shadow.reg}
             onChangeText={(text: string) => setTimes(Number(text))} 
             value={(times ?? '').toString()} 
             keyboardType="numeric"
           />
-        </>
+        </View>
       }
       
-      {repeat &&
-        <View style={styles.rowCon}>
-          <Text style={styles.rowText}>Set end date? (optional)</Text>
-          <TouchableOpacity onPress={() => setEnding(!ending)}>
-            <Text style={styles.rowTextFocus}>{ending ? '☑︎' : '☐'}</Text>
-          </TouchableOpacity>
-        </View>
-      }
-      {repeat && ending &&
-        <View style={styles.rowCon}>
-          <Text style={styles.rowText}>End Date</Text>
-          <RNDateTimePicker value={new Date(endDate) ?? new Date()} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setEndDate(selectedDate) }} accentColor={Colors.pink.dark} />
-        </View>
-      }
-
       <View style={styles.bottomCon}>
-        <View style={[styles.rowCon]}>
-          <Text style={styles.rowText}>Repeat is</Text>
-          <TouchableOpacity onPress={() => setRepeat(!repeat)}>
-            <Text style={[styles.rowTextFocus, { color: repeat ? Colors.green.reg : Colors.red.reg }]}>{repeat ? 'ON' : 'OFF'}</Text>
-          </TouchableOpacity>
-        </View>
         <ColorPickingPanel onPress={setColor} initial={initialValues?.color} />
         <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
         <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
@@ -150,35 +156,5 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    ...Forms.form,
-  },
-  header: {
-    ...Typography.mainHeader,
-    color: Colors.pink.dark
-  },
-  input: {
-    ...Forms.input,
-  },
-  rowCon: {
-    ...Spacing.flexRow,
-    justifyContent: 'space-around',
-    width: 250,
-    marginVertical: 15,
-  },
-  rowText: {
-    fontSize: 15
-  },
-  rowTextFocus: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  bottomCon: {
-    ...Spacing.flexColumn,
-    marginTop: 'auto',
-  },
-})
  
 export default CareForm

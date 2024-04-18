@@ -58,3 +58,5 @@ export const FISH_SPECIES: string[] = ["Adolfo's cory", "Adonis tetra", "African
 export const SPECIES = [ 'Dog', 'Cat', 'Bird', 'Fish', 'Others' ]
 
 export const STATUS = [ 'Healthy', 'Passed away' ]
+
+export const IDS = ['Microchip', 'License', 'Passport', 'Others']

@@ -35,8 +35,8 @@ const NestedList: FC<NestedListProps> = ({ data, type, navigation, activeDateObj
       //*show future tasks based on user's selected interval, show completed tasks for the whole month
       let filteredVisits: Visit[] = item.lastDone.filter((visit: Visit) => 
         new Date(visit.date).getMonth() === activeDateObj.getMonth() && new Date(visit.date).getFullYear() === activeDateObj.getFullYear()
-      ).sort((a: Visit, b: Visit) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      const pastVisit: Visit = filteredVisits.length > 1 ?filteredVisits.find(visit => activeDateObj < new Date(visit.date)) : filteredVisits[0]
+      ).sort((a: Visit, b: Visit) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      const pastVisit: Visit = filteredVisits.length > 1 ? filteredVisits.find(visit => activeDateObj > new Date(visit.date)) : filteredVisits[0]
       
       return <SwipeableHealthTask key={item._id} health={item} navigation={navigation} onPress={() => onPressTask(item, 'Health')} pastVisit={pastVisit} />
     } else {

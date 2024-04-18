@@ -62,7 +62,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
                 </Text>
                 <Text style={styles.subHeader}>Ready to start a new journey with your furry friends?</Text>
             </View>
-            <TransparentButton title='Get Started' onPress={() => scrollToNext(1)} color={Colors.pink.reg} size='large' />
+            <TransparentButton title='Get Started' onPress={() => scrollToNext(1)} color={Colors.pink.reg} bdColor={Colors.pink.reg} size='large' />
             <SubButton title="Already have an account? Login here" size='small' color={Colors.shadow.darkest} onPress={() => navigation.navigate('User', { screen: 'Login' })} />
             
             <TouchableOpacity style={styles.link} onPress={() => scrollToNext(1)}>

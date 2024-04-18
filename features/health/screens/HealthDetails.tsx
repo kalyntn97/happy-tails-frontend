@@ -36,15 +36,14 @@ const HealthDetailsScreen = ({ navigation, route }) => {
 
   const { showDeleteConfirmDialog, handleDeleteHealthCard } = useDeleteHealthCard(navigation)
   const petIdToColor = useShallowPetColor()
-  let petColor: string, lastDoneReversed: Visit[], iconSource: any, daysToDue: number, daysFromDone: number
+  let petColor: string, iconSource: any, daysToDue: number, daysFromDone: number
   
   if (isSuccess) {
     petColor = Colors.multi.light[petIdToColor(health.pet._id)]
-    
-    lastDoneReversed= [...health.lastDone].reverse() ?? []
     iconSource = getHealthIconSource(health.name)
+    health.lastDone.sort((a: Visit, b: Visit) => new Date(b.date).getTime() - new Date(a.date).getTime())
     daysToDue = countDaysBetween('today', health.nextDue.date)
-    daysFromDone = countDaysBetween(lastDoneReversed[0]?.date, 'today')
+    daysFromDone = countDaysBetween(health.lastDone[0].date, 'today')
   }
 
   const VisitItem = ({ visit, due }: VisitItem) => (
@@ -114,22 +113,21 @@ const HealthDetailsScreen = ({ navigation, route }) => {
           </View>
           <View style={{...Forms.roundedCon}}>
             <BoxHeader title='All logs' titleIconSource={getActionIconSource('noteSquare')}/>
-            {lastDoneReversed.length > 1 && 
+            {health.lastDone.length > 1 && 
               <TouchableOpacity style={styles.showButton} onPress={() => setShowAllVisits(!showAllVisits)}>
-                <Text style={{...Typography.xSmallSubHeader}}>{showAllVisits ? 'Hide ': 'Show all'} ({lastDoneReversed.length + 1})</Text>
+                <Text style={{...Typography.xSmallSubHeader}}>{showAllVisits ? 'Hide ': 'Show all'} ({health.lastDone.length + 1})</Text>
               </TouchableOpacity>
             }
             <View style={styles.pastVisitCon}>
               <VisitItem visit={health.nextDue} due={true} /> 
-              { lastDoneReversed.length ? 
+              { health.lastDone.length > 0 ?
                 <>
-                  { lastDoneReversed.map((visit: Visit, index: number) => {
-                    if (showAllVisits) {
-                      return <VisitItem key={visit._id} visit={visit} />
-                    } else {
-                      return index < 1 && <VisitItem key={visit._id} visit={visit} />
-                    }
-                  })}
+                  {showAllVisits ? 
+                    health.lastDone.map((visit: Visit) => <VisitItem key={visit._id} visit={visit} />)
+                  : 
+                    health.lastDone.slice(0, 1).map((visit: Visit) => <VisitItem key={visit._id} visit={visit} />)
+                  }
+
                   {showAllVisits && 
                     <TransparentButton title='Hide' onPress={() => setShowAllVisits(false)} size="small" />
                   }
