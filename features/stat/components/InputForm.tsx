@@ -9,6 +9,7 @@ import Dropdown from '@components/Dropdown/Dropdown'
 import { getStatIconSource } from '@utils/ui'
 import { useDisplayUnits } from '@store/store'
 import NoteForm from './NoteForm'
+import { CircleIcon } from '@components/UIComponents'
 
 
 
@@ -32,9 +33,7 @@ const InputForm: FC<InputFormProps> = ({ name, initialValues, onSelect }) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ ...Forms.roundedIconCon }}>
-        <Image source={getStatIconSource(name)} style={{ ...Forms.largeIcon }} />
-      </View>
+      <CircleIcon iconSource={getStatIconSource(name)} />
       <Text style={{ ...Typography.mediumHeader }}>{STATS[name].name}</Text>
       <View style={styles.inputCon}>
         <TextInput 

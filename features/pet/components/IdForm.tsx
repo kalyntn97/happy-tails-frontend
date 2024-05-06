@@ -8,13 +8,14 @@ import { MainButton, TransparentButton } from '@components/ButtonComponent'
 //styles
 import { Colors, Typography, Spacing, Forms } from '@styles/index'
 import { styles } from '@styles/FormStyles'
+import { getPetIconSource } from '@utils/ui'
+import { CircleIcon } from '@components/UIComponents'
 
 interface IdFormProps {
-  onSave: (idFormData: Id) => void
-  onHide: () => void
+  onSubmit: (type: string, idFormData: Id) => void
 }
 
-const IdForm : FC<IdFormProps> = ({ onSave, onHide }) => {
+const IdForm : FC<IdFormProps> = ({ onSubmit }) => {
   const [name, setName] = useState<string>(null)
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
   const [registry, setRegistry] = useState<string>(null)
@@ -37,14 +38,15 @@ const IdForm : FC<IdFormProps> = ({ onSave, onHide }) => {
       setErrorMsg('Please enter all required fields') 
     } else {
       setErrorMsg(null)
-      onSave({ name, registry, no, notes })
+      onSubmit('id', { name, registry, no, notes })
     }
   }
 
   return (
     <View style={styles.container}>
+      <CircleIcon iconSource={getPetIconSource('petIdTag')} />
       <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
-      <View style={styles.labelCon}>
+      <View style={[styles.labelCon, { marginTop: 0 }]}>
         <Text>ID type</Text>
         <Text>Registry name</Text>
       </View>
@@ -89,7 +91,7 @@ const IdForm : FC<IdFormProps> = ({ onSave, onHide }) => {
 
       <View style={styles.btnCon}>
         <MainButton title='Add' size='small' onPress={handleSave} />
-        <TransparentButton title='Cancel' size='small' onPress={onHide} />
+        <TransparentButton title='Cancel' size='small' />
       </View>
     </View>
   )

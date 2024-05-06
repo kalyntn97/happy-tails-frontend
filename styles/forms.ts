@@ -12,7 +12,7 @@ export const boxShadow: ViewStyle = {
 
 export const form: ViewStyle = {
   ...flexColumn,
-  width: '90%',
+  width: '100%',
 }
 
 export const inputBase: ViewStyle = {

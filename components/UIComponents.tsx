@@ -55,3 +55,15 @@ export const BoxWithHeader: FC<BoxProps> = ({ title, titleIconSource, onPress, c
     </View>
   </View>
 )
+
+type CircleIconProps = {
+  iconSource: ImageSourcePropType
+  size?: string
+  bgColor?: string
+}
+
+export const CircleIcon: FC<CircleIconProps> = ({ iconSource, size, bgColor }) => (
+  <View style={{ backgroundColor: bgColor ?? Colors.shadow.light, ...Forms.roundedIconCon }}>
+    <Image source={iconSource} style={{ ...Forms.largeIcon }} />
+  </View>
+)

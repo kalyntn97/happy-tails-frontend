@@ -13,7 +13,7 @@ import BarChart from "@components/Charts/BarChart"
 import YearChart from "@components/Charts/YearChart"
 import FillChart from "@components/Charts/FillChart"
 import Loader from "@components/Loader"
-import { BoxHeader, BoxWithHeader } from "@components/HeaderComponent"
+import { BoxHeader, BoxWithHeader } from "@components/UIComponents"
 import { StatButton } from "@components/ButtonComponent"
 //styles
 import { styles } from "@styles/DetailsScreenStyles"

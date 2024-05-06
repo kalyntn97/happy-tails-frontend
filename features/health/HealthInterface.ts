@@ -7,7 +7,7 @@ export interface Visit {
 }
 
 export interface VisitFormData {
-  date: Date
+  date: string
   notes: string
   healthId?: string
 }

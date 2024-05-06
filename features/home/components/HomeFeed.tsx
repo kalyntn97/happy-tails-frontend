@@ -168,7 +168,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         onDismiss={() => setClickedTask(null)}
         transparent={true}
       >
-        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={styles.modalContainer}> 
+        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...Forms.modal }}> 
           <View style={styles.detailContainer}>
             {clickedTask &&
               <>
@@ -252,9 +252,6 @@ const styles = StyleSheet.create({
   },
   btnText: {
     ...Buttons.buttonText,
-  },
-  modalContainer: {
-    ...Forms.modal,
   },
   detailContainer: {
     width: '100%',

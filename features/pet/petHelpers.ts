@@ -1,6 +1,7 @@
 //types
 import { ImageSourcePropType } from "react-native"
 import { BirdListResponse, CatBreed, DogBreedListResponse } from "./PetInterface"
+import { keyFromName } from "@utils/misc"
 
 export const getDogBreedData = async (): Promise<string[]> => {
   try {
@@ -61,3 +62,22 @@ export const SPECIES_OPTIONS = [...SPECIES, 'Others']
 export const STATUS = [ 'Healthy', 'Passed away' ]
 
 export const IDS = ['Microchip', 'License', 'Passport', 'Others']
+
+export const MED_STATUS = ['Active', 'Paused', 'Inactive']
+
+export const DISEASE_TYPES = ['Skeletal/ muscular', 'Cardiovascular', 'Neurological', 'Eyes', 'Ears', 'Skin', 'Endocrine', 'Gastrointestinal', 'Urinary/ Reproductive', 'Cancer', 'Behavioral', 'Poison', 'Allergy', 'Autoimmune', 'Diabetes', 'Liver', 'Trauma/ Injury'].sort()
+
+export const DISEASE_STATUS = ['Active', 'Cured', 'Chronic']
+
+export const SERVICE_TYPES = ['ER Hospital', 'Clinic', 'School', 'Boarding', 'Groomer', 'Sitter', 'Pet store']
+
+export const PET_DETAILS = {
+  id: 'Pet Identifications',
+  med: 'Pet Medications',
+  service: 'Pet Services',
+  disease: 'Pet Diseases',
+}
+
+export const getDetailHeader = (key: string) => {
+  return PET_DETAILS[key]
+}

@@ -13,7 +13,7 @@ import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 import Loader from "@components/Loader"
 import PetInfo from "@components/PetInfo/PetInfo"
 import NoteInput from "@health/components/NoteInput"
-import { BoxHeader } from "@components/HeaderComponent"
+import { BoxHeader } from "@components/UIComponents"
 import { StatButton, TransparentButton } from "@components/ButtonComponent"
 //styles
 import { styles } from "@styles/DetailsScreenStyles"

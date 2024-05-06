@@ -1,4 +1,4 @@
-import { compareDates, dateIsWithinRange, getDateFromRange, getDateInfo, isSameDates } from "@utils/datetime"
+import { dateIsWithinRange, getDateFromRange } from "@utils/datetime"
 import { Record } from "./statInterface"
 
 export const DEFAULT_WEIGHT_UNIT = 'kg'
@@ -24,7 +24,7 @@ export const filterByRange = (range: string, records: Record[], startDate: strin
   const unit = unitName[range[1]]
   const endDate = getDateFromRange(startDate ?? 'today', unit, count, -1)
   //* records are sorted desc
-  const filtered = records.filter(record => dateIsWithinRange( endDate.toString(), startDate, record.createdAt)) 
+  const filtered = records.filter(record => dateIsWithinRange( endDate.toISOString(), startDate, record.createdAt)) 
   return { filtered, endDate }
 }
 

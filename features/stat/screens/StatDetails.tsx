@@ -11,6 +11,7 @@ import { Typography, Forms, Spacing, Colors } from '@styles/index'
 import ToggleableForm from '@components/ToggleableForm'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { compareDates } from '@utils/datetime'
+import { CircleIcon } from '@components/UIComponents'
 
 interface StatDetailsProps {
   navigation: any
@@ -35,7 +36,7 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
 
   const changeRange = (range: string) => {
     setSelectedRange(range)
-    const { filtered, endDate } = filterByRange(range, records, startDate.toString())
+    const { filtered, endDate } = filterByRange(range, records, startDate.toISOString())
     setFiltered(filtered)
     setEndDate(endDate ? endDate.toDateString().slice(4) : null)
     const avgValue = getAverageValue(filtered.map(r => r.value))
@@ -44,9 +45,7 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={{ ...Forms.roundedIconCon }}>
-        <Image source={getStatIconSource(stat.name)} style={{ ...Forms.largeIcon }}/>
-      </View>
+      <CircleIcon iconSource={getStatIconSource(stat.name)} />
       <Text style={{ ...Typography.mediumHeader }}>{name}</Text>
 
       <ToggleableForm title='See graph' content={

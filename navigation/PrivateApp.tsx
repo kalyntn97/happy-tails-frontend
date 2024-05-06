@@ -22,13 +22,14 @@ import EditHealthScreen from "@health/screens/EditHealthScreen"
 import HealthDetailsScreen from "@health/screens/HealthDetails"
 import NewStatScreen from "@stat/screens/NewStatScreen"
 import StatDetails from "@stat/screens/StatDetails"
-import EditPetDetailsScreen from "@pet/screens/EditPetDetailsScreen"
+import MorePetDetailsScreen from "@pet/screens/MorePetDetailsScreen"
 //components
 import { GoBackButton } from "@components/ButtonComponent"
 //helpers
 import { getNavigationIconSource } from "@utils/ui"
 //styles
 import { Colors, Forms, Typography, Spacing } from "@styles/index"
+import EditMorePetDetailsScreen from "@pet/screens/EditMorePetDetailsScreen"
 
 const PrivateApp = () => {
   const Tab = createBottomTabNavigator()
@@ -129,7 +130,8 @@ const PrivateApp = () => {
                       <NoTitleHeader navigation={navigation} />
                     )
                   } }} />
-                  <DetailStack.Screen name='Edit' component={EditPetDetailsScreen} options={{ title: 'Edit Details' }} />
+                  <DetailStack.Screen name='PetDetails' component={MorePetDetailsScreen} options={{ title: 'More Details' }} />
+                  <DetailStack.Screen name='Edit' component={EditMorePetDetailsScreen} options={{ title: 'Edit pet details' }} />
                   <DetailStack.Screen name='Create' component={NewStatScreen} options={{ title: 'New Log' }} />
                   <DetailStack.Screen name='Stat' component={StatDetails} options={{ title: 'Details' }} />
                 </DetailStack.Navigator>

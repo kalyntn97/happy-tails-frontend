@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 //component
-import { BoxHeader } from "@components/HeaderComponent"
+import { BoxHeader } from "@components/UIComponents"
 //context
 import { useDisplayUnits, useSetActions } from "@store/store"
 import { useAuth } from "@auth/AuthContext"

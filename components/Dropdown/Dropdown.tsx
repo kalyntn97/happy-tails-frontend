@@ -67,6 +67,10 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
         'catVaccines': healthHelpers.CAT_VACCINE_NAMES,
         'petStatus': petHelpers.STATUS,
         'petIds': petHelpers.IDS,
+        'medStatus': petHelpers.MED_STATUS,
+        'diseaseTypes': petHelpers.DISEASE_TYPES,
+        'diseaseStatus': petHelpers.DISEASE_STATUS,
+        'serviceTypes': petHelpers.SERVICE_TYPES,
       }
       const result = typeToSource[dataType] || []
       setData(result)
@@ -80,7 +84,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
       {visible && (
         <Modal visible={visible} transparent animationType="none">
           <TouchableOpacity style={styles.overlay} onPress={() => setVisible(false)}>
-            <View style={[styles.content, data.length > 4 && { height: 200 }, { top: dropdownTop, left: dropdownLeft, width: width ?? 250 }]}>
+            <View style={[styles.content, data.length > 4 && { height: 200 }, width && { width: width }, { top: dropdownTop, left: dropdownLeft }]}>
               <FlatList 
                 data={data} 
                 keyExtractor={(item, idx) => idx.toString()}
@@ -125,6 +129,7 @@ const styles = StyleSheet.create({
     padding: 10,
     ...Forms.boxShadow,
     borderRadius: 8,
+    width: 300,
   },
   label: {
     maxWidth: 180,

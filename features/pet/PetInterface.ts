@@ -1,6 +1,9 @@
-type Service = {
+export type Service = {
   name: string
-  contact: { address?: string, phone?: string, fax?: string } | null
+  type: string
+  address?: string
+  phone?: string
+  email?: string
   notes?: string
 }
 type Stat = {
@@ -10,39 +13,49 @@ type Stat = {
   unit: string
   notes?: string
 }
-export type Id = { 
+
+export type IdFormData = {
   name: string, 
   registry: string, 
   no: string, 
   notes: string 
 }
-type Dose = {
-  date: string
-  notes: string
+export interface Id extends IdFormData {
+  _id: string,
 }
-export type Medication = {
-  name: string
-  dosage: { amount: string, times: number, frequency: string, repeat: boolean, startDate: string, endDate: string }
-  refill: { times: number, frequency: string, dates: string[] }
-  doses: Dose[]
-  status: string
-  reminder: boolean
-}
-type Timeline = {
-  startDate: string
-  endDate: string
-}
+
 type Note = {
   content: string
   createdAt: string
 }
-type Disease = {
+
+export type Medication = {
+  name: string
+  dosage: { amount: string, startDate: string, endDate: string, times: number, frequency: string, reminder: string }
+  refill: { times: number, frequency: string, reminder: string }
+  status: string
+  notes: Note[]
+}
+
+export type MedicationFormData = {
+  name: string
+  dosage: { amount: string, startDate: string, endDate: string, times: number, frequency: string, reminder: boolean }
+  refill: { times: number, frequency: string, reminder: boolean }
+  status: string
+}
+
+export type Timeline = {
+  startDate: string
+  endDate: string
+}
+
+export type Disease = {
   name: string
   type: string
   timeline: Timeline[]
   description: string
-  notes: Note[]
   status: string
+  notes: Note[]
 }
 export interface Pet {
   _id: string
@@ -80,6 +93,8 @@ export interface PetFormData {
   color: number
   petId?: string
 }
+
+
 
 export interface DogBreedListResponse {
   message: Record<string, string[]>;

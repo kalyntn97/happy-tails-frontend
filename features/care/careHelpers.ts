@@ -2,6 +2,7 @@ import { ImageSourcePropType } from "react-native"
 import { Colors } from "@styles/index"
 import { Care, Tracker } from "@care/CareInterface"
 import { getMonth, getDateInfo } from "@utils/datetime"
+import { keyFromName } from "@utils/misc"
 
 export const CARES = {
   nail: 'Clip nail', 
@@ -10,20 +11,15 @@ export const CARES = {
   brush: 'Brush', 
   litter: 'Clean litter box', 
   groom: 'Groom service', 
-  bath: 'Give bath', 
-  others: 'Others'
+  bath: 'Give bath',
+  med: 'Give medication',
+  train: 'Train commands',
+  feed: 'Feed',
+  others: 'Others',
 }
 
 export const CARE_NAMES = Object.keys(CARES).map(key => CARES[key])
 
-const keyFromName = (data: {[key: string]: string}) => {
-  const map = {}
-  for (const key in data) {
-    const name = data[key]
-    map[name] = key
-  }
-  return map
-} 
 export const careKeyFromName = keyFromName(CARES)
 
 export const CARE_FREQ = ['Daily', 'Weekly', 'Monthly', 'Yearly']

@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { Pet, PetFormData } from './PetInterface'
+import { Id, IdFormData, Pet, PetFormData } from './PetInterface'
 import * as petService from './petService'
 
 const BASE_URL = `${process.env.EXPO_PUBLIC_BACKEND_URL}/pets`
@@ -53,6 +53,28 @@ export const useDeletePet = () => {
     mutationFn: (petId: string) => petService.deletePet(petId),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
+    }
+  })
+}
+
+export const useAddId = (petId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (formData: Id) => petService.addId(formData, petId),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
+    }
+  })
+}
+
+export const useDeleteId = (petId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ petId, idId }: { petId: string, idId: string }) => petService.deleteId(petId, idId),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
     }
   })
 }

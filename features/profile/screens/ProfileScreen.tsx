@@ -10,7 +10,7 @@ import { PetBasic } from "@pet/PetInterface"
 import PetList from "@components/PetInfo/PetList"
 import Loader from "@components/Loader"
 import { StatButton } from "@components/ButtonComponent"
-import { BoxHeader, BoxWithHeader } from "@components/HeaderComponent"
+import { BoxHeader, BoxWithHeader } from "@components/UIComponents"
 //hooks & utils
 import { AlertForm, getActionIconSource } from "@utils/ui"
 import { useCaresByFrequency, useSelectPhoto, useTaskCounts } from "@home/hooks"

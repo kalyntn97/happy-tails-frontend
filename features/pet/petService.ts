@@ -1,9 +1,9 @@
 import axios from "axios"
 import { PET_BASE_URL } from "@services/urls"
-import { Pet } from "./PetInterface"
+import { Id, Pet } from "./PetInterface"
 const BASE_URL = PET_BASE_URL
 
-export const getAllPets = async () => {
+export const getAllPets = async (): Promise<Pet[]> => {
   return (await axios.get<Pet[]>(BASE_URL)).data
 }
 
@@ -31,10 +31,18 @@ export const update = async (name: string,  species: string, breed: string, dob:
     return result
 }
 
-export async function getPetById(petId: string): Promise<any> {
+export async function getPetById(petId: string): Promise<Pet> {
   return (await axios.get<Pet>(`${BASE_URL}/${petId}`)).data
 }
 
 export async function deletePet(petId: string): Promise<string> {
   return (await axios.delete<string>(`${BASE_URL}/${petId}`)).data
+}
+
+export async function addId(formData: { name: string, registry: string, no: string, notes: string }, petId: string): Promise<Id> {
+  return (await axios.patch<Id>(`${BASE_URL}/${petId}/id`, formData)).data
+}
+
+export async function deleteId(petId: string, idId: string): Promise<string> {
+  return (await axios.delete<string>(`${BASE_URL}/${petId}/id/${idId}`)).data
 }
