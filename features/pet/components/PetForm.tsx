@@ -13,10 +13,13 @@ import { getPetIconSource } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
 import { styles } from "@styles/FormStyles"
+import { InitialPet, InitialPetValues, PhotoFormData } from "@pet/PetInterface"
+
+
 
 interface PetFormProps {
-  onSubmit: (name: string, species: string, breed: string | null, dob: Date | null, firstMet: Date | null, altered: {value: boolean, date: Date | null}, status: {value: string, date: Date | null, show: boolean }, color: number, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
-  initialValues?: { name?: string, species?: string, breed?: string, dob?: Date, firstMet?: Date, altered?: {value: boolean, date: Date }, status?: {value: string, date: Date, show: boolean }, color?: number, photo?: string, petId?: string }
+  onSubmit: ({ name, species, breed, dob, firstMet, altered, status, color }: InitialPet, photoData: PhotoFormData, petId: string | null) => Promise<any>
+  initialValues?: InitialPetValues
   formStatus: string
   navigation: any
 }
@@ -26,13 +29,13 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
   const [species, setSpecies] = useState<string>(initialValues?.species ?? null)
   const [allowManualSpecies, setAllowManualSpecies] = useState<boolean>((initialValues && !SPECIES.includes(initialValues?.species)) ?? false)
   const [breed, setBreed] = useState<string>(initialValues?.breed ?? null)
-  const [dob, setDob] = useState<Date>(initialValues?.dob)
+  const [dob, setDob] = useState<string>(initialValues?.dob)
   const [showDob, setShowDob] = useState<boolean>(initialValues && !initialValues.dob ? false : true)
-  const [firstMet, setFirstMet] = useState<Date>(initialValues?.firstMet ?? null)
+  const [firstMet, setFirstMet] = useState<string>(initialValues?.firstMet ?? null)
   const [showFirstMet, setShowFirstMet] = useState<boolean>(initialValues && !initialValues.firstMet ? false : true)
-  const [altered, setAltered] = useState<{ value: boolean, date: Date }>(initialValues?.altered ?? { value: false, date: null })
+  const [altered, setAltered] = useState<{ value: boolean, date: string }>(initialValues?.altered ?? { value: false, date: null })
   const [showAlteredDate, setShowAlteredDate] = useState<boolean>(initialValues && !initialValues.altered?.date ? false : true)
-  const [status, setStatus] = useState<{ value: string, date: Date, show: boolean }>(initialValues?.status ?? { value: STATUS[0], date: null, show: true })
+  const [status, setStatus] = useState<{ value: string, date: string, show: boolean }>(initialValues?.status ?? { value: STATUS[0], date: null, show: true })
   const [showPassedDate, setShowPassedDate] = useState<boolean>(initialValues?.status?.date === null ? false : true)
   const [color, setColor] = useState<number>(initialValues?.color ?? 0)
   const [photo, setPhoto] = useState<string | null>(initialValues?.photo ?? null)
@@ -70,7 +73,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
     } else {
       setErrorMsg('')
       if (species === 'Others') setBreed(null)
-      await onSubmit(name, species, breed, dob, firstMet, altered, status, color, photoData, petId)
+      await onSubmit({ name, species, breed, dob, firstMet, altered, status, color }, photoData, petId)
     }
   }
 

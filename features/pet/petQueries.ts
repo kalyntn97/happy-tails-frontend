@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { Id, IdFormData, Pet, PetFormData } from './PetInterface'
+import { Id, IdFormData, Pet, PetFormData, PetMutationFormData, PhotoFormData } from './PetInterface'
 import * as petService from './petService'
 
 const BASE_URL = `${process.env.EXPO_PUBLIC_BACKEND_URL}/pets`
@@ -28,7 +28,7 @@ export const useAddPet = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ name,  species, breed, dob, firstMet, altered, status, color, photoData }: PetFormData) => petService.create(name, species, breed, dob, firstMet, altered, status, color, photoData),
+    mutationFn: ({ name,  species, breed, dob, firstMet, altered, status, color, photoData }: PetMutationFormData) => petService.create({ name, species, breed, dob, firstMet, altered, status, color }, photoData),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
     }
@@ -39,7 +39,7 @@ export const useUpdatePet = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ name, species, breed, dob, firstMet, altered, status, color, photoData, petId }: PetFormData) => petService.update(name,  species, breed, dob, firstMet, altered, status, color, photoData, petId),
+    mutationFn: ({ name, species, breed, dob, firstMet, altered, status, color, photoData, petId }: PetMutationFormData) => petService.update({ name,  species, breed, dob, firstMet, altered, status, color }, photoData, petId),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
     }

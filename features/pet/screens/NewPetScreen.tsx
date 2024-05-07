@@ -11,13 +11,14 @@ import PetForm from "../components/PetForm"
 import { AlertForm } from "@utils/ui"
 //styles
 import { Spacing } from "@styles/index"
+import { InitialPet, PetMutationFormData, PhotoFormData } from "@pet/PetInterface"
 
 const NewPetScreen = ({ navigation }) => {
   const isFocused = useIsFocused()
   const { onAddPet } = usePetActions()
   const addPetMutation = useAddPet()
 
-  const handleAddPet = async (name: string,  species: string, breed: string, dob: Date, firstMet: Date, altered: {value: boolean, date: Date | null}, status: {value: string, date: Date | null, show: boolean }, color: number, photoData: { uri: string, name: string, type: string } | null) => {
+  const handleAddPet = async ({ name, species, breed, dob, firstMet, altered, status, color }: InitialPet, photoData: PhotoFormData) => {
     addPetMutation.mutate({ name, species, breed, dob, firstMet, altered, status, color, photoData }, {
       onSuccess: (data) => {
         onAddPet(data)

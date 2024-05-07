@@ -39,7 +39,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
     deletePetMutation.mutate(petId, {
       onSuccess: (data) => {
         onDeletePet(data)
-        navigation.navigate('Index')
+        navigation.navigate('Pet', { screen: 'Index' })
         return AlertForm({ body: 'Pet deleted successfully', button: 'OK' })
       }, 
       onError: (error) => {

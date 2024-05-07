@@ -58,14 +58,15 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
     const detailItems = []
     for (const key in PET_DETAILS) {
       detailItems.push(
-        (!show || show === key) && <>
-          <ListHeader name={key} onPress={() => openForm(key)} />
-          {detailData[key].length ? 
-            detailData[key].map((item: any, index: number) =>
-              key === 'id' && <IdItem id={item} key={`id-${index}`} />
-            ) : <EmptyList />
-          }
-        </>
+        (!show || show === key) && 
+          <View key={`${key}-details`} style={{ width: '90%' }}>
+            <ListHeader name={key} onPress={() => openForm(key)} />
+            {detailData[key].length ? 
+              detailData[key].map((item: any, index: number) =>
+                key === 'id' && <IdItem id={item} key={`id-${index}`} />
+              ) : <EmptyList />
+            }
+          </View>
       )
     }
     return detailItems
@@ -102,7 +103,7 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
   )
   
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} alwaysBounceVertical={false}>
       <DetailSections />
     </ScrollView>
   )
@@ -110,14 +111,12 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.flexColumn,
-    width: '100%',
-    paddingBottom: 20,
+    alignItems: 'center',
   },
   listHeaderCon: {
     ...Spacing.flexRow,
     justifyContent: 'space-between',
-    width: '90%',
+    width: '100%',
     marginTop: 20,
     marginBottom: 10,
   },

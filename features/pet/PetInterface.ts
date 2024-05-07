@@ -1,17 +1,51 @@
-export type Service = {
+export interface Pet extends InitialPet {
+  _id: string
+  photo: string | null
+  ids: Id[]
+  services: Service[]
+  medications: Medication[]
+  diseases: Disease[]
+  stats: Stat[]
+}
+
+export interface PetBasic {
+  name: string
+  photo: string | null
+}
+export interface InitialPet {
+  name: string
+  species: string 
+  breed: string
+  dob: string | null
+  firstMet: string | null
+  altered: { value: boolean, date: string | null}
+  status: { value: string, date: string | null, show: boolean }
+  color: number
+}
+
+export interface InitialPetValues extends InitialPet {
+  photo: string | null
+  petId: string
+}
+
+export type PhotoFormData = { uri: string, name: string, type: string } | null
+
+export interface PetMutationFormData extends InitialPet {
+  photoData: PhotoFormData
+  petId?: string
+}
+
+export type ServiceFormData = {
   name: string
   type: string
   address?: string
-  phone?: string
+  phone?: string[]
   email?: string
   notes?: string
 }
-type Stat = {
-  name: string
-  date: Date
-  record: number
-  unit: string
-  notes?: string
+
+export interface Service extends ServiceFormData {
+  _id: string,
 }
 
 export type IdFormData = {
@@ -57,44 +91,14 @@ export type Disease = {
   status: string
   notes: Note[]
 }
-export interface Pet {
-  _id: string
+
+type Stat = {
   name: string
-  species: string 
-  breed: string
-  dob: string | null
-  firstMet: string | null
-  altered: { value: boolean, date: string | null}
-  status: { value: string, date: string | null, show: boolean }
-  photo: string | null
-  // icon: number | null
-  color: number
-  ids: Id[]
-  services: Service[]
-  medications: Medication[]
-  diseases: Disease[]
-  stats: Stat[]
+  date: Date
+  record: number
+  unit: string
+  notes?: string
 }
-
-export interface PetBasic {
-  name: string
-  photo: string | null
-}
-
-export interface PetFormData {
-  name: string
-  species: string 
-  breed: string
-  dob: Date | null
-  firstMet: Date | null
-  altered: { value: boolean, date: Date | null }
-  status: { value: string, date: Date | null, show: boolean }
-  photoData: { uri: string, name: string, type: string } | null
-  color: number
-  petId?: string
-}
-
-
 
 export interface DogBreedListResponse {
   message: Record<string, string[]>;
