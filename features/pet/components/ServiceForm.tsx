@@ -2,7 +2,7 @@
 import { View, Text, TextInput, Pressable } from 'react-native'
 import React, { FC, useState } from 'react'
 //helpers && types
-import { Service } from '@pet/PetInterface'
+import { Service, ServiceFormData } from '@pet/PetInterface'
 import { getPetIconSource } from '@utils/ui'
 //components
 import { CircleIcon } from '@components/UIComponents'
@@ -15,10 +15,10 @@ import MultipleInputs from '@components/MultipleInputs'
 
 interface ServiceFormProps {
   initialValues?: { name: string, type: string, address?: string, email?: string, phones?: string[], notes?: string }
-  onSave: (serviceFormData: Service) => void
+  onSubmit: (type: string, formData: ServiceFormData) => void
 } 
 
-const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSave }) => {
+const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
   const [name, setName] = useState<string>(initialValues?.name ?? null)
   const [type, setType] = useState(initialValues?.type ?? null)
   const [address, setAddress] = useState(initialValues?.address ?? null)
@@ -32,9 +32,11 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSave }) => {
       setErrorMsg('Please enter all required fields') 
     } else {
       setErrorMsg(null)
-      onSave({ name, type, address, email, phones, notes })
+      console.log(phones)
+      onSubmit('service', { name, type, address, email, phones, notes })
     }
   }
+  
 
   return (
     <View style={styles.container}>
@@ -72,27 +74,8 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSave }) => {
         inputMode='email'
       />
       <Text style={styles.label}>Phone</Text>
-      {/* {phones.length > 0 &&
-        phones.map((phone, index) =>
-          <View style={styles.rowCon} key={`phone-${index}`}>
-            <ActionButton title='decrease' size='small' onPress={() => setPhones(prev => prev.filter(p => p !== phone))} />
-            <TextInput 
-              style={[styles.input, { width: 260 }]}
-              placeholder='Enter phone number'
-              placeholderTextColor={Colors.shadow.reg}
-              value={phone}
-              onChangeText={(text: string) => setPhones(prev => prev.map((p, idx) => index === idx ? text : p))}
-              inputMode='tel'
-            />
-          </View>
-        )
-      } */}
-      {/* <View style={styles.labelCon}>
-        <ActionButton title={'increase'} size='small' onPress={() => setPhones(prev => [...prev, ''])} />
-        <Text>add phone</Text>
-      </View> */}
+    
       <MultipleInputs inputName='phone' inputMode='tel' initials={phones} onEdit={setPhones} />
-      
       
       <Text style={styles.label}>Notes</Text>
       <TextInput 

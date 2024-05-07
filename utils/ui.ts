@@ -212,13 +212,19 @@ const petIconSource = {
   Others: require('@assets/icons/pet-animal.png'),
   DogProfile: require('@assets/icons/pet-dog_profile.png'),
   CatProfile: require('@assets/icons/pet-cat_profile.png'),
-  disease: require('@assets/icons/pet-disease.png'),
-  petIdTag: require('@assets/icons/pet-id_tag.png'),
-  service: require('@assets/icons/pet-service.png'),
-  Microchip: require('@assets/icons/pet-microchip.png'),
-  Passport: require('@assets/icons/pet-passport.png'),
-  License: require('@assets/icons/pet-license.png'),
-  Id: require('@assets/icons/pet-id.png')
+  disease: require('@assets/icons/disease.png'),
+  id: require('@assets/icons/id.png'),
+  Microchip: require('@assets/icons/id-microchip.png'),
+  Passport: require('@assets/icons/id-passport.png'),
+  License: require('@assets/icons/id-license.png'),
+  Id: require('@assets/icons/id-id.png'),
+  service: require('@assets/icons/service.png'),
+  Groomer: require('@assets/icons/service-salon.png'),
+  Boarding: require('@assets/icons/service-boarding.png'),
+  'Pet Store': require('@assets/icons/service-store.png'),
+  'ER Hospital': require('@assets/icons/service-er.png'),
+  Clinic: require('@assets/icons/service-vet.png'),
+  Sitter: require('@assets/icons/service-sitter.png')
 }
 
 export const getActionIconSource = (name: string) => {

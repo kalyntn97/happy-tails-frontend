@@ -44,14 +44,22 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMod
             <ActionButton title='decrease' size='small' onPress={() => handleRemoveInput(input)} />
             <View style={type === 'date' && { marginVertical: 5 }}>
               {type === 'date' ?
-                <RNDateTimePicker themeVariant='light' value={new Date(input) ?? new Date()} maximumDate={new Date()} accentColor={Colors.pink.dark} onChange={(event, selectedDate) => setInputs(prev => prev.map((val, idx) => index === idx ? selectedDate : val))} />
+                <RNDateTimePicker themeVariant='light' value={new Date(input) ?? new Date()} maximumDate={new Date()} accentColor={Colors.pink.dark} onChange={(event, selectedDate) => setInputs(prev => {
+                  const updatedInputs = prev.map((val, idx) => index === idx ? selectedDate : val)
+                  onEdit(updatedInputs)
+                    return updatedInputs
+                })} />
               : 
                 <TextInput 
                   style={[styles.input, { width: 260 }]}
                   placeholder={`Enter ${inputName}`}
                   placeholderTextColor={Colors.shadow.reg}
                   value={input}
-                  onChangeText={(text: string) => setInputs(prev => prev.map((val, idx) => index === idx ? text : val))}
+                  onChangeText={(text: string) => setInputs(prev => {
+                    const updatedInputs = prev.map((val, idx) => index === idx ? text : val)
+                    onEdit(updatedInputs)
+                    return updatedInputs
+                  })}
                   inputMode={inputMode ?? 'text'}
                 />
               }

@@ -1,7 +1,7 @@
 //npm
 import { Image, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { FC, useState } from 'react'
-import { Id } from '@pet/PetInterface'
+import { Id, IdFormData } from '@pet/PetInterface'
 //components
 import Dropdown from '@components/Dropdown/Dropdown'
 import { MainButton, TransparentButton } from '@components/ButtonComponent'
@@ -12,18 +12,18 @@ import { getPetIconSource } from '@utils/ui'
 import { CircleIcon } from '@components/UIComponents'
 
 interface IdFormProps {
-  onSubmit: (type: string, idFormData: Id) => void
+  onSubmit: (type: string, idFormData: IdFormData) => void
 }
 
 const IdForm : FC<IdFormProps> = ({ onSubmit }) => {
   const [name, setName] = useState<string>(null)
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
-  const [registry, setRegistry] = useState<string>(null)
+  const [type, setType] = useState<string>(null)
   const [no, setNo] = useState<string>(null)
   const [notes, setNotes] = useState<string>(null)
   const [errorMsg, setErrorMsg] = useState<string>(null)
   
-  const handleSelectName = (item: string) => {
+  const handleSelectType = (item: string) => {
     if (item === 'Others') {
       setName(null)
       setAllowManualName(true)
@@ -34,11 +34,11 @@ const IdForm : FC<IdFormProps> = ({ onSubmit }) => {
   }
 
   const handleSave = () => {
-    if (!name || !registry || !no )  {
+    if (!name || !type || !no )  {
       setErrorMsg('Please enter all required fields') 
     } else {
       setErrorMsg(null)
-      onSubmit('id', { name, registry, no, notes })
+      onSubmit('id', { name, type, no, notes })
     }
   }
 
@@ -51,13 +51,13 @@ const IdForm : FC<IdFormProps> = ({ onSubmit }) => {
         <Text>Registry name</Text>
       </View>
       <View style={styles.rowCon}>
-        <Dropdown label='Select ID type' dataType='petIds' onSelect={handleSelectName} width={140} />
+        <Dropdown label='Select ID type' dataType='petIds' onSelect={handleSelectType} width={140} />
         <TextInput 
           style={[styles.input, styles.rightInput]}
           placeholder='Enter registry name'
           placeholderTextColor={Colors.shadow.reg}
-          value={registry}
-          onChangeText={(text: string) => setRegistry(text)}
+          value={name}
+          onChangeText={(text: string) => setName(text)}
         />
       </View>
       <View style={styles.labelCon}>

@@ -11,7 +11,7 @@ import PetForm from "../components/PetForm"
 import { AlertForm } from "@utils/ui"
 //styles
 import { Spacing } from "@styles/index"
-import { InitialPet, PetMutationFormData, PhotoFormData } from "@pet/PetInterface"
+import { InitialPet, PhotoFormData } from "@pet/PetInterface"
 
 const NewPetScreen = ({ navigation }) => {
   const isFocused = useIsFocused()

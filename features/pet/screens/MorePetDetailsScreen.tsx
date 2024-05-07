@@ -4,7 +4,7 @@ import React, { FC, useState } from 'react'
 import IdForm from '@pet/components/IdForm'
 import { CloseButton, MainButton } from '@components/ButtonComponent'
 //utils & types
-import { Id, Medication, Pet } from '@pet/PetInterface'
+import { Id, Medication, Pet, Service } from '@pet/PetInterface'
 import { AlertForm, getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
 import { Colors, Forms, Spacing, Typography } from '@styles/index'
@@ -13,8 +13,9 @@ import MedicationForm from '@pet/components/MedicationForm'
 import CareForm from '@care/components/CareForm'
 import DiseaseForm from '@pet/components/DiseaseForm'
 import ServiceForm from '@pet/components/ServiceForm'
-import { useDeleteId } from '@pet/petQueries'
+import { useDeleteId, useDeleteService, useGetPetById } from '@pet/petQueries'
 import { PET_DETAILS } from '@pet/petHelpers'
+import Loader from '@components/Loader'
 
 interface EditPetDetailsScreenProps {
   route: { params: { pet: Pet, show?: string }}
@@ -40,7 +41,8 @@ const EmptyList = () => (
 )
 
 const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route }) => {
-  const { ids, medications, diseases, services, _id: petId } = route.params.pet
+  const {data: pet, isSuccess, isLoading, isError} = useGetPetById(route.params.pet._id, route.params.pet)
+  const { ids, medications, diseases, services, _id: petId } = pet
   const { show } = route.params
 
   const detailData = {
@@ -62,9 +64,8 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
           <View key={`${key}-details`} style={{ width: '90%' }}>
             <ListHeader name={key} onPress={() => openForm(key)} />
             {detailData[key].length ? 
-              detailData[key].map((item: any, index: number) =>
-                key === 'id' && <IdItem id={item} key={`id-${index}`} />
-              ) : <EmptyList />
+              detailData[key].map((item: any, index: number) => <Item key={`${key}-${index}`} item={item} type={key} />) 
+              : <EmptyList />
             }
           </View>
       )
@@ -73,38 +74,56 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
   }
 
   const deleteIdMutation = useDeleteId(petId)
+  const deleteServiceMutation = useDeleteService(petId)
 
-  const handleDelete = (type: string, id: string) => {
+  const handleDelete = (type: string, itemId: string) => {
     switch (type) {
-      case 'id': deleteIdMutation.mutate({ petId, idId: id}, {
-        onSuccess: () => {
-          return AlertForm({ body: 'Id deleted successfully', button: 'OK' })
-        },
-        onError: (error) => {
-          return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-        }
-      })
+      case 'id': deleteIdMutation.mutate({ petId, idId: itemId })
+      case 'service': deleteServiceMutation.mutate({ petId, serviceId: itemId })
+      default: return null
     }
   }
 
-  const IdItem = ({ id }) => ( 
-    <View style={styles.itemCon}>
-      <View style={{ ...Spacing.flexRow }}>
-        <Image source={getPetIconSource(id.name) || getPetIconSource('Id')} style={{ ...Forms.smallIcon }} />
-        <Text style={styles.itemHeader}>
-          {id.registry}
-          <Text style={{ ...Typography.xSmallSubHeader }}> - {id.name}</Text>
-        </Text>
-      </View>
+  const IdDetails = ({ id }: { id: Id }) => ( 
+    <View>
       <Text style={styles.itemBody}>No: {id.no}</Text>
-      <Text style={styles.itemFooter}>Notes: {id.notes}</Text>
-      <CloseButton size='small' position='topRight' onPress={() => handleDelete('id', id._id)} />
+      {id.notes && <Text style={styles.itemFooter}>Notes: {id.notes}</Text>}
+    </View>
+  )
+
+  const ServiceDetails = ({ service }: { service: Service }) => (
+    <View>
+      {service.address && <Text style={styles.itemBody}>Address: {service.address}</Text>}
+      {service.email && <Text style={styles.itemBody}>Email: {service.email}</Text>}
+      {service.phones && service.phones.length > 0 && service.phones.map(phone =>
+        <Text style={styles.itemBody}>Phone: {phone}</Text>
+      )}
+      {service.notes && <Text style={styles.itemFooter}>Notes: {service.notes}</Text>}
     </View>
   )
   
+  const Item = ({ item, type }) => (
+    <View style={styles.itemCon}>
+      <View style={{ ...Spacing.flexRow }}>
+        <Image source={getPetIconSource(item.type) || getPetIconSource(type)} style={{ ...Forms.smallIcon }} />
+        <Text style={styles.itemHeader}>
+          {item.name}
+          <Text style={{ ...Typography.xSmallSubHeader }}> - {item.type}</Text>
+        </Text>
+      </View>
+      {type === 'id' ? <IdDetails id={item} />
+        : type === 'service' ? <ServiceDetails service={item} />
+        : null
+      }
+      <CloseButton size='small' position='topRight' onPress={() => handleDelete(type, item._id)} />
+    </View>
+  )
+
   return (
     <ScrollView contentContainerStyle={styles.container} alwaysBounceVertical={false}>
-      <DetailSections />
+      { isLoading && <Loader /> }
+      { isError && <Text>Error fetching pet details...</Text> }
+      { isSuccess && <DetailSections /> }
     </ScrollView>
   )
 }
@@ -144,7 +163,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     borderBottomWidth: 1,
     borderColor: Colors.shadow.reg,
-    width: '90%',
+    width: '100%',
     paddingVertical: 10,
   },
 })

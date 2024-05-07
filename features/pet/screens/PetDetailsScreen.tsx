@@ -97,7 +97,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
             <BoxHeader title='Health conditions' titleIconSource={getActionIconSource('disease')} mode="light" />
           </>
         }  
-        {pet.services.length > 0 && <BoxHeader title='Services' titleIconSource={getActionIconSource('service')} mode="light" />}
+        {pet.services.length > 0 && <BoxHeader title='Services' titleIconSource={getActionIconSource('service')} mode="light" onPress={() => navigation.navigate('PetDetails', { pet, show: 'service' })} />}
       </View>
 
       {isSuccess && pet.stats.length > 0 &&

@@ -4,7 +4,7 @@ import IdForm from '@pet/components/IdForm'
 import MedicationForm from '@pet/components/MedicationForm'
 import ServiceForm from '@pet/components/ServiceForm'
 import DiseaseForm from '@pet/components/DiseaseForm'
-import { useAddId } from '@pet/petQueries'
+import { useAddId, useAddService } from '@pet/petQueries'
 import { AlertForm } from '@utils/ui'
 
 interface EditMorePetDetailsScreenProps {
@@ -16,27 +16,21 @@ interface EditMorePetDetailsScreenProps {
 
 const EditMorePetDetailsScreen: FC<EditMorePetDetailsScreenProps> = ({ route, navigation }) => {
   const { form, petId } = route.params
-  const addIdMutation = useAddId(petId)
+  const addIdMutation = useAddId(petId, navigation)
+  const addServiceMutation = useAddService(petId, navigation)
 
   const handleSubmit = (type: string, formData: any) => {
     switch (type) {
-      case 'id': addIdMutation.mutate(formData, {
-        onSuccess: () => {
-          navigation.goBack()
-          return AlertForm({ body: 'Id added successfully', button: 'OK' })
-        },
-        onError: (error) => {
-          return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-        }
-      })
+      case 'id': return addIdMutation.mutate(formData)
+      case 'service': return addServiceMutation.mutate(formData)
     }
   }
 
   return (
     <ScrollView>
-      {form === 'id' && <IdForm onSubmit={handleSubmit} />}
+      {form === 'id' && <IdForm onSubmit={handleSubmit} />} 
       {form === 'med' && <MedicationForm />}
-      {form === 'service' && <ServiceForm />}
+      {form === 'service' && <ServiceForm onSubmit={handleSubmit} />}
       {form === 'disease' && <DiseaseForm />}
     </ScrollView>
   )

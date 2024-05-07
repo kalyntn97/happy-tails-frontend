@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { Id, IdFormData, Pet, PetFormData, PetMutationFormData, PhotoFormData } from './PetInterface'
+import { IdFormData, Pet, PetFormData, ServiceFormData } from './PetInterface'
 import * as petService from './petService'
-
-const BASE_URL = `${process.env.EXPO_PUBLIC_BACKEND_URL}/pets`
+import { AlertForm } from '@utils/ui'
+import { alertError, alertSuccess } from '@utils/misc'
 
 export const petKeyFactory = {
   pets: ['all-pets'],
@@ -28,7 +28,7 @@ export const useAddPet = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ name,  species, breed, dob, firstMet, altered, status, color, photoData }: PetMutationFormData) => petService.create({ name, species, breed, dob, firstMet, altered, status, color }, photoData),
+    mutationFn: ({ name,  species, breed, dob, firstMet, altered, status, color, photoData }: PetFormData) => petService.create({ name, species, breed, dob, firstMet, altered, status, color }, photoData),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
     }
@@ -39,7 +39,7 @@ export const useUpdatePet = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ name, species, breed, dob, firstMet, altered, status, color, photoData, petId }: PetMutationFormData) => petService.update({ name,  species, breed, dob, firstMet, altered, status, color }, photoData, petId),
+    mutationFn: ({ name, species, breed, dob, firstMet, altered, status, color, photoData, petId }: PetFormData) => petService.update({ name,  species, breed, dob, firstMet, altered, status, color }, photoData, petId),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
     }
@@ -57,14 +57,16 @@ export const useDeletePet = () => {
   })
 }
 
-export const useAddId = (petId: string) => {
+export const useAddId = (petId: string, navigation: any) => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (formData: Id) => petService.addId(formData, petId),
+    mutationFn: (formData: IdFormData) => petService.addId(formData, petId),
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
-    }
+      queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
+      alertSuccess('Id added', navigation)
+    },
+    onError: (error) => alertError(error)
   })
 }
 
@@ -74,8 +76,36 @@ export const useDeleteId = (petId: string) => {
   return useMutation({
     mutationFn: ({ petId, idId }: { petId: string, idId: string }) => petService.deleteId(petId, idId),
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
-    }
+      queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
+      return AlertForm({ body: 'Id deleted successfully', button: 'OK' })
+    },
+    onError: (error) => alertError(error)
+  })
+}
+
+export const useAddService = (petId: string, navigation: any) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (formData: ServiceFormData) => petService.addService(formData, petId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
+      alertSuccess('Service added', navigation)
+    },
+    onError: (error) => alertError(error)
+  })
+}
+
+export const useDeleteService = (petId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ petId, serviceId }: { petId: string, serviceId: string }) => petService.deleteService(petId, serviceId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
+      return AlertForm({ body: 'Id deleted successfully', button: 'OK' })
+    },
+    onError: (error) => alertError(error)
   })
 }
 

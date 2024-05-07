@@ -30,7 +30,7 @@ export interface InitialPetValues extends InitialPet {
 
 export type PhotoFormData = { uri: string, name: string, type: string } | null
 
-export interface PetMutationFormData extends InitialPet {
+export interface PetFormData extends InitialPet {
   photoData: PhotoFormData
   petId?: string
 }
@@ -39,9 +39,10 @@ export type ServiceFormData = {
   name: string
   type: string
   address?: string
-  phone?: string[]
   email?: string
+  phones?: string[]
   notes?: string
+  serviceId?: string
 }
 
 export interface Service extends ServiceFormData {
