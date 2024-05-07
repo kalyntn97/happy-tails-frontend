@@ -17,7 +17,7 @@ import { useDeleteId } from '@pet/petQueries'
 import { PET_DETAILS } from '@pet/petHelpers'
 
 interface EditPetDetailsScreenProps {
-  route: { params: { pet: Pet }}
+  route: { params: { pet: Pet, show?: string }}
   navigation: any
 }
 
@@ -35,12 +35,13 @@ const ListHeader = ({ name, onPress }) => (
 
 const EmptyList = () => (
   <View>
-    <Text>No item addd.</Text>
+    <Text>No item added.</Text>
   </View>
 )
 
 const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route }) => {
   const { ids, medications, diseases, services, _id: petId } = route.params.pet
+  const { show } = route.params
 
   const detailData = {
     id: ids,
@@ -57,7 +58,7 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
     const detailItems = []
     for (const key in PET_DETAILS) {
       detailItems.push(
-        <>
+        (!show || show === key) && <>
           <ListHeader name={key} onPress={() => openForm(key)} />
           {detailData[key].length ? 
             detailData[key].map((item: any, index: number) =>
@@ -90,8 +91,8 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
       <View style={{ ...Spacing.flexRow }}>
         <Image source={getPetIconSource(id.name) || getPetIconSource('Id')} style={{ ...Forms.smallIcon }} />
         <Text style={styles.itemHeader}>
-          {id.name}
-          <Text style={{ ...Typography.xSmallSubHeader }}> - {id.registry}</Text>
+          {id.registry}
+          <Text style={{ ...Typography.xSmallSubHeader }}> - {id.name}</Text>
         </Text>
       </View>
       <Text style={styles.itemBody}>No: {id.no}</Text>

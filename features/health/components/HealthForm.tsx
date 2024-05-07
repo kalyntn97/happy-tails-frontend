@@ -67,7 +67,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     return setVaccine(vaccineAbbr)
   }
 
-  const addPastVisits = (inputs: Date[]) => {
+  const editPastVisits = (inputs: Date[]) => {
     const results = inputs.map(input => ({ date: input, notes: null }))
     setLastDone(results)
   }
@@ -115,7 +115,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={handleSaveVaccine} initial={vaccine} width={300} />
       }
       <Text style={styles.label}>Previous visits</Text>
-      <MultipleInputs label='Last Done' type='Date' initials={initialVisits} onPress={addPastVisits} width={300} />
+      <MultipleInputs inputName='visit' type='date' initials={initialVisits} onEdit={editPastVisits} />
 
       <View style={styles.labelCon}>
         <Text>Next visit due in</Text>

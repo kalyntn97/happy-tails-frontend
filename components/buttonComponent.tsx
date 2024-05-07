@@ -47,6 +47,19 @@ export const RoundButton: FC<RoundButtonProps> = ({ onPress, size, bgColor, colo
     </Text>
   </TouchableOpacity>
 )
+
+export const ActionButton: FC<BaseButtonProps> = ({ title, onPress, size }) => (
+  <TouchableOpacity onPress={onPress}>
+    <Image 
+      source={getActionIconSource(title)}
+      style={[
+        { marginHorizontal: 10 },
+        size === 'large'? { ...Forms.largeIcon } : size === 'small' ? { ...Forms.xSmallIcon } : { ...Forms.smallIcon },
+      ]}
+    />
+  </TouchableOpacity>
+)
+
 interface IconButtonProps extends BaseButtonProps {
   type: string
   size: string

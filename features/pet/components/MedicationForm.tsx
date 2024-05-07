@@ -81,12 +81,12 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSave }) => {
         </View>
         <View style={styles.rowCon}>
           <View style={(!ending) && { width: 300, alignItems: 'center' }}>
-            <RNDateTimePicker themeVariant="light" value={date ? new Date(date) : new Date()} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setDate(selectedDate.toISOString()) }} accentColor={Colors.pink.dark} />
+            <RNDateTimePicker themeVariant="light" value={startDate ? new Date(startDate) : new Date()} minimumDate={new Date(startDate)} onChange={(event, selectedDate) => { setStartDate(selectedDate.toISOString()) }} accentColor={Colors.pink.dark} />
           </View>
           { ending &&
             <>
               <Text style={{ marginLeft: 10 }}> - </Text>
-              <RNDateTimePicker themeVariant='light' value={endDate ? new Date(endDate) : new Date()} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setEndDate(selectedDate.toISOString()) }} accentColor={Colors.pink.dark} />
+              <RNDateTimePicker themeVariant='light' value={endDate ? new Date(endDate) : new Date()} minimumDate={new Date(endDate)} onChange={(event, selectedDate) => { setEndDate(selectedDate.toISOString()) }} accentColor={Colors.pink.dark} />
             </>
           }
         </View>

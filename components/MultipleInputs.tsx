@@ -1,33 +1,29 @@
 //npm
-import { FC, useEffect, useState } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native'
+import { FC, useState } from 'react'
+import { InputModeOptions, Text, TextInput, View } from 'react-native'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 //components
-import { RoundButton  } from '@components/ButtonComponent'
+import { ActionButton } from '@components/ButtonComponent'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Spacing, Colors } from '@styles/index'
+import { styles } from '@styles/FormStyles'
 
 type MultipleInputsProps = {
   initials?: any[]
-  type: string
-  label: string
-  onPress: React.Dispatch<React.SetStateAction<any[]>>
+  inputName: string,
+  inputMode?: InputModeOptions,
+  type?: string
+  onEdit: React.Dispatch<React.SetStateAction<any[]>>
   width?: number
 }
 
-const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPress, width }) => {
+const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMode, type, onEdit, width }) => {
   const [inputs, setInputs] = useState<any[]>(initials ?? [])
-  const [selected, setSelected] = useState<any>(type === 'Date' && new Date())
-
-  const customSortArray = (array: any[]) => {
-    return array.sort((a, b) => type ==='Date' ? new Date(b).getTime() - new Date(a).getTime() : b - a)
-  }
 
   const handleAddInput = () => {
-    setInputs((prev) => {
-      let updatedInputs = [selected, ...inputs]
-      updatedInputs = customSortArray(updatedInputs)
-      onPress(updatedInputs)
+    setInputs(prev => {
+      let updatedInputs = type === 'date' ? [...prev, new Date()] : [...prev, '']
+      onEdit(updatedInputs)
       return updatedInputs
     })
   }
@@ -35,62 +31,40 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, type, label, onPres
   const handleRemoveInput = (val: string) => {
     setInputs((prev) => {
       let updatedInputs = prev.filter(v => v !== val)
-      updatedInputs = customSortArray(updatedInputs)
-      onPress(updatedInputs)
+      onEdit(updatedInputs)
       return updatedInputs
     })
   }
 
   return (
-    <View style={{ width: width ?? 250 }}>
-      <View style={styles.rowCon}>
-        {type === 'Date' ?
-          <RNDateTimePicker themeVariant='light' value={selected ?? new Date()} maximumDate={new Date()} accentColor={Colors.pink.dark} onChange={(event, selectedDate) => setSelected(selectedDate)} />
-        : <TextInput 
-            style={[Forms.inputBase, { width: 100 }]}
-            placeholder={label}
-            placeholderTextColor={Colors.shadow.reg}
-            onChangeText={(text: string) => setSelected(text)} 
-            value={selected} 
-          />
-        }
-        <RoundButton onPress={() => handleAddInput()} size='medium' type='add' />
-      </View>
-
-      {inputs.length > 0 ?
-        <View style={styles.rowCon}>
-          {inputs.map((val: string, index: number) =>
-            <View style={styles.initial} key={index}>
-              <Text>{ type === 'Date' ? new Date(val).toLocaleDateString() : val }</Text>
-              <RoundButton onPress={() => handleRemoveInput(val)} size='small' type='remove' />
+    <View style={{ width: width ?? 300 }}>
+      {inputs.length > 0 &&
+        inputs.map((input, index) =>
+          <View style={{ ...Spacing.flexRow }} key={`${inputName}-${index}`}>
+            <ActionButton title='decrease' size='small' onPress={() => handleRemoveInput(input)} />
+            <View style={type === 'date' && { marginVertical: 5 }}>
+              {type === 'date' ?
+                <RNDateTimePicker themeVariant='light' value={new Date(input) ?? new Date()} maximumDate={new Date()} accentColor={Colors.pink.dark} onChange={(event, selectedDate) => setInputs(prev => prev.map((val, idx) => index === idx ? selectedDate : val))} />
+              : 
+                <TextInput 
+                  style={[styles.input, { width: 260 }]}
+                  placeholder={`Enter ${inputName}`}
+                  placeholderTextColor={Colors.shadow.reg}
+                  value={input}
+                  onChangeText={(text: string) => setInputs(prev => prev.map((val, idx) => index === idx ? text : val))}
+                  inputMode={inputMode ?? 'text'}
+                />
+              }
             </View>
-          )}
-        </View>
-      : <Text style={styles.empty}>Nothing added. Press + to add and - to remove</Text>} 
+          </View>
+        )
+      }
+      <View style={{ ...Spacing.flexRow, marginVertical: 10 }}>
+        <ActionButton title={'increase'} size='small' onPress={handleAddInput} />
+        <Text>add {inputName}</Text>
+      </View>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  rowCon : {
-    ...Spacing.flexRow,
-    justifyContent: 'space-evenly',
-    flexWrap: 'wrap',
-    marginVertical: 7,
-    width: '100%',
-  },
-  initial: {
-    ...Spacing.flexRow,
-    marginVertical: 10,
-  },
-  label: {
-    fontSize: 15,
-  },
-  empty: {
-    ...Typography.xSmallSubBody,
-    margin: 0,
-    textAlign: 'center',
-  },
-})
 
 export default MultipleInputs

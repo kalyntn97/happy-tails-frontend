@@ -89,7 +89,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
             </Pressable>
           </View>
         }
-        {pet.ids.length > 0 && <BoxHeader title='Identifications' titleIconSource={getActionIconSource('petId')} mode="light" onPress={() => navigation.navigate('PetDetails', { pet })} />}
+        {pet.ids.length > 0 && <BoxHeader title='Identifications' titleIconSource={getActionIconSource('id')} mode="light" onPress={() => navigation.navigate('PetDetails', { pet, show: 'id' })} />}
         {pet.medications.length > 0 && <BoxHeader title='Medications' titleIconSource={getActionIconSource('med')} mode="light" />}
         {pet.diseases.length > 0 &&
           <>
@@ -107,7 +107,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
             <Text style={styles.sectionHeader}>Logs</Text>
           </View>
           <View style={{ ...Forms.roundedCon }}>
-            { pet.stats.map((stat: Stat, index: number) =>
+            { pet.stats.map((stat: any, index: number) =>
               <BoxHeader key={index} mode='light' onPress={() => navigation.navigate('Stat', { stat })} 
                 title={STATS[stat.name]?.name}
                 titleIconSource={getStatIconSource(stat.name)}

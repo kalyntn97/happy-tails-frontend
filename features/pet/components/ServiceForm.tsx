@@ -1,19 +1,20 @@
 //npm
-import { View, Text, TextInput } from 'react-native'
+import { View, Text, TextInput, Pressable } from 'react-native'
 import React, { FC, useState } from 'react'
 //helpers && types
 import { Service } from '@pet/PetInterface'
 import { getPetIconSource } from '@utils/ui'
 //components
 import { CircleIcon } from '@components/UIComponents'
-import { MainButton, TransparentButton } from '@components/ButtonComponent'
+import { ActionButton, MainButton, TransparentButton } from '@components/ButtonComponent'
 import Dropdown from '@components/Dropdown/Dropdown'
 //styles
 import { styles } from '@styles/FormStyles'
 import { Colors, Forms, Spacing, Typography } from '@styles/index'
+import MultipleInputs from '@components/MultipleInputs'
 
 interface ServiceFormProps {
-  initialValues?: { name: string, type: string, address?: string, email?: string, phone?: string, notes?: string }
+  initialValues?: { name: string, type: string, address?: string, email?: string, phones?: string[], notes?: string }
   onSave: (serviceFormData: Service) => void
 } 
 
@@ -22,7 +23,7 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSave }) => {
   const [type, setType] = useState(initialValues?.type ?? null)
   const [address, setAddress] = useState(initialValues?.address ?? null)
   const [email, setEmail] = useState(initialValues?.email ?? null)
-  const [phone, setPhone] = useState(initialValues?.phone ?? null)
+  const [phones, setPhones] = useState(initialValues?.phones ?? [])
   const [notes, setNotes] = useState(initialValues?.notes ?? null)
   const [errorMsg, setErrorMsg] = useState<string>(null)
   
@@ -31,7 +32,7 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSave }) => {
       setErrorMsg('Please enter all required fields') 
     } else {
       setErrorMsg(null)
-      onSave({ name, type, address, email, phone, notes })
+      onSave({ name, type, address, email, phones, notes })
     }
   }
 
@@ -61,28 +62,38 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSave }) => {
         value={address}
         onChangeText={(text: string) => setAddress(text)}
       />
-      <View style={styles.labelCon}>
-        <Text>Email</Text>
-        <Text>Phone</Text>
-      </View>
-      <View style={styles.rowCon}>
-        <TextInput 
-          style={[styles.input, { width: 185 }]}
-          placeholder='Enter email'
-          placeholderTextColor={Colors.shadow.reg}
-          value={email}
-          onChangeText={(text: string) => setEmail(text)}
-          inputMode='email'
-        />
-        <TextInput 
-          style={[styles.input, { width: 110 }]}
-          placeholder='Enter phone number'
-          placeholderTextColor={Colors.shadow.reg}
-          value={phone}
-          onChangeText={(text: string) => setPhone(text)}
-          inputMode='tel'
-        />
-      </View>
+      <Text style={styles.label}>Email</Text>
+      <TextInput 
+        style={styles.input}
+        placeholder='Enter email'
+        placeholderTextColor={Colors.shadow.reg}
+        value={email}
+        onChangeText={(text: string) => setEmail(text)}
+        inputMode='email'
+      />
+      <Text style={styles.label}>Phone</Text>
+      {/* {phones.length > 0 &&
+        phones.map((phone, index) =>
+          <View style={styles.rowCon} key={`phone-${index}`}>
+            <ActionButton title='decrease' size='small' onPress={() => setPhones(prev => prev.filter(p => p !== phone))} />
+            <TextInput 
+              style={[styles.input, { width: 260 }]}
+              placeholder='Enter phone number'
+              placeholderTextColor={Colors.shadow.reg}
+              value={phone}
+              onChangeText={(text: string) => setPhones(prev => prev.map((p, idx) => index === idx ? text : p))}
+              inputMode='tel'
+            />
+          </View>
+        )
+      } */}
+      {/* <View style={styles.labelCon}>
+        <ActionButton title={'increase'} size='small' onPress={() => setPhones(prev => [...prev, ''])} />
+        <Text>add phone</Text>
+      </View> */}
+      <MultipleInputs inputName='phone' inputMode='tel' initials={phones} onEdit={setPhones} />
+      
+      
       <Text style={styles.label}>Notes</Text>
       <TextInput 
         style={styles.input}
