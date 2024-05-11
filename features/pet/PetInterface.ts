@@ -38,10 +38,10 @@ export interface PetFormData extends InitialPet {
 export type ServiceFormData = {
   name: string
   type: string
-  address?: string
-  email?: string
-  phones?: string[]
-  notes?: string
+  address: string | null
+  email: string | null
+  phones: string[] | []
+  notes: string | null
   serviceId?: string
 }
 
@@ -51,7 +51,7 @@ export type IdFormData = {
   name: string, 
   type: string, 
   no: string, 
-  notes: string 
+  notes: string | null
 }
 export interface Id extends IdFormData { _id: string }
 
@@ -61,31 +61,32 @@ type Note = {
 }
 
 export type Medication = {
+  _id: string
   name: string
-  dosage: { amount: string, startDate: string, endDate: string, times: number, frequency: string, reminder: string }
-  refill: { times: number, frequency: string, reminder: string }
+  dosage: { amount: string, startDate: string, endDate: string | null, times: number, frequency: string, reminder: string }
+  refill: { times: number, frequency: string, reminder: string } | null
   status: string
-  notes: Note[]
+  notes: Note[] | []
 }
 
 export type MedicationFormData = {
   name: string
-  dosage: { amount: string, startDate: string, endDate: string, times: number, frequency: string, reminder: boolean }
-  refill: { times: number, frequency: string, reminder: boolean }
+  dosage: { amount: string, startDate: string, endDate: string | null, times: number, frequency: string, reminder: boolean }
+  refill: { times: number, frequency: string, reminder: boolean } | null
   status: string
 }
 
 export type Timeline = {
   startDate: string
-  endDate: string
-  notes?: Note[]
+  endDate: string | null
+  notes: Note[] | []
 }
 
 export type IllnessFormData = {
   name: string
   type: string
   timeline: Timeline[]
-  description: string
+  description: string | null
   status: string
 }
 

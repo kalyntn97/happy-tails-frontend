@@ -12,32 +12,25 @@ import Dropdown from '@components/Dropdown/Dropdown'
 import { styles } from '@styles/FormStyles'
 import { Colors, Forms, Spacing, Typography } from '@styles/index'
 import MultipleInputs from '@components/MultipleInputs'
+import useForm from '@hooks/useForm'
 
 interface ServiceFormProps {
-  initialValues?: { name: string, type: string, address?: string, email?: string, phones?: string[], notes?: string }
+  initialValues?: ServiceFormData
   onSubmit: (type: string, formData: ServiceFormData) => void
 } 
 
 const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
-  const [name, setName] = useState<string>(initialValues?.name ?? null)
-  const [type, setType] = useState(initialValues?.type ?? null)
-  const [address, setAddress] = useState(initialValues?.address ?? null)
-  const [email, setEmail] = useState(initialValues?.email ?? null)
-  const [phones, setPhones] = useState(initialValues?.phones ?? [])
-  const [notes, setNotes] = useState(initialValues?.notes ?? null)
-  const [errorMsg, setErrorMsg] = useState<string>(null)
+  const initialState = { name: initialValues?.name ?? null, type: initialValues?.type ?? null, address: initialValues?.address ?? null, email: initialValues?.email ?? null, phones: initialValues?.phones ?? [], notes: initialValues?.notes ?? null, errorMsg: false }
   
-  const handleSave = () => {
-    if (!name || !type)  {
-      setErrorMsg('Please enter all required fields') 
-    } else {
-      setErrorMsg(null)
-      console.log(phones)
-      onSubmit('service', { name, type, address, email, phones, notes })
-    }
+  const [reset, setReset] = useState(false)
+
+  const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
+  const { name, type, address, email, phones, notes, errorMsg } = values
+
+  function handleSubmit() {
+    onSubmit('service', { name, type, address, email, phones, notes })
   }
   
-
   return (
     <View style={styles.container}>
       <CircleIcon iconSource={getPetIconSource('service')} />
@@ -52,9 +45,9 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
           placeholder='Enter name'
           placeholderTextColor={Colors.shadow.reg}
           value={name}
-          onChangeText={(text: string) => setName(text)}
+          onChangeText={(text: string) => onChange('name', text)}
         />
-        <Dropdown label='Select type' dataType='serviceTypes' initial={type} onSelect={setType} width={125} />
+        <Dropdown label='Select type' dataType='serviceTypes' initial={type} onSelect={selected => onChange('type', selected)} width={125} />
       </View>
       <Text style={styles.label}>Address</Text>
       <TextInput 
@@ -62,7 +55,7 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
         placeholder='Enter address'
         placeholderTextColor={Colors.shadow.reg}
         value={address}
-        onChangeText={(text: string) => setAddress(text)}
+        onChangeText={(text: string) =>  onChange('address', text)}
       />
       <Text style={styles.label}>Email</Text>
       <TextInput 
@@ -70,12 +63,12 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
         placeholder='Enter email'
         placeholderTextColor={Colors.shadow.reg}
         value={email}
-        onChangeText={(text: string) => setEmail(text)}
+        onChangeText={(text: string) =>  onChange('email', text)}
         inputMode='email'
       />
       <Text style={styles.label}>Phone</Text>
     
-      <MultipleInputs inputName='phone' inputMode='tel' initials={phones} onEdit={setPhones} />
+      <MultipleInputs inputName='phone' inputMode='tel' initials={phones} onEdit={(inputs) => onChange('phones', inputs)} />
       
       <Text style={styles.label}>Notes</Text>
       <TextInput 
@@ -83,11 +76,13 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
         placeholder='Enter notes'
         placeholderTextColor={Colors.shadow.reg}
         value={notes}
-        onChangeText={(text: string) => setNotes(text)}
+        onChangeText={(text: string) => onChange('notes', text)}
       />
-      <View style={styles.btnCon}>
-        <MainButton title='Submit' size='small' onPress={handleSave} />
-        <TransparentButton title='Cancel' size='small' />
+
+      {errorMsg && <ErrorMessage error={errorMsg} top={20} />}
+      <View style={[styles.btnCon, { marginTop: errorMsg ? 0 : 40 }]}>
+        <MainButton title='Submit' size='small' onPress={() => onValidate(name, type)} />
+        <TransparentButton title='Cancel' size='small' onPress={() => { onReset(); setReset(!reset) }} />
       </View>
     </View>
   )

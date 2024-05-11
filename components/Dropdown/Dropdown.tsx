@@ -18,10 +18,9 @@ interface DropdownProps {
   onSelect: (item: string ) => void
   width?: number
   initial?: string
-  reset?: boolean
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, initial, reset }) => {
+const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, initial }) => {
   const [visible, setVisible] = useState(false)
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
@@ -75,10 +74,10 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
       }
       const result = typeToSource[dataType] || []
       setData(result)
-      setSelected(initial ?? null)
     }
     fetchData(dataType)
-  }, [dataType, reset])
+    setSelected(initial)
+  }, [dataType, initial])
 
   return (
     <TouchableOpacity style={[styles.dropDownBtn, width && { width: width }]} onPress={toggleDropdown} ref={DropdownBtn}>

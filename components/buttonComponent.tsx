@@ -1,6 +1,6 @@
 import { Image, ImageSourcePropType, Pressable, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Buttons, Colors, Spacing, Forms, Typography } from "@styles/index"
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { transparent } from "@styles/buttons"
 import { getActionIconSource } from "@utils/ui"
 
@@ -233,6 +233,10 @@ export const CheckboxButton: FC<CheckboxButtonProps> = ({ onPress, size, initial
     onPress()
   }
 
+  useEffect(() => {
+    setCheck(initial)
+  }, [initial])
+
   return (  
     <TouchableOpacity onPress={handlePress} style={[
       { width: 20, height: 20, borderRadius: 4, borderWidth: 1, ...Spacing.centered, marginLeft: 10 },
@@ -258,6 +262,10 @@ export const ToggleButton: FC<CheckboxButtonProps> = ({ onPress, size, initial, 
   const circleStyles = {
     borderRadius: 99, width: size === 'small' ? 20 : size === 'large' ? 40 : 30, height: size === 'small' ? 20 : size === 'large' ? 40 : 30,
   }
+
+  useEffect(() => {
+    setOn(initial)
+  }, [initial])
 
   return (
     <Pressable onPress={handlePress} style={{

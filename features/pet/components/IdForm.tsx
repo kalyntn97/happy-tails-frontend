@@ -14,12 +14,12 @@ import { IDS } from '@pet/petHelpers'
 import useForm from '@hooks/useForm'
 
 interface IdFormProps {
-  initialValues: { name: string, type: string, no: string, notes: string }
+  initialValues?: IdFormData
   onSubmit: (type: string, idFormData: IdFormData) => void
 }
 
 const IdForm : FC<IdFormProps> = ({ initialValues, onSubmit }) => {
-  const initialState = { name: initialValues?.name ?? null, allowManualType: initialValues ? !IDS.includes(initialValues.type) : true, type: initialValues?.type ?? null, no: initialValues?.no ?? null, notes: initialValues?.notes ?? null }
+  const initialState = { name: initialValues?.name ?? null, allowManualType: initialValues ? !IDS.includes(initialValues.type) : true, type: initialValues?.type ?? null, no: initialValues?.no ?? null, notes: initialValues?.notes ?? null, errorMsg: false }
 
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
 
@@ -42,8 +42,7 @@ const IdForm : FC<IdFormProps> = ({ initialValues, onSubmit }) => {
   return (
     <View style={styles.container}>
       <CircleIcon iconSource={getPetIconSource('id')} />
-      {errorMsg && <ErrorMessage error={errorMsg} />}
-      <View style={[styles.labelCon, { marginTop: 0 }]}>
+      <View style={[styles.labelCon, { marginTop: 20 }]}>
         <Text>ID type</Text>
         <Text>Registry name</Text>
       </View>
@@ -80,7 +79,7 @@ const IdForm : FC<IdFormProps> = ({ initialValues, onSubmit }) => {
         />
       </View>
       <Text style={styles.label}>ID number</Text>
-      <TextInput 
+        <TextInput 
           style={styles.input}
           placeholder='Enter ID no.'
           placeholderTextColor={Colors.shadow.reg}
@@ -88,7 +87,8 @@ const IdForm : FC<IdFormProps> = ({ initialValues, onSubmit }) => {
           onChangeText={(text: string) => onChange('no', text)}
         />
 
-      <View style={styles.btnCon}>
+      {errorMsg && <ErrorMessage error={errorMsg} top={20} />}
+      <View style={[styles.btnCon, { marginTop: errorMsg ? 0 : 40 }]}>
         <MainButton title='Submit' size='small' onPress={() => onValidate(name, type, no)} />
         <TransparentButton title='Cancel' size='small' onPress={onReset}/>
       </View>

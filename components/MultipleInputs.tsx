@@ -15,10 +15,9 @@ type MultipleInputsProps = {
   type?: string
   onEdit: React.Dispatch<React.SetStateAction<any[]>>
   width?: number
-  reset?: boolean
 }
 
-const MultipleInputs: FC<MultipleInputsProps> = ({ initials, reset, inputName, inputMode, type, onEdit, width }) => {
+const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMode, type, onEdit, width }) => {
   const [inputs, setInputs] = useState<any[]>(initials ?? [])
 
   const handleAddInput = () => {
@@ -38,8 +37,8 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, reset, inputName, i
   }
 
   useEffect(() => {
-    setInputs(initials)
-  }, [reset])
+    if (!initials.length) setInputs(initials)
+  }, [initials])
 
   return (
     <View style={{ width: width ?? 300 }}>

@@ -7,7 +7,7 @@ import { MainButton, TransparentButton } from '@components/ButtonComponent'
 import MultipleInputs from '@components/MultipleInputs'
 //helpers
 import { getPetIconSource } from '@utils/ui'
-import { Illness, IllnessFormData, Timeline } from '@pet/PetInterface'
+import { IllnessFormData, Timeline } from '@pet/PetInterface'
 //hooks
 import useForm from '@hooks/useForm'
 //styles
@@ -15,23 +15,19 @@ import { styles } from '@styles/FormStyles'
 import { Colors, Spacing } from '@styles/index'
 
 interface IllnessFormProps {
-  initialValues?: { name: string, type: string, description: string, timeline: Timeline[], status: string }
+  initialValues?: IllnessFormData
   onSubmit: (type: string, formData: IllnessFormData) => void
 }
 
 const IllnessForm: FC<IllnessFormProps> = ({ initialValues, onSubmit }) => {
-  const initialState = { name: initialValues?.name ?? null, type: initialValues?.type ?? null, timeline: initialValues?.timeline ?? [], description: initialValues?.description ?? null, status: initialValues?.status ?? null }
+  const initialState = { name: initialValues?.name ?? null, type: initialValues?.type ?? null, timeline: initialValues?.timeline ?? [], description: initialValues?.description ?? null, status: initialValues?.status ?? null, errorMsg: false }
 
   const [reset, setReset] = useState<boolean>(false)
 
-  const handleSubmit = () => {
-    const formData = { name: values.name, type: values.type, timeline: values.timeline, description: values.description, status: values.status }
-    onSubmit('illness', formData)
-  }
-
   const { values, onChange, onReset, onValidate } = useForm(handleSubmit, initialState)
+  const { name, type, timeline, description, status, errorMsg } = values
 
-  const timelineInputs = values.timeline.map((t: Timeline) => Object.values(t)).flat()
+  const timelineInputs = timeline.map((t: Timeline) => Object.values(t)).flat()
 
   const handleSelectTimeline = (inputs: Date[]) => {
     const dates = []
@@ -42,7 +38,11 @@ const IllnessForm: FC<IllnessFormProps> = ({ initialValues, onSubmit }) => {
     }
     onChange('timeline', dates)
   }
-  
+
+  function handleSubmit() {
+    onSubmit('illness', { name, type, timeline, description, status })
+  }
+
   return (
     <View style={styles.container}>
       <CircleIcon iconSource={getPetIconSource('illness')}/>
@@ -51,7 +51,7 @@ const IllnessForm: FC<IllnessFormProps> = ({ initialValues, onSubmit }) => {
         style={styles.input}
         placeholder='Enter name'
         placeholderTextColor={Colors.shadow.reg}
-        value={values.name}
+        value={name}
         onChangeText={(text: string) => onChange('name', text)}
       />
       <View style={styles.labelCon}>
@@ -59,33 +59,33 @@ const IllnessForm: FC<IllnessFormProps> = ({ initialValues, onSubmit }) => {
         <Text>Status</Text>
       </View>
       <View style={styles.rowCon}>
-        <Dropdown label='Select Type' dataType='illnessTypes' onSelect={(selected) => onChange('type', selected)} width={195} initial={values.type} reset={!values.type} />
-        <Dropdown label='Status' dataType='illnessStatus' onSelect={(selected) => onChange('status', selected)} width={100} initial={values.status} reset={!values.status} />
+        <Dropdown label='Select Type' dataType='illnessTypes' onSelect={selected => onChange('type', selected)} width={195} initial={type} />
+        <Dropdown label='Status' dataType='illnessStatus' onSelect={selected => onChange('status', selected)} width={100} initial={status} />
       </View>
       <Text style={styles.label}>Description</Text>
       <TextInput 
         style={styles.input}
         placeholder='Enter description (optional)'
         placeholderTextColor={Colors.shadow.reg}
-        value={values.description}
+        value={description}
         onChangeText={(text: string) => onChange('description', text)}
       />
       <Text style={styles.label}>Timeline</Text>
       <View style={{ ...Spacing.flexRow, alignItems: 'flex-start' }}>
         <View style={{ ...Spacing.flexColumn}}>
-          {values.timeline.map((_: string, index: number) =>
+          {timeline.map((_: string, index: number) =>
             <View key={index}>
               <Text style={{ height: 47, lineHeight: 47 }}>start</Text>
               <Text style={{ height: 47, lineHeight: 47 }}>end</Text>
             </View>
           )}
         </View>
-        <MultipleInputs inputName='date' type='date' onEdit={handleSelectTimeline} width={150} initials={timelineInputs} reset={reset} />
+        <MultipleInputs inputName='date' type='date' onEdit={handleSelectTimeline} width={150} initials={timelineInputs} />
       </View>
 
-      {values.errorMsg && <ErrorMessage error={values.errorMsg} />}
-      <View style={styles.btnCon}>
-        <MainButton title='Submit' size='small' onPress={() => onValidate(values.name, values.type, values.status)} />
+      {errorMsg && <ErrorMessage error={errorMsg} top={20} />}
+      <View style={[styles.btnCon, { marginTop: errorMsg ? 0 : 40 }]}>
+        <MainButton title='Submit' size='small' onPress={() => onValidate(name, type, status)} />
         <TransparentButton title='Clear' size='small' onPress={() => { onReset(); setReset(!reset) }} />
       </View>
       
