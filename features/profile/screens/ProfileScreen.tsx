@@ -13,7 +13,7 @@ import { StatButton } from "@components/ButtonComponent"
 import { BoxHeader, BoxWithHeader } from "@components/UIComponents"
 //hooks & utils
 import { AlertForm, getActionIconSource } from "@utils/ui"
-import { useCaresByFrequency, useSelectPhoto, useTaskCounts } from "@home/hooks"
+import { useCaresByFrequency, useSelectPhoto, useTaskCounts } from "@hooks/sharedHooks"
 //styles
 import { Care } from "@care/CareInterface"
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'

@@ -18,9 +18,10 @@ interface DropdownProps {
   onSelect: (item: string ) => void
   width?: number
   initial?: string
+  reset?: boolean
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, initial }) => {
+const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, initial, reset }) => {
   const [visible, setVisible] = useState(false)
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
@@ -68,8 +69,8 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
         'petStatus': petHelpers.STATUS,
         'petIds': petHelpers.IDS,
         'medStatus': petHelpers.MED_STATUS,
-        'diseaseTypes': petHelpers.DISEASE_TYPES,
-        'diseaseStatus': petHelpers.DISEASE_STATUS,
+        'illnessTypes': petHelpers.DISEASE_TYPES,
+        'illnessStatus': petHelpers.DISEASE_STATUS,
         'serviceTypes': petHelpers.SERVICE_TYPES,
       }
       const result = typeToSource[dataType] || []
@@ -77,7 +78,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
       setSelected(initial ?? null)
     }
     fetchData(dataType)
-  }, [dataType])
+  }, [dataType, reset])
 
   return (
     <TouchableOpacity style={[styles.dropDownBtn, width && { width: width }]} onPress={toggleDropdown} ref={DropdownBtn}>
@@ -90,7 +91,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
                 keyExtractor={(item, idx) => idx.toString()}
                 renderItem={({ item }) => (
                   <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
-                    <Text style={item === selected && styles.selected}>
+                    <Text style={item === (selected) && styles.selected}>
                       { item }
                     </Text>
                   </TouchableOpacity>

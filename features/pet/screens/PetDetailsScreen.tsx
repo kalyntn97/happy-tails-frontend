@@ -13,7 +13,7 @@ import { useDeletePet, useGetPetById } from "@pet/petQueries"
 import { usePetActions } from "@store/store"
 //styles
 import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
-import { useCaresByPet, useHealthDueByPet } from "@home/hooks"
+import { useCaresByPet, useHealthDueByPet } from "@hooks/sharedHooks"
 import StatDetails from "@stat/screens/StatDetails"
 import { STATS } from "@stat/statHelpers"
 import { Stat } from "@stat/statInterface"
@@ -81,26 +81,26 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
         <Text style={styles.sectionHeader}>Important</Text>
       </View>
       <View style={{ ...Forms.roundedCon }}>
-        {!pet.ids.length && !pet.medications.length && !pet.services.length && !pet.diseases.length && showMsg &&
+        {/* {!pet.ids.length && !pet.medications.length && !pet.services.length && !pet.illnesses.length && showMsg && */}
           <View>
             <Pressable style={{ ...Spacing.flexRow, width: '100%', padding: 5 }} onPress={() => navigation.navigate('PetDetails', { pet })}>
               <CloseButton size="xSmall" onPress={() => setShowMsg(false)} />
               <Text style={{ ...Typography.xSmallSubBody, marginLeft: 5 }}>Enter details such as microchip, medications, allergies, any health conditions, and contacts.</Text>
             </Pressable>
           </View>
-        }
-        {pet.ids.length > 0 && <BoxHeader title='Identifications' titleIconSource={getActionIconSource('id')} mode="light" onPress={() => navigation.navigate('PetDetails', { pet, show: 'id' })} />}
-        {pet.medications.length > 0 && <BoxHeader title='Medications' titleIconSource={getActionIconSource('med')} mode="light" />}
-        {pet.diseases.length > 0 &&
+        
+        {pet.ids?.length > 0 && <BoxHeader title='Identifications' titleIconSource={getActionIconSource('id')} mode="light" onPress={() => navigation.navigate('PetDetails', { pet, show: 'id' })} />}
+        {pet.medications?.length > 0 && <BoxHeader title='Medications' titleIconSource={getActionIconSource('med')} mode="light" />}
+        {pet.illnesses?.length > 0 &&
           <>
             <BoxHeader title='Allergies' titleIconSource={getActionIconSource('allergy')} mode="light" />
-            <BoxHeader title='Health conditions' titleIconSource={getActionIconSource('disease')} mode="light" />
+            <BoxHeader title='Health conditions' titleIconSource={getActionIconSource('illness')} mode="light" />
           </>
         }  
-        {pet.services.length > 0 && <BoxHeader title='Services' titleIconSource={getActionIconSource('service')} mode="light" onPress={() => navigation.navigate('PetDetails', { pet, show: 'service' })} />}
+        {pet.services?.length > 0 && <BoxHeader title='Services' titleIconSource={getActionIconSource('service')} mode="light" onPress={() => navigation.navigate('PetDetails', { pet, show: 'service' })} />}
       </View>
 
-      {isSuccess && pet.stats.length > 0 &&
+      {isSuccess && pet.stats?.length > 0 &&
         <>
           <View style={styles.sectionHeaderCon}>
             <Image source={getActionIconSource('chart')} style={{ ...Forms.smallIcon }} />

@@ -78,5 +78,9 @@ export const styles = StyleSheet.create({
   btnCon: {
     ...Spacing.flexRow,
     marginTop: 20
+  },
+  catAnimation: {
+    width: '60%',
+    aspectRatio: 1,
   }
 })

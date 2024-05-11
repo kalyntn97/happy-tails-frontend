@@ -5,7 +5,7 @@ import React, { FC, useState } from 'react'
 import { Service, ServiceFormData } from '@pet/PetInterface'
 import { getPetIconSource } from '@utils/ui'
 //components
-import { CircleIcon } from '@components/UIComponents'
+import { CircleIcon, ErrorMessage } from '@components/UIComponents'
 import { ActionButton, MainButton, TransparentButton } from '@components/ButtonComponent'
 import Dropdown from '@components/Dropdown/Dropdown'
 //styles
@@ -41,7 +41,7 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
   return (
     <View style={styles.container}>
       <CircleIcon iconSource={getPetIconSource('service')} />
-      <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
+      {errorMsg && <ErrorMessage error={errorMsg} />}
       <View style={styles.labelCon}>
         <Text>Name</Text>
         <Text>Type</Text>
@@ -86,7 +86,7 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
         onChangeText={(text: string) => setNotes(text)}
       />
       <View style={styles.btnCon}>
-        <MainButton title='Add' size='small' onPress={handleSave} />
+        <MainButton title='Submit' size='small' onPress={handleSave} />
         <TransparentButton title='Cancel' size='small' />
       </View>
     </View>

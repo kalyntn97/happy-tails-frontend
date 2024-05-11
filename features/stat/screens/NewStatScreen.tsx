@@ -15,6 +15,7 @@ import RatingForm from '../components/RatingForm'
 import InputForm from '../components/InputForm'
 import { useAddStats } from '../statQueries'
 import { LogData, StatFormData } from '../statInterface'
+import { ErrorMessage } from '@components/UIComponents'
 
 interface NewStatScreenProps {
   route:{ params: { pet: {_id: string, name: string } } }
@@ -83,7 +84,7 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
       )}
 
       <View style={styles.footerCon}>
-        <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
+        {errorMsg && <ErrorMessage error={errorMsg} />}
         <View style={{ ...Spacing.flexRow }}>
           {index === 0 &&
             <TransparentButton title='Cancel' size='small' onPress={() => navigation.goBack()} />

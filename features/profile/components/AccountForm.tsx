@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-nativ
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { MainButton } from "@components/ButtonComponent"
+import { ErrorMessage } from "@components/UIComponents"
 
 interface AccountFormProps {
   showForm: string
@@ -43,7 +44,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
 
   return (
     <View style={[styles.container, { backgroundColor: showForm === 'password' ? Colors.white : showForm !== 'password' ? Colors.white : Colors.pink.lightest }]}>
-      <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
+      {errorMsg && <ErrorMessage error={errorMsg} />}
       <View style={styles.form}>
         <TextInput 
           style={styles.input}

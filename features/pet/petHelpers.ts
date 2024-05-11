@@ -75,7 +75,7 @@ export const PET_DETAILS = {
   id: 'Pet Identifications',
   med: 'Pet Medications',
   service: 'Pet Services',
-  disease: 'Pet Conditions',
+  illness: 'Pet Conditions',
 }
 
 export const getDetailHeader = (key: string) => {

@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { IdFormData, Pet, PetFormData, ServiceFormData } from './PetInterface'
+import { IdFormData, IllnessFormData, Pet, PetFormData, ServiceFormData } from './PetInterface'
 import * as petService from './petService'
 import { AlertForm } from '@utils/ui'
 import { alertError, alertSuccess } from '@utils/misc'
@@ -57,55 +57,46 @@ export const useDeletePet = () => {
   })
 }
 
-export const useAddId = (petId: string, navigation: any) => {
+export const useAddPetDetail = (petId: string, navigation: any) => {
   const queryClient = useQueryClient()
 
+  const addPetDetail = (key: string, formData: any) => {
+    const keyToService = {
+      id: () => petService.addId(formData, petId),
+      service: () => petService.addService(formData, petId),
+      illness: () => petService.addIllness(formData, petId),
+    }
+    return keyToService[key]()
+  }
+
   return useMutation({
-    mutationFn: (formData: IdFormData) => petService.addId(formData, petId),
+    mutationFn: ({ key, formData }: { key: string, formData: any }) => addPetDetail(key, formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
-      alertSuccess('Id added', navigation)
+      return alertSuccess('Detail added', navigation)
     },
     onError: (error) => alertError(error)
   })
 }
 
-export const useDeleteId = (petId: string) => {
+export const useDeletePetDetail = (petId: string) => {
   const queryClient = useQueryClient()
+  
+  const deletePetDetail = (key: string, detailId: string) => {
+    const keyToService = {
+      id: () => petService.deleteId(petId, detailId),
+      service: () => petService.deleteService(petId, detailId),
+      illness: () => petService.deleteIllness(petId, detailId),
+    }
+    return keyToService[key]()
+  }
 
   return useMutation({
-    mutationFn: ({ petId, idId }: { petId: string, idId: string }) => petService.deleteId(petId, idId),
+    mutationFn: ({ key, detailId }: { key: string, detailId: string }) => deletePetDetail(key, detailId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
-      return AlertForm({ body: 'Id deleted successfully', button: 'OK' })
+      return AlertForm({ body: `Detail deleted successfully`, button: 'OK' })
     },
     onError: (error) => alertError(error)
   })
 }
-
-export const useAddService = (petId: string, navigation: any) => {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (formData: ServiceFormData) => petService.addService(formData, petId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
-      alertSuccess('Service added', navigation)
-    },
-    onError: (error) => alertError(error)
-  })
-}
-
-export const useDeleteService = (petId: string) => {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: ({ petId, serviceId }: { petId: string, serviceId: string }) => petService.deleteService(petId, serviceId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(petId)] })
-      return AlertForm({ body: 'Id deleted successfully', button: 'OK' })
-    },
-    onError: (error) => alertError(error)
-  })
-}
-

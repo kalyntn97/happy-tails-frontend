@@ -14,6 +14,7 @@ import MultipleInputs from "@components/MultipleInputs"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/FormStyles"
+import { ErrorMessage } from "@components/UIComponents"
 
 interface HealthFormProps {
   onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: VisitFormData[], nextDue: VisitFormData, healthId: string) => void
@@ -87,7 +88,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      {errorMsg && <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>}
+      {errorMsg && <ErrorMessage error={errorMsg} />}
 
       <Text style={styles.label}>Pet</Text>
       <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} width={300} />

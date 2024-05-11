@@ -1,6 +1,6 @@
 import axios from "axios"
 import { PET_BASE_URL } from "@services/urls"
-import { Id, IdFormData, InitialPet, Pet, PhotoFormData, Service, ServiceFormData } from "./PetInterface"
+import { Id, IdFormData, Illness, IllnessFormData, InitialPet, Pet, PhotoFormData, Service, ServiceFormData } from "./PetInterface"
 const BASE_URL = PET_BASE_URL
 
 export const getAllPets = async (): Promise<Pet[]> => {
@@ -39,18 +39,26 @@ export async function deletePet(petId: string): Promise<string> {
   return (await axios.delete<string>(`${BASE_URL}/${petId}`)).data
 }
 
-export async function addId(formData: IdFormData, petId: string): Promise<Id> {
-  return (await axios.patch<Id>(`${BASE_URL}/${petId}/id`, formData)).data
+export async function addId(formData: IdFormData, petId: string): Promise<string> {
+  return (await axios.patch<string>(`${BASE_URL}/${petId}/ids`, formData)).data
+}
+
+export async function addIllness(formData: IllnessFormData, petId: string): Promise<string> {
+  return (await axios.patch<string>(`${BASE_URL}/${petId}/illnesses`, formData)).data
+}
+
+export async function addService(formData: ServiceFormData, petId: string): Promise<string> {
+  return (await axios.patch<string>(`${BASE_URL}/${petId}/services`, formData)).data
 }
 
 export async function deleteId(petId: string, idId: string): Promise<string> {
-  return (await axios.delete<string>(`${BASE_URL}/${petId}/id/${idId}`)).data
-}
-
-export async function addService(formData: ServiceFormData, petId: string): Promise<Service> {
-  return (await axios.patch<Service>(`${BASE_URL}/${petId}/service`, formData)).data
+  return (await axios.delete<string>(`${BASE_URL}/${petId}/ids/${idId}`)).data
 }
 
 export async function deleteService(petId: string, serviceId: string): Promise<string> {
-  return (await axios.delete<string>(`${BASE_URL}/${petId}/service/${serviceId}`)).data
+  return (await axios.delete<string>(`${BASE_URL}/${petId}/services/${serviceId}`)).data
+}
+
+export async function deleteIllness(petId: string, illnessId: string): Promise<string> {
+  return (await axios.delete<string>(`${BASE_URL}/${petId}/illnesses/${illnessId}`)).data
 }

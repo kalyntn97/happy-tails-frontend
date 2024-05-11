@@ -3,7 +3,7 @@ import React from "react"
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView } from "react-native"
 //types & helpers & queries
 import { Care, Tracker } from "@care/CareInterface"
-import { useDeleteCareCard } from "@home/hooks"
+import { useDeleteCareCard } from "@hooks/sharedHooks"
 import { CARES, getCurrentTrackerIndex } from "@care/careHelpers"
 //components
 import { getActionIconSource, getCareIconSource } from "@utils/ui"

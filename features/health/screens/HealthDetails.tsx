@@ -7,7 +7,7 @@ import { countDaysBetween } from "@utils/datetime"
 import { useGetHealthById } from "@health/healthQueries"
 import { HEALTHS } from "@health/healthHelpers"
 //queries & hooks
-import { useDeleteHealthCard, useShallowPetColor } from "@home/hooks"
+import { useDeleteHealthCard, useShallowPetColor } from "@hooks/sharedHooks"
 import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 //components
 import Loader from "@components/Loader"

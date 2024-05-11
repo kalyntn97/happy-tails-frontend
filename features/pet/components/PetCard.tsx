@@ -9,7 +9,7 @@ import { IconButton, MainButton, StatButton, TransparentButton } from "@componen
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { countYearsBetween } from "@utils/datetime"
-import { useCaresByPet, useHealthDueByPet } from "@home/hooks"
+import { useCaresByPet, useHealthDueByPet } from "@hooks/sharedHooks"
 interface PetCardProps {
   pet: Pet
   index: number

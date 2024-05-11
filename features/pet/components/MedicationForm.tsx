@@ -3,7 +3,7 @@ import React, { FC, useState } from 'react'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 //components
 import Dropdown from '@components/Dropdown/Dropdown'
-import { CircleIcon } from '@components/UIComponents'
+import { CircleIcon, ErrorMessage } from '@components/UIComponents'
 import { CheckboxButton, MainButton, ToggleButton, TransparentButton } from '@components/ButtonComponent'
 //helpers & types
 import { Medication, MedicationFormData } from '@pet/PetInterface'
@@ -46,7 +46,7 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSave }) => {
   return (
     <View style={styles.container}>
       <CircleIcon iconSource={getCareIconSource('med')}/>
-      <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
+      {errorMsg && <ErrorMessage error={errorMsg} />}
       <Text style={styles.label}>Medication name</Text>
       <TextInput 
         style={styles.input}
@@ -130,7 +130,7 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSave }) => {
       </>}
       
       <View style={styles.btnCon}>
-        <MainButton title='Add' size='small' onPress={handleSave} />
+        <MainButton title='Submit' size='small' onPress={handleSave} />
         <TransparentButton title='Cancel' size='small' />
       </View>
 

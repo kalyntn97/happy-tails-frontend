@@ -15,6 +15,7 @@ import { usePetIds } from "@store/storeUtils"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/FormStyles"
+import { ErrorMessage } from "@components/UIComponents"
 
 interface CareFormProps {
   onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, color: number, careId: string | null) => void
@@ -89,7 +90,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       showsVerticalScrollIndicator={false}
       alwaysBounceVertical={false}
     >
-      {errorMsg && <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>}
+      {errorMsg && <ErrorMessage error={errorMsg} />}
 
       <Text style={styles.label}>Name</Text>
       <Dropdown label={'Select Name'} dataType="care" onSelect={handleSelectName} initial={name} />

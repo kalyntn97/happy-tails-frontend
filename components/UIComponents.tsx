@@ -67,3 +67,7 @@ export const CircleIcon: FC<CircleIconProps> = ({ iconSource, size, bgColor }) =
     <Image source={iconSource} style={{ ...Forms.largeIcon }} />
   </View>
 )
+
+export const ErrorMessage: FC<{error: string}> = ({ error }) => (
+  <Text style={{ ...Typography.errorMsg}}>{error}</Text>
+)

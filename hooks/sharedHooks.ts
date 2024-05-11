@@ -3,14 +3,14 @@ import { FC, useState } from "react"
 import { Alert } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 //queries
-import { useDeleteCare } from "../care/careQueries"
+import { useDeleteCare } from "../features/care/careQueries"
 import { useDeleteHealth } from "@health/healthQueries"
 //types & helpers
 import { AlertForm } from "@utils/ui"
 import { usePetIds, useShallowCares, useShallowHealths, useShallowPetBasics } from "@store/storeUtils"
 import { countDaysBetween } from "@utils/datetime"
 import { Care } from "@care/CareInterface"
-import { shouldRenderCareTask } from "./helpers"
+import { shouldRenderCareTask } from "../features/home/helpers"
 import { useCares } from "@store/store"
 
 const showDeleteConfirmDialog = (item: any, handleDeleteItem: (itemId: string) => void) => {

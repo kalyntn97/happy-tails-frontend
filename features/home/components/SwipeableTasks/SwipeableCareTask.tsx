@@ -7,7 +7,7 @@ import { Care } from '@care/CareInterface'
 import * as careHelpers from '@care/careHelpers'
 //store & queries & hooks
 import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
-import { useDeleteCareCard } from '@home/hooks'
+import { useDeleteCareCard } from '@hooks/sharedHooks'
 //components
 import { useActiveDate } from '@store/store'
 import { AlertForm, getActionIconSource } from '@utils/ui'

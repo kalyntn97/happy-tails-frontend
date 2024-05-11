@@ -50,10 +50,9 @@ const HomeScreen: React.FC = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={200}
           decelerationRate="fast"
-          style={{ width: windowWidth }}
         >
-          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.white }]}>
-            <LottieView source={require('@assets/animations/happy.json')} autoPlay loop style={styles.happyAnimation} />
+          <View style={[styles.screen, { width: windowWidth, height: windowHeight, backgroundColor: Colors.white }]}>
+            <LottieView source={require('@assets/animations/happy.json')} autoPlay loop style={styles.homeAnimation} />
             <View style={styles.headers}>
                 <Text style={styles.mainHeader}>
                   <Text style={{ color: Colors.blue.reg }}>Care.</Text>{'\n'}
@@ -63,7 +62,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
                 <Text style={styles.subHeader}>Ready to start a new journey with your furry friends?</Text>
             </View>
             <TransparentButton title='Get Started' onPress={() => scrollToNext(1)} color={Colors.pink.reg} bdColor={Colors.pink.reg} size='large' />
-            <SubButton title="Already have an account? Login here" size='small' color={Colors.shadow.darkest} onPress={() => navigation.navigate('User', { screen: 'Login' })} />
+            <SubButton title="Already have an account? Login here" size='small' color={Colors.shadow.darkest} onPress={() => navigation.navigate('Login')} />
             
             <TouchableOpacity style={styles.link} onPress={() => scrollToNext(1)}>
               <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
@@ -117,10 +116,6 @@ const styles = StyleSheet.create({
     color: Colors.shadow.darkest,
     marginBottom: 20
   },
-  happyAnimation: {
-    width: '100%',
-    marginTop: 10,
-  },
   link: {
     ...Buttons.base,
     marginTop: 'auto'
@@ -128,6 +123,11 @@ const styles = StyleSheet.create({
   icon: {
     width: 80, 
     height: 80,
+  },
+  homeAnimation: {
+    width: '100%',
+    aspectRatio: 1,
+    marginTop: 20,
   }
 })
  

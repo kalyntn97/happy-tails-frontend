@@ -9,7 +9,7 @@ import PetInfo from '@components/PetInfo/PetInfo'
 //types & queries & hooks
 import { Health, Visit } from '@health/HealthInterface'
 import { useCheckDoneHealth, useUncheckDoneHealth } from '@health/healthQueries'
-import { useDeleteHealthCard, useShallowPetColor } from '@home/hooks'
+import { useDeleteHealthCard, useShallowPetColor } from '@hooks/sharedHooks'
 import { HEALTHS, VACCINES, healthNameFromKey } from '@health/healthHelpers'
 import { useShallowPetBasics } from '@store/storeUtils'
 //styles

@@ -45,7 +45,6 @@ const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
   }
 })
 
-
 const createPetSlice: StateCreator<PetSlice> = (set) => ({
   pets: [],
   petActions: {

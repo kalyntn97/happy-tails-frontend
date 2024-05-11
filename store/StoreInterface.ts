@@ -24,8 +24,8 @@ export interface ProfileSlice {
     setReminderInterval: (interval: number) => void,
     setDisplayUnits: (displayUnitObj: { weight: string, food: string, water: string }) => void
     setPets: (pets: Pet[]) => void
-    setCares: (cares: Care[]) => void
-    setHealths: (healths: Health[]) => void
+    // setCares: (cares: Care[]) => void
+    // setHealths: (healths: Health[]) => void
     onUpdateProfile: (profile: Profile) => void
   }
 }

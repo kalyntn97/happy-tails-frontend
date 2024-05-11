@@ -7,6 +7,8 @@ import { useAuth } from '@auth/AuthContext'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponent'
+import { styles } from '@styles/FormStyles'
+import { ErrorMessage } from '@components/UIComponents'
 
 const LoginScreen: FC = ({ navigation }) => {
   const [username, setUserName] = useState<string>('')
@@ -27,11 +29,9 @@ const LoginScreen: FC = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <GoBackButton position ='topLeft' top={50} onPress={() => navigation.goBack()}/>
       <LottieView source={require('@assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
       <Text style={styles.header}>Sign in</Text>
-      <View style={styles.form}>
-        <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
+        {errorMsg && <ErrorMessage error={errorMsg} />}
         <TextInput 
           style={styles.input} 
           placeholder='Username'
@@ -50,31 +50,30 @@ const LoginScreen: FC = ({ navigation }) => {
         />
         <MainButton title='Submit' onPress={login} top={40} bottom={0} />
         <SubButton title='Create Account' onPress={() => navigation.navigate('Register')} top={0} bottom={0} />
-      </View>
     </SafeAreaView>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-    ...Spacing.centered
-  },
-  catAnimation: {
-    width: '60%',
-  },
-  header: {
-    ...Typography.mainHeader,
-    marginTop: 0,
-    color: Colors.pink.dark,
-  },
-  form: {
-    ...Forms.form,
-  },
-  input: {
-    ...Forms.input,
-    borderColor: Colors.pink.reg,
-  },
-})
+// const styles = StyleSheet.create({
+//   container: {
+//     ...Spacing.fullScreenDown,
+//     ...Spacing.centered
+//   },
+//   catAnimation: {
+//     width: '60%',
+//   },
+//   header: {
+//     ...Typography.mainHeader,
+//     marginTop: 0,
+//     color: Colors.pink.dark,
+//   },
+//   form: {
+//     ...Forms.form,
+//   },
+//   input: {
+//     ...Forms.input,
+//     borderColor: Colors.pink.reg,
+//   },
+// })
 
 export default LoginScreen

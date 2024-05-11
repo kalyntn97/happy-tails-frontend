@@ -9,43 +9,40 @@ import { MainButton, TransparentButton } from '@components/ButtonComponent'
 import { Colors, Typography, Spacing, Forms } from '@styles/index'
 import { styles } from '@styles/FormStyles'
 import { getPetIconSource } from '@utils/ui'
-import { CircleIcon } from '@components/UIComponents'
+import { CircleIcon, ErrorMessage } from '@components/UIComponents'
+import { IDS } from '@pet/petHelpers'
+import useForm from '@hooks/useForm'
 
 interface IdFormProps {
+  initialValues: { name: string, type: string, no: string, notes: string }
   onSubmit: (type: string, idFormData: IdFormData) => void
 }
 
-const IdForm : FC<IdFormProps> = ({ onSubmit }) => {
-  const [name, setName] = useState<string>(null)
-  const [allowManualName, setAllowManualName] = useState<boolean>(false)
-  const [type, setType] = useState<string>(null)
-  const [no, setNo] = useState<string>(null)
-  const [notes, setNotes] = useState<string>(null)
-  const [errorMsg, setErrorMsg] = useState<string>(null)
+const IdForm : FC<IdFormProps> = ({ initialValues, onSubmit }) => {
+  const initialState = { name: initialValues?.name ?? null, allowManualType: initialValues ? !IDS.includes(initialValues.type) : true, type: initialValues?.type ?? null, no: initialValues?.no ?? null, notes: initialValues?.notes ?? null }
+
+  const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
+
+  const { name, allowManualType, type, no , notes, errorMsg } = values
   
   const handleSelectType = (item: string) => {
     if (item === 'Others') {
-      setName(null)
-      setAllowManualName(true)
+      onChange('type', null)
+      onChange('allowManualType', true)
     } else {
-      setAllowManualName(false)
-      setName(item)
+      onChange('type', item)
+      onChange('allowManualType', false)
     }
   }
 
-  const handleSave = () => {
-    if (!name || !type || !no )  {
-      setErrorMsg('Please enter all required fields') 
-    } else {
-      setErrorMsg(null)
-      onSubmit('id', { name, type, no, notes })
-    }
+  function handleSubmit() {
+    onSubmit('id', { name, type, no, notes })
   }
 
   return (
     <View style={styles.container}>
-      <CircleIcon iconSource={getPetIconSource('petIdTag')} />
-      <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
+      <CircleIcon iconSource={getPetIconSource('id')} />
+      {errorMsg && <ErrorMessage error={errorMsg} />}
       <View style={[styles.labelCon, { marginTop: 0 }]}>
         <Text>ID type</Text>
         <Text>Registry name</Text>
@@ -57,27 +54,29 @@ const IdForm : FC<IdFormProps> = ({ onSubmit }) => {
           placeholder='Enter registry name'
           placeholderTextColor={Colors.shadow.reg}
           value={name}
-          onChangeText={(text: string) => setName(text)}
+          onChangeText={(text: string) => onChange('name', text)}
         />
       </View>
       <View style={styles.labelCon}>
-        {allowManualName && <Text>ID type</Text>}
+        {allowManualType && <Text>ID type</Text>}
         <Text>Notes (optional)</Text>
       </View>
       <View style={styles.rowCon}>
-        {allowManualName && <TextInput 
-          style={[styles.input, styles.leftInput]}
-          placeholder='Enter ID type'
-          placeholderTextColor={Colors.shadow.reg}
-          value={name}
-          onChangeText={(text: string) => setName(text)}
-        />}
+        {allowManualType && 
+          <TextInput 
+            style={[styles.input, styles.leftInput]}
+            placeholder='Enter ID type'
+            placeholderTextColor={Colors.shadow.reg}
+            value={type}
+            onChangeText={(text: string) => onChange('type', text)}
+          />
+        }
         <TextInput 
-          style={[styles.input, allowManualName && styles.rightInput]}
+          style={[styles.input, allowManualType && styles.rightInput]}
           placeholder='Enter notes'
           placeholderTextColor={Colors.shadow.reg}
           value={notes}
-          onChangeText={(text: string) => setNotes(text)}
+          onChangeText={(text: string) => onChange('notes', text)}
         />
       </View>
       <Text style={styles.label}>ID number</Text>
@@ -86,12 +85,12 @@ const IdForm : FC<IdFormProps> = ({ onSubmit }) => {
           placeholder='Enter ID no.'
           placeholderTextColor={Colors.shadow.reg}
           value={no}
-          onChangeText={(text: string) => setNo(text)}
+          onChangeText={(text: string) => onChange('no', text)}
         />
 
       <View style={styles.btnCon}>
-        <MainButton title='Add' size='small' onPress={handleSave} />
-        <TransparentButton title='Cancel' size='small' />
+        <MainButton title='Submit' size='small' onPress={() => onValidate(name, type, no)} />
+        <TransparentButton title='Cancel' size='small' onPress={onReset}/>
       </View>
     </View>
   )

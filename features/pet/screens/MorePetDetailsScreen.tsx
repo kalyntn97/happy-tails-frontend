@@ -11,9 +11,9 @@ import { Colors, Forms, Spacing, Typography } from '@styles/index'
 import { BoxWithHeader } from '@components/UIComponents'
 import MedicationForm from '@pet/components/MedicationForm'
 import CareForm from '@care/components/CareForm'
-import DiseaseForm from '@pet/components/DiseaseForm'
+import IllnessForm from '@pet/components/IllnessForm'
 import ServiceForm from '@pet/components/ServiceForm'
-import { useDeleteId, useDeleteService, useGetPetById } from '@pet/petQueries'
+import { useDeleteId, useDeleteIllness, useDeletePetDetail, useDeleteService, useGetPetById } from '@pet/petQueries'
 import { PET_DETAILS } from '@pet/petHelpers'
 import Loader from '@components/Loader'
 
@@ -42,13 +42,13 @@ const EmptyList = () => (
 
 const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route }) => {
   const {data: pet, isSuccess, isLoading, isError} = useGetPetById(route.params.pet._id, route.params.pet)
-  const { ids, medications, diseases, services, _id: petId } = pet
+  const { ids, medications, illnesses, services, _id: petId } = pet
   const { show } = route.params
 
   const detailData = {
     id: ids,
     med: medications,
-    disease: diseases,
+    illness: illnesses,
     service: services,
   }
 
@@ -63,7 +63,7 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
         (!show || show === key) && 
           <View key={`${key}-details`} style={{ width: '90%' }}>
             <ListHeader name={key} onPress={() => openForm(key)} />
-            {detailData[key].length ? 
+            {detailData[key]?.length ? 
               detailData[key].map((item: any, index: number) => <Item key={`${key}-${index}`} item={item} type={key} />) 
               : <EmptyList />
             }
@@ -73,16 +73,7 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
     return detailItems
   }
 
-  const deleteIdMutation = useDeleteId(petId)
-  const deleteServiceMutation = useDeleteService(petId)
-
-  const handleDelete = (type: string, itemId: string) => {
-    switch (type) {
-      case 'id': deleteIdMutation.mutate({ petId, idId: itemId })
-      case 'service': deleteServiceMutation.mutate({ petId, serviceId: itemId })
-      default: return null
-    }
-  }
+  const deleteDetailMutation = useDeletePetDetail(petId)
 
   const IdDetails = ({ id }: { id: Id }) => ( 
     <View>
@@ -115,7 +106,7 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
         : type === 'service' ? <ServiceDetails service={item} />
         : null
       }
-      <CloseButton size='small' position='topRight' onPress={() => handleDelete(type, item._id)} />
+      <CloseButton size='small' position='topRight' onPress={() => deleteDetailMutation.mutate({ key: type, detailId: item._id })} />
     </View>
   )
 

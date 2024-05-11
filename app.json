@@ -35,6 +35,9 @@
     },
     "experiments": {
       "tsconfigPaths": true
-    }
+    },
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }

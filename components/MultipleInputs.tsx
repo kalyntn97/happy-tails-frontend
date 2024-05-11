@@ -1,5 +1,5 @@
 //npm
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { InputModeOptions, Text, TextInput, View } from 'react-native'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 //components
@@ -15,9 +15,10 @@ type MultipleInputsProps = {
   type?: string
   onEdit: React.Dispatch<React.SetStateAction<any[]>>
   width?: number
+  reset?: boolean
 }
 
-const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMode, type, onEdit, width }) => {
+const MultipleInputs: FC<MultipleInputsProps> = ({ initials, reset, inputName, inputMode, type, onEdit, width }) => {
   const [inputs, setInputs] = useState<any[]>(initials ?? [])
 
   const handleAddInput = () => {
@@ -35,6 +36,10 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMod
       return updatedInputs
     })
   }
+
+  useEffect(() => {
+    setInputs(initials)
+  }, [reset])
 
   return (
     <View style={{ width: width ?? 300 }}>

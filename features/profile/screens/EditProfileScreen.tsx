@@ -13,6 +13,7 @@ import Loader from "@components/Loader"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { AlertForm } from "@utils/ui"
+import { ErrorMessage } from "@components/UIComponents"
 
 interface EditProfileProps {
   navigation: any
@@ -84,7 +85,7 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
             </View>
           </View>
 
-          <Text style={{ ...Typography.errorMsg }}>{errorMsg}</Text>
+          {errorMsg && <ErrorMessage error={errorMsg} />}
 
           <View style={styles.form}>
             <TextInput 

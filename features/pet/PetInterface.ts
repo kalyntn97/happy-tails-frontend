@@ -4,7 +4,7 @@ export interface Pet extends InitialPet {
   ids: Id[]
   services: Service[]
   medications: Medication[]
-  diseases: Disease[]
+  illnesses: Illness[]
   stats: Stat[]
 }
 
@@ -45,23 +45,19 @@ export type ServiceFormData = {
   serviceId?: string
 }
 
-export interface Service extends ServiceFormData {
-  _id: string,
-}
+export interface Service extends ServiceFormData { _id: string }
 
 export type IdFormData = {
   name: string, 
-  registry: string, 
+  type: string, 
   no: string, 
   notes: string 
 }
-export interface Id extends IdFormData {
-  _id: string,
-}
+export interface Id extends IdFormData { _id: string }
 
 type Note = {
   content: string
-  createdAt: string
+  createdAt?: string
 }
 
 export type Medication = {
@@ -82,16 +78,18 @@ export type MedicationFormData = {
 export type Timeline = {
   startDate: string
   endDate: string
+  notes?: Note[]
 }
 
-export type Disease = {
+export type IllnessFormData = {
   name: string
   type: string
   timeline: Timeline[]
   description: string
   status: string
-  notes: Note[]
 }
+
+export interface Illness extends IllnessFormData { _id: string }
 
 type Stat = {
   name: string

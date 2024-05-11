@@ -1,7 +1,7 @@
 //npm
-import { BottomTabNavigationOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import { NativeStackNavigationOptions, createNativeStackNavigator } from "@react-navigation/native-stack"
-import { Image, Text, StyleSheet, View } from "react-native"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import { Image, Text } from "react-native"
 //screens
 import CareDetailsScreen from "@care/screens/CareDetailsScreen"
 import CareIndexScreen from "@care/screens/CareIndexScreen"
@@ -23,13 +23,12 @@ import HealthDetailsScreen from "@health/screens/HealthDetails"
 import NewStatScreen from "@stat/screens/NewStatScreen"
 import StatDetails from "@stat/screens/StatDetails"
 import MorePetDetailsScreen from "@pet/screens/MorePetDetailsScreen"
-//components
-import { GoBackButton } from "@components/ButtonComponent"
+import EditMorePetDetailsScreen from "@pet/screens/EditMorePetDetailsScreen"
 //helpers
 import { getNavigationIconSource } from "@utils/ui"
 //styles
-import { Colors, Forms, Typography, Spacing } from "@styles/index"
-import EditMorePetDetailsScreen from "@pet/screens/EditMorePetDetailsScreen"
+import { Typography } from "@styles/index"
+import { styles, tabBarOptions, modalPresentation, stackOptions, noTitleHeaderStyle, titleOnlyHeaderStyle  } from "./NavigationStyles"
 
 const PrivateApp = () => {
   const Tab = createBottomTabNavigator()
@@ -70,7 +69,7 @@ const PrivateApp = () => {
         {() => (
           <HomeStack.Navigator
             initialRouteName="Main"
-            screenOptions={() => ({ headerShown: false, ...presentationOptions })}
+            screenOptions={() => ({ headerShown: false, ...modalPresentation })}
           >
             <HomeStack.Screen name='Main' component={HomeScreen} />
             <HomeStack.Screen name='Care'>
@@ -78,11 +77,7 @@ const PrivateApp = () => {
                 <CareStack.Navigator screenOptions={{ ...stackOptions, }}>
                   <CareStack.Screen name='Index' component={CareIndexScreen} options={{ title: 'All Pet Care'}}/>
                   <CareStack.Screen name='Create' component={NewCareScreen} options={{ title: 'Add a Task' }}/>
-                  <CareStack.Screen name='Details' component={CareDetailsScreen} options={{ header: ({ navigation }) => {
-                    return (
-                      <NoTitleHeader navigation={navigation} />
-                    )
-                  } }}/>
+                  <CareStack.Screen name='Details' component={CareDetailsScreen} options={{...noTitleHeaderStyle }}/>
                   <CareStack.Screen name='Edit' component={EditCareScreen} options={{ title: 'Edit Task' }}/>
                 </CareStack.Navigator>
               )}
@@ -94,11 +89,7 @@ const PrivateApp = () => {
                   <HealthStack.Screen name='Index' component={HealthIndexScreen} options={{ title: 'All Pet Health'}} />
                   <HealthStack.Screen name='Create' component={NewHealthScreen} options={{ title: 'Add a Vet Visit'}} />
                   <HealthStack.Screen name='Edit' component={EditHealthScreen} options={{ title: 'Update Vet Visit'}}/>
-                  <HealthStack.Screen name='Details' component={HealthDetailsScreen} options={{ header: ({ navigation }) => {
-                    return (
-                      <NoTitleHeader navigation={navigation} />
-                    )
-                  } }} />
+                  <HealthStack.Screen name='Details' component={HealthDetailsScreen} options={{ ...noTitleHeaderStyle }} />
                 </HealthStack.Navigator>
               )}
             </HomeStack.Screen>
@@ -110,26 +101,16 @@ const PrivateApp = () => {
       <Tab.Screen name='Pets'>
         {() => (
           <PetStack.Navigator
-            screenOptions={{ ...stackOptions, ...presentationOptions }}
+            screenOptions={{ ...stackOptions, ...modalPresentation }}
           >
-            <PetStack.Screen name='Index' component={PetIndexScreen} 
-              options={{ header: () => {
-                return (
-                  <TitleOnlyHeader title='All Pets' />
-                )
-              } }} 
-            />
+            <PetStack.Screen name='Index' component={PetIndexScreen} options={{ ...titleOnlyHeaderStyle }} />
             <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }}
             />
             <PetStack.Screen name='Edit' component={EditPetScreen} options={({ route }) => ({ title: 'Edit Pet' })} />
             <PetStack.Screen name='Details' options={{ headerShown: false }}>
               {() => (
                 <DetailStack.Navigator screenOptions={{ ...stackOptions }}>
-                  <DetailStack.Screen name='Index' component={PetDetailsScreen} options={{ header: ({ navigation }) => {
-                    return (
-                      <NoTitleHeader navigation={navigation} />
-                    )
-                  } }} />
+                  <DetailStack.Screen name='Index' component={PetDetailsScreen} options={{ ...noTitleHeaderStyle }} />
                   <DetailStack.Screen name='PetDetails' component={MorePetDetailsScreen} options={{ title: 'More Details' }} />
                   <DetailStack.Screen name='Edit' component={EditMorePetDetailsScreen} options={{ title: 'Edit pet details' }} />
                   <DetailStack.Screen name='Create' component={NewStatScreen} options={{ title: 'New Log' }} />
@@ -145,7 +126,7 @@ const PrivateApp = () => {
         /* options={{ unmountOnBlur: true, }}
         listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) } */>
         {() => (
-          <ProfileStack.Navigator screenOptions={{ ...stackOptions, ...presentationOptions }}>
+          <ProfileStack.Navigator screenOptions={{ ...stackOptions, ...modalPresentation }}>
             <ProfileStack.Screen name='Profile' component={ProfileScreen} options={{ headerShown: false }} />
             <ProfileStack.Screen name='Edit' component={EditProfileScreen} options={{ title: 'Edit Profile'}} />
             <ProfileStack.Screen name='Settings' component={SettingsScreen} />
@@ -156,74 +137,5 @@ const PrivateApp = () => {
     </Tab.Navigator>
   )
 }
-
-const baseHeaderStyle: any = {
-  headerTitleStyle: { fontSize: 18, fontWeight: 'bold' },
-  header: ({ navigation, options }) => {
-    const title = options.title
-    return (
-      <Header title={title} navigation={navigation} />
-    )
-  }
-}
-
-const coloredHeaderStyle: any = {
-  ...baseHeaderStyle,
-  headerStyle: { backgroundColor: Colors.pink.lightest },
-  headerTintColor: Colors.pink.darkest,
-}
-
-const headerStyle: any = {
-  ...baseHeaderStyle,
-  headerStyle: { backgroundColor: Colors.shadow.lightest },
-  headerTintColor: Colors.black,
-}
-
-const contentStyle: NativeStackNavigationOptions = {
-  contentStyle: { backgroundColor: Colors.shadow.lightest },
-}
-
-const stackOptions: NativeStackNavigationOptions = {
-  ...headerStyle,
-  ...contentStyle,
-}
-
-const presentationOptions: NativeStackNavigationOptions = {
-  presentation: 'modal',
-  gestureEnabled: true,
-}
-
-const tabBarOptions: BottomTabNavigationOptions = {
-  tabBarStyle: { padding : 10, height: 100, backgroundColor: Colors.white},
-  headerShown: false,
-}
-
-const Header = ({ title, navigation }: { title: string, navigation: any }) => (
-  <View style={styles.headerCon}>
-    <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={10} left={10} />
-    <Text style={styles.headerText}>{title}</Text>
-  </View>
-)
-
-const TitleOnlyHeader = ({ title }: { title: string }) => (
-  <View style={[styles.headerCon, ]}>
-    <Text style={[styles.headerText, { marginTop: 50 }]}>{title}</Text>
-  </View>
-)
-
-const NoTitleHeader = ({ navigation }) => (
-  <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={10} left={10} />
-)
-
-const styles = StyleSheet.create({
-  icon: { ...Forms.icon },
-  iconLabel: { fontWeight: 'bold' },
-  headerText: {
-    ...Typography.mediumHeader, color: Colors.pink.darkest, marginTop: 30,
-  },
-  headerCon: { 
-    backgroundColor: Colors.shadow.lightest, height: 100
-  },
-})
 
 export default PrivateApp
