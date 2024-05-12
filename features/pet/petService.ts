@@ -1,13 +1,13 @@
 import axios from "axios"
 import { PET_BASE_URL } from "@services/urls"
-import { Id, IdFormData, Illness, IllnessFormData, InitialPet, Pet, PhotoFormData, Service, ServiceFormData } from "./PetInterface"
+import { IdFormData, IllnessFormData, Pet, PetFormData, PhotoFormData, ServiceFormData } from "./PetInterface"
 const BASE_URL = PET_BASE_URL
 
 export const getAllPets = async (): Promise<Pet[]> => {
   return (await axios.get<Pet[]>(BASE_URL)).data
 }
 
-export const create = async (formData: InitialPet, photoData: PhotoFormData): Promise<Pet> => {
+export const create = async (formData: PetFormData, photoData: PhotoFormData): Promise<Pet> => {
   const result = (await axios.post<Pet>(BASE_URL, formData)).data
   if (photoData) {
     const url = await addPhoto(result._id, photoData)
@@ -22,8 +22,8 @@ export const addPhoto = async (petId: string, photoData: any): Promise<string> =
   return (await axios.patch<string>(`${BASE_URL}/${petId}/add-photo`, photoFormData)).data
 }
 
-export const update = async (formData: InitialPet, photoData: PhotoFormData, petId: string): Promise<Pet> => {
-    const result = (await axios.put<Pet>(`${BASE_URL}/${petId}`, formData)).data
+export const update = async (formData: PetFormData, photoData: PhotoFormData): Promise<Pet> => {
+    const result = (await axios.put<Pet>(`${BASE_URL}/${formData.petId}`, formData)).data
     if (photoData) {
       const url = await addPhoto(result._id, photoData)
       result.photo = url

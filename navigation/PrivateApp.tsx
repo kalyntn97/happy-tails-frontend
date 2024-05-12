@@ -112,7 +112,7 @@ const PrivateApp = () => {
                 <DetailStack.Navigator screenOptions={{ ...stackOptions }}>
                   <DetailStack.Screen name='Index' component={PetDetailsScreen} options={{ ...noTitleHeaderStyle }} />
                   <DetailStack.Screen name='PetDetails' component={MorePetDetailsScreen} options={{ title: 'More Details' }} />
-                  <DetailStack.Screen name='Edit' component={EditMorePetDetailsScreen} options={{ title: 'Edit pet details' }} />
+                  <DetailStack.Screen name='Edit' component={EditMorePetDetailsScreen} options={{ ...noTitleHeaderStyle }} />
                   <DetailStack.Screen name='Create' component={NewStatScreen} options={{ title: 'New Log' }} />
                   <DetailStack.Screen name='Stat' component={StatDetails} options={{ title: 'Details' }} />
                 </DetailStack.Navigator>

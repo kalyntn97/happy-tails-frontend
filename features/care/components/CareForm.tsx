@@ -16,10 +16,11 @@ import { usePetIds } from "@store/storeUtils"
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/FormStyles"
 import { ErrorMessage } from "@components/UIComponents"
+import { CareFormData } from "@care/CareInterface"
 
 interface CareFormProps {
   onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, color: number, careId: string | null) => void
-  initialValues?: { name?: string, pets?: Pet[], repeat?: boolean, ending?: boolean, date?: Date, endDate?: Date, frequency?: string, times?: number,  color: number, careId?: string }
+  initialValues?: CareFormData
   navigation: any
   status: string
 }
@@ -33,7 +34,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   const [name, setName] = useState<string>((CARES[initialValues?.name] || initialValues?.name) ?? null)
   const [petData, setPetData] = useState<string[]>(initialPets ?? [])
   const [repeat, setRepeat] = useState<boolean>(initialValues?.repeat ?? false)
-  const [ending, setEnding] = useState<boolean>(initialValues?.ending ?? false)
+  const [ending, setEnding] = useState<boolean>(initialValues ? !!initialValues.endDate : false)
   const [date, setDate] = useState<Date | null>(initialValues?.date ?? new Date())
   const [endDate, setEndDate] = useState<Date | null>(initialValues?.endDate ?? null)
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)

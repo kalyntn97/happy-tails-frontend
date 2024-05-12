@@ -33,8 +33,8 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
   
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>Add a Service</Text>
       <CircleIcon iconSource={getPetIconSource('service')} />
-      {errorMsg && <ErrorMessage error={errorMsg} />}
       <View style={styles.labelCon}>
         <Text>Name</Text>
         <Text>Type</Text>

@@ -31,7 +31,6 @@ const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
   const { width } = useWindowDimensions()
   const scrollX = useSharedValue(0)
   const FlatListRef = useRef<Animated.FlatList<Pet>>(null)
-  const DotNavRef = useRef(null)
 
   const onScrollHandler = useAnimatedScrollHandler((event) => {
     scrollX.value = event.contentOffset.x
@@ -95,51 +94,54 @@ const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
       { isLoading && <Loader /> }
       { isError && <Text>Error fetching pets...</Text> }
       { isSuccess &&  <>
-        { !pets.length && <PlaceHolder /> }
-        
-        <View style={styles.carousel}>
-          <Animated.FlatList 
-            ref={FlatListRef}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            onScroll={onScrollHandler}
-            onMomentumScrollEnd={onScrollEnd}
-            data={pets}
-            keyExtractor={item => item._id}
-            pagingEnabled={true}
-            renderItem={({ item, index }) => {
-              return <PetCard pet={item} index={index} scrollX={scrollX} navigation={navigation}/>
-            }}
-            ListEmptyComponent={
-              <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
-            }
-          />
-          
-        </View>
+        { pets.length > 0 ?
+          <>
+            <View style={styles.carousel}>
+              <Animated.FlatList 
+                ref={FlatListRef}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                onScroll={onScrollHandler}
+                onMomentumScrollEnd={onScrollEnd}
+                data={pets}
+                keyExtractor={item => item._id}
+                pagingEnabled={true}
+                renderItem={({ item, index }) => {
+                  return <PetCard pet={item} index={index} scrollX={scrollX} navigation={navigation}/>
+                }}
+                ListEmptyComponent={
+                  <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
+                }
+              />
+              
+            </View>
 
-        <View style={styles.rowCon}>
-          <Pressable 
-            onPress={handleClickPrev} 
-            style={[styles.prevBtn, currCard == 0 && styles.disabled]}
-            disabled={currCard == 0}
-          >
-            <Image source={getActionIconSource('prev')} style={{...Forms.smallIcon}}/> 
-          </Pressable>
-          
-          <View style={styles.dotNav}>
-            {Array(3).fill(0).map((_, i) =>
-              <DotNav key={i} index={i} />
-            )}
-          </View>
-          
-          <Pressable 
-            onPress={handleClickNext} 
-            style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled]}
-            disabled={currCard == petCount - 1}
-          >
-            <Image source={getActionIconSource('next')} style={{ ...Forms.smallIcon }}/> 
-          </Pressable>
-        </View>
+            <View style={styles.rowCon}>
+              <Pressable 
+                onPress={handleClickPrev} 
+                style={[styles.prevBtn, currCard == 0 && styles.disabled]}
+                disabled={currCard == 0}
+              >
+                <Image source={getActionIconSource('prev')} style={{...Forms.smallIcon}}/> 
+              </Pressable>
+              
+              <View style={styles.dotNav}>
+                {Array(3).fill(0).map((_, i) =>
+                  <DotNav key={i} index={i} />
+                )}
+              </View>
+              
+              <Pressable 
+                onPress={handleClickNext} 
+                style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled]}
+                disabled={currCard == petCount - 1}
+              >
+                <Image source={getActionIconSource('next')} style={{ ...Forms.smallIcon }}/> 
+              </Pressable>
+            </View>
+          </> : <PlaceHolder navigation={navigation} /> 
+        }
+        
         
       </> } 
       

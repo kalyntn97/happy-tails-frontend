@@ -20,33 +20,20 @@ interface MedicationFormProps {
 }
 
 const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => {
-  const initialState = { name: initialValues?.name ?? null, amount: initialValues?.dosage.amount ?? null, times: initialValues?.dosage.times ?? null, frequency: initialValues?.dosage.frequency ?? 'Daily', startDate: initialValues?.dosage.startDate ?? new Date(), ending: !!initialValues?.dosage.endDate ?? false, endDate: initialValues?.dosage.endDate ?? new Date(), medReminder: !!initialValues?.dosage.reminder ?? false, refillTimes: initialValues?.refill?.times ?? null, refillFrequency: initialValues?.refill?.frequency ?? 'Monthly', refillReminder: !!initialValues?.refill.reminder ?? false, status: initialValues?.status ?? 'Active', errorMsg: false }
+  const initialState = { name: initialValues?.name ?? null, amount: initialValues?.dosage.amount ?? null, times: initialValues?.dosage.times ?? null, frequency: initialValues?.dosage.frequency ?? 'Daily', startDate: initialValues?.dosage.startDate ?? null, ending: !!initialValues?.dosage.endDate ?? false, endDate: initialValues?.dosage.endDate ?? null, medReminder: !!initialValues?.dosage.reminder ?? false, refillTimes: initialValues?.refill?.times ?? null, refillFrequency: initialValues?.refill?.frequency ?? 'Monthly', refillReminder: !!initialValues?.refill.reminder ?? false, status: initialValues?.status ?? 'Active', errorMsg: false }
 
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
   const { name, amount, times, frequency, startDate, ending, endDate, medReminder, refillTimes, refillFrequency, refillReminder, status, errorMsg } = values
   const dosage = status !== 'Inactive' ? { amount, times, frequency, startDate, endDate: ending ? endDate : null, reminder: medReminder } : null
   const refill = status !== 'Inactive' && refillReminder ? { times: refillTimes, frequency: refillFrequency, reminder: refillReminder } : null
-  // const [name, setName] = useState<string>(initialValues?.name ?? null)
-  // const [amount, setAmount] = useState<string>(initialValues?.dosage.amount ?? null)
-  // const [times, setTimes] = useState<number>(initialValues?.dosage.times ?? null)
-  // const [frequency, setFrequency] = useState<string>(initialValues?.dosage.frequency ?? 'Daily')
-  // const [startDate, setStartDate] = useState<string>(initialValues?.dosage.startDate ?? null)
-  // const [ending, setEnding] = useState<boolean>(!!initialValues?.dosage.endDate ?? false)
-  // const [endDate, setEndDate] = useState<string>(initialValues?.dosage.endDate ?? null)
-  // const [medReminder, setMedReminder] = useState<boolean>(initialValues?.dosage.reminder ? true : false)
-  // const [refillReminder, setRefillReminder] = useState<boolean>(!!initialValues?.refill ? true : false)
-  // const [refillTimes, setRefillTimes] = useState<number>(initialValues?.refill?.times ?? null)
-  // const [refillFrequency, setRefillFrequency] = useState<string>(initialValues?.refill?.frequency ?? 'Monthly')
-  // const [status, setStatus] = useState<string>(initialValues?.status ?? 'Active')
-  // const [errorMsg, setErrorMsg] = useState<string>(null)
 
   function handleSubmit() {
-    console.log('med', { name, dosage, refill, status })
-    // onSubmit('med', { name, dosage, refill, status })
+    onSubmit('med', { name, dosage, refill, status })
   }
 
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>Add a Medication</Text>
       <CircleIcon iconSource={getCareIconSource('med')}/>
       <Text style={styles.label}>Medication name</Text>
       <TextInput 
@@ -82,12 +69,12 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => 
         </View>
         <View style={styles.rowCon}>
           <View style={(!ending) && { width: 300, alignItems: 'center' }}>
-            <RNDateTimePicker themeVariant="light" value={new Date(startDate)} onChange={(event, selectedDate) => { onChange('startDate', selectedDate) }} accentColor={Colors.pink.dark} />
+            <RNDateTimePicker themeVariant="light" value={new Date() ?? new Date(startDate)} onChange={(event, selectedDate) => { onChange('startDate', selectedDate) }} accentColor={Colors.pink.dark} />
           </View>
           { ending &&
             <>
               <Text style={{ marginLeft: 10 }}> - </Text>
-              <RNDateTimePicker themeVariant='light' value={new Date(endDate)} minimumDate={new Date(endDate)} onChange={(event, selectedDate) => { onChange('endDate', selectedDate) }} accentColor={Colors.pink.dark} />
+              <RNDateTimePicker themeVariant='light' value={new Date() ?? new Date(endDate)} minimumDate={new Date(endDate)} onChange={(event, selectedDate) => { onChange('endDate', selectedDate) }} accentColor={Colors.pink.dark} />
             </>
           }
         </View>

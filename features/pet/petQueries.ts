@@ -1,8 +1,9 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { IdFormData, IllnessFormData, Pet, PetFormData, ServiceFormData } from './PetInterface'
+import { IdFormData, IllnessFormData, Pet, PetFormData, PetMutationFormData, PhotoFormData, ServiceFormData } from './PetInterface'
 import * as petService from './petService'
 import { AlertForm } from '@utils/ui'
 import { alertError, alertSuccess } from '@utils/misc'
+import { usePetActions } from '@store/store'
 
 export const petKeyFactory = {
   pets: ['all-pets'],
@@ -24,25 +25,33 @@ export const useGetPetById = (petId: string, initialPet: Pet) => {
   })
 } 
 
-export const useAddPet = () => {
+export const useAddPet = (navigation: any) => {
   const queryClient = useQueryClient()
-  
+  const { onAddPet } = usePetActions()
+
   return useMutation({
-    mutationFn: ({ name,  species, breed, dob, firstMet, altered, status, color, photoData }: PetFormData) => petService.create({ name, species, breed, dob, firstMet, altered, status, color }, photoData),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
-    }
+    mutationFn: ({ formData, photoData } : PetMutationFormData) => petService.create(formData, photoData),
+    onSuccess: (data) => {
+      onAddPet(data)
+      queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
+      navigation.navigate('Index')
+      return alertSuccess('Pet added', navigation)
+    },
+    onError: (error) => alertError(error)
   })
 }
 
-export const useUpdatePet = () => {
+export const useUpdatePet = (navigation: any) => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ name, species, breed, dob, firstMet, altered, status, color, photoData, petId }: PetFormData) => petService.update({ name,  species, breed, dob, firstMet, altered, status, color }, photoData, petId),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
-    }
+    mutationFn: ({ formData, photoData } : PetMutationFormData) => petService.update(formData, photoData),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [...petKeyFactory.pets] })
+      navigation.navigate('Details', { screen: 'Index', params : { pet: data } })
+      return alertSuccess('Pet updated', navigation)
+    },
+    onError: (error) => alertError(error)
   })
 }
 

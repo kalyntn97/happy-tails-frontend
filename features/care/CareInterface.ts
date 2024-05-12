@@ -19,11 +19,10 @@ export interface Care {
   name: string
   pets: Pet[]
   repeat: boolean
-  ending: boolean
   date: string
-  endDate?: string
-  frequency?: string
-  times?: number
+  endDate: string | null
+  frequency: string | null
+  times: number | null
   color: number
   trackers: Tracker[]
 }
@@ -32,11 +31,10 @@ export interface CareFormData {
   name: string
   pets: string[]
   repeat: boolean
-  ending: boolean
   date: Date
-  endDate?: Date
-  frequency: string
-  times: number
+  endDate: Date | null
+  frequency: string | null
+  times: number | null
   color: number
   careId?: string
 }

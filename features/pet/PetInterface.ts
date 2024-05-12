@@ -1,18 +1,18 @@
-export interface Pet extends InitialPet {
+export interface Pet extends PetFormData {
   _id: string
-  photo: string | null
   ids: Id[]
   services: Service[]
   medications: Medication[]
   illnesses: Illness[]
   stats: Stat[]
 }
-
 export interface PetBasic {
   name: string
+  species: string
   photo: string | null
+  color: number
 }
-export interface InitialPet {
+export interface PetFormData {
   name: string
   species: string 
   breed: string
@@ -21,18 +21,15 @@ export interface InitialPet {
   altered: { value: boolean, date: string | null}
   status: { value: string, date: string | null, show: boolean }
   color: number
-}
-
-export interface InitialPetValues extends InitialPet {
-  photo: string | null
-  petId: string
-}
-
-export type PhotoFormData = { uri: string, name: string, type: string } | null
-
-export interface PetFormData extends InitialPet {
-  photoData: PhotoFormData
+  photo?: string | null
   petId?: string
+}
+
+export type PhotoFormData = { uri: string, name: string, type: string }
+
+export interface PetMutationFormData {
+  formData: PetFormData
+  photoData: PhotoFormData | null
 }
 
 export type ServiceFormData = {
@@ -40,7 +37,7 @@ export type ServiceFormData = {
   type: string
   address: string | null
   email: string | null
-  phones: string[] | []
+  phones: string[]
   notes: string | null
   serviceId?: string
 }
@@ -66,7 +63,7 @@ export type Medication = {
   dosage: { amount: string, startDate: string, endDate: string | null, times: number, frequency: string, reminder: string }
   refill: { times: number, frequency: string, reminder: string } | null
   status: string
-  notes: Note[] | []
+  notes: Note[]
 }
 
 export type MedicationFormData = {
@@ -79,7 +76,7 @@ export type MedicationFormData = {
 export type Timeline = {
   startDate: string
   endDate: string | null
-  notes: Note[] | []
+  notes: Note[]
 }
 
 export type IllnessFormData = {

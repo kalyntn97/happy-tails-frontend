@@ -1,15 +1,15 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Colors, Spacing } from '@styles/index'
 
 type Props = {
   onPress: (colorIndex: number) => void
-  initial?: number
+  initial: number
 }
 
 const ColorPickingPanel: FC<Props> = ({ onPress, initial }) => {
   const [selected, setSelected] = useState<number>(initial ?? 0)
-
+  
   const onSelect = (index: number) => {
     setSelected(index)
     onPress(index)
@@ -27,6 +27,11 @@ const ColorPickingPanel: FC<Props> = ({ onPress, initial }) => {
       </TouchableOpacity>
     )
   }
+
+  useEffect(() => {
+    onSelect(initial)
+  }, [initial])
+
   return (
     <View style={styles.container}>
       {colorOptions}

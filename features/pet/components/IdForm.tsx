@@ -41,6 +41,7 @@ const IdForm : FC<IdFormProps> = ({ initialValues, onSubmit }) => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>Add an ID</Text>
       <CircleIcon iconSource={getPetIconSource('id')} />
       <View style={[styles.labelCon, { marginTop: 20 }]}>
         <Text>ID type</Text>

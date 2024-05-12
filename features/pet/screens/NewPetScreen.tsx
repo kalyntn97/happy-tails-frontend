@@ -9,26 +9,17 @@ import { usePetActions } from "@store/store"
 import PetForm from "../components/PetForm"
 //utils
 import { AlertForm } from "@utils/ui"
+import { PetFormData, PetMutationFormData, PhotoFormData } from "@pet/PetInterface"
 //styles
 import { Spacing } from "@styles/index"
-import { InitialPet, PhotoFormData } from "@pet/PetInterface"
 
 const NewPetScreen = ({ navigation }) => {
   const isFocused = useIsFocused()
-  const { onAddPet } = usePetActions()
-  const addPetMutation = useAddPet()
+  
+  const addPetMutation = useAddPet(navigation)
 
-  const handleAddPet = async ({ name, species, breed, dob, firstMet, altered, status, color }: InitialPet, photoData: PhotoFormData) => {
-    addPetMutation.mutate({ name, species, breed, dob, firstMet, altered, status, color, photoData }, {
-      onSuccess: (data) => {
-        onAddPet(data)
-        navigation.navigate('Index')
-        return AlertForm({ body: 'Pet added successfully', button: 'OK' })
-      }, 
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      } 
-    })
+  const handleAddPet = async (formData: PetFormData, photoData: PhotoFormData) => {
+    addPetMutation.mutate({ formData, photoData })
   }
 
   useEffect(() => {

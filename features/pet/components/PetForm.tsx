@@ -13,79 +13,53 @@ import { getPetIconSource } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
 import { styles } from "@styles/FormStyles"
-import { InitialPet, InitialPetValues, PhotoFormData } from "@pet/PetInterface"
+import { PetFormData, PhotoFormData } from "@pet/PetInterface"
 import { ErrorMessage } from "@components/UIComponents"
+import useForm from "@hooks/useForm"
+import { useSelectPhoto } from "@hooks/sharedHooks"
 
 
 
 interface PetFormProps {
-  onSubmit: ({ name, species, breed, dob, firstMet, altered, status, color }: InitialPet, photoData: PhotoFormData, petId: string | null) => Promise<any>
-  initialValues?: InitialPetValues
+  onSubmit: (formData: PetFormData, photoData: PhotoFormData | null) => Promise<any>
+  initialValues?: any
   formStatus: string
   navigation: any
 }
 
 const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, formStatus }) => {
-  const initialStates = { name: initialValues?.name ?? null, species: initialValues?.species ?? null, allowManualSpecies: initialValues ? !SPECIES.includes(initialValues.species) : false, breed: initialValues?.breed ?? null, dob: initialValues?.dob ?? null, showDob: initialValues ? !!initialValues.dob : true, firstMet: initialValues?.firstMet ?? null, showFirstMet: initialValues ? !!initialValues.firstMet : true, altered: initialValues?.altered ?? { value: false, date: null }, showAlteredDate: initialValues ? !!initialValues.altered.date : true, status: initialValues?.status ?? { value: STATUS[0], date: null, show: true }, showPassedDate: initialValues ? !!initialValues.status.date : true, color: initialValues?.color ?? 0, photo: initialValues?.photo ?? null, errorMsg: '' }
+  const initialState = { name: initialValues?.name ?? null, species: initialValues?.species ?? null, allowManualSpecies: initialValues ? !SPECIES.includes(initialValues.species) : false, breed: initialValues?.breed ?? null, dob: initialValues?.dob ?? null, showDob: initialValues ? !!initialValues.dob : true, firstMet: initialValues?.firstMet ?? null, showFirstMet: initialValues ? !!initialValues.firstMet : true, altered: initialValues?.altered ?? { value: false, date: null }, showAlteredDate: initialValues ? !!initialValues.altered.date : true, status: initialValues?.status ?? { value: 'Healthy', date: null, show: true }, showPassedDate: initialValues ? !!initialValues.status.date : true, color: initialValues?.color ?? 0, photo: initialValues?.photo ?? null, photoData: null, petId: initialValues?.petId ?? null, errorMsg: '' }
 
-  const [name, setName] = useState<string>(initialStates.name)
-  const [species, setSpecies] = useState<string>(initialStates.species)
-  const [allowManualSpecies, setAllowManualSpecies] = useState<boolean>(initialStates.allowManualSpecies)
-  const [breed, setBreed] = useState<string>(initialStates.breed)
-  const [dob, setDob] = useState<string>(initialStates.dob)
-  const [showDob, setShowDob] = useState<boolean>(initialStates.showDob)
-  const [firstMet, setFirstMet] = useState<string>(initialStates.firstMet)
-  const [showFirstMet, setShowFirstMet] = useState<boolean>(initialStates.showFirstMet)
-  const [altered, setAltered] = useState<{ value: boolean, date: string }>(initialStates.altered)
-  const [showAlteredDate, setShowAlteredDate] = useState<boolean>(initialStates.showAlteredDate)
-  const [status, setStatus] = useState<{ value: string, date: string, show: boolean }>(initialStates.status)
-  const [showPassedDate, setShowPassedDate] = useState<boolean>(initialStates.showPassedDate)
-  const [color, setColor] = useState<number>(initialStates.color)
-  const [photo, setPhoto] = useState<string | null>(initialStates.photo)
-  const [errorMsg, setErrorMsg] = useState<string>('')
-  const [reset, setReset] = useState<boolean>(false)
-
-  const petId: string | null = initialValues?.petId ?? null
+  const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
+  const { name, species, allowManualSpecies, breed, dob, showDob, firstMet, showFirstMet, altered, showAlteredDate, status, showPassedDate, color, photo, petId, errorMsg } = values
 
   const addPhoto = async (): Promise<void> => {
-    let _image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4,3],
-      quality: 1,
-    })
-    if (!_image.canceled) {
-      setPhoto(_image.assets[0].uri)
-    }
+    const photo = await useSelectPhoto()
+    onChange('photo', photo)
   }
 
   const handleSelectSpecies = (selected: string) => {
     if (selected === 'Others') {
-      setAllowManualSpecies(true)
-      setSpecies(null)
+      onChange('allowManualSpecies', true)
+      onChange('species', null)
+      onChange('breed', null)
     } else {
-      setAllowManualSpecies(false)
-      setSpecies(selected)
+      onChange('allowManualSpecies', false)
+      onChange('species', selected)
     }
   }
 
   const handleSelectStatus = (selected: string) => {
-    selected === STATUS[0] 
-      ? setStatus(prev => ({ ...prev, value: selected, date: null, show: true }))
-      : setStatus(prev => ({ ...prev, value: selected, show: selected !== STATUS[1] }))
+    selected === 'Healthy'
+      ? onChange('status', { ...status, value: selected, date: null, show: true })
+      : onChange('status', { ...status, value: selected, date: new Date() })
   }
 
-  const handleSubmit = async () => {    
-    const photoData: { uri: string, name: string, type: string } | null 
-      = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
-    if (!name || !species) {
-      setErrorMsg('Please enter name and type.')
-    } else {
-      setErrorMsg('')
-      if (species === 'Others') setBreed(null)
-      await onSubmit({ name, species, breed, dob, firstMet, altered, status, color }, photoData, petId)
-    }
+  function handleSubmit() {
+    const photoData = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
+    onSubmit({ name, species, breed, dob, firstMet, altered, status, color, petId }, photoData)
   }
+  
 
   return ( 
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
@@ -99,17 +73,17 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
         </View>
       </View>
       {errorMsg && <ErrorMessage error={errorMsg} />}
-      <Text style={styles.label}>Pet Name</Text>
+      <Text style={styles.label}>Pet Name (required)</Text>
       <TextInput 
         style={styles.input} 
         placeholder='Enter pet name'
         placeholderTextColor={Colors.shadow.reg}
-        onChangeText={(text: string) => setName(text)} 
+        onChangeText={(text: string) => onChange('name', text)} 
         value={name} 
         autoCapitalize="words"
       />
       <View style={styles.labelCon}>
-        <Text>Pet Type</Text>
+        <Text>Pet Type (required)</Text>
         {!allowManualSpecies && 
           <Text>{species === 'Dog' || species === 'Cat' ? 'Select Breed' : 'Select Species'}</Text>
         }
@@ -121,10 +95,10 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
             style={[styles.input, { width: 170 }]} 
             placeholder='Enter pet type'
             placeholderTextColor={Colors.shadow.reg}
-            onChangeText={(text: string) => setSpecies(text)} 
+            onChangeText={(text: string) => onChange('species', text)} 
             value={species} 
             autoCapitalize="words"
-          /> : <Dropdown label='Select Breed' dataType={species} onSelect={setBreed} initial={breed} width={170} />
+          /> : <Dropdown label='Select Breed' dataType={species} onSelect={selected => onChange('breed', selected)} initial={breed} width={170} />
         }
       </View>
 
@@ -132,22 +106,22 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
           <Text>Date of birth</Text>
           <View style={{ ...Spacing.flexRow}}>
             <Text>Unknown</Text>
-            <CheckboxButton onPress={() => { setShowDob(!showDob); setDob(null) }} initial={!showDob} />
+            <CheckboxButton onPress={() => { onChange('showDob', !showDob); !showDob && onChange('dob', null) }} initial={!showDob} />
           </View>
         </View>
-        {showDob && <RNDateTimePicker themeVariant='light' value={new Date(dob ?? new Date())} onChange={(event, selectedDate) => { setDob(selectedDate.toISOString()) }} /> }
+        {showDob && <RNDateTimePicker themeVariant='light' value={dob ? new Date(dob) : new Date()} onChange={(event, selectedDate) => onChange('dob', selectedDate) } /> }
         <View style={styles.labelCon}>
           <Text>Date you first met</Text>
           <View style={{ ...Spacing.flexRow }}>
             <Text>Unknown</Text>
-            <CheckboxButton onPress={() => { setShowFirstMet(!showFirstMet); setFirstMet(null) }} initial={!showFirstMet} />
+            <CheckboxButton onPress={() => { onChange('showFirstMet', !showFirstMet); !showFirstMet && onChange('firstMet', null) }} initial={!showFirstMet} />
           </View>
         </View>
-        {showFirstMet && <RNDateTimePicker themeVariant="light" value={new Date(firstMet ?? new Date())} onChange={(event, selectedDate) => { setFirstMet(selectedDate.toISOString()) }} /> }
+        {showFirstMet && <RNDateTimePicker themeVariant="light" value={firstMet ? new Date(firstMet) : new Date()} onChange={(event, selectedDate) => onChange('firstMet', selectedDate)} /> }
 
       <View style={styles.labelCon}>
         <Text>Neutered/ Spayed?</Text>
-        <CheckboxButton onPress={() => { setAltered(prev => ({ ...prev, value: !prev.value })) }} initial={altered.value} />
+        <CheckboxButton onPress={() => { onChange('altered', { ...altered, value: !altered.value }) }} initial={altered.value} />
       </View>
 
       {altered.value && 
@@ -156,40 +130,40 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
             <Text>Surgery Date</Text>
               <View style={{ ...Spacing.flexRow }}>
                 <Text>Unknown</Text>
-                <CheckboxButton onPress={() => { setShowAlteredDate(!showAlteredDate); setAltered(prev => ({...prev, date: null })) }} initial={!showAlteredDate} />
+                <CheckboxButton onPress={() => { onChange('showAlteredDate', !showAlteredDate); !showAlteredDate && onChange('altered', { ...altered, date: null }) }} initial={!showAlteredDate} />
               </View>
           </View>
-          {showAlteredDate && <RNDateTimePicker themeVariant='light' value={new Date(altered.date ?? new Date())} onChange={(event, selectedDate) => { setAltered({ value: true, date: selectedDate.toISOString() }) }} /> }
+          {showAlteredDate && <RNDateTimePicker themeVariant='light' value={altered.date ? new Date(altered.date) : new Date()} onChange={(event, selectedDate) => onChange('altered', { ...altered, date: selectedDate }) } />}
         </>
       }
       <View style={styles.labelCon}>
         <Text>Status?</Text>
-        <Dropdown label='' dataType="petStatus" initial={STATUS[0]} onSelect={handleSelectStatus} width={140} />
+        <Dropdown label='' dataType="petStatus" initial={status.value} onSelect={handleSelectStatus} width={140} />
       </View>
 
-      {status.value === STATUS[1] && 
+      {status.value === 'Passed away' && 
         <>
           <View style={styles.labelCon}>
             <Text>Date</Text>
               <View style={{ ...Spacing.flexRow }}>
                 <Text>Unknown</Text>
-                <CheckboxButton onPress={() => { setShowPassedDate(!showPassedDate); setStatus(prev => ({...prev, date: null })) }} initial={!!status.date} />
+                <CheckboxButton onPress={() => { onChange('showPassedDate', !showPassedDate); !showPassedDate && onChange('status', {...status, date: null }) }} initial={!showPassedDate} />
               </View>
           </View>
-          {showPassedDate && <RNDateTimePicker themeVariant="light" value={new Date(status.date ?? new Date())} onChange={(event, selectedDate) => { setStatus(prev => ({...prev, value: STATUS[1], date: selectedDate.toISOString() })) }} /> }
+          {showPassedDate && <RNDateTimePicker themeVariant="light" value={status.date ? new Date(status.date) : new Date()} onChange={(event, selectedDate) => { onChange('status', {...status, date: selectedDate }) }} /> }
 
           <View style={styles.labelCon}>
             <Text>Archive?</Text>
-            <CheckboxButton onPress={() => setStatus(prev => ({ ...prev, show: !prev.show }))} initial={!status.show} />
+            <CheckboxButton onPress={() => onChange('status', { ...status, show: !status.show })} initial={!status.show} />
           </View>
         </>
       }
 
-      <ColorPickingPanel onPress={setColor} initial={initialValues?.color} />
+      <ColorPickingPanel onPress={selected => onChange('color', selected)} initial={color} />
 
       <View style={{ ...Spacing.flexRow}}>
-        <MainButton onPress={handleSubmit} title={formStatus === 'pending' ? 'Submitting' : initialValues?.name ? 'Save' : 'Add Pet'} top={0} bottom={10} />
-        <TransparentButton onPress={() => setReset(true)} title='Clear' />
+        <MainButton onPress={() => onValidate(name, species)} title={formStatus === 'pending' ? 'Submitting' : !!name ? 'Save' : 'Add Pet'} top={0} bottom={10} />
+        <TransparentButton onPress={onReset} title='Clear' />
       </View>
 
     </ScrollView>

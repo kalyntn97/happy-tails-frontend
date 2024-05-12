@@ -41,7 +41,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   const [errorMsg, setErrorMsg] = useState<string>(null)
 
   const healthId: string | null = initialValues?.healthId ?? null
-  const initialVisits = initialValues?.lastDone.map(visit => visit.date)
+  const initialVisits = lastDone.map((visit: Visit) => visit.date)
 
   const handleSelectName = (selected: string) => {
     setName(() => {

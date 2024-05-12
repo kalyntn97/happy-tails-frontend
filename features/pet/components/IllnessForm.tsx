@@ -45,6 +45,7 @@ const IllnessForm: FC<IllnessFormProps> = ({ initialValues, onSubmit }) => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>Add an Illness</Text>
       <CircleIcon iconSource={getPetIconSource('illness')}/>
       <Text style={styles.label}>Name</Text>
       <TextInput 

@@ -8,8 +8,9 @@ export const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   header: {
-    ...Typography.mainHeader,
-    color: Colors.pink.dark
+    ...Typography.mediumHeader,
+    marginTop: 30,
+    color: Colors.pink.darkest
   },
   input: {
     ...Forms.input,
