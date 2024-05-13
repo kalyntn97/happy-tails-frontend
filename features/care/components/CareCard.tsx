@@ -11,7 +11,7 @@ import TrackerPanel from "./TrackerPanel"
 import { CloseButton, TransparentButton } from "@components/ButtonComponent"
 //styles
 import { styles } from "@styles/ModalCardStyles"
-import { Colors, Spacing, Forms } from "@styles/index"
+import { Colors, Spacing, Forms, Typography } from "@styles/index"
 
 interface CareCardProps {
   care: Care
@@ -24,7 +24,7 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
   
   const handleNavigate = () => {
     onNavigate()
-    navigation.navigate('Care', { screen: 'Details' , params : { care }, initial: false })
+    navigation.navigate('CareDetails', { care })
   }
 
   return (
@@ -35,6 +35,14 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
         <Text style={styles.title}>{CARES[care.name] ?? care.name}</Text>
       </View>
 
+      {care.medication &&
+        <View style={styles.desCon}>
+          <Text style={styles.des}>
+            {care.medication.name}
+            {care.medication.amount && <Text> - {care.medication.amount}</Text>}
+          </Text>
+        </View>
+      }
       <View style={styles.subHeader}>
         <PetList petArray={care.pets} size='small' navigation={navigation}/>
           {care.repeat &&

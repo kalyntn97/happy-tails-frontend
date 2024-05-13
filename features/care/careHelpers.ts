@@ -15,6 +15,7 @@ export const CARES = {
   med: 'Give medication',
   train: 'Train commands',
   feed: 'Feed',
+  refillMed: 'Refill medication',
   others: 'Others',
 }
 

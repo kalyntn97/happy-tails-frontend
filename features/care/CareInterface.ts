@@ -17,6 +17,7 @@ export interface Tracker {
 export interface Care {
   _id: string
   name: string
+  medication: { name: string, amount?: string } | null
   pets: Pet[]
   repeat: boolean
   date: string

@@ -4,7 +4,7 @@ import IdForm from '@pet/components/IdForm'
 import MedicationForm from '@pet/components/MedicationForm'
 import ServiceForm from '@pet/components/ServiceForm'
 import IllnessForm from '@pet/components/IllnessForm'
-import { useAddId, useAddIllness, useAddPetDetail, useAddService } from '@pet/petQueries'
+import { useAddPetDetail } from '@pet/petQueries'
 import { AlertForm } from '@utils/ui'
 
 interface EditMorePetDetailsScreenProps {
@@ -26,7 +26,7 @@ const EditMorePetDetailsScreen: FC<EditMorePetDetailsScreenProps> = ({ route, na
   return (
     <ScrollView>
       {form === 'id' && <IdForm onSubmit={handleSubmit} />} 
-      {form === 'med' && <MedicationForm />}
+      {form === 'med' && <MedicationForm onSubmit={handleSubmit} />}
       {form === 'service' && <ServiceForm onSubmit={handleSubmit} />}
       {form === 'illness' && <IllnessForm onSubmit={handleSubmit} />}
     </ScrollView>

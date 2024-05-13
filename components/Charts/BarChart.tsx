@@ -39,8 +39,8 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
 
   return (  
     <View style={[styles.container, { width: chartWidth, height: chartHeight }]}>
-      <View style={[styles.chartName, {  }]}>
-      <View style={[styles.header, { height: '30%' }]}>
+      <View style={styles.chartName}>
+        <View style={[styles.header, { height: '30%' }]}>
           <Text style={[
             styles.headerText,
             { color: isCurrent ? Colors.pink.dark : 'black' },
@@ -68,7 +68,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
             style={[
               styles.column, {
                 width: barWidth,
-                height: barHeightUnit * value ,
+                height: barHeightUnit * value.value ,
                 backgroundColor: getColor(times, value, colorArray),
                 marginHorizontal: frequency === 'Weekly' ? 10 : 7
               }
@@ -80,24 +80,24 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
               ( 
                 (currWeek === idx + 1 && isCurrent && frequency === 'Weekly') 
                 || (monthIdx === idx + 1 && isCurrent && frequency === 'Monthly') 
-              ) ? { color: Colors.pink.dark, fontWeight: 'bold' } 
-              : {}
+              ) && { color: Colors.pink.dark, fontWeight: 'bold' } 
             ]}>
                 {frequency === 'Weekly' 
                   ? `Week ${idx + 1}`
                   : getMonth(idx + 1).slice(0, 3)
                 }
             </Text>
-
-            <Text style={[
-              styles.value, 
-              { fontSize: frequency === 'Weekly' ? 15 : 10 }
-            ]}>
-              {times === value && 
+            <View style={{ ...Spacing.flexRow }}>
+              <Text style={[
+                styles.value, 
+                { fontSize: frequency === 'Weekly' ? 15 : 10 }
+              ]}>
+                {value.value !== 0 && value.value}
+              </Text>
+              {times === value.value && 
                 <Text style={{ fontSize: frequency === 'Weekly' ? 10 : 5, color: Colors.green.reg }}>✔️</Text>
               }
-              {value !== 0 && value}
-            </Text>
+            </View>
           </View>
         )}
       </View>
@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
     height: '100%',
     ...Spacing.flexColumn,
   },
-
 header: {
   width: '100%',
   ...Spacing.centered,

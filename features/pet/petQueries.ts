@@ -74,6 +74,7 @@ export const useAddPetDetail = (petId: string, navigation: any) => {
       id: () => petService.addId(formData, petId),
       service: () => petService.addService(formData, petId),
       illness: () => petService.addIllness(formData, petId),
+      med: () => petService.addMedication(formData, petId),
     }
     return keyToService[key]()
   }
@@ -96,6 +97,7 @@ export const useDeletePetDetail = (petId: string) => {
       id: () => petService.deleteId(petId, detailId),
       service: () => petService.deleteService(petId, detailId),
       illness: () => petService.deleteIllness(petId, detailId),
+      med: () => petService.deleteMedication(petId, detailId),
     }
     return keyToService[key]()
   }

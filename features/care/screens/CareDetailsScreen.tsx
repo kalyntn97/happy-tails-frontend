@@ -1,5 +1,5 @@
 //npm
-import React from "react"
+import React, { FC } from "react"
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView } from "react-native"
 //types & helpers & queries
 import { Care, Tracker } from "@care/CareInterface"
@@ -24,7 +24,7 @@ interface CareDetailsProps {
   route: { params: { care: Care }}
 }
 
-const CareDetailsScreen = ({ navigation, route }) => {
+const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
 
   const { care } = route.params
   const { showDeleteConfirmDialog, handleDeleteCareCard } = useDeleteCareCard(navigation)
@@ -33,7 +33,6 @@ const CareDetailsScreen = ({ navigation, route }) => {
   
   const iconSource = getCareIconSource(care.name)
 
-  
   return (
     <ScrollView
       style={{ backgroundColor: Colors.multi.lightest[care.color]}}
@@ -66,22 +65,20 @@ const CareDetailsScreen = ({ navigation, route }) => {
                   }
                 </Text>
               </View>
-              {/* <TouchableOpacity style={styles.subBtn} onPress={() => navigation.goBack()}>
-                <Text style={styles.btnText}>Go back</Text>
-              </TouchableOpacity> */}
+    
             </View>
           
             <PetList petArray={care.pets} size='small' />
 
             <View style={{...Forms.rowCon}}>
               <StatButton item={{ header: 'streak', stat: 0, body: 'days' }} />
-              <StatButton item={{ header: 'current', stat: trackers[0].done[taskIndex], body: `of ${care.times}` }} />
+              <StatButton item={{ header: 'current', stat: trackers[0].done[taskIndex].value, body: `of ${care.times}` }} />
               <StatButton item={{ header: 'longest', stat: 0, body: 'days' }} />
             </View>
           </View>
 
           <View style={{ ...Forms.roundedCon}}>
-            <BoxHeader title='Update' titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('Edit', { care: care })} />
+            <BoxHeader title='Update' titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('CareEdit', { care })} />
             <BoxHeader title='Delete' titleIconSource={getActionIconSource('deleteSquare')} onPress={() => showDeleteConfirmDialog(care, handleDeleteCareCard)} titleColor={Colors.red.reg} />
           </View>
 

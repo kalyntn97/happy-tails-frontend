@@ -51,6 +51,10 @@ export async function addService(formData: ServiceFormData, petId: string): Prom
   return (await axios.patch<string>(`${BASE_URL}/${petId}/services`, formData)).data
 }
 
+export async function addMedication(formData: ServiceFormData, petId: string): Promise<string> {
+  return (await axios.patch<string>(`${BASE_URL}/${petId}/medications`, formData)).data
+}
+
 export async function deleteId(petId: string, idId: string): Promise<string> {
   return (await axios.delete<string>(`${BASE_URL}/${petId}/ids/${idId}`)).data
 }
@@ -61,4 +65,8 @@ export async function deleteService(petId: string, serviceId: string): Promise<s
 
 export async function deleteIllness(petId: string, illnessId: string): Promise<string> {
   return (await axios.delete<string>(`${BASE_URL}/${petId}/illnesses/${illnessId}`)).data
+}
+
+export async function deleteMedication(petId: string, medicationId: string): Promise<string> {
+  return (await axios.delete<string>(`${BASE_URL}/${petId}/medications/${medicationId}`)).data
 }

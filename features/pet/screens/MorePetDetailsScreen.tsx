@@ -53,7 +53,7 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
   }
 
   const openForm = (form: string) => {
-    navigation.navigate('Edit', { form, petId })
+    navigation.navigate('EditDetails', { form, petId })
   }
 
   const DetailSections = () => {

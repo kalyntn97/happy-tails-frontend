@@ -17,8 +17,8 @@ const TitleOnlyHeader = ({ title }: { title: string }) => (
   </View>
 )
 
-const NoTitleHeader = ({ navigation }) => (
-  <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={10} left={10} />
+const NoTitleHeader = ({ navigation, top }) => (
+  <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={top} left={10} />
 )
 
 const baseHeaderStyle: any = {
@@ -30,12 +30,13 @@ const baseHeaderStyle: any = {
   }
 }
 
-export const noTitleHeaderStyle: any = {
+export const noTitleHeaderCardStyle: any = {
   header: ({ navigation }) => {
     return (
-      <NoTitleHeader navigation={navigation} />
+      <NoTitleHeader navigation={navigation} top={40} />
     )
-  }
+  },
+  presentation: 'card'
 }
 
  export const titleOnlyHeaderStyle: any = {
@@ -45,6 +46,14 @@ export const noTitleHeaderStyle: any = {
       <TitleOnlyHeader title={title} />
     )
   }
+}
+
+export const noTitleHeaderModalStyle: any = {
+  header: ({ navigation }) => {
+    return (
+      <NoTitleHeader navigation={navigation} top={10} />
+    )
+  },
 }
 
 const headerStyle: any = {

@@ -15,7 +15,7 @@ import useForm from '@hooks/useForm'
 import { MED_STATUS } from '@pet/petHelpers'
 
 interface MedicationFormProps {
-  initialValues?: MedicationFormData
+  initialValues?: Medication
   onSubmit: (type: string, medFormData: MedicationFormData) => void
 }
 
@@ -24,18 +24,18 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => 
 
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
   const { name, amount, times, frequency, startDate, ending, endDate, medReminder, refillTimes, refillFrequency, refillReminder, status, errorMsg } = values
-  const dosage = status !== 'Inactive' ? { amount, times, frequency, startDate, endDate: ending ? endDate : null, reminder: medReminder } : null
-  const refill = status !== 'Inactive' && refillReminder ? { times: refillTimes, frequency: refillFrequency, reminder: refillReminder } : null
+  const dosage = status !== 'Inactive' ? { amount, times, frequency, startDate, endDate: ending ? endDate : null } : null
+  const refill = status !== 'Inactive' && refillReminder ? { times: refillTimes, frequency: refillFrequency } : null
 
   function handleSubmit() {
-    onSubmit('med', { name, dosage, refill, status })
+    onSubmit('med', { name, dosage, refill, status, medReminder, refillReminder })
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Add a Medication</Text>
       <CircleIcon iconSource={getCareIconSource('med')}/>
-      <Text style={styles.label}>Medication name</Text>
+      <Text style={styles.label}>Name</Text>
       <TextInput 
         style={styles.input}
         placeholder='Enter name'
@@ -69,12 +69,12 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => 
         </View>
         <View style={styles.rowCon}>
           <View style={(!ending) && { width: 300, alignItems: 'center' }}>
-            <RNDateTimePicker themeVariant="light" value={new Date() ?? new Date(startDate)} onChange={(event, selectedDate) => { onChange('startDate', selectedDate) }} accentColor={Colors.pink.dark} />
+            <RNDateTimePicker themeVariant="light" value={startDate ? new Date(startDate) : new Date()} onChange={(event, selectedDate) => { onChange('startDate', selectedDate) }} accentColor={Colors.pink.dark} />
           </View>
           { ending &&
             <>
               <Text style={{ marginLeft: 10 }}> - </Text>
-              <RNDateTimePicker themeVariant='light' value={new Date() ?? new Date(endDate)} minimumDate={new Date(endDate)} onChange={(event, selectedDate) => { onChange('endDate', selectedDate) }} accentColor={Colors.pink.dark} />
+              <RNDateTimePicker themeVariant='light' value={endDate ? new Date(endDate) : new Date()} onChange={(event, selectedDate) => { onChange('endDate', selectedDate) }} accentColor={Colors.pink.dark} />
             </>
           }
         </View>
@@ -103,7 +103,7 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => 
         </View>
         {refillReminder && <>
           <Text style={styles.label}>Refill frequency</Text>
-          <View style={styles.rowCon}>
+          <View style={[styles.rowCon, { marginBottom: 70 }]}>
             <TextInput
               style={[Forms.inputBase, styles.leftInput, { marginRight: 5 }]}
               placeholder='Enter times'

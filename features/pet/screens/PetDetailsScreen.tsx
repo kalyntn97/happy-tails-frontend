@@ -83,13 +83,13 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
         <View style={{ ...Forms.roundedCon }}>
           {/* {!pet.ids.length && !pet.medications.length && !pet.services.length && !pet.illnesses.length && showMsg && */}
             <View>
-              <Pressable style={{ ...Spacing.flexRow, width: '100%', padding: 5 }} onPress={() => navigation.navigate('PetDetails', { pet })}>
+              <Pressable style={{ ...Spacing.flexRow, width: '100%', padding: 5 }} onPress={() => navigation.navigate('MoreDetails', { pet })}>
                 <CloseButton size="xSmall" onPress={() => setShowMsg(false)} />
                 <Text style={{ ...Typography.xSmallSubBody, marginLeft: 5 }}>Enter details such as microchip, medications, allergies, any health conditions, and contacts.</Text>
               </Pressable>
             </View>
           
-            {pet.ids?.length > 0 && <BoxHeader title='Identifications' titleIconSource={getActionIconSource('id')} mode="light" onPress={() => navigation.navigate('PetDetails', { pet, show: 'id' })} />}
+            {pet.ids?.length > 0 && <BoxHeader title='Identifications' titleIconSource={getActionIconSource('id')} mode="light" onPress={() => navigation.navigate('MoreDetails', { pet, show: 'id' })} />}
             {pet.medications?.length > 0 && <BoxHeader title='Medications' titleIconSource={getActionIconSource('med')} mode="light" />}
             {pet.illnesses?.length > 0 &&
               <>
@@ -97,7 +97,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
                 <BoxHeader title='Health conditions' titleIconSource={getActionIconSource('illness')} mode="light" />
               </>
             }  
-            {pet.services?.length > 0 && <BoxHeader title='Services' titleIconSource={getActionIconSource('service')} mode="light" onPress={() => navigation.navigate('PetDetails', { pet, show: 'service' })} />}
+            {pet.services?.length > 0 && <BoxHeader title='Services' titleIconSource={getActionIconSource('service')} mode="light" onPress={() => navigation.navigate('MoreDetails', { pet, show: 'service' })} />}
           
         </View>
 
@@ -106,8 +106,8 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
           <Text style={styles.sectionHeader}>Logs</Text>
         </View>
         <View style={{ ...Forms.roundedCon }}>
-          { pet.stats.map((stat: any, index: number) =>
-            <BoxHeader key={index} mode='light' onPress={() => navigation.navigate('Stat', { stat })} 
+          { pet.stats?.map((stat: any, index: number) =>
+            <BoxHeader key={index} mode='light' onPress={() => navigation.navigate('LogDetails', { stat })} 
               title={STATS[stat.name]?.name}
               titleIconSource={getStatIconSource(stat.name)}
             />
@@ -119,8 +119,8 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
           <Text style={styles.sectionHeader}>Actions</Text>
         </View>
         <View style={{ ...Forms.roundedCon }}>
-          <BoxHeader title='Log pet stats' titleIconSource={getActionIconSource('log')} mode='light' onPress={() => navigation.navigate('Create', { pet: { _id: pet._id, name: pet.name } })} />
-          <BoxHeader title="Update pet info" titleIconSource={getActionIconSource('editSquare')} mode='light' onPress={() => navigation.navigate('Pets', { screen: 'Edit', params: { pet: pet } })} />
+          <BoxHeader title='Log pet stats' titleIconSource={getActionIconSource('log')} mode='light' onPress={() => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } })} />
+          <BoxHeader title="Update pet info" titleIconSource={getActionIconSource('editSquare')} mode='light' onPress={() => navigation.navigate('Edit', { pet: pet })} />
           <BoxHeader title={deletePetMutation.isPending ? 'Deleting...' : 'Delete pet profile'} titleIconSource={getActionIconSource('deleteSquare')} onPress={showDeleteConfirmDialog} titleColor={Colors.red.dark} />
         </View>
       </>}
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.flexColumn,
     paddingVertical: 20,
-    marginTop: 20,
+    marginTop: 50,
   },
   infoCard: {
     width: '90%',

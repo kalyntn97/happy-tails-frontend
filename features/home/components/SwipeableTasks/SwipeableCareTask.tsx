@@ -75,12 +75,12 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
   const rightSwipeActions = () => (
     <View style={styles.squareBtnContainer}>
       <IconButton type='edit' size='medium' onPress={() => {
-        navigation.navigate('Care', { screen: 'Edit', params: { care }, initial: false })
+        navigation.navigate('CareEdit', { care })
         closeSwipeable()
       }} />
       {care.repeat &&
         <IconButton type='details' size='medium' onPress={() => {
-          navigation.navigate('Care', { screen: 'Details', params: { care }, initial: false })
+          navigation.navigate('CareDetails', { care })
           closeSwipeable()
         }} />
       }

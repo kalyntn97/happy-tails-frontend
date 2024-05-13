@@ -41,19 +41,11 @@ const FillChart = ({ tracker, frequency, times }) => {
               ) ? Colors.pink.dark : Colors.white,
               backgroundColor: getColor(times, value, colorArray),
             }
-        
           ]}>
-            <Text style={[
-              styles.label,
-              // { color: 
-              //   ( (currWeek === index + 1 && isCurrent && frequency === 'Weekly') 
-              //     || (currMonth === index + 1 && isCurrent && frequency === 'Monthly') 
-              //   ) ? Colors.pink.dark : Colors.white
-              // }
-            ]}>
+            <Text style={styles.label}>
               {frequency === 'Monthly' ? getMonth(index + 1).slice(0, 3) : `Week ${index + 1}`}
             </Text>
-            <Text style={styles.value}>{value ? '✔︎' : ''}</Text>
+            <Text style={styles.value}>{value === times ? '✔︎' : ''}</Text>
           </View>
         )}
       </View>

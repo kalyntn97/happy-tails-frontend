@@ -68,9 +68,11 @@ export type Medication = {
 
 export type MedicationFormData = {
   name: string
-  dosage: { amount: string, startDate: string, endDate: string | null, times: number, frequency: string, reminder: boolean }
-  refill: { times: number, frequency: string, reminder: boolean } | null
+  dosage: { amount: string, startDate: string, endDate: string | null, times: number, frequency: string }
+  refill: { times: number, frequency: string } | null
   status: string
+  medReminder: boolean
+  refillReminder: boolean
 }
 
 export type Timeline = {

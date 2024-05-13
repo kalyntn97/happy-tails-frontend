@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
   scrollContent: {
     ...Spacing.flexColumn,
     paddingVertical: 20,
+    marginTop: 30,
   },
   headerContainer: {
     ...Spacing.flexColumn,

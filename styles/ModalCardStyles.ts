@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     ...Spacing.fullScreenDown,
     ...Forms.cardWithShadow,
     width: '90%',
-    height: 370,
+    height: 400,
     justifyContent: 'flex-start'
   },
   header: {
@@ -56,13 +56,15 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-start', 
     width: '100%' 
   },
-  vaxCon: {
+  desCon: {
     width: '100%',
     padding: 10,
+    paddingLeft: '20%',
   },
-  vax: {
+  des: {
     ...Typography.xSmallSubHeader,
-    margin: 0,
     marginTop: -15,
-  },
+    marginBottom: 0,
+    textAlign: 'left',
+  }
 })

@@ -34,7 +34,7 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
 
   const handleNavigate = () => {
     onNavigate && onNavigate()
-    navigation.navigate('Health', { screen: 'Details' , params : { healthId: health._id }, initial: false })
+    navigation.navigate('HealthDetails', { healthId: health._id })
   }
 
   return (
@@ -48,8 +48,8 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
       </View>
 
       { health.name === 'vax' && 
-        <View style={styles.vaxCon}>
-          <Text style={styles.vax}>{VACCINES[health.vaccine].name}</Text>
+        <View style={styles.desCon}>
+          <Text style={styles.des}>{VACCINES[health.vaccine].name}</Text>
         </View>
       }
 

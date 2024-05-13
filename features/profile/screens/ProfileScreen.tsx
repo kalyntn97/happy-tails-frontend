@@ -96,8 +96,8 @@ const ProfileScreen = ({ navigation, route }) => {
               
             } />
             <View style={{...Forms.roundedCon}}>
-              <BoxHeader title="All pet care tasks" titleIconSource={getActionIconSource('care')} onPress={() => navigation.navigate('Care', { screen: 'Index', initial: false})} />
-              <BoxHeader title="All vet visits" titleIconSource={getActionIconSource('health')} onPress={() => navigation.navigate('Health', { screen: 'Index', initial: false})} />
+              <BoxHeader title="All pet care tasks" titleIconSource={getActionIconSource('care')} onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
+              <BoxHeader title="All vet visits" titleIconSource={getActionIconSource('health')} onPress={() => navigation.navigate('Home', { screen: 'HealthIndex' })} />
               <BoxHeader title="Update profile" titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('Edit', { profile : profile })} />
               <BoxHeader title="Settings" titleIconSource={getActionIconSource('settings')} onPress={() => navigation.navigate('Settings', { profile : profile })} />
             </View>

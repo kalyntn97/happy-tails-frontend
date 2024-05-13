@@ -10,8 +10,7 @@ import PetInfo from '@components/PetInfo/PetInfo'
 import { Health, Visit } from '@health/HealthInterface'
 import { useCheckDoneHealth, useUncheckDoneHealth } from '@health/healthQueries'
 import { useDeleteHealthCard, useShallowPetColor } from '@hooks/sharedHooks'
-import { HEALTHS, VACCINES, healthNameFromKey } from '@health/healthHelpers'
-import { useShallowPetBasics } from '@store/storeUtils'
+import { HEALTHS } from '@health/healthHelpers'
 //styles
 import { styles } from '@styles/SwipeableTaskStyles'
 import Colors from '@styles/colors'
@@ -40,11 +39,11 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, pa
   const rightSwipeActions = () => (
     <View style={styles.squareBtnContainer}>
       <IconButton type='edit' size='medium' onPress={() => {
-        navigation.navigate('Health', { screen: 'Edit', params: { health: health }, initial: false })
+        navigation.navigate('HealthEdit', { health: health })
         closeSwipeable()
       }} />
       <IconButton type='details' size='medium' onPress={() => {
-        navigation.navigate('Health', { screen: 'Details', params: { healthId: health._id }, initial: false })
+        navigation.navigate('HealthDetails', { healthId: health._id })
         closeSwipeable()
       }} />
 

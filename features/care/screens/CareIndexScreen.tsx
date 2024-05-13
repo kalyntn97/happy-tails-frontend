@@ -32,7 +32,7 @@ const CareItem = ({ care, navigation }) => {
   return (
     <TouchableOpacity 
       disabled={!care.repeat}
-      onPress={() => navigation.navigate('Details', { care })}
+      onPress={() => navigation.navigate('CareDetails', { care })}
       style={[styles.itemContainer,
       { backgroundColor: Colors.multi.light[care.color], opacity: !care.repeat ? 0.5 : 1 }
       ]}
@@ -120,7 +120,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
   
   return (
     <View style={styles.container}>
-      <RoundButton onPress={() => navigation.navigate('Create')} type='add' position="bottomRight"/>
+      <RoundButton onPress={() => navigation.navigate('CareCreate')} type='add' position="bottomRight" />
       {isSuccess ?
         <>
           { !Object.values(cares).length && <PlaceHolder /> }

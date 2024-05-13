@@ -28,13 +28,12 @@ import EditMorePetDetailsScreen from "@pet/screens/EditMorePetDetailsScreen"
 import { getNavigationIconSource } from "@utils/ui"
 //styles
 import { Typography } from "@styles/index"
-import { styles, tabBarOptions, modalPresentation, stackOptions, noTitleHeaderStyle, titleOnlyHeaderStyle  } from "./NavigationStyles"
+import { styles, tabBarOptions, modalPresentation, stackOptions, noTitleHeaderCardStyle, titleOnlyHeaderStyle, noTitleHeaderModalStyle } from "./NavigationStyles"
 
 const PrivateApp = () => {
   const Tab = createBottomTabNavigator()
   //HomeTab
   const HomeStack = createNativeStackNavigator()
-  const CareStack = createNativeStackNavigator()
   const HealthStack = createNativeStackNavigator()
   //PetTab
   const PetStack = createNativeStackNavigator()
@@ -69,30 +68,22 @@ const PrivateApp = () => {
         {() => (
           <HomeStack.Navigator
             initialRouteName="Main"
-            screenOptions={() => ({ headerShown: false, ...modalPresentation })}
+            screenOptions={() => ({ ...modalPresentation })}
           >
-            <HomeStack.Screen name='Main' component={HomeScreen} />
-            <HomeStack.Screen name='Care'>
-              {() => (
-                <CareStack.Navigator screenOptions={{ ...stackOptions, }}>
-                  <CareStack.Screen name='Index' component={CareIndexScreen} options={{ title: 'All Pet Care'}}/>
-                  <CareStack.Screen name='Create' component={NewCareScreen} options={{ title: 'Add a Task' }}/>
-                  <CareStack.Screen name='Details' component={CareDetailsScreen} options={{...noTitleHeaderStyle }}/>
-                  <CareStack.Screen name='Edit' component={EditCareScreen} options={{ title: 'Edit Task' }}/>
-                </CareStack.Navigator>
-              )}
-            </HomeStack.Screen>
+            <HomeStack.Screen name='Main' component={HomeScreen} options={{ headerShown: false }} />
+            <HomeStack.Group screenOptions={{ ...stackOptions }}>
+              <HomeStack.Screen name='CareIndex' component={CareIndexScreen} options={{ title: 'All Pet Care'}}/>
+              <HomeStack.Screen name='CareCreate' component={NewCareScreen} options={{ title: 'Add a Task' }}/>
+              <HomeStack.Screen name='CareDetails' component={CareDetailsScreen} options={{ ...noTitleHeaderCardStyle }}/>
+              <HomeStack.Screen name='CareEdit' component={EditCareScreen} options={{ title: 'Edit Task' }}/>
+            </HomeStack.Group>
         
-            <HomeStack.Screen name='Health'>
-              {() => (
-                <HealthStack.Navigator screenOptions={{ ...stackOptions }}>
-                  <HealthStack.Screen name='Index' component={HealthIndexScreen} options={{ title: 'All Pet Health'}} />
-                  <HealthStack.Screen name='Create' component={NewHealthScreen} options={{ title: 'Add a Vet Visit'}} />
-                  <HealthStack.Screen name='Edit' component={EditHealthScreen} options={{ title: 'Update Vet Visit'}}/>
-                  <HealthStack.Screen name='Details' component={HealthDetailsScreen} options={{ ...noTitleHeaderStyle }} />
-                </HealthStack.Navigator>
-              )}
-            </HomeStack.Screen>
+            <HomeStack.Group screenOptions={{ ...stackOptions }}>
+              <HealthStack.Screen name='HealthIndex' component={HealthIndexScreen} options={{ title: 'All Pet Health'}} />
+              <HealthStack.Screen name='HealthCreate' component={NewHealthScreen} options={{ title: 'Add a Vet Visit'}} />
+              <HealthStack.Screen name='HealthEdit' component={EditHealthScreen} options={{ title: 'Update Vet Visit'}}/>
+              <HealthStack.Screen name='HealthDetails' component={HealthDetailsScreen} options={{ ...noTitleHeaderCardStyle }} />
+            </HomeStack.Group>
         
           </HomeStack.Navigator> 
         )}
@@ -104,20 +95,13 @@ const PrivateApp = () => {
             screenOptions={{ ...stackOptions, ...modalPresentation }}
           >
             <PetStack.Screen name='Index' component={PetIndexScreen} options={{ ...titleOnlyHeaderStyle }} />
-            <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }}
-            />
+            <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }} />
             <PetStack.Screen name='Edit' component={EditPetScreen} options={({ route }) => ({ title: 'Edit Pet' })} />
-            <PetStack.Screen name='Details' options={{ headerShown: false }}>
-              {() => (
-                <DetailStack.Navigator screenOptions={{ ...stackOptions }}>
-                  <DetailStack.Screen name='Index' component={PetDetailsScreen} options={{ ...noTitleHeaderStyle }} />
-                  <DetailStack.Screen name='PetDetails' component={MorePetDetailsScreen} options={{ title: 'More Details' }} />
-                  <DetailStack.Screen name='Edit' component={EditMorePetDetailsScreen} options={{ ...noTitleHeaderStyle }} />
-                  <DetailStack.Screen name='Create' component={NewStatScreen} options={{ title: 'New Log' }} />
-                  <DetailStack.Screen name='Stat' component={StatDetails} options={{ title: 'Details' }} />
-                </DetailStack.Navigator>
-              )}
-            </PetStack.Screen>
+            <PetStack.Screen name='Details' component={PetDetailsScreen} options={{ ...noTitleHeaderCardStyle }} />
+            <PetStack.Screen name='MoreDetails' component={MorePetDetailsScreen} options={{ title: 'More Details' }} />
+            <PetStack.Screen name='EditDetails' component={EditMorePetDetailsScreen} options={{ ...noTitleHeaderModalStyle }} />
+            <PetStack.Screen name='CreateLog' component={NewStatScreen} options={{ title: 'New Log' }} />
+            <PetStack.Screen name='LogDetails' component={StatDetails} options={{ title: 'Details' }} />
           </PetStack.Navigator>
         )}
       </Tab.Screen>

@@ -92,6 +92,7 @@ const careIconSource = {
   bath: require('@assets/icons/care-give_bath.png'),
   brush: require('@assets/icons/care-brush_coat.png'),
   med: require('@assets/icons/care-med.png'),
+  refillMed: require('@assets/icons/care-med.png'),
   train: require('@assets/icons/care-train.png'),
   feed: require('@assets/icons/care-feed.png'),
   others: require('@assets/icons/health-misc_exam.png'),

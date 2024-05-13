@@ -41,7 +41,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const isSuccess = useUserQueries().every(query => query.isSuccess)
   const isError = useUserQueries().some(query => query.isError)
   //store
-  const { setPets, setCares, setHealths } = useSetActions()
+  const { setPets } = useSetActions()
   
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const activeDateObj = new Date(activeYear, activeMonth, activeDate + 1)
@@ -58,8 +58,6 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   useEffect(() => {
     if (isSuccess) {
       setPets(pets.data)
-      setCares(Object.values(cares.data).flat())
-      setHealths(healths.data)
       // setReminderInterval(profile.data.reminderInterval)
       
       // const daysElapsed = countDaysBetween(profile.data.streak.lastDate, new Date())
@@ -173,7 +171,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
             {clickedTask &&
               <>
                 {clickedTask.type === 'care' ?
-                  <CareCard care={clickedTask.item as Care} navigation={navigation} onNavigate={() => setModalVisible(false)}/>
+                  <CareCard care={clickedTask.item as Care} navigation={navigation} onNavigate={() => setModalVisible(false)} />
                 :
                 clickedTask.type === 'health' ?
                   <HealthCard health={clickedTask.item as Health} navigation={navigation} onNavigate={() => setModalVisible(false)} activeDateObj = {activeDateObj} />
