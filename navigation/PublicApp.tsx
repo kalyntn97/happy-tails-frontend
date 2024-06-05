@@ -5,7 +5,7 @@ import RegisterScreen from "@auth/screens/RegisterScreen"
 import HomeScreen from "@home/HomeScreen"
 //style
 import { Colors } from "@styles/index"
-import { noTitleHeaderStyle, modalPresentation } from "./NavigationStyles"
+import { noTitleHeaderModalStyle, modalPresentation } from "./NavigationStyles"
 
 
 const PublicApp = () => {
@@ -17,8 +17,8 @@ const PublicApp = () => {
       contentStyle: { backgroundColor: Colors.white},
     }}>
       <Stack.Screen name='Home' component={HomeScreen} options={{ headerShown: false }} />
-      <Stack.Screen name='Login' component={LoginScreen} options={{ ...noTitleHeaderStyle }} />
-      <Stack.Screen name='Register' component={RegisterScreen} options={{ ...noTitleHeaderStyle }} />
+      <Stack.Screen name='Login' component={LoginScreen} options={{ ...noTitleHeaderModalStyle }} />
+      <Stack.Screen name='Register' component={RegisterScreen} options={{ ...noTitleHeaderModalStyle }} />
       
     </Stack.Navigator>
   )

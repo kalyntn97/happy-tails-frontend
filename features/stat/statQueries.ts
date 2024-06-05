@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import * as statService from '@stat/statService'
 import { StatFormData } from "./statInterface"
+import { alertError, alertSuccess } from "@utils/misc"
+import { petKeyFactory } from "@pet/petQueries"
 
 export const statKeyFactory = {
   stats: ['all-stats'],
@@ -14,13 +16,15 @@ export const useGetAllStats = () => {
   })
 }
 
-export const useAddStats = () => {
+export const useAddStats = (navigation) => {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: ({ petId, logs }:  StatFormData) => statService.create(petId, logs),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...statKeyFactory.stats] })
-    }
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [...petKeyFactory.petById(data)] })
+      return alertSuccess('Log added', navigation)
+    },
+    onError: (error) => alertError(error)
   })
 }

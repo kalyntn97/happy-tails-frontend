@@ -75,7 +75,7 @@ const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
               }
             ]}>
               <Text style={styles.day}>{idx + 1}</Text>
-              {value === times && 
+              {value.value === times && 
                 <Text style={styles.dot}>✔︎</Text>
               }
           </View>  

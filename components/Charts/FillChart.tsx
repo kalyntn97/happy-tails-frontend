@@ -45,7 +45,7 @@ const FillChart = ({ tracker, frequency, times }) => {
             <Text style={styles.label}>
               {frequency === 'Monthly' ? getMonth(index + 1).slice(0, 3) : `Week ${index + 1}`}
             </Text>
-            <Text style={styles.value}>{value === times ? '✔︎' : ''}</Text>
+            <Text style={styles.value}>{value.value === times ? '✔︎' : ''}</Text>
           </View>
         )}
       </View>

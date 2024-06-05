@@ -95,8 +95,9 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
             <Text style={styles.column}>{new Date(record.createdAt).toLocaleDateString()}</Text>
           </View>
           <View style={[styles.columnCon, styles.rightColumn]}>
-            {unit && <Text style={styles.column}>{unit === defaultUnit ? record.value : statConverter(stat.name, record.value.toString(), unit)}</Text> }
-            {stat.name === 'mood' && <Image source={getStatQualIconSource(stat.name, record.value)} style={{ ...Forms.icon }} /> }
+            {stat.name === 'mood' ? <Image source={getStatQualIconSource(stat.name, record.value)} style={{ ...Forms.icon }} /> 
+            : <Text style={styles.column}>{(unit === defaultUnit || !unit) ? record.value : statConverter(stat.name, record.value.toString(), unit)}</Text>
+            }
             
           </View>
         </View>

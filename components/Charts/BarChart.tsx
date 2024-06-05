@@ -87,17 +87,15 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
                   : getMonth(idx + 1).slice(0, 3)
                 }
             </Text>
-            <View style={{ ...Spacing.flexRow }}>
-              <Text style={[
-                styles.value, 
-                { fontSize: frequency === 'Weekly' ? 15 : 10 }
-              ]}>
-                {value.value !== 0 && value.value}
-              </Text>
+            <Text style={[
+              styles.value, 
+              { fontSize: frequency === 'Weekly' ? 15 : 10 }
+            ]}>
+              {value.value !== 0 && value.value}
               {times === value.value && 
                 <Text style={{ fontSize: frequency === 'Weekly' ? 10 : 5, color: Colors.green.reg }}>✔️</Text>
               }
-            </View>
+            </Text>
           </View>
         )}
       </View>

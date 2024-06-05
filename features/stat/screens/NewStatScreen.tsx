@@ -29,7 +29,7 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
   const [errorMsg, setErrorMsg] = useState<string>(null)
 
   const { pet } = route.params
-  const addStatsMutation = useAddStats()
+  const addStatsMutation = useAddStats(navigation)
   
   const addLog = (item: LogData) => {
     logs.find(prevItem => prevItem.name === item.name) 
@@ -42,15 +42,7 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
       setErrorMsg('Please enter all selected values.')
     } else {
       setErrorMsg(null)
-      // addStatsMutation.mutate({ petId, logs }, {
-      //   onSuccess: () => {
-      //     navigation.goBack()
-      //     return AlertForm({ body: `Submitted successfully`, button: 'OK' })
-      //   },
-      //   onError: (error) => {
-      //     return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      //   },
-      // })
+      addStatsMutation.mutate({ petId, logs })
     }
   }
 
