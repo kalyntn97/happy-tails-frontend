@@ -10,40 +10,41 @@ import ColorPickingPanel from "@components/ColorPickingPanel"
 //types
 import { Pet } from "@pet/PetInterface"
 import { CARES, careKeyFromName } from "@care/careHelpers"
-//store
-import { usePetIds } from "@store/storeUtils"
+
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/FormStyles"
 import { ErrorMessage } from "@components/UIComponents"
-import { CareFormData } from "@care/CareInterface"
+import PetSelectForm from "@components/PetSelectForm"
+import { Care } from "@care/CareInterface"
 
+interface initialStates extends Care {
+  careId: string
+}
 interface CareFormProps {
   onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, color: number, careId: string | null) => void
-  initialValues?: CareFormData
+  initialValues?: initialStates
   navigation: any
   status: string
 }
 
 const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
-  const initialPetNames = initialValues?.pets.map(pet => pet.name) ?? null
   const initialPets = initialValues?.pets.map(pet => pet._id)
-  const pets = usePetIds()
-  const height = useWindowDimensions().height
-
-  const [name, setName] = useState<string>((CARES[initialValues?.name] || initialValues?.name) ?? null)
-  const [petData, setPetData] = useState<string[]>(initialPets ?? [])
+  const [name, setName] = useState<string>(initialValues?.name ?? null)
+  const [petData, setPetData] = useState<string[] | Pet[]>(initialValues?.pets ?? [])
   const [repeat, setRepeat] = useState<boolean>(initialValues?.repeat ?? false)
   const [ending, setEnding] = useState<boolean>(initialValues ? !!initialValues.endDate : false)
-  const [date, setDate] = useState<Date | null>(initialValues?.date ?? new Date())
-  const [endDate, setEndDate] = useState<Date | null>(initialValues?.endDate ?? null)
+  const [date, setDate] = useState<string | null>(initialValues?.date ?? new Date().toISOString())
+  const [endDate, setEndDate] = useState<string | null>(initialValues?.endDate ?? null)
   const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
   const [times, setTimes] = useState<number>(initialValues?.times ?? null)
   const [color, setColor] = useState<number>(initialValues?.color ?? 0)
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [allowManualName, setAllowManualName] = useState<boolean>(false)
-
   const careId: string | null = initialValues?.careId ?? null
+
+  const height = useWindowDimensions().height
+
   // handle input custom name for form
   const handleSelectName = (selected: string) => {
     setName(() => {
@@ -56,15 +57,6 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         return careKey
       }
     })
-  }
-  // handle select multiple pets
-  const handleSelectPets = (selected: string[]) => {
-    // convert names into ids before submitting
-    const petIds = selected.map(name => {
-      const pet = pets.find(pet => pet.name === name)
-      return pet._id
-    })
-    setPetData(petIds)
   }
 
   const handleSubmit = async () => {
@@ -94,7 +86,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       {errorMsg && <ErrorMessage error={errorMsg} />}
 
       <Text style={styles.label}>Name</Text>
-      <Dropdown label={'Select Name'} dataType="care" onSelect={handleSelectName} initial={name} />
+      <Dropdown label={'Select Name'} dataType="care" onSelect={handleSelectName} initial={CARES[name]} />
       {allowManualName && 
         <TextInput 
           style={styles.input}
@@ -107,8 +99,8 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       }
 
       <Text style={styles.label}>Pets</Text>
-      <MultiselectDropdown label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialPetNames} />
-
+      {/* <MultiselectDropdown label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialPetNames} /> */}
+      <PetSelectForm mode="multi" onSelect={setPetData} initials={initialPets} />
       <View style={[styles.labelCon]}>
           <Text style={styles.rowText}>Repeat</Text>
           <ToggleButton onPress={() => setRepeat(!repeat)} initial={repeat} size='small' />

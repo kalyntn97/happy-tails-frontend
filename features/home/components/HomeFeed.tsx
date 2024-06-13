@@ -5,21 +5,22 @@ import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Modal, Pre
 import { Care } from "@care/CareInterface"
 import { Health } from "@health/HealthInterface"
 //store & queries
-import { useUpdateStreak } from "@profile/profileQueries"
-import { useActiveDate, useActiveTaskCounts, useCurrentIsActive, useSetActions } from "@store/store"
+import { useGetProfile, useUpdateStreak } from "@profile/profileQueries"
+import { useActiveDate, useBoundStore, useCurrentIsActive, useSetActions } from "@store/store"
 import { AlertForm, getCalendarIconSource, getNavigationIconSource } from "@utils/ui"
 //components
 import CareCard from "@care/components/CareCard"
-import { CloseButton } from "../../../components/ButtonComponent"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
 import NestedList from './NestedList';
 import HealthCard from "@health/components/HealthCard"
 //utils & store
-import { useUserQueries } from "../homeQueries"
 import { getMonth } from "@utils/datetime"
 //styles
 import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
+import { ErrorImage } from "@components/UIComponents"
+import { useQueryClient } from "@tanstack/react-query"
+import { petKeyFactory } from "@pet/petQueries"
 
 interface HomeFeedProps {
   navigation: any
@@ -36,12 +37,10 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [clickedTask, setClickedTask] = useState<ClickedTask>(null)
   //queries
-  const [profile, pets, cares, healths] = useUserQueries()
-  const isLoading = useUserQueries().some(query => query.isLoading)
-  const isSuccess = useUserQueries().every(query => query.isSuccess)
-  const isError = useUserQueries().some(query => query.isError)
+  const { data, isLoading, isSuccess, isError } = useGetProfile()
+  const queryClient = useQueryClient()
   //store
-  const { setPets } = useSetActions()
+  const { setPets, setCares, setHealths, setProfile } = useSetActions()
   
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const activeDateObj = new Date(activeYear, activeMonth, activeDate + 1)
@@ -54,25 +53,15 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     setModalVisible(true)
   }
   
-
   useEffect(() => {
     if (isSuccess) {
-      setPets(pets.data)
-      // setReminderInterval(profile.data.reminderInterval)
-      
-      // const daysElapsed = countDaysBetween(profile.data.streak.lastDate, new Date())
-      // if (daysElapsed >= 1) {
-      //   updateStreakMutation.mutate(null, {
-      //     // onSuccess: () => {
-
-      //     // },
-      //     onError: (error) => {
-      //       return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      //     }
-      //   })
-      // }
+      setPets(data.profile.pets)
+      setCares(data.cares)
+      setHealths(data.healths)
+      setProfile(data.profile)
+      queryClient.setQueryData(petKeyFactory.pets, data.profile.pets)
     }
-  }, [pets.data, cares.data, healths.data, profile.data])
+  }, [isSuccess])
 
   return (  
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
@@ -92,11 +81,11 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       </View>
 
       { isLoading && <Loader /> }
-      { isError && <Text>Error fetching data... </Text> }
+      { isError && <ErrorImage /> }
       
       {feed === 'health' && isSuccess &&
         <View style={styles.taskListContainer}>
-          <NestedList data={healths.data} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='health' />
+          <NestedList data={data.healths} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='health' />
         </View>
       }
 
@@ -135,22 +124,22 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           </View>
           
           <View style={styles.taskListContainer}>
-            {Object.values(cares.data).length > 0 ?
+            {Object.values(data.cares).length > 0 ?
               <>
                 {selected === 'day' &&
-                  <NestedList data={[...cares.data['Daily'], ...cares.data['Others']]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
+                  <NestedList data={[...data.cares['Daily'], ...data.cares['Others']]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
                 }
                 
                 {selected === 'week' &&
-                  <NestedList data={cares.data['Weekly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
+                  <NestedList data={data.cares['Weekly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
                 }
 
                 {selected === 'month' && 
-                  <NestedList data={cares.data['Monthly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
+                  <NestedList data={data.cares['Monthly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
                 }
 
                 {selected === 'year' && 
-                  <NestedList data={cares.data['Yearly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
+                  <NestedList data={data.cares['Yearly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
                 }
               </>
             : <PlaceHolder navigation={navigation}/> }

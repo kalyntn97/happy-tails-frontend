@@ -86,6 +86,19 @@ export const IconButton: FC<IconButtonProps> = ({ onPress, type, size }) => (
   </TouchableOpacity>
 )
 
+interface PhotoButtonProps extends BaseButtonProps {
+  photo: string
+  placeholder?: string
+}
+
+export const PhotoButton = ({ photo, onPress, size, placeholder }) => (
+  <TouchableOpacity onPress={onPress} style={{ margin: 5 }}>
+    <View style={[size === 'small' ? { ...Forms.xxSmallPhoto } : { ...Forms.xSmallPhoto }, { backgroundColor: Colors.pink.light, ...Spacing.centered }]}>
+      <Image source={photo ? { uri: photo } : placeholder} style={size === 'small' ? { ...Forms.xxSmallPhoto } : { ...Forms.xSmallPhoto }} />
+    </View>
+  </TouchableOpacity>
+)
+
 interface CornerButtonProps extends BaseButtonProps {
   position?: string
   top?: number
@@ -276,3 +289,4 @@ export const ToggleButton: FC<CheckboxButtonProps> = ({ onPress, size, initial, 
     </Pressable>
   )
 }
+

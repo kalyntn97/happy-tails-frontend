@@ -3,12 +3,18 @@ import LottieView from "lottie-react-native"
 import { Typography, Colors, Spacing } from "@styles/index"
 import { TransparentButton } from "./ButtonComponent"
 
-const PlaceHolder = ({ navigation }) => {
+const PlaceHolder = ({ type, navigation }) => {
   return (  
     <View style={styles.container}>
       <LottieView source={require('@assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
-      <TransparentButton title='Add task' onPress={() => navigation.navigate('Care', { screen: 'Create' })} color={Colors.pink.dark} />
-      <Text style={styles.msg}>No tasks.</Text>
+      <TransparentButton title={`Add ${type}`} onPress={() => {
+          type === 'task' ? navigation.navigate('Care', { screen: 'Create' })
+          : type === 'vet appointments' ? navigation.navigate('Health', { screen: 'Create' })
+          : type === 'pet' ? navigation.navigate('Pets', { screen: 'Create' })
+          : null
+        }} color={Colors.pink.dark} bdColor={Colors.pink.dark} top={-40}
+      />
+      <Text style={styles.msg}>No {type}s.</Text>
     </View>
   )
 }
@@ -22,8 +28,8 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   catAnimation: {
-    width: 200,
-    height: 200,
+    width: 300,
+    height: 300,
   },
 })
 

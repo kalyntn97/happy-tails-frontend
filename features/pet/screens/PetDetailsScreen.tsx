@@ -13,13 +13,14 @@ import { useDeletePet, useGetPetById } from "@pet/petQueries"
 import { usePetActions } from "@store/store"
 //styles
 import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
-import { useCaresByPet, useHealthDueByPet } from "@hooks/sharedHooks"
+import { showDeleteConfirmDialog, useCaresByPet, useDeletePetCard, useHealthDueByPet } from "@hooks/sharedHooks"
 import StatDetails from "@stat/screens/StatDetails"
 import { STATS } from "@stat/statHelpers"
 import { Stat } from "@stat/statInterface"
 import { Image } from "react-native"
 import { CloseButton, IconButton } from "@components/ButtonComponent"
 import { useState } from "react"
+import ToastManager from "toastify-react-native"
 
 interface PetDetailsProps {
   navigation: any
@@ -31,32 +32,11 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   const {data: pet, isSuccess, isLoading, isError} = useGetPetById(route.params.pet._id, route.params.pet)
   const [showMsg, setShowMsg] = useState<boolean>(true)
   const windowHeight = useWindowDimensions().height
+  
+  const deletePetMutation = useDeletePet(navigation)
 
-  const { onDeletePet } = usePetActions()
-  const deletePetMutation = useDeletePet()
-  
-  const handleDeletePet = async (petId: string) => {
-    deletePetMutation.mutate(petId, {
-      onSuccess: (data) => {
-        onDeletePet(data)
-        navigation.navigate('Pets', { screen: 'Index' })
-        return AlertForm({ body: 'Pet deleted successfully', button: 'OK' })
-      }, 
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      }
-    })
-  }
-  
-  const showDeleteConfirmDialog = () => {
-    return Alert.alert(
-      'Are you sure?',
-      `Remove ${pet.name} from your profile?`, 
-      [
-        { text: 'Yes', onPress: () => { handleDeletePet(pet._id) }},
-        { text: 'No' }
-      ]
-    )
+  const handleDeletePet = (petId: string) => {
+    deletePetMutation.mutate(petId)
   }
 
   return (
@@ -68,7 +48,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
       { isLoading && <Loader /> }
       { isError && <Text>Error fetching pets...</Text> }
       { isSuccess && pet && <>
-        <View style={[styles.infoCard, 
+        <View style={[styles.infoCard,
         ]}>
           <View style={styles.petInfo}>
             <PetInfo pet={pet} size='expanded' />
@@ -121,7 +101,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
         <View style={{ ...Forms.roundedCon }}>
           <BoxHeader title='Log pet stats' titleIconSource={getActionIconSource('log')} mode='light' onPress={() => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } })} />
           <BoxHeader title="Update pet info" titleIconSource={getActionIconSource('editSquare')} mode='light' onPress={() => navigation.navigate('Edit', { pet: pet })} />
-          <BoxHeader title={deletePetMutation.isPending ? 'Deleting...' : 'Delete pet profile'} titleIconSource={getActionIconSource('deleteSquare')} onPress={showDeleteConfirmDialog} titleColor={Colors.red.dark} />
+          <BoxHeader title={deletePetMutation.isPending ? 'Deleting...' : 'Delete pet profile'} titleIconSource={getActionIconSource('deleteSquare')} onPress={() => showDeleteConfirmDialog(pet._id, handleDeletePet)} titleColor={Colors.red.dark} />
         </View>
       </>}
 

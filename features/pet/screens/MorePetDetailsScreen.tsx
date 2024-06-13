@@ -13,9 +13,10 @@ import MedicationForm from '@pet/components/MedicationForm'
 import CareForm from '@care/components/CareForm'
 import IllnessForm from '@pet/components/IllnessForm'
 import ServiceForm from '@pet/components/ServiceForm'
-import { useDeleteId, useDeleteIllness, useDeletePetDetail, useDeleteService, useGetPetById } from '@pet/petQueries'
+import { useDeletePetDetail, useGetPetById } from '@pet/petQueries'
 import { PET_DETAILS } from '@pet/petHelpers'
 import Loader from '@components/Loader'
+import ToastManager from 'toastify-react-native'
 
 interface EditPetDetailsScreenProps {
   route: { params: { pet: Pet, show?: string }}
@@ -73,7 +74,7 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
     return detailItems
   }
 
-  const deleteDetailMutation = useDeletePetDetail(petId)
+  const deleteDetailMutation = useDeletePetDetail(petId, navigation)
 
   const IdDetails = ({ id }: { id: Id }) => ( 
     <View>
@@ -115,6 +116,7 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
       { isLoading && <Loader /> }
       { isError && <Text>Error fetching pet details...</Text> }
       { isSuccess && <DetailSections /> }
+      <ToastManager />
     </ScrollView>
   )
 }

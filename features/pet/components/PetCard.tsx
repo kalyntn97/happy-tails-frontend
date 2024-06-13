@@ -10,6 +10,7 @@ import { IconButton, MainButton, StatButton, TransparentButton } from "@componen
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { countYearsBetween } from "@utils/datetime"
 import { useCaresByPet, useHealthDueByPet } from "@hooks/sharedHooks"
+import { SPECIES_OPTIONS } from "@pet/petHelpers"
 interface PetCardProps {
   pet: Pet
   index: number
@@ -18,7 +19,7 @@ interface PetCardProps {
 }
 
 const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) => {
-  const petAge = countYearsBetween(pet.dob, 'today')
+  const petAge = pet.dob ? countYearsBetween(pet.dob, 'today') : 'Unknown'
   const caresByPet = useCaresByPet(pet._id)
   const healthDueByPet = useHealthDueByPet(pet._id)
 
@@ -42,8 +43,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
       ],
     }
   })
-
-  const iconSource = getPetIconSource(pet.species)
   
   return ( 
     <Animated.View style={[styles.container, animatedStyles, { width: width }]} key={pet._id}>
@@ -53,22 +52,21 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
           
           <View style={styles.detailsContainer}>
             <View style={styles.petInfo}>
-              <Image style={{ ...Forms.smallIcon }} source={iconSource} />
+              <Image style={{ ...Forms.smallIcon }} source={getPetIconSource(!SPECIES_OPTIONS.includes(pet.species) ? 'Others' : pet.species)} />
               <Text style={styles.body}>{pet.breed ? pet.breed : 'Unknown'}</Text>
             </View>
 
             <View style={styles.petInfo}>
               <Image style={{ ...Forms.smallIcon }} source={require('@assets/icons/info-birthday.png')} />
               <Text style={styles.body}>
-                {petAge ?? 'Unknown'} {petAge && (petAge <= 1 ? 'year' : 'years')}
+                {petAge} {petAge !== 'Unknown' && (petAge <= 1 ? 'year' : 'years')}
               </Text>
             </View>
           </View>
         </View>
 
-        <Image 
-          source={pet.photo ? {uri: pet.photo} : pet.species && getPetIconSource(`${pet.species}Profile`)} 
-          style={styles.petPhoto } 
+        <Image style={styles.petPhoto } 
+          source={pet.photo ? {uri: pet.photo} : getPetIconSource(['Dog', 'Cat'].includes(pet.species) ? `${pet.species}Profile` : 'AnimalProfile')} 
         />
         <View style={{...Forms.rowCon, marginTop: 'auto'}}>
           <StatButton item={ {header: 'vet visit', stat: healthDueByPet(), body: 'days'}} bgColor={Colors.multi.light[pet.color]} />

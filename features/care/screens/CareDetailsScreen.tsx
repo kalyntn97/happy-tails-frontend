@@ -110,4 +110,4 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
 
 
 
-export default CareDetailsScreen
+export default CareDetailsScreen                                           

@@ -112,28 +112,28 @@ const healthIconSource = {
 
 const navigationIconSource = {
   Home: {
-    'active': require('@assets/icons/home-active.png'),
-    'inactive': require('@assets/icons/home-inactive.png'),
+    'active': require('@assets/icons/nav-home-active.png'),
+    'inactive': require('@assets/icons/nav-home-inactive.png'),
   },
   Pets: {
-    'active': require('@assets/icons/pets-active.png'),
-    'inactive': require('@assets/icons/pets-inactive.png'),
+    'active': require('@assets/icons/nav-pets-active.png'),
+    'inactive': require('@assets/icons/nav-pets-inactive.png'),
   },
   User: {
-    'active': require('@assets/icons/profile-active.png'),
-    'inactive': require('@assets/icons/profile-inactive.png'),
+    'active': require('@assets/icons/nav-profile-active.png'),
+    'inactive': require('@assets/icons/nav-profile-inactive.png'),
   },
   Account: {
-    'active': require('@assets/icons/account-active.png'),
-    'inactive': require('@assets/icons/account-inactive.png'),
+    'active': require('@assets/icons/nav-account-active.png'),
+    'inactive': require('@assets/icons/nav-account-inactive.png'),
   },
   care: {
-    'active': require('@assets/icons/care-active.png'),
-    'inactive': require('@assets/icons/care-inactive.png'),
+    'active': require('@assets/icons/nav-care-active.png'),
+    'inactive': require('@assets/icons/nav-care-inactive.png'),
   },
   health: {
-    'active': require('@assets/icons/health-active.png'),
-    'inactive': require('@assets/icons/health-inactive.png'),
+    'active': require('@assets/icons/nav-health-active.png'),
+    'inactive': require('@assets/icons/nav-health-inactive.png'),
   },
 }
 
@@ -213,6 +213,7 @@ const petIconSource = {
   Others: require('@assets/icons/pet-animal.png'),
   DogProfile: require('@assets/icons/pet-dog_profile.png'),
   CatProfile: require('@assets/icons/pet-cat_profile.png'),
+  AnimalProfile: require('@assets/icons/pets.png'),
   illness: require('@assets/icons/illness.png'),
   id: require('@assets/icons/id.png'),
   Microchip: require('@assets/icons/id-microchip.png'),
@@ -240,7 +241,7 @@ export const getHealthIconSource = (name: string) => {
 }
 
 export const getNavigationIconSource = (name: string, status: string) => {
-  return navigationIconSource[name][status] || require('@assets/icons/account-active.png')
+  return navigationIconSource[name][status] || require('@assets/icons/nav-account-active.png')
 }
 
 export const getPetIconSource = (name: string) => {

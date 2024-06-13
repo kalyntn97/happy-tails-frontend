@@ -41,7 +41,6 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
   const handleSelectSpecies = (selected: string) => {
     if (selected === 'Others') {
       onChange('allowManualSpecies', true)
-      onChange('species', null)
       onChange('breed', null)
     } else {
       onChange('allowManualSpecies', false)
@@ -89,7 +88,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
         }
       </View>
       <View style={styles.rowCon}>
-        <Dropdown label='Select Type' dataType='species' onSelect={handleSelectSpecies} initial={species} width={125} />
+        <Dropdown label='Select Type' dataType='species' onSelect={handleSelectSpecies} initial={allowManualSpecies ? 'Others' : species} width={125} />
         {allowManualSpecies ?
           <TextInput 
             style={[styles.input, { width: 170 }]} 

@@ -15,31 +15,13 @@ interface PetListProps {
 const PetList: React.FC<PetListProps> = ({ petArray, size, navigation }) => {
   return (  
     <View style={[styles.container, 
-      size === 'mini' ? { maxWidth: 225, height: 50 } 
-      : size === 'small' ? { maxWidth: 300, height: 110 } 
-      : { maxWidth: 450, height: 250 }
+      size === 'mini' ? { maxWidth: 225 } 
+      : size === 'small' ? { maxWidth: 300 } 
+      : { width: '100%' }
     ]}>
-      {/* <ScrollView
-        alwaysBounceVertical={false}
-        contentContainerStyle={[
-          styles.scrollContent,
-          size === 'compact' && { paddingVertical: 10}
-        ]}> */}
-      {petArray.map((pet: Pet, idx: number) => 
-        <View 
-          key={idx}
-          style={
-            size === 'mini' ? { width: 40, height: 40 } 
-            : size === 'small' ? { width: 60, height: 100 } 
-            : { width: 90, height: 120 }
-          } 
-        >
-          {/* <Pressable onPress={() => navigation.navigate('Pets', { screen: 'Details', params: { pet: pet } })}> */}
-            <PetInfo pet={pet} size={size} key={pet._id} />
-          {/* </Pressable> */}
-        </View>  
+      {petArray.map((pet: Pet | PetBasic, idx: number) => 
+        <PetInfo pet={pet} size={size} key={pet.name} />
       )}
-      {/* </ScrollView> */}
     </View>
   )
 }
@@ -47,9 +29,8 @@ const PetList: React.FC<PetListProps> = ({ petArray, size, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.flexRow,
-    // width: '100%',
-    flexWrap: 'wrap',
     justifyContent: 'center',
+    flexWrap: 'wrap',
   },
 })
  

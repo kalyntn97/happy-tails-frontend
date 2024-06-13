@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import * as careService from "./careService"
 import { CareFormData, TrackerFormData } from "./CareInterface"
 import { useSetActions } from "@store/store"
+import { alertError, alertSuccess } from "@utils/misc"
 
 export const careKeyFactory = {
   cares: ['all-cares'],
@@ -44,14 +45,15 @@ export const useUpdateCare = () => {
   })
 }
 
-export const useDeleteCare = () => {
-  const queryClient = useQueryClient()
+export const useDeleteCare = (navigation: any) => {
   
   return useMutation({
     mutationFn: (careId: string) => careService.deleteCare(careId),
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
-    }
+      navigation.navigate('Main')
+      return alertSuccess('Care card deleted!')
+    },
+    onError: (error) => alertError(error)
   })
 }
 
@@ -72,7 +74,7 @@ export const useUncheckDoneCare = () => {
   return useMutation({
     mutationFn: ({careId, trackerId, index}: TrackerFormData) => careService.uncheckDone(careId, trackerId, index),
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
+      // return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
     }
   })
 }
@@ -83,7 +85,7 @@ export const useCheckAllDoneCare = () => {
   return useMutation({
     mutationFn: ({ careId, trackerId, index }: TrackerFormData) => careService.checkAllDone(careId, trackerId, index),
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
+      // return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
     }
   })
 }

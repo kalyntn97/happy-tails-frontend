@@ -32,26 +32,12 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
     name: pet.name, species: pet.species, breed: pet.breed, dob: pet.dob, firstMet: pet.firstMet, altered: pet.altered, status: pet.status, color: pet.color, photo: pet.photo, petId: pet._id
   }
 
-  const savedPetInfo = { name: initialValues.name, photo: initialValues.photo }
-
-  const updateGlobalPetInfo = (pet: Pet) => {
-    onUpdatePet(pet)
-  }
-
   const handleEditPet = async (formData: PetFormData, photoData: PhotoFormData)  => {
-    updatePetMutation.mutate({ formData, photoData }, {
-      onSuccess: (data) => {
-        if (data.name !== savedPetInfo.name || data.photo !== savedPetInfo.photo) {
-          updateGlobalPetInfo(data)
-        }
-      }
-    })
+    updatePetMutation.mutate({ formData, photoData })
   }
 
   useEffect(() => {
-    if (!isFocused) {
-      goBack()
-    }
+    if (!isFocused) goBack()
   }, [navigation, isFocused])
 
   return (

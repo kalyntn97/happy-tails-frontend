@@ -1,12 +1,11 @@
 import axios from 'axios'
 import { PROFILE_BASE_URL } from '@services/urls'
-import { Profile } from './ProfileInterface'
-
+import { Profile, ProfileData } from './ProfileInterface'
 
 const BASE_URL = PROFILE_BASE_URL
 
 export async function getProfile() {
-  return (await axios.get<Profile>(BASE_URL)).data
+  return (await axios.get<ProfileData>(BASE_URL)).data
 }
 
 export async function addPhoto(photoData: any): Promise<string> {

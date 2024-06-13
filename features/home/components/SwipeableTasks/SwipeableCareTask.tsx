@@ -1,5 +1,5 @@
 //npm
-import { FC, useEffect, useRef } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { View, TouchableOpacity, Text, StyleSheet, Image, Alert } from 'react-native'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 //types & helpers

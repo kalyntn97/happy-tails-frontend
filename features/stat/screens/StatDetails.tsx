@@ -1,17 +1,18 @@
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { FC, useState } from 'react'
+import RNDateTimePicker from '@react-native-community/datetimepicker'
 //helpers & types
 import { Stat } from '@stat/statInterface'
 import { getActionIconSource, getStatIconSource, getStatQualIconSource } from '@utils/ui'
 import { CHART_PARAMS, STATS, filterByRange, getAverageValue, getUnitKey, statConverter } from '@stat/statHelpers'
 //store & queries
 import { useDisplayUnits } from '@store/store'
+//components
+import { CircleIcon } from '@components/UIComponents'
+import ToggleableForm from '@components/ToggleableForm'
+import LineChart from '@components/Charts/LineChart'
 //styles
 import { Typography, Forms, Spacing, Colors } from '@styles/index'
-import ToggleableForm from '@components/ToggleableForm'
-import RNDateTimePicker from '@react-native-community/datetimepicker'
-import { compareDates } from '@utils/datetime'
-import { CircleIcon } from '@components/UIComponents'
 
 interface StatDetailsProps {
   navigation: any
@@ -49,7 +50,7 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
       <Text style={{ ...Typography.mediumHeader }}>{name}</Text>
 
       <ToggleableForm title='See graph' content={
-        <Text>This is a graph</Text>
+        <LineChart />
       } />
 
       <View style={styles.filterBtnCon}>

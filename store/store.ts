@@ -1,11 +1,11 @@
 import { create, StateCreator } from 'zustand'
-import { CareSlice, HealthSlice, PersistSettingSlice, PetSlice, ProfileSlice, SettingSlice } from './StoreInterface'
+import { CareSlice, HealthSlice, ProfileSlice, SettingSlice } from './StoreInterface'
 import { getDateInfo } from '@utils/datetime'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 
-const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & HealthSlice & SettingSlice, [], [], ProfileSlice> = (set) => ({
+const createProfileSlice: StateCreator<ProfileSlice & CareSlice & HealthSlice & SettingSlice, [], [], ProfileSlice> = (set, get) => ({
   profile: {},
   setActions: {
     setProfile: profile => set({ profile: profile }),
@@ -13,10 +13,33 @@ const createProfileSlice: StateCreator<ProfileSlice & PetSlice & CareSlice & Hea
     setActiveDate: dateObj => set({ activeDate: dateObj }),
     setActiveTaskCounts: activeTaskObj => set({ activeTaskCounts: activeTaskObj }),
     setDisplayUnits: displayUnitObj => set({ displayUnits: displayUnitObj }),
-    setPets: pets => set({ pets: pets }),
+    setPets: pets => set(state => ({ profile: { ...state.profile, pets: pets } })),
     setCares: cares => set({ cares: cares}),
     setHealths: healths => set({ healths: healths }),
     onUpdateProfile: profile => set({ profile: profile}),    
+  },
+  petActions: {
+    onAddPet: pet => set(state => {
+      if ('pets' in state.profile) return { 
+        profile: { ...state.profile, pets: [...state.profile.pets, pet] } 
+      }
+      console.error('Profile is not initialized')
+      return state
+    }),
+    onUpdatePet: pet => set(state => {
+      if ('pets' in state.profile) return { 
+        profile: { ...state.profile,  pets: state.profile.pets.map(p => p._id === pet._id ? pet : p) } ,
+      }
+      console.error('Profile is not initialized')
+      return state
+    }),
+    onDeletePet: petId => set(state => {
+      if ('pets' in state.profile) return { 
+        profile: { ...state.profile, pets: state.profile.pets.filter(p => p._id !== petId) }
+      }
+      console.error('Profile is not initialized')
+      return state
+    }),
   }
 })
 
@@ -45,25 +68,12 @@ const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
   }
 })
 
-const createPetSlice: StateCreator<PetSlice> = (set) => ({
-  pets: [],
-  petActions: {
-    onAddPet: pet => set(state => ({ pets: [...state.pets, pet] })),
-    onUpdatePet: pet => set(state => ({ pets: state.pets.map(p => p._id === pet._id ? pet : p) })),
-    onDeletePet: petId => set(state => ({ pets: state.pets.filter(p => p._id !== petId) }))
-  }
-})
-
 const createCareSlice: StateCreator<CareSlice> = (set) => ({
-  cares: [],
+  cares: {},
   careActions: {
     onAddCare: care => set(state => ({ cares: [...state.cares, care] })),
     onUpdateCare: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c) })),
     onDeleteCare: careId => set(state => ({ cares: state.cares.filter(c => c._id !== careId) })),
-    onCheckDone: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c)})),
-    onUncheckDone: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c)})),
-    onCheckAllDone: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c)})),
-    onUncheckAllDone: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c)})),
   }
 })
 
@@ -76,11 +86,10 @@ const createHealthSlice: StateCreator<HealthSlice> = (set) => ({
   }
 })
 
-export const useBoundStore= create<ProfileSlice & PetSlice & CareSlice & HealthSlice & SettingSlice>()(
+export const useBoundStore= create<ProfileSlice & CareSlice & HealthSlice & SettingSlice>()(
   persist(
     (...a) => ({
     ...createProfileSlice(...a),
-    ...createPetSlice(...a),
     ...createCareSlice(...a),
     ...createHealthSlice(...a),
     ...createSettingSlice(...a),
@@ -99,7 +108,9 @@ export const useActiveDate = () => useBoundStore(state => state.activeDate)
 export const useActiveTaskCounts = () => useBoundStore(state => state.activeTaskCounts)
 export const useCurrentIsActive = () => useBoundStore(state => state.currentIsActive)
 export const useDisplayUnits = () => useBoundStore(state => state.displayUnits)
-export const usePets = () => useBoundStore(state => state.pets)
+export const usePets = () => useBoundStore(state => {
+  if ('pets' in state.profile) return state.profile.pets
+})
 export const useCares = () => useBoundStore(state => state.cares)
 export const useHealths = () => useBoundStore(state => state.healths)
 //actions

@@ -94,7 +94,7 @@ const PrivateApp = () => {
           <PetStack.Navigator
             screenOptions={{ ...stackOptions, ...modalPresentation }}
           >
-            <PetStack.Screen name='Index' component={PetIndexScreen} options={{ ...titleOnlyHeaderStyle }} />
+            <PetStack.Screen name='Index' component={PetIndexScreen} options={{ headerShown: false }} />
             <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }} />
             <PetStack.Screen name='Edit' component={EditPetScreen} options={({ route }) => ({ title: 'Edit Pet' })} />
             <PetStack.Screen name='Details' component={PetDetailsScreen} options={{ ...noTitleHeaderCardStyle }} />

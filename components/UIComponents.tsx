@@ -3,6 +3,7 @@ import { Spacing, Colors, Typography, Forms } from "@styles/index"
 import { FC } from "react"
 import { getActionIconSource } from "@utils/ui"
 import { ImageSourcePropType } from "react-native"
+import ToastManager, { Toast } from "toastify-react-native"
 
 type BoxHeaderProps = {
   title: string
@@ -49,7 +50,7 @@ export const BoxWithHeader: FC<BoxProps> = ({ title, titleIconSource, onPress, c
   }}>
     <BoxHeader title={title} onPress={onPress} titleColor={titleColor} arrow={arrow} titleIconSource={titleIconSource}/>
     <View style={{
-      width: '100%', alignItems: 'center'
+      width: '100%'
     }}>
       { content }
     </View>
@@ -71,3 +72,11 @@ export const CircleIcon: FC<CircleIconProps> = ({ iconSource, size, bgColor }) =
 export const ErrorMessage: FC<{ error: string, top?: number }> = ({ error, top }) => (
   <Text style={{ ...Typography.errorMsg, marginTop: top ?? 0 }}>{error}</Text>
 )
+
+export const ErrorImage: FC<{ top?: number }> = ({ top }) => (
+  <View style={[top && { marginTop: top }, { width: '100%' }]}>
+    <Image source={require('assets/images/error.png')} style={{ maxWidth: 300, resizeMode: 'contain' }} />
+  </View>
+)
+
+  

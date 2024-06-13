@@ -50,27 +50,27 @@ export const basePhoto: ImageStyle = {
   margin: 5,
 }
 
-const med = {
+export const med = {
   width: 150,
   height: 150,
 }
 
-const small = {
+export const small = {
   width: 120,
   height: 120,
 }
 
-const xSmall = {
+export const xSmall = {
   width: 80,
   height: 80,
 }
 
-const xxSmall = {
+export const xxSmall = {
   width: 50,
   height: 50,
 }
 
-const tiny = {
+export const tiny = {
   width: 30,
   height: 30,
 }

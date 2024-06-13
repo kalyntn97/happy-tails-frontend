@@ -7,10 +7,10 @@ interface PetInfoProps {
   pet: {
     name: string
     dob?: string,
-    firstMet?: Date,
+    firstMet?: string,
     species?: string 
     breed?: string
-    photo: string | null
+    photo?: string | null
   }
   size: 'compact' | 'expanded' | 'small' | 'mini'
 }
@@ -20,7 +20,12 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
   const petAge = countYearsBetween(pet.dob, 'today')
 
   return ( 
-    <View style={styles.container}>
+    <View style={[styles.container, 
+      size === 'mini' ? { width: 40, height: 40 } 
+      : size === 'small' ? { width: 60, height: 100 } 
+      : size === 'compact' ? { width: 90, height: 120 }
+      : { ...Spacing.flexRow }
+    ]}>
       <View style={size === 'expanded' ? styles.photoContainerExpanded : styles.photoContainerCompact}>
         {size === 'expanded' && 
           <Image source={iconSource} style={styles.petIcon } />
@@ -51,7 +56,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenAcross,
+    
   },
   shortName: {
     ...Typography.xSmallHeader,

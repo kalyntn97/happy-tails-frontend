@@ -8,8 +8,7 @@ import { usePetActions } from "@store/store"
 //components
 import PetForm from "../components/PetForm"
 //utils
-import { AlertForm } from "@utils/ui"
-import { PetFormData, PetMutationFormData, PhotoFormData } from "@pet/PetInterface"
+import { PetFormData,  PhotoFormData } from "@pet/PetInterface"
 //styles
 import { Spacing } from "@styles/index"
 
@@ -23,9 +22,7 @@ const NewPetScreen = ({ navigation }) => {
   }
 
   useEffect(() => {
-    if (!isFocused) {
-      navigation.goBack()
-    }
+    if (!isFocused) navigation.goBack()
   }, [navigation, isFocused])
 
   return ( 

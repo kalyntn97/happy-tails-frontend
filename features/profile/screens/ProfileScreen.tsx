@@ -1,5 +1,5 @@
 //npm modules
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
 //store & queries
 import { useAddBanner, useGetProfile } from "@profile/profileQueries"
@@ -10,23 +10,23 @@ import { PetBasic } from "@pet/PetInterface"
 import PetList from "@components/PetInfo/PetList"
 import Loader from "@components/Loader"
 import { StatButton } from "@components/ButtonComponent"
-import { BoxHeader, BoxWithHeader } from "@components/UIComponents"
+import { BoxHeader, BoxWithHeader, ErrorImage } from "@components/UIComponents"
 //hooks & utils
 import { AlertForm, getActionIconSource } from "@utils/ui"
 import { useCaresByFrequency, useSelectPhoto, useTaskCounts } from "@hooks/sharedHooks"
 //styles
 import { Care } from "@care/CareInterface"
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { useProfile } from "@store/store"
+import { Profile } from "@profile/ProfileInterface"
 
 const ProfileScreen = ({ navigation, route }) => {
-  const { data: profile, isLoading, isError } = useGetProfile()
+  const profile = useProfile()
   const [banner, setBanner] = useState<string>(profile.banner ?? null)
-
   const pets: PetBasic[] = useShallowPetBasics()
-  const { careCounts, healthCounts } = useTaskCounts()
-  const careCounter = careCounts(new Date())
-  const healthCounter = healthCounts()
- 
+  // const { careCounts, healthCounts } = useTaskCounts()
+  // const careCounter = careCounts(new Date())
+  // const healthCounter = healthCounts()
   const addBannerMutation = useAddBanner()
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
@@ -53,18 +53,18 @@ const ProfileScreen = ({ navigation, route }) => {
     }
   }
 
-  return ( 
+  if (!profile) return <ErrorImage />
+
+  return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Pressable style={styles.bannerCon} onPress={addBanner}>
-        <View style={styles.cameraIcon}>
-          <Image source={require('@assets/icons/action-camera.png')} style={{...Forms.smallIcon}} />
-        </View>
-        { banner && <Image source={{ uri: banner }} style={[
-            styles.banner,
-            
-          ] as ImageStyle} /> }
-      </Pressable>
-      { profile &&
+      
+        <Pressable style={styles.bannerCon} onPress={addBanner}>
+          <View style={styles.cameraIcon}>
+            <Image source={require('@assets/icons/action-camera.png')} style={{...Forms.smallIcon}} />
+          </View>
+          { banner && <Image source={{ uri: banner }} style={styles.banner as ImageStyle} /> }
+        </Pressable>
+
         <View style={styles.profileCon}>
           <View style={styles.headerContainer}>
             <View style={styles.profileHeader}>
@@ -77,23 +77,20 @@ const ProfileScreen = ({ navigation, route }) => {
               <Text style={styles.bioText}>{profile.bio}</Text>
             </View>
               
-            <View style={{...Forms.rowCon}}>
+            {/* <View style={{...Forms.rowCon}}>
               <StatButton item={ {header: 'streak', stat: 0, body: 'days'}} />
               <StatButton item={ {header: 'tasks', stat: careCounts(new Date()) , body: 'today'}} />
               <StatButton item={ {header: 'visit due', stat: Math.abs(healthCounter), body: `days ${healthCounter < 0 && 'ago'}`}} color={healthCounter < 0 && Colors.red.reg} />
-            </View>
+            </View> */}
           </View>
 
           <View style={styles.bodyCon}>
             <BoxWithHeader title='All Pets' titleIconSource={getActionIconSource('home')} onPress={() => navigation.navigate('Pets', { screen: 'Index' })} content={
-              pets ?
-                <>
+              <View style={{ width: '100%', paddingTop: 10 }}>
+                <Suspense fallback={<Loader />}>
                   <PetList petArray={pets} size='compact' />
-                  { !pets.length && <Loader /> }
-                </>
-              :
-                <Text>Error fetching pets...</Text> 
-              
+                </Suspense>
+              </View>
             } />
             <View style={{...Forms.roundedCon}}>
               <BoxHeader title="All pet care tasks" titleIconSource={getActionIconSource('care')} onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
@@ -101,13 +98,9 @@ const ProfileScreen = ({ navigation, route }) => {
               <BoxHeader title="Update profile" titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('Edit', { profile : profile })} />
               <BoxHeader title="Settings" titleIconSource={getActionIconSource('settings')} onPress={() => navigation.navigate('Settings', { profile : profile })} />
             </View>
-            
           </View>
         </View>
-      }
-      { isLoading && <Loader /> }
-      { isError && <Text>Error fetching profile</Text> }
-
+    
     </ScrollView>
   )
 }

@@ -12,8 +12,9 @@ import { countDaysBetween } from "@utils/datetime"
 import { Care } from "@care/CareInterface"
 import { shouldRenderCareTask } from "../features/home/helpers"
 import { useCares } from "@store/store"
+import { useDeletePet } from "@pet/petQueries"
 
-const showDeleteConfirmDialog = (item: any, handleDeleteItem: (itemId: string) => void) => {
+export const showDeleteConfirmDialog = (item: any, handleDeleteItem: (itemId: string) => void) => {
   return Alert.alert(
     'Are you sure?',
     `Remove ${item.name} Tracker ?`, 
@@ -25,18 +26,10 @@ const showDeleteConfirmDialog = (item: any, handleDeleteItem: (itemId: string) =
 }
 
 export const useDeleteCareCard = (navigation: any) => {
-  const deleteCareMutation = useDeleteCare()
+  const deleteCareMutation = useDeleteCare(navigation)
 
   const handleDeleteCareCard = async (careId: string) => {
-    deleteCareMutation.mutate(careId, {
-      onSuccess: () => {
-        navigation.navigate('Main')
-        return AlertForm({ body: `Deleted successfully`, button: 'OK' })
-      },
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      },
-    })
+    deleteCareMutation.mutate(careId)
   }
 
   return { handleDeleteCareCard, showDeleteConfirmDialog }
@@ -90,7 +83,7 @@ export const useCaresByPet = (petId: string) => {
   const cares = useCares()
   
   const caresByPet = () => {
-    const filtered = cares.filter(care => {
+    const filtered = Object.values(cares).flat().filter(care => {
       const includesPet = care.pets.map(p => p._id).includes(petId)
       const dueToday = shouldRenderCareTask(care, new Date()) && care.frequency === 'Daily'
       return includesPet && dueToday

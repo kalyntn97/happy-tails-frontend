@@ -3,29 +3,30 @@ import { useState } from "react"
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 //store && types & helpers
-import { usePets } from "@store/store"
-import { Pet } from "@pet/PetInterface"
-import { Visit, VisitFormData } from "@health/HealthInterface"
+import { Health, Visit, VisitFormData } from "@health/HealthInterface"
 import * as healthHelpers from '@health/healthHelpers'
+import { useShallowPetBasics } from "@store/storeUtils"
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
 import { CheckboxButton, MainButton, SubButton } from "@components/ButtonComponent"
 import MultipleInputs from "@components/MultipleInputs"
+import PetSelectForm from "@components/PetSelectForm"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/FormStyles"
 import { ErrorMessage } from "@components/UIComponents"
 
+interface initialStates extends Health {
+  healthId: string
+}
 interface HealthFormProps {
   onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: VisitFormData[], nextDue: VisitFormData, healthId: string) => void
-  initialValues?: {pet?: Pet, type?: string, name?: string, vaccine?: string, times?: number, frequency?: string, lastDone?: Visit[], nextDue?: Visit, healthId?: string}
+  initialValues?: initialStates 
   navigation: any
   status: string
 }
 
 const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
-  const pets = usePets()
-  const initialPetName = pets.find(p => p._id === initialValues?.pet._id)?.name ?? null
   const [pet, setPet] = useState<string>(initialValues?.pet._id ?? null)
   const [name, setName] = useState<string>(healthHelpers.HEALTHS[initialValues?.name] ?? null)
   const [vaccine, setVaccine] = useState<string>(healthHelpers.VACCINES[initialValues?.vaccine]?.name ?? null)
@@ -56,10 +57,10 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     })
   }
 
-  const handleSelectPet = (selected: string) => {
-    const pet = pets.find(pet => pet.name === selected)
-    setPet(pet._id)
-    setSpecies(pet.species)
+  const pets = useShallowPetBasics()
+  const handleSelectPet = (selected: string[]) => {
+    setPet(selected[0])
+    setSpecies(pets.find(pet => pet._id === selected[0]).species)
     if (vaccine) setVaccine(null)
   }
 
@@ -91,14 +92,14 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       {errorMsg && <ErrorMessage error={errorMsg} />}
 
       <Text style={styles.label}>Pet</Text>
-      <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} width={300} />
-
+      {/* <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} width={300} /> */}
+      <PetSelectForm onSelect={handleSelectPet} initials={[pet]} />
       <View style={styles.labelCon}>
         <Text>Name</Text>
         <Text>Type</Text>
       </View>
       <View style={styles.rowCon}>
-        <Dropdown label={'Select Name'} dataType="health" onSelect={handleSelectName} initial={name} width={175} />
+        <Dropdown label={'Select Name'} dataType="health" onSelect={handleSelectName} initial={healthHelpers.HEALTHS[name]} width={175} />
         <Dropdown label={'Select Type'} dataType="healthTypes" onSelect={setType} initial={type} width={120} />
       </View>
     
