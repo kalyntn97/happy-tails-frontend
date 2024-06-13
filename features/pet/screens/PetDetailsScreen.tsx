@@ -5,11 +5,11 @@ import { Pet } from "@pet/PetInterface"
 //components
 import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
-import {  BoxHeader, BoxWithHeader } from "@components/UIComponents"
+import {  BoxHeader, BoxWithHeader, ErrorImage, ErrorMessage } from "@components/UIComponents"
 import { AlertForm, getActionIconSource, getStatIconSource } from "@utils/ui"
 
 //store & queries
-import { useDeletePet, useGetPetById } from "@pet/petQueries"
+import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
 import { usePetActions } from "@store/store"
 //styles
 import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
@@ -19,17 +19,21 @@ import { STATS } from "@stat/statHelpers"
 import { Stat } from "@stat/statInterface"
 import { Image } from "react-native"
 import { CloseButton, IconButton } from "@components/ButtonComponent"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ToastManager from "toastify-react-native"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface PetDetailsProps {
   navigation: any
-  route: { params: { pet: Pet } }
+  route: { params: { petId: string } }
 }
 
 const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
+  const queryClient = useQueryClient()
+  const petCache: Pet | undefined = queryClient.getQueryData(petKeyFactory.petById(route.params.petId))
   
-  const {data: pet, isSuccess, isLoading, isError} = useGetPetById(route.params.pet._id, route.params.pet)
+  const {data: pet, isSuccess, isLoading, isError} = useGetPetById(route.params.petId, !petCache)
+    
   const [showMsg, setShowMsg] = useState<boolean>(true)
   const windowHeight = useWindowDimensions().height
   
@@ -39,15 +43,17 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
     deletePetMutation.mutate(petId)
   }
 
+  if (isError) return <ErrorImage />
+  if (isLoading) return <Loader />
+
   return (
     <ScrollView
       alwaysBounceVertical={false}
       contentContainerStyle={styles.container}
       style={pet?.color && { backgroundColor: Colors.multi.lightest[pet.color] }}
     >
-      { isLoading && <Loader /> }
-      { isError && <Text>Error fetching pets...</Text> }
-      { isSuccess && pet && <>
+      { isSuccess && <>
+        <ToastManager />
         <View style={[styles.infoCard,
         ]}>
           <View style={styles.petInfo}>

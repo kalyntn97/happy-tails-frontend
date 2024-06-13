@@ -77,7 +77,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
         <View style={{ ...Spacing.flexRow, marginTop: 'auto' }}>
           <TransparentButton title='Log' icon="logPet" onPress={() => navigation.navigate('CreateLog', { pet })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
 
-          <TransparentButton title='Details' icon='detailsPet' onPress={() => navigation.navigate('Details', { pet })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
+          <TransparentButton title='Details' icon='detailsPet' onPress={() => navigation.navigate('Details', { petId: pet._id })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
         </View>  
 
       </View>

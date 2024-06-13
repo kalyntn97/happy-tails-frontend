@@ -13,21 +13,24 @@ export const petKeyFactory = {
   petById: (id: string) => [...petKeyFactory.pets, id],
 }
 
-export const useGetAllPets = () => {
-  const pets = usePets()
+// export const useGetAllPets = () => {
+//   const pets = usePets()
 
-  return useQuery({
-    initialData: pets,
-    queryKey: [...petKeyFactory.pets],
-    queryFn: petService.getAllPets, 
-  })
-} 
+//   return useQuery({
+//     initialData: pets,
+//     queryKey: [...petKeyFactory.pets],
+//     queryFn: petService.getAllPets, 
+//   })
+// } 
 
-export const useGetPetById = (petId: string, initialPet: Pet) => {
+export const useGetPetById = (petId: string, isEnabled: boolean) => {
+  const queryClient = useQueryClient()
+
   return useQuery({
     queryKey: [...petKeyFactory.petById(petId)],
     queryFn: () => petService.getPetById(petId),
-    initialData: initialPet,
+    initialData: queryClient.getQueryData(profileKeyFactory.profile).profile.pets.find((pet: Pet) => pet._id === petId),
+    enabled: isEnabled,
   })
 } 
 
@@ -57,7 +60,7 @@ export const useUpdatePet = (navigation: any) => {
         return {...oldData, profile: { ...oldData.profile, pets: oldData.profile.pets.map(pet => pet._id === data._id ? data : pet) }}
       })
       alertSuccess('Pet updated')
-      return navigation.navigate('Details', { screen: 'Index', params : { pet: data } })
+      return navigation.navigate('Details', data._id)
     },
     onError: (error) => alertError(error)
   })
@@ -82,8 +85,6 @@ export const useDeletePet = (navigation: any) => {
 export const useAddPetDetail = (petId: string, navigation: any) => {
   const queryClient = useQueryClient()
 
-  
-
   const addPetDetail = (key: string, formData: any) => {
     const keyToService = {
       id: () => petService.addId(formData, petId),
@@ -97,10 +98,8 @@ export const useAddPetDetail = (petId: string, navigation: any) => {
   return useMutation({
     mutationFn: ({ key, formData }: { key: string, formData: any }) => addPetDetail(key, formData),
     onSuccess: (data: { item: Id | Service | Illness | Medication, key: string }) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return {...oldData, profile: { ...oldData.profile, pets: oldData.profile.pets.find(pet => pet._id === petId)[data.key].push(data.item) } }
-      })
-      navigation.navigate('Details', petId)
+      queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) => oldData[data.key].push(data.item))
+      navigation.navigate('MoreDetails', petId)
       return showSuccessToast('Item added!')
     }, 
     onError: (error) => alertError(error)
@@ -123,11 +122,9 @@ export const useDeletePetDetail = (petId: string, navigation: any) => {
   return useMutation({
     mutationFn: ({ key, detailId }: { key: string, detailId: string }) => deletePetDetail(key, detailId),
     onSuccess: (data: { itemId: string, key: string }) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return {...oldData, profile: { ...oldData.profile, pets: oldData.profile.pets.find(pet => pet._id === petId)[data.key].filter((item: Id | Service | Illness | Medication) => item._id !== data.itemId) } }
-      })
-      alertSuccess('Detail deleted!')
-      // return navigation.navigate('MoreDetails', data.petId)
+      queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) => oldData[data.key].filter((item: Id | Service | Illness | Medication) => item._id !== data.itemId))
+      navigation.navigate('MoreDetails', petId)
+      return showSuccessToast('Item added!')
     },
     onError: (error) => alertError(error)
   })

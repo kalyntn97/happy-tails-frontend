@@ -59,7 +59,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       setCares(data.cares)
       setHealths(data.healths)
       setProfile(data.profile)
-      queryClient.setQueryData(petKeyFactory.pets, data.profile.pets)
+      console.log(data.profile)
     }
   }, [isSuccess])
 

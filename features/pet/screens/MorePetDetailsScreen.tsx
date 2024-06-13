@@ -19,7 +19,7 @@ import Loader from '@components/Loader'
 import ToastManager from 'toastify-react-native'
 
 interface EditPetDetailsScreenProps {
-  route: { params: { pet: Pet, show?: string }}
+  route: { params: { petId: string, show?: string }}
   navigation: any
 }
 
@@ -42,7 +42,7 @@ const EmptyList = () => (
 )
 
 const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route }) => {
-  const {data: pet, isSuccess, isLoading, isError} = useGetPetById(route.params.pet._id, route.params.pet)
+  const {data: pet, isSuccess, isLoading, isError} = useGetPetById(route.params.petId)
   const { ids, medications, illnesses, services, _id: petId } = pet
   const { show } = route.params
 
