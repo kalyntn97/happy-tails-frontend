@@ -15,6 +15,7 @@ import PetSelectForm from "@components/PetSelectForm"
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/FormStyles"
 import { ErrorMessage } from "@components/UIComponents"
+import { useShallowPets } from "@hooks/sharedHooks"
 
 interface initialStates extends Health {
   healthId: string
@@ -57,10 +58,10 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     })
   }
 
-  const pets = useShallowPetBasics()
+  const { PET_BASICS } = useShallowPets()
   const handleSelectPet = (selected: string[]) => {
     setPet(selected[0])
-    setSpecies(pets.find(pet => pet._id === selected[0]).species)
+    setSpecies(PET_BASICS.find(pet => pet._id === selected[0]).species)
     if (vaccine) setVaccine(null)
   }
 

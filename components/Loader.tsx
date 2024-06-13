@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Image, StyleSheet, View, useWindowDimensions } from "react-native"
-import { Forms } from "@styles/index"
+import { Colors, Forms, Spacing } from "@styles/index"
 import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated"
 
 const Loader = () => {
@@ -32,7 +32,7 @@ const Loader = () => {
   }, [start])
   
   const container = []
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < NUM_OP; i++) {
     container.push(
       <Animated.View key={i} style={[
         styles.paw, 
@@ -47,18 +47,19 @@ const Loader = () => {
   }
 
   return (
-    <View style={[
-      styles.container,
-      { width: windowWidth * 0.9, height: 120 }
-    ]}>
-      { container }
+    <View style={styles.container}>
+      <View style={{ width: windowWidth * 0.9, height: 120 }}>
+        { container }
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'center',
+    ...Spacing.fullWH,
+    ...Spacing.centered,
+    backgroundColor: Colors.transparent.semiLight
   },
   paw: {
     position: 'absolute',

@@ -1,5 +1,7 @@
 //npm modules
 import { useState, useRef, useEffect, FC } from 'react'
+import ToastManager from 'toastify-react-native'
+import { useQueryClient } from '@tanstack/react-query'
 import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image, ScrollView } from "react-native"
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 //components
@@ -9,25 +11,25 @@ import PlaceHolder from '@components/PlaceHolder'
 import { ErrorImage } from '@components/UIComponents'
 //store & queries
 import { Pet } from '../PetInterface'
-import { usePets } from '@store/store'
+import { profileKeyFactory, useGetProfile } from '@profile/profileQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
 import { Spacing, Typography, Colors, Forms } from '@styles/index'
-import { useGetAllPets } from '@pet/petQueries'
-import { useQueryClient } from '@tanstack/react-query'
-import { profileKeyFactory } from '@profile/profileQueries'
+import { ProfileData } from '@profile/ProfileInterface'
+import { useProfile } from '@store/store'
+import Loader from '@components/Loader'
 
 interface PetIndexProps {
   navigation: any
 }
 
-
 const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
   const [currCard, setCurrCard] = useState<number>(0)
-  // const pets = usePets()
-  const queryClient = useQueryClient()
-  const pets = queryClient.getQueryData(profileKeyFactory.profile).profile.pets
-  const petCount = pets?.length ?? 0
+  const { data, isFetching, isError } = useGetProfile()
+
+  const pets = data.profile?.pets
+
+  const petCount: number = pets?.length ?? 0
   
   const { width } = useWindowDimensions()
   const scrollX = useSharedValue(0)
@@ -89,10 +91,12 @@ const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
     )
   }
 
-  if (!pets) return <ErrorImage />
+  if (isFetching) return <Loader />
+  if (isError) return <ErrorImage />
 
   return ( 
     <View style={styles.container}>
+      <ToastManager />
       { pets.length > 0 ? 
         <>
           <View style={styles.petNav}>

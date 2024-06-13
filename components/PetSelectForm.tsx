@@ -1,8 +1,9 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
-import { useShallowPetBasics } from '@store/storeUtils'
 import PetInfo from './PetInfo/PetInfo'
 import { Spacing } from '@styles/index'
+import { PetBasic } from '@pet/PetInterface'
+import { useShallowPets } from '@hooks/sharedHooks'
 
 type Props = {
   mode?: 'multi',
@@ -11,7 +12,7 @@ type Props = {
 }
 
 const PetSelectForm = ({ mode, onSelect, initials }: Props) => {
-  const pets = useShallowPetBasics()
+  const { PET_BASICS } = useShallowPets()
   const [selected, setSelected] = useState<string[]>(initials ?? [])
 
   const handleSelect = (petId: string) => {
@@ -31,7 +32,7 @@ const PetSelectForm = ({ mode, onSelect, initials }: Props) => {
 
   return (
     <View style={styles.container}>
-      {pets.map(pet =>
+      {PET_BASICS.map((pet: PetBasic) =>
         <Pressable key={pet._id} style={[styles.petBtn, selected.includes(pet._id) ? styles.selected : styles.inactive]} onPress={() => handleSelect(pet._id)}>
           <PetInfo pet={pet} size='small' />
         </Pressable>

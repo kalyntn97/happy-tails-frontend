@@ -3,7 +3,6 @@ import { Id, IdFormData, Illness, IllnessFormData, Medication, Pet, PetFormData,
 import * as petService from './petService'
 import { AlertForm } from '@utils/ui'
 import { alertError, alertSuccess, showSuccessToast } from '@utils/misc'
-import { usePetActions, usePets } from '@store/store'
 import { profileKeyFactory } from '@profile/profileQueries'
 import { ProfileData } from '@profile/ProfileInterface'
 
@@ -43,8 +42,8 @@ export const useAddPet = (navigation: any) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
         return {...oldData, profile: { ...oldData.profile, pets: [...oldData.profile.pets, data]}}
       })
-      alertSuccess('Pet added')
-      return navigation.navigate('Index')
+      navigation.navigate('Index')
+      return showSuccessToast('Pet added!')
     },
     onError: (error) => alertError(error)
   })
@@ -59,8 +58,8 @@ export const useUpdatePet = (navigation: any) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
         return {...oldData, profile: { ...oldData.profile, pets: oldData.profile.pets.map(pet => pet._id === data._id ? data : pet) }}
       })
-      alertSuccess('Pet updated')
-      return navigation.navigate('Details', data._id)
+      navigation.navigate('Details', { petId: data._id })
+      return showSuccessToast('Pet updated!')
     },
     onError: (error) => alertError(error)
   })
@@ -75,8 +74,8 @@ export const useDeletePet = (navigation: any) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
         return {...oldData, profile: { ...oldData.profile, pets: oldData.profile.pets.filter(pet => pet._id !== data) }}
       })
-      alertSuccess('Pet deleted!')
-      return navigation.navigate('Index')
+      navigation.navigate('Index')
+      return showSuccessToast('Pet deleted!')
     }, 
     onError: (error) => alertError(error)
   })
@@ -98,8 +97,10 @@ export const useAddPetDetail = (petId: string, navigation: any) => {
   return useMutation({
     mutationFn: ({ key, formData }: { key: string, formData: any }) => addPetDetail(key, formData),
     onSuccess: (data: { item: Id | Service | Illness | Medication, key: string }) => {
-      queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) => oldData[data.key].push(data.item))
-      navigation.navigate('MoreDetails', petId)
+      queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) => {
+        return { ...oldData, [data.key]: [...oldData[data.key], data.item] }
+      })
+      navigation.navigate('MoreDetails', { petId })
       return showSuccessToast('Item added!')
     }, 
     onError: (error) => alertError(error)
@@ -122,9 +123,11 @@ export const useDeletePetDetail = (petId: string, navigation: any) => {
   return useMutation({
     mutationFn: ({ key, detailId }: { key: string, detailId: string }) => deletePetDetail(key, detailId),
     onSuccess: (data: { itemId: string, key: string }) => {
-      queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) => oldData[data.key].filter((item: Id | Service | Illness | Medication) => item._id !== data.itemId))
-      navigation.navigate('MoreDetails', petId)
-      return showSuccessToast('Item added!')
+      queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) => {
+        return { ...oldData, [data.key]: oldData[data.key].filter((item: Id | Service | Illness | Medication) => item._id !== data.itemId) }
+      })
+      navigation.navigate('MoreDetails', { petId })
+      return showSuccessToast('Item deleted!')
     },
     onError: (error) => alertError(error)
   })

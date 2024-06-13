@@ -74,9 +74,8 @@ export const ErrorMessage: FC<{ error: string, top?: number }> = ({ error, top }
 )
 
 export const ErrorImage: FC<{ top?: number }> = ({ top }) => (
-  <View style={[top && { marginTop: top }, { width: '100%' }]}>
+  <View style={[top && { marginTop: top }, { ...Spacing.fullWH, ...Spacing.centered }]}>
     <Image source={require('assets/images/error.png')} style={{ maxWidth: 300, resizeMode: 'contain' }} />
   </View>
 )
 
-  

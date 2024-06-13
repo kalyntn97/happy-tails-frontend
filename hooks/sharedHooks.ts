@@ -2,17 +2,18 @@
 import { FC, useState } from "react"
 import { Alert } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
+import { useQueryClient } from "@tanstack/react-query"
 //queries
 import { useDeleteCare } from "../features/care/careQueries"
 import { useDeleteHealth } from "@health/healthQueries"
-//types & helpers
-import { AlertForm } from "@utils/ui"
-import { usePetIds, useShallowCares, useShallowHealths, useShallowPetBasics } from "@store/storeUtils"
-import { countDaysBetween } from "@utils/datetime"
+//types
 import { Care } from "@care/CareInterface"
+import { profileKeyFactory } from "@profile/profileQueries"
+import { ProfileData } from "@profile/ProfileInterface"
+//helpers
+import { AlertForm } from "@utils/ui"
+import { countDaysBetween } from "@utils/datetime"
 import { shouldRenderCareTask } from "../features/home/helpers"
-import { useCares } from "@store/store"
-import { useDeletePet } from "@pet/petQueries"
 
 export const showDeleteConfirmDialog = (item: any, handleDeleteItem: (itemId: string) => void) => {
   return Alert.alert(
@@ -53,15 +54,26 @@ export const useDeleteHealthCard = (navigation: any) => {
   return { handleDeleteHealthCard, showDeleteConfirmDialog }
 }
 
-export const useShallowPetColor = () => {
-  const pets = useShallowPetBasics()
+export const useShallowPets = () => {
+  const queryClient = useQueryClient()
+
+  const pets = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).profile.pets
+
+  const PET_BASICS = pets.map(pet => ({ _id: pet._id, name: pet.name, photo: pet.photo, species: pet.species, color: pet.color }))
+  const PET_NAMES = PET_BASICS.map(pet => pet.name)
+  const PET_IDS = PET_BASICS.map(pet => pet._id)
+
   const petIdToColor = (petId: string) => {
     if (pets.length) {
-      return pets.find(pet => pet._id === petId).color
+      return PET_BASICS.find(pet => pet._id === petId).color
     }
   }
-  
-  return petIdToColor
+
+  const petIdToPet = (petId: string) => {
+    return PET_BASICS.find(pet => pet._id === petId)
+  }
+
+  return { petIdToColor, petIdToPet, PET_NAMES, PET_IDS, PET_BASICS }
 }
 
 
@@ -80,7 +92,8 @@ export const useSelectPhoto = async  () => {
 }
 
 export const useCaresByPet = (petId: string) => {
-  const cares = useCares()
+  const queryClient = useQueryClient()
+  const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
   
   const caresByPet = () => {
     const filtered = Object.values(cares).flat().filter(care => {
@@ -95,22 +108,19 @@ export const useCaresByPet = (petId: string) => {
 }
 
 export const useCaresByFrequency = (frequency: string) => {
-  const cares = useShallowCares()
+  const queryClient = useQueryClient()
+  const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
   
   const caresByFrequency = () => {
-    const sorted = cares.reduce((result, care) => {
-      const { frequency } = care
-      result[frequency] = result[frequency] || []
-      result[frequency].push(care)
-      return result
-    }, {})
-    return sorted[frequency] ?? []
+    return cares[frequency] ?? []
   }
+
   return caresByFrequency
 }
 
 export const useHealthDueByPet = (petId: string) => {
-  const healths = useShallowHealths()
+  const queryClient = useQueryClient()
+  const healths = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).healths
 
   const healthDueByPet = () => {
     let minDays = Infinity
@@ -127,18 +137,20 @@ export const useHealthDueByPet = (petId: string) => {
 }
 
 export const useTaskCounts = () => {
-  const cares = useCares()
+  const queryClient = useQueryClient()
+  
   //* num of tasks due today
   const careCounts = (selectedDate: Date) => {
-    const filtered = cares.filter((care: Care) => shouldRenderCareTask(care, selectedDate) && care.frequency === 'Daily')
+    const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
+    const filtered = Object.values(cares).flat().filter((care: Care) => shouldRenderCareTask(care, selectedDate) && care.frequency === 'Daily')
     return filtered.length
   }
   //* num of days until the next vet visit
   const healthCounts = () => {
-    const petIds = usePetIds()
     let minDays = Infinity
-    petIds.forEach(pet => {
-      const healthDueByPet = useHealthDueByPet(pet._id)
+    const petIds = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).profile.pets.map(pet => pet._id)
+    petIds.forEach(petId => {
+      const healthDueByPet = useHealthDueByPet(petId)
       const days = healthDueByPet()
       if (days < minDays) minDays = days
       return minDays

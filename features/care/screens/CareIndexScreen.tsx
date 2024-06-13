@@ -5,16 +5,18 @@ import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 //components
 import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
-import EmptyList from "@components/EmptyList"
 import { RoundButton } from "@components/ButtonComponent"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import { CARES } from "@care/careHelpers"
 import { getActionIconSource, getCareIconSource } from "@utils/ui"
 //queries
-import { useGetAllCares } from "@care/careQueries"
+import { profileKeyFactory, useGetProfile } from "@profile/profileQueries"
 //styles
 import { Buttons, Spacing, Colors, Forms } from '@styles/index'
+import { ErrorImage } from "@components/UIComponents"
+import { useQueryClient } from "@tanstack/react-query"
+import { ProfileData } from "@profile/ProfileInterface"
 
 type CareIndexProps = {
   navigation: any
@@ -49,7 +51,11 @@ const CareItem = ({ care, navigation }) => {
 }
 
 const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
-  const { data: cares, isLoading, isSuccess, isError} = useGetAllCares()
+  const queryClient = useQueryClient()
+  const caresCache = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
+  const { data, isSuccess, isFetching, isError } = useGetProfile(!caresCache)
+  const cares = data.cares
+  
   const [filtered, setFiltered] = useState<string[]>([])
 
   const sortOrder = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'Others']
@@ -118,13 +124,14 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
     }
   }, [route.params, isSuccess])
   
+  if (isFetching) return <Loader />
+  if (isError) return <ErrorImage />
+
   return (
     <View style={styles.container}>
       <RoundButton onPress={() => navigation.navigate('CareCreate')} type='add' position="bottomRight" />
-      {isSuccess ?
-        <>
-          { !Object.values(cares).length && <PlaceHolder /> }
-          
+      { isSuccess && (
+        Object.values(cares).flat().length > 0 ?
           <SectionList
             ref={sectionListRef}
             sections={careIndex}
@@ -139,10 +146,9 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
             getItemLayout={getItemLayout}
             showsVerticalScrollIndicator={false}
             style={{ width: '100%' }}
-            ListEmptyComponent={ <EmptyList /> }
           />
-        </> : <Loader />
-      }
+        : <PlaceHolder type='task' navigation={navigation} />
+      )}
         
     </View> 
   )

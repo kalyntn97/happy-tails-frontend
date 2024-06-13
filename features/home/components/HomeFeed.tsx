@@ -37,11 +37,8 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [clickedTask, setClickedTask] = useState<ClickedTask>(null)
   //queries
-  const { data, isLoading, isSuccess, isError } = useGetProfile()
-  const queryClient = useQueryClient()
+  const { data, isFetching, isSuccess, isError } = useGetProfile()
   //store
-  const { setPets, setCares, setHealths, setProfile } = useSetActions()
-  
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const activeDateObj = new Date(activeYear, activeMonth, activeDate + 1)
   const activeMonthName = getMonth(activeMonth + 1)
@@ -53,16 +50,6 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     setModalVisible(true)
   }
   
-  useEffect(() => {
-    if (isSuccess) {
-      setPets(data.profile.pets)
-      setCares(data.cares)
-      setHealths(data.healths)
-      setProfile(data.profile)
-      console.log(data.profile)
-    }
-  }, [isSuccess])
-
   return (  
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.headerCon}>  
@@ -80,7 +67,7 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      { isLoading && <Loader /> }
+      { isFetching && <Loader /> }
       { isError && <ErrorImage /> }
       
       {feed === 'health' && isSuccess &&

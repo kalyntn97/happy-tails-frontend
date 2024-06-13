@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Image, Pressable, ScrollView, Modal } from 'react-native'
-import React, { FC, useState } from 'react'
+import React, { Children, FC, Suspense, useState } from 'react'
 //components
 import IdForm from '@pet/components/IdForm'
 import { CloseButton, MainButton } from '@components/ButtonComponent'
@@ -8,15 +8,16 @@ import { Id, Medication, Pet, Service } from '@pet/PetInterface'
 import { AlertForm, getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
 import { Colors, Forms, Spacing, Typography } from '@styles/index'
-import { BoxWithHeader } from '@components/UIComponents'
+import { BoxWithHeader, ErrorImage } from '@components/UIComponents'
 import MedicationForm from '@pet/components/MedicationForm'
 import CareForm from '@care/components/CareForm'
 import IllnessForm from '@pet/components/IllnessForm'
 import ServiceForm from '@pet/components/ServiceForm'
-import { useDeletePetDetail, useGetPetById } from '@pet/petQueries'
+import { petKeyFactory, useDeletePetDetail, useGetPetById } from '@pet/petQueries'
 import { PET_DETAILS } from '@pet/petHelpers'
 import Loader from '@components/Loader'
 import ToastManager from 'toastify-react-native'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface EditPetDetailsScreenProps {
   route: { params: { petId: string, show?: string }}
@@ -42,39 +43,39 @@ const EmptyList = () => (
 )
 
 const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route }) => {
-  const {data: pet, isSuccess, isLoading, isError} = useGetPetById(route.params.petId)
-  const { ids, medications, illnesses, services, _id: petId } = pet
-  const { show } = route.params
+  const queryClient = useQueryClient()
+  const { petId } = route.params
 
-  const detailData = {
-    id: ids,
-    med: medications,
-    illness: illnesses,
-    service: services,
-  }
-
+  const pet: Pet | undefined = queryClient.getQueryData(petKeyFactory.petById(petId))
+  
+  const deleteDetailMutation = useDeletePetDetail(petId, navigation)
+ 
   const openForm = (form: string) => {
     navigation.navigate('EditDetails', { form, petId })
   }
 
   const DetailSections = () => {
+    const detailData = {
+      id: pet.ids,
+      med: pet.medications,
+      illness: pet.illnesses,
+      service: pet.services,
+    }
+
     const detailItems = []
     for (const key in PET_DETAILS) {
       detailItems.push(
-        (!show || show === key) && 
-          <View key={`${key}-details`} style={{ width: '90%' }}>
-            <ListHeader name={key} onPress={() => openForm(key)} />
-            {detailData[key]?.length ? 
-              detailData[key].map((item: any, index: number) => <Item key={`${key}-${index}`} item={item} type={key} />) 
-              : <EmptyList />
-            }
-          </View>
+        <View key={`${key}-details`} style={{ width: '90%' }}>
+          <ListHeader name={key} onPress={() => openForm(key)} />
+          {detailData[key].length > 0 ? 
+            detailData[key].map((item: any, index: number) => <Item key={`${key}-${index}`} item={item} type={key} />) 
+            : <EmptyList />
+          }
+        </View>
       )
     }
     return detailItems
   }
-
-  const deleteDetailMutation = useDeletePetDetail(petId, navigation)
 
   const IdDetails = ({ id }: { id: Id }) => ( 
     <View>
@@ -111,11 +112,13 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
     </View>
   )
 
+  
   return (
     <ScrollView contentContainerStyle={styles.container} alwaysBounceVertical={false}>
-      { isLoading && <Loader /> }
-      { isError && <Text>Error fetching pet details...</Text> }
-      { isSuccess && <DetailSections /> }
+      {!pet && <ErrorImage />}
+      
+      { pet && <DetailSections /> }
+     
       <ToastManager />
     </ScrollView>
   )

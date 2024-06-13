@@ -7,17 +7,19 @@ import LottieView from "lottie-react-native"
 import { RoundButton } from "@components/ButtonComponent"
 import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
-import EmptyList from "@components/EmptyList"
+import { ErrorImage } from "@components/UIComponents"
 //types & helpers
 import PetInfo from "@components/PetInfo/PetInfo"
 import { Health } from "@health/HealthInterface"
 import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 import { HEALTHS } from "@health/healthHelpers"
+import { useShallowPets } from "@hooks/sharedHooks"
 //queries
-import { usePetIds, useShallowPetBasics } from "@store/storeUtils"
-import { useGetAllHealths } from "@health/healthQueries"
+import { profileKeyFactory, useGetProfile } from "@profile/profileQueries"
 //styles
 import { Buttons, Spacing, Typography, Colors, Forms } from '@styles/index'
+import { useQueryClient } from "@tanstack/react-query"
+import { ProfileData } from "@profile/ProfileInterface"
 
 type HealthIndexProps = {
   navigation: any
@@ -51,18 +53,16 @@ const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
 }
 
 const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
-  const { data: healths, isLoading, isSuccess, isError} = useGetAllHealths()
-  const pets = useShallowPetBasics()
-  const petIds = pets.map(pet => pet._id)
-  const [filtered, setFiltered] = useState<string[]>(petIds)
+  const queryClient = useQueryClient()
+  const healthsCache = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).healths
+  
+  const { data, isSuccess, isFetching, isError } = useGetProfile(!healthsCache)
+  const healths = data.healths
 
-  const petIdToPet = (petId: string) => {
-    return pets.find(pet => pet._id === petId)
-  }
-  
-  const sortOrder = pets.map(pet => pet._id)
-  
-  const healthIndex: { title: string; data: Health[] }[] = sortOrder.map(petId => ({
+  const { PET_BASICS, PET_IDS, petIdToPet } = useShallowPets()
+  const [filtered, setFiltered] = useState<string[]>(PET_IDS)
+ 
+  const healthIndex: { title: string; data: Health[] }[] = PET_IDS.map(petId => ({
     title: petId,
     data: healths.filter(health => 
       health.pet._id === petId && filtered.includes(health.pet._id)
@@ -97,13 +97,13 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
       contentContainerStyle={styles.listHeader}
       showsHorizontalScrollIndicator={false}
     > 
-      <TouchableOpacity style={[styles.allBtn, filtered.length < pets.length && { opacity: 0.3 }]} onPress={() => setFiltered(prev => prev.length === pets.length ? [] : petIds)}>
+      <TouchableOpacity style={[styles.btnCon, filtered.length < PET_BASICS.length && { opacity: 0.3 }]} onPress={() => setFiltered(prev => prev.length === PET_BASICS.length ? [] : PET_IDS)}>
         {/* <Text style={styles.headerCount}>{section.data.length}</Text> */}
         <Image source={require('@assets/icons/pets.png')} style={styles.allBtnIcon} />
         <Text style={styles.allBtnText}>All</Text>
       </TouchableOpacity>
       {healthIndex.map((section, idx) => 
-        <TouchableOpacity key={`title-${idx}`} style={[styles.subBtn, !filtered.includes(section.title) && { opacity: 0.3 }]} onPress={() => handleHeaderPress(section.title)}>
+        <TouchableOpacity key={`title-${idx}`} style={[styles.btnCon, !filtered.includes(section.title) && { opacity: 0.3 }]} onPress={() => handleHeaderPress(section.title)}>
           {/* <Text style={styles.headerCount}>{section.data.length}</Text> */}
           <PetInfo pet={petIdToPet(section.title)} size='small' />
         </TouchableOpacity>
@@ -121,13 +121,14 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
     }
   }, [route.params, isSuccess])
   
+  if (isFetching) return <Loader />
+  if (isError) return <ErrorImage />
+
   return (
     <View style={styles.container}>
       <RoundButton onPress={() => navigation.navigate('Create')} type='add' position='bottomRight' />
-      {isSuccess ?
-        <>
-          { !healths.length && <PlaceHolder navigation={navigation} /> }
-          
+      {isSuccess && (
+        healths.length > 0 ?
           <SectionList
             ref={sectionListRef}
             sections={healthIndex}
@@ -140,10 +141,9 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
             getItemLayout={getItemLayout}
             showsVerticalScrollIndicator={false}
             style={styles.list}
-            ListEmptyComponent={ <EmptyList /> }
-          />
-        </> : <Loader />
-      }
+          /> 
+        : <PlaceHolder navigation={navigation} type='vet visit' />
+      )}
         
     </View> 
   )
@@ -153,13 +153,9 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
   },
-  subBtn: {
-    width: 80,
-  },
-  allBtn: {
+  btnCon: {
     width: 80,
     ...Spacing.flexColumn,
-    alignSelf: 'center',
   },
   allBtnIcon: {
     width: 50,

@@ -1,14 +1,13 @@
 //npm modules
 import { ReactElement, useEffect, useRef, useState } from "react"
 import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, FlatList } from "react-native"
-//store & hooks
-import { usePetNames } from "@store/storeUtils"
 //helpers 
 import * as petHelpers from '@pet/petHelpers'
 import * as careHelpers from '@care/careHelpers'
 import * as healthHelpers from '@health/healthHelpers'
 import * as statHelpers from '@stat/statHelpers'
 import { getActionIconSource } from "@utils/ui"
+import { useShallowPets } from "@hooks/sharedHooks"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
@@ -24,7 +23,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
   const [visible, setVisible] = useState(false)
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
-  const PET_NAMES = usePetNames()
+  const { PET_NAMES } = useShallowPets()
 
   const toggleDropdown = (): void => {
     visible ? setVisible(false) : openDropDown()

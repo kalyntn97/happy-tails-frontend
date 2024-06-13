@@ -7,6 +7,7 @@ export interface Pet extends PetFormData {
   stats: Stat[]
 }
 export interface PetBasic {
+  _id: string
   name: string
   species: string
   photo: string | null

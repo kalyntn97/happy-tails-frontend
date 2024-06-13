@@ -6,10 +6,11 @@ export const profileKeyFactory = {
   profile: ['profile'],
 }
 
-export const useGetProfile = () => {
+export const useGetProfile = (isEnabled?: boolean) => {
   return useQuery({
     queryKey: [...profileKeyFactory.profile],
     queryFn: profileService.getProfile,
+    enabled: isEnabled,
   })
 }
 

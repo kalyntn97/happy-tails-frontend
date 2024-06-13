@@ -1,47 +1,8 @@
 import { create, StateCreator } from 'zustand'
-import { CareSlice, HealthSlice, ProfileSlice, SettingSlice } from './StoreInterface'
+import { SettingSlice } from './StoreInterface'
 import { getDateInfo } from '@utils/datetime'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { persist, createJSONStorage } from 'zustand/middleware'
-
-
-const createProfileSlice: StateCreator<ProfileSlice & CareSlice & HealthSlice & SettingSlice, [], [], ProfileSlice> = (set, get) => ({
-  profile: {},
-  setActions: {
-    setProfile: profile => set({ profile: profile }),
-    setReminderInterval: interval => set({ reminderInterval: interval }),
-    setActiveDate: dateObj => set({ activeDate: dateObj }),
-    setActiveTaskCounts: activeTaskObj => set({ activeTaskCounts: activeTaskObj }),
-    setDisplayUnits: displayUnitObj => set({ displayUnits: displayUnitObj }),
-    setPets: pets => set(state => ({ profile: { ...state.profile, pets: pets } })),
-    setCares: cares => set({ cares: cares}),
-    setHealths: healths => set({ healths: healths }),
-    onUpdateProfile: profile => set({ profile: profile}),    
-  },
-  petActions: {
-    onAddPet: pet => set(state => {
-      if ('pets' in state.profile) return { 
-        profile: { ...state.profile, pets: [...state.profile.pets, pet] } 
-      }
-      console.error('Profile is not initialized')
-      return state
-    }),
-    onUpdatePet: pet => set(state => {
-      if ('pets' in state.profile) return { 
-        profile: { ...state.profile,  pets: state.profile.pets.map(p => p._id === pet._id ? pet : p) } ,
-      }
-      console.error('Profile is not initialized')
-      return state
-    }),
-    onDeletePet: petId => set(state => {
-      if ('pets' in state.profile) return { 
-        profile: { ...state.profile, pets: state.profile.pets.filter(p => p._id !== petId) }
-      }
-      console.error('Profile is not initialized')
-      return state
-    }),
-  }
-})
 
 const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
   reminderInterval: 30,
@@ -65,33 +26,51 @@ const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
     weight: 'kg',
     food: 'g',
     water: 'ml',
-  }
+  },
+  setActions: {
+    setReminderInterval: interval => set({ reminderInterval: interval }),
+    setActiveDate: dateObj => set({ activeDate: dateObj }),
+    setActiveTaskCounts: activeTaskObj => set({ activeTaskCounts: activeTaskObj }),
+    setDisplayUnits: displayUnitObj => set({ displayUnits: displayUnitObj }),
+  },
 })
 
-const createCareSlice: StateCreator<CareSlice> = (set) => ({
-  cares: {},
-  careActions: {
-    onAddCare: care => set(state => ({ cares: [...state.cares, care] })),
-    onUpdateCare: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c) })),
-    onDeleteCare: careId => set(state => ({ cares: state.cares.filter(c => c._id !== careId) })),
-  }
-})
+// const createProfileSlice: StateCreator<ProfileSlice & CareSlice & HealthSlice & SettingSlice, [], [], ProfileSlice> = (set, get) => ({
+//   profile: {},
+//   setActions: {
+//     setProfile: profile => set({ profile: profile }),
+//     setReminderInterval: interval => set({ reminderInterval: interval }),
+//     setActiveDate: dateObj => set({ activeDate: dateObj }),
+//     setActiveTaskCounts: activeTaskObj => set({ activeTaskCounts: activeTaskObj }),
+//     setDisplayUnits: displayUnitObj => set({ displayUnits: displayUnitObj }),
+//     setPets: pets => set(state => ({ profile: { ...state.profile, pets: pets } })),
+//     setCares: cares => set({ cares: cares}),
+//     setHealths: healths => set({ healths: healths }),
+//     onUpdateProfile: profile => set({ profile: profile}),    
+//   },
+// })
 
-const createHealthSlice: StateCreator<HealthSlice> = (set) => ({
-  healths: [],
-  healthActions: {
-    onAddHealth: health => set(state => ({ healths: [...state.healths, health] })),
-    onUpdateHealth: health => set(state => ({ healths: state.healths.map(h => h._id === health._id ? health : h) })),
-    onDeleteHealth: healthId => set(state => ({ healths: state.healths.filter(h => h._id !== healthId) }))
-  }
-})
+// const createCareSlice: StateCreator<CareSlice> = (set) => ({
+//   cares: {},
+//   careActions: {
+//     onAddCare: care => set(state => ({ cares: [...state.cares, care] })),
+//     onUpdateCare: care => set(state => ({ cares: state.cares.map(c => c._id === care._id ? care : c) })),
+//     onDeleteCare: careId => set(state => ({ cares: state.cares.filter(c => c._id !== careId) })),
+//   }
+// })
 
-export const useBoundStore= create<ProfileSlice & CareSlice & HealthSlice & SettingSlice>()(
+// const createHealthSlice: StateCreator<HealthSlice> = (set) => ({
+//   healths: [],
+//   healthActions: {
+//     onAddHealth: health => set(state => ({ healths: [...state.healths, health] })),
+//     onUpdateHealth: health => set(state => ({ healths: state.healths.map(h => h._id === health._id ? health : h) })),
+//     onDeleteHealth: healthId => set(state => ({ healths: state.healths.filter(h => h._id !== healthId) }))
+//   }
+// })
+
+export const useBoundStore= create<SettingSlice>()(
   persist(
     (...a) => ({
-    ...createProfileSlice(...a),
-    ...createCareSlice(...a),
-    ...createHealthSlice(...a),
     ...createSettingSlice(...a),
     }), {
       name: 'setting-storage',
@@ -102,19 +81,10 @@ export const useBoundStore= create<ProfileSlice & CareSlice & HealthSlice & Sett
 )
 
 //states
-export const useProfile = () => useBoundStore(state => state.profile)
 export const useReminderInterval = () => useBoundStore(state => state.reminderInterval)
 export const useActiveDate = () => useBoundStore(state => state.activeDate)
 export const useActiveTaskCounts = () => useBoundStore(state => state.activeTaskCounts)
 export const useCurrentIsActive = () => useBoundStore(state => state.currentIsActive)
 export const useDisplayUnits = () => useBoundStore(state => state.displayUnits)
-export const usePets = () => useBoundStore(state => {
-  if ('pets' in state.profile) return state.profile.pets
-})
-export const useCares = () => useBoundStore(state => state.cares)
-export const useHealths = () => useBoundStore(state => state.healths)
 //actions
-export const usePetActions = () => useBoundStore(state => state.petActions)
 export const useSetActions = () => useBoundStore(state => state.setActions)
-export const useCareActions = () => useBoundStore(state => state.careActions)
-export const useHealthActions = () => useBoundStore(state => state.healthActions)

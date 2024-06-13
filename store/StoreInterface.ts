@@ -8,6 +8,12 @@ export interface SettingSlice {
   activeTaskCounts: { care: number, health: number }
   reminderInterval: number
   displayUnits: { weight: string, food: string, water: string }
+  setActions : {
+    setActiveDate: (dateObj: { date: number, week: number, month: number, year: number }) => void
+    setActiveTaskCounts: (activeTaskObj: { care: number, health: number }) => void
+    setReminderInterval: (interval: number) => void,
+    setDisplayUnits: (displayUnitObj: { weight: string, food: string, water: string }) => void
+  }
 }
 
 export interface ProfileSlice {
