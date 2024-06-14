@@ -55,7 +55,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
         'species': petHelpers.SPECIES_OPTIONS,
         'Dog': await petHelpers.getDogBreedData(),
         'Cat': await petHelpers.getCatBreedData(),
-        'Bird': await petHelpers.getBirdSpeciesData(),
+        'Bird': petHelpers.BIRD_SPECIES,
         'Fish': petHelpers.FISH_SPECIES,
         'frequency': careHelpers.CARE_FREQ,
         'care': Object.values(careHelpers.CARE_NAMES),

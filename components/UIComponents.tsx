@@ -1,9 +1,8 @@
-import { Image, Pressable, Text, TouchableOpacity, View, ViewStyle } from "react-native"
+import { ActivityIndicator, Image, Pressable, Text, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Spacing, Colors, Typography, Forms } from "@styles/index"
 import { FC } from "react"
 import { getActionIconSource } from "@utils/ui"
 import { ImageSourcePropType } from "react-native"
-import ToastManager, { Toast } from "toastify-react-native"
 
 type BoxHeaderProps = {
   title: string
@@ -79,3 +78,16 @@ export const ErrorImage: FC<{ top?: number }> = ({ top }) => (
   </View>
 )
 
+export const CatToast = ({ text1, text2, props }) => (
+  <View style={{ ...Spacing.flexRow, backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', height: 70, borderLeftWidth: 7, borderLeftColor: props.style === 'success' ? Colors.green.dark : Colors.red.dark, ...Forms.boxShadow }}>
+    <Image source={props.style === 'success' ? require('assets/icons/ui-cat-happy.png') : require('assets/icons/ui-cat-sad.png')} style={{ ...Forms.icon}} />
+    <View style={{ ...Spacing.flexColumn, marginLeft: 10, alignItems: 'flex-start' }}>  
+      <Text style={{ textTransform: 'capitalize', fontWeight: 'bold', fontSize: 15, marginBottom: 5 }}>{props.style}!</Text>
+      <Text>{text1}</Text>
+      { text2 && <Text>{text2}</Text> }
+    </View>
+    <Pressable style={{ marginLeft: 'auto' }} onPress={props.onClose}>
+      <Image source={getActionIconSource('close')} style={{ ...Forms.smallIcon}} />
+    </Pressable>
+  </View>
+)

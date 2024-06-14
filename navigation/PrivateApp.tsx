@@ -28,7 +28,8 @@ import EditMorePetDetailsScreen from "@pet/screens/EditMorePetDetailsScreen"
 import { getNavigationIconSource } from "@utils/ui"
 //styles
 import { Typography } from "@styles/index"
-import { styles, tabBarOptions, modalPresentation, stackOptions, noTitleHeaderCardStyle, titleOnlyHeaderStyle, noTitleHeaderModalStyle } from "./NavigationStyles"
+import { styles, tabBarOptions, modalPresentation, stackOptions, noTitleCardHeaderStyle, titleOnlyHeaderStyle, noTitleModalHeaderStyle, cardHeaderStyle } from "./NavigationStyles"
+import Toast from "react-native-toast-message"
 
 const PrivateApp = () => {
   const Tab = createBottomTabNavigator()
@@ -72,17 +73,17 @@ const PrivateApp = () => {
           >
             <HomeStack.Screen name='Main' component={HomeScreen} options={{ headerShown: false }} />
             <HomeStack.Group screenOptions={{ ...stackOptions }}>
-              <HomeStack.Screen name='CareIndex' component={CareIndexScreen} options={{ title: 'All Pet Care'}}/>
+              <HomeStack.Screen name='CareIndex' component={CareIndexScreen} options={{ title: 'All Pet Care', ...cardHeaderStyle }}/>
               <HomeStack.Screen name='CareCreate' component={NewCareScreen} options={{ title: 'Add a Task' }}/>
-              <HomeStack.Screen name='CareDetails' component={CareDetailsScreen} options={{ ...noTitleHeaderCardStyle }}/>
+              <HomeStack.Screen name='CareDetails' component={CareDetailsScreen} options={{ ...noTitleModalHeaderStyle }}/>
               <HomeStack.Screen name='CareEdit' component={EditCareScreen} options={{ title: 'Edit Task' }}/>
             </HomeStack.Group>
         
             <HomeStack.Group screenOptions={{ ...stackOptions }}>
-              <HealthStack.Screen name='HealthIndex' component={HealthIndexScreen} options={{ title: 'All Pet Health'}} />
+              <HealthStack.Screen name='HealthIndex' component={HealthIndexScreen} options={{ title: 'All Pet Health', ...cardHeaderStyle }} />
               <HealthStack.Screen name='HealthCreate' component={NewHealthScreen} options={{ title: 'Add a Vet Visit'}} />
+              <HealthStack.Screen name='HealthDetails' component={HealthDetailsScreen} options={{ ...noTitleModalHeaderStyle }} />
               <HealthStack.Screen name='HealthEdit' component={EditHealthScreen} options={{ title: 'Update Vet Visit'}}/>
-              <HealthStack.Screen name='HealthDetails' component={HealthDetailsScreen} options={{ ...noTitleHeaderCardStyle }} />
             </HomeStack.Group>
         
           </HomeStack.Navigator> 
@@ -97,18 +98,16 @@ const PrivateApp = () => {
             <PetStack.Screen name='Index' component={PetIndexScreen} options={{ headerShown: false }} />
             <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }} />
             <PetStack.Screen name='Edit' component={EditPetScreen} options={({ route }) => ({ title: 'Edit Pet' })} />
-            <PetStack.Screen name='Details' component={PetDetailsScreen} options={{ ...noTitleHeaderCardStyle }} />
+            <PetStack.Screen name='Details' component={PetDetailsScreen} options={{ ...noTitleCardHeaderStyle }} />
             <PetStack.Screen name='MoreDetails' component={MorePetDetailsScreen} options={{ title: 'More Details' }} />
-            <PetStack.Screen name='EditDetails' component={EditMorePetDetailsScreen} options={{ ...noTitleHeaderModalStyle }} />
+            <PetStack.Screen name='EditDetails' component={EditMorePetDetailsScreen} options={{ ...noTitleModalHeaderStyle }} />
             <PetStack.Screen name='CreateLog' component={NewStatScreen} options={{ title: 'New Log' }} />
             <PetStack.Screen name='LogDetails' component={StatDetails} options={{ title: 'Details' }} />
           </PetStack.Navigator>
         )}
       </Tab.Screen>
 
-      <Tab.Screen name='User'
-        /* options={{ unmountOnBlur: true, }}
-        listeners={ ({ navigation }) => ({ blur: () => navigation.setParams({ screen: undefined }) }) } */>
+      <Tab.Screen name='User'>
         {() => (
           <ProfileStack.Navigator screenOptions={{ ...stackOptions, ...modalPresentation }}>
             <ProfileStack.Screen name='Profile' component={ProfileScreen} options={{ headerShown: false }} />

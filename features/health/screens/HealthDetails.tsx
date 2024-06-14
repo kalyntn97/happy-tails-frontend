@@ -7,7 +7,7 @@ import { countDaysBetween } from "@utils/datetime"
 import { useGetHealthById } from "@health/healthQueries"
 import { HEALTHS } from "@health/healthHelpers"
 //queries & hooks
-import { useDeleteHealthCard, useShallowPetColor } from "@hooks/sharedHooks"
+import { useDeleteHealthCard, useShallowPetColor, useShallowPets } from "@hooks/sharedHooks"
 import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 //components
 import Loader from "@components/Loader"
@@ -35,7 +35,7 @@ const HealthDetailsScreen = ({ navigation, route }) => {
   const [showAllVisits, setShowAllVisits] = useState(false)
 
   const { showDeleteConfirmDialog, handleDeleteHealthCard } = useDeleteHealthCard(navigation)
-  const petIdToColor = useShallowPetColor()
+  const { petIdToColor } = useShallowPets()
   let petColor: string, iconSource: any, daysToDue: number, daysFromDone: number
   
   if (isSuccess) {

@@ -1,23 +1,21 @@
 import { StyleSheet, Text, View, Image, Pressable, ScrollView, Modal } from 'react-native'
 import React, { Children, FC, Suspense, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 //components
 import IdForm from '@pet/components/IdForm'
 import { CloseButton, MainButton } from '@components/ButtonComponent'
+import Loader from '@components/Loader'
+import { CatToast, ErrorImage } from '@components/UIComponents'
 //utils & types
+import { PET_DETAILS } from '@pet/petHelpers'
 import { Id, Medication, Pet, Service } from '@pet/PetInterface'
 import { AlertForm, getActionIconSource, getPetIconSource } from '@utils/ui'
+import { petKeyFactory, useDeletePetDetail, useGetPetById } from '@pet/petQueries'
 //styles
 import { Colors, Forms, Spacing, Typography } from '@styles/index'
-import { BoxWithHeader, ErrorImage } from '@components/UIComponents'
-import MedicationForm from '@pet/components/MedicationForm'
-import CareForm from '@care/components/CareForm'
-import IllnessForm from '@pet/components/IllnessForm'
-import ServiceForm from '@pet/components/ServiceForm'
-import { petKeyFactory, useDeletePetDetail, useGetPetById } from '@pet/petQueries'
-import { PET_DETAILS } from '@pet/petHelpers'
-import Loader from '@components/Loader'
-import ToastManager from 'toastify-react-native'
-import { useQueryClient } from '@tanstack/react-query'
+import Toast from 'react-native-toast-message'
+import { toastConfig } from '@navigation/AppNavigator'
+
 
 interface EditPetDetailsScreenProps {
   route: { params: { petId: string, show?: string }}
@@ -116,17 +114,17 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
   return (
     <ScrollView contentContainerStyle={styles.container} alwaysBounceVertical={false}>
       {!pet && <ErrorImage />}
-      
       { pet && <DetailSections /> }
-     
-      <ToastManager />
+      <Toast config={toastConfig} />
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
     alignItems: 'center',
+    minHeight: '100%',
   },
   listHeaderCon: {
     ...Spacing.flexRow,
@@ -156,10 +154,10 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   itemCon: {
+    width: '100%',
     alignItems: 'flex-start',
     borderBottomWidth: 1,
     borderColor: Colors.shadow.reg,
-    width: '100%',
     paddingVertical: 10,
   },
 })

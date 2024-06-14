@@ -1,7 +1,5 @@
 //npm modules
 import { useState, useRef, useEffect, FC } from 'react'
-import ToastManager from 'toastify-react-native'
-import { useQueryClient } from '@tanstack/react-query'
 import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image, ScrollView } from "react-native"
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 //components
@@ -15,8 +13,6 @@ import { profileKeyFactory, useGetProfile } from '@profile/profileQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
 import { Spacing, Typography, Colors, Forms } from '@styles/index'
-import { ProfileData } from '@profile/ProfileInterface'
-import { useProfile } from '@store/store'
 import Loader from '@components/Loader'
 
 interface PetIndexProps {
@@ -96,7 +92,6 @@ const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
 
   return ( 
     <View style={styles.container}>
-      <ToastManager />
       { pets.length > 0 ? 
         <>
           <View style={styles.petNav}>
@@ -137,7 +132,7 @@ const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
             </Pressable>
             
             <View style={styles.dotNav}>
-              {Array(3).fill(0).map((_, i) =>
+              {petCount > 2 && Array(3).fill(0).map((_, i) =>
                 <DotNav key={i} index={i} />
               )}
             </View>
@@ -201,6 +196,7 @@ const styles = StyleSheet.create({
   },
   dotNav: {
     ...Spacing.flexRow,
+    marginTop: 10,
     width: 120,
     justifyContent: 'space-between',
   },

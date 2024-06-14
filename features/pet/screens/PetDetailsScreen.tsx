@@ -1,12 +1,11 @@
 //npm modules
 import { useEffect, useState } from "react"
 import { StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView, useWindowDimensions, Pressable, Image } from "react-native"
-import ToastManager from "toastify-react-native"
 import { useQueryClient } from "@tanstack/react-query"
 //types & context & hooks
 import { Pet } from "@pet/PetInterface"
 import { STATS } from "@stat/statHelpers"
-import { showDeleteConfirmDialog, useCaresByPet, useDeletePetCard, useHealthDueByPet } from "@hooks/sharedHooks"
+import { showDeleteConfirmDialog } from "@hooks/sharedHooks"
 //components
 import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
@@ -49,7 +48,6 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
       { isLoading && <Loader /> }
       
       { isSuccess && <>
-        <ToastManager />
         <View style={[styles.infoCard,
         ]}>
           <View style={styles.petInfo}>

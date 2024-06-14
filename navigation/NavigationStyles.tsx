@@ -4,8 +4,18 @@ import { NativeStackNavigationOptions } from "@react-navigation/native-stack"
 import { Colors, Forms, Typography } from "@styles/index"
 import { StyleSheet, Text, View } from "react-native"
 
-const Header = ({ title, navigation }: { title: string, navigation: any }) => (
-  <View style={styles.headerCon}>
+const headerOptions: any = {
+  headerTitleStyle: { fontSize: 18, fontWeight: 'bold' },
+  headerStyle: { backgroundColor: Colors.shadow.lightest },
+  headerTintColor: Colors.black,
+}
+
+const contentStyle: NativeStackNavigationOptions = {
+  contentStyle: { backgroundColor: Colors.shadow.lightest },
+}
+
+const Header = ({ title, navigation, top }: { title: string, navigation: any, top?: number }) => (
+  <View style={[styles.headerCon, top && { marginTop: top }]}>
     <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={10} left={10} />
     <Text style={styles.headerText}>{title}</Text>
   </View>
@@ -27,10 +37,28 @@ const baseHeaderStyle: any = {
     return (
       <Header title={title} navigation={navigation} />
     )
-  }
+  },
 }
 
-export const noTitleHeaderCardStyle: any = {
+export const noTitleModalHeaderStyle: any = {
+  header: ({ navigation }) => {
+    return (
+      <NoTitleHeader navigation={navigation} top={10} />
+    )
+  },
+}
+
+export const baseCardHeaderStyle: any = {
+  header: ({ navigation, options }) => {
+    const title = options.title
+    return (
+      <Header title={title} navigation={navigation} top={30} />
+    )
+  },
+  presentation: 'card'
+}
+
+export const noTitleCardHeaderStyle: any = {
   header: ({ navigation }) => {
     return (
       <NoTitleHeader navigation={navigation} top={40} />
@@ -48,23 +76,14 @@ export const noTitleHeaderCardStyle: any = {
   }
 }
 
-export const noTitleHeaderModalStyle: any = {
-  header: ({ navigation }) => {
-    return (
-      <NoTitleHeader navigation={navigation} top={10} />
-    )
-  },
-}
-
 const headerStyle: any = {
   ...baseHeaderStyle,
-  headerTitleStyle: { fontSize: 18, fontWeight: 'bold' },
-  headerStyle: { backgroundColor: Colors.shadow.lightest },
-  headerTintColor: Colors.black,
+  ...headerOptions,
 }
 
-const contentStyle: NativeStackNavigationOptions = {
-  contentStyle: { backgroundColor: Colors.shadow.lightest },
+export const cardHeaderStyle: any = {
+  ...baseCardHeaderStyle,
+  ...headerOptions,
 }
 
 export const stackOptions: NativeStackNavigationOptions = {

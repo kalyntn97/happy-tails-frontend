@@ -187,3 +187,7 @@ export const rightMoreRounded: ViewStyle = {
   borderTopRightRadius: 15,
   borderBottomRightRadius: 15,
 }
+
+export const successToast: ViewStyle = {
+  backgroundColor: Colors.pink.lightest,
+}
