@@ -40,7 +40,7 @@ export const RoundButton: FC<RoundButtonProps> = ({ onPress, size, bgColor, colo
     position === 'bottomRight' && { position: 'absolute', bottom: 10, right: 10, zIndex: 2, }
   ]}>
     <Text style={[
-      { ...whiteBtnTextStyles, fontSize: size === 'small' ? 9 : size === 'medium' ? 15 : 30 },
+      { ...whiteBtnTextStyles, fontSize: size === 'small' ? 9 : size === 'medium' ? 20 : 30 },
       color && { color: color }
     ]}>
       {roundButtonTypes[type]}
@@ -75,14 +75,15 @@ export const IconButton: FC<IconButtonProps> = ({ onPress, type, size }) => (
   <TouchableOpacity onPress={onPress} style={[
     size === 'small' && {...smallIconButtonStyles as ViewStyle},
     size === 'medium' && { 
-      width: 40, height: 60, borderRadius: 10, marginHorizontal: 2,
-      backgroundColor: iconButtonStyles[type].bgColor, ...Spacing.centered,
+      width: 50, height: 60, borderRadius: 10, marginHorizontal: 2, paddingVertical: 10,
+      backgroundColor: iconButtonStyles[type].bgColor, alignItems: 'center', justifyContent: 'space-around',
     }
   ]}>
     <Image source={getActionIconSource(type)} style={[
-     size === 'medium' && {...Forms.smallIcon},
-     size === 'small' && {...Forms.xSmallIcon},
+      size === 'medium' && {...Forms.xSmallIcon},
+      size === 'small' && {...Forms.xSmallIcon},
     ]} />
+    { size === 'medium' && <Text style={{ fontSize: 10, textTransform: 'capitalize' }}>{type}</Text> }
   </TouchableOpacity>
 )
 

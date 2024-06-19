@@ -29,7 +29,6 @@ import { getNavigationIconSource } from "@utils/ui"
 //styles
 import { Typography } from "@styles/index"
 import { styles, tabBarOptions, modalPresentation, stackOptions, noTitleCardHeaderStyle, titleOnlyHeaderStyle, noTitleModalHeaderStyle, cardHeaderStyle } from "./NavigationStyles"
-import Toast from "react-native-toast-message"
 
 const PrivateApp = () => {
   const Tab = createBottomTabNavigator()
@@ -38,7 +37,6 @@ const PrivateApp = () => {
   const HealthStack = createNativeStackNavigator()
   //PetTab
   const PetStack = createNativeStackNavigator()
-  const DetailStack = createNativeStackNavigator()
   //AccountTab
   const ProfileStack = createNativeStackNavigator()
   

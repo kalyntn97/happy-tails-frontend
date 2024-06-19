@@ -9,7 +9,7 @@ import PetInfo from '@components/PetInfo/PetInfo'
 //types & queries & hooks
 import { Health, Visit } from '@health/HealthInterface'
 import { useCheckDoneHealth, useUncheckDoneHealth } from '@health/healthQueries'
-import { useDeleteHealthCard, useShallowPetColor } from '@hooks/sharedHooks'
+import { useDeleteHealthCard, useShallowPets } from '@hooks/sharedHooks'
 import { HEALTHS } from '@health/healthHelpers'
 //styles
 import { styles } from '@styles/SwipeableTaskStyles'
@@ -27,7 +27,7 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, pa
   const checkDoneMutation = useCheckDoneHealth()
   const uncheckDoneMutation = useUncheckDoneHealth()
   const { showDeleteConfirmDialog, handleDeleteHealthCard } = useDeleteHealthCard(navigation)
-  const petIdToColor = useShallowPetColor()
+  const { petIdToColor } = useShallowPets()
   const petColor = petIdToColor(health.pet._id)
   
   const swipeableRef = useRef(null)

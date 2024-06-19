@@ -9,8 +9,6 @@ import { Pet, PetFormData, PhotoFormData } from "@pet/PetInterface"
 import Loader from "@components/Loader"
 //store & queries
 import { useUpdatePet } from "@pet/petQueries"
-import { usePetActions } from "@store/store"
-import { AlertForm } from "@utils/ui"
 import useCustomNavigation from "@hooks/useNavigation"
 
 
@@ -23,8 +21,6 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
   const { pet } = route.params
   const updatePetMutation = useUpdatePet(navigation)
   const { goBack } = useCustomNavigation()
-
-  const { onUpdatePet } = usePetActions()
 
   const isFocused = useIsFocused()
 

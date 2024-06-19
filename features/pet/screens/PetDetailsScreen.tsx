@@ -9,7 +9,7 @@ import { showDeleteConfirmDialog } from "@hooks/sharedHooks"
 //components
 import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
-import {  BoxHeader, ErrorImage } from "@components/UIComponents"
+import {  BoxHeader, EmptyList, ErrorImage } from "@components/UIComponents"
 import { getActionIconSource, getStatIconSource } from "@utils/ui"
 import { CloseButton, IconButton } from "@components/ButtonComponent"
 //store & queries
@@ -80,12 +80,13 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
             {pet.services?.length > 0 && <BoxHeader title='Services' titleIconSource={getActionIconSource('service')} mode="light" onPress={() => navigation.navigate('MoreDetails', { pet, show: 'service' })} />}
           
         </View>
-
+        
         <View style={styles.sectionHeaderCon}>
           <Image source={getActionIconSource('chart')} style={{ ...Forms.smallIcon }} />
           <Text style={styles.sectionHeader}>Logs</Text>
         </View>
         <View style={{ ...Forms.roundedCon }}>
+          { !pet.stats.length && <EmptyList type='log' /> }
           { pet.stats?.map((stat: any, index: number) =>
             <BoxHeader key={index} mode='light' onPress={() => navigation.navigate('LogDetails', { stat })} 
               title={STATS[stat.name]?.name}

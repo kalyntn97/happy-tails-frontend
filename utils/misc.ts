@@ -28,3 +28,4 @@ export const closeToast = () => {
 export const showToast = ({ text1, style, text2, duration }: { text1: string, style: string, text2?: string, duration?: number }) => {
   Toast.show({ type: 'catToast', text1: text1, text2: text2, visibilityTime: duration ?? 3000, props: { style: style, onClose: closeToast }, position: 'bottom', bottomOffset: 50 })
 }
+

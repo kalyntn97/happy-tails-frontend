@@ -105,7 +105,7 @@ const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPre
           ]}>
             {careHelpers.CARES[care.name] ?? care.name}
           </Text>
-          <Text style={styles.taskStatus}>{done}/{times}</Text>
+          <Text style={styles.taskStatus}><Text style={{ fontSize: 15 }}>{done}</Text>/{times}</Text>
           <View style={styles.taskPetList}>
             <PetList petArray={care.pets} size='mini' />
           </View>

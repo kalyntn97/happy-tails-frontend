@@ -38,7 +38,6 @@ export const styles = StyleSheet.create({
   },
   done: {
     textDecorationLine: 'line-through',
-    fontStyle: 'italic',
   },
   squareBtnContainer: {
     ...Spacing.flexRow,

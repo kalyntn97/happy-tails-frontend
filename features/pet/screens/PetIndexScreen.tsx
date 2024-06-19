@@ -95,7 +95,8 @@ const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
       { pets.length > 0 ? 
         <>
           <View style={styles.petNav}>
-            <ScrollView horizontal contentContainerStyle={{ minWidth: '100%', justifyContent: 'space-evenly' }} showsHorizontalScrollIndicator={false}>
+            <ScrollView horizontal contentContainerStyle={{ minWidth: '100%', justifyContent: 'space-evenly', alignItems: 'center' }} showsHorizontalScrollIndicator={false}>
+              <RoundButton type='add' size='medium' onPress={() => navigation.navigate('Create')} />
               {pets.map((pet, index) => 
                 <PhotoButton key={`photo-${pet._id}`} photo={pet.photo} placeholder={getPetIconSource('AnimalProfile')} size='small' onPress={() => handleClickPhoto(index)} />
               )}
@@ -145,9 +146,6 @@ const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
               <Image source={getActionIconSource('next')} style={{ ...Forms.xSmallIcon }}/> 
             </Pressable>
           </View>
-
-          <RoundButton onPress={() => navigation.navigate('Create')} type='add' position='bottomRight' />
-
         </> : 
           <View style={{ ...Spacing.fullWH, justifyContent: 'center' }}> 
             <PlaceHolder type='pet' navigation={navigation} /> 

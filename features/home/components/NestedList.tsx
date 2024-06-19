@@ -4,7 +4,7 @@ import React, { FC, useCallback, useEffect, useState } from 'react'
 //components
 import SwipeableCareTask from './SwipeableTasks/SwipeableCareTask'
 import SwipeableHealthTask from './SwipeableTasks/SwipeableHealthTask'
-import EmptyList from '@components/EmptyList'
+import { EmptyList } from '@components/UIComponents'
 //types & utils
 import { Care } from '@care/CareInterface'
 import { Health, Visit } from '@health/HealthInterface'
@@ -60,7 +60,7 @@ const NestedList: FC<NestedListProps> = ({ data, type, navigation, activeDateObj
   return (
     <View style={[styles.list, { width: windowWidth * 0.95 }]}>
       {data.map(item =>  renderItem(item))}
-      { counts[type] === 0 && <EmptyList /> }
+      { counts[type] === 0 && <EmptyList type='task' /> }
     </View>
   )
 }

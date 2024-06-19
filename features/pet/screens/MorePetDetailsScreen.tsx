@@ -1,20 +1,19 @@
 import { StyleSheet, Text, View, Image, Pressable, ScrollView, Modal } from 'react-native'
 import React, { Children, FC, Suspense, useState } from 'react'
+import Toast from 'react-native-toast-message'
 import { useQueryClient } from '@tanstack/react-query'
 //components
 import IdForm from '@pet/components/IdForm'
 import { CloseButton, MainButton } from '@components/ButtonComponent'
 import Loader from '@components/Loader'
-import { CatToast, ErrorImage } from '@components/UIComponents'
+import { EmptyList, ErrorImage, toastConfig } from '@components/UIComponents'
 //utils & types
 import { PET_DETAILS } from '@pet/petHelpers'
 import { Id, Medication, Pet, Service } from '@pet/PetInterface'
 import { AlertForm, getActionIconSource, getPetIconSource } from '@utils/ui'
-import { petKeyFactory, useDeletePetDetail, useGetPetById } from '@pet/petQueries'
+import { petKeyFactory, useDeletePetDetail } from '@pet/petQueries'
 //styles
 import { Colors, Forms, Spacing, Typography } from '@styles/index'
-import Toast from 'react-native-toast-message'
-import { toastConfig } from '@navigation/AppNavigator'
 
 
 interface EditPetDetailsScreenProps {
@@ -31,12 +30,6 @@ const ListHeader = ({ name, onPress }) => (
     <Pressable onPress={onPress}>
       <Image source={getActionIconSource('add')} style={{ ... Forms.smallIcon }} />
     </Pressable>
-  </View>
-)
-
-const EmptyList = () => (
-  <View>
-    <Text>No item added.</Text>
   </View>
 )
 
@@ -63,7 +56,7 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
     const detailItems = []
     for (const key in PET_DETAILS) {
       detailItems.push(
-        <View key={`${key}-details`} style={{ width: '90%' }}>
+        <View key={`${key}-details`} style={styles.sectionCon}>
           <ListHeader name={key} onPress={() => openForm(key)} />
           {detailData[key].length > 0 ? 
             detailData[key].map((item: any, index: number) => <Item key={`${key}-${index}`} item={item} type={key} />) 
@@ -126,11 +119,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: '100%',
   },
+  sectionCon: {
+    width: '90%', 
+    marginBottom: 40,
+  },
   listHeaderCon: {
     ...Spacing.flexRow,
     justifyContent: 'space-between',
     width: '100%',
-    marginTop: 20,
     marginBottom: 10,
   },
   listHeaderText: {
@@ -160,6 +156,10 @@ const styles = StyleSheet.create({
     borderColor: Colors.shadow.reg,
     paddingVertical: 10,
   },
+  empty: {
+    ...Typography.xSmallSubHeader,
+    margin: 0
+  }
 })
 
 export default MorePetDetailsScreen

@@ -3,6 +3,7 @@ import { Spacing, Colors, Typography, Forms } from "@styles/index"
 import { FC } from "react"
 import { getActionIconSource } from "@utils/ui"
 import { ImageSourcePropType } from "react-native"
+import { ToastConfigParams } from "react-native-toast-message"
 
 type BoxHeaderProps = {
   title: string
@@ -91,3 +92,11 @@ export const CatToast = ({ text1, text2, props }) => (
     </Pressable>
   </View>
 )
+
+export const EmptyList: FC<{ type?: string }> = ({ type }) => (
+  <Text style={type === 'task' ? { ...Typography.smallSubHeader } : { ...Typography.xSmallSubHeader }}>{type === 'task' ? 'No tasks to manage.' : type === 'log' ? 'No logs created.' : 'No item added'}</Text>
+) 
+
+export const toastConfig = {
+  catToast: ({ text1, text2, props }: ToastConfigParams<any>) => ( <CatToast text1={text1} text2={text2} props={props} /> )
+}

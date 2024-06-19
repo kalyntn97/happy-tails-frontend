@@ -113,23 +113,15 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           <View style={styles.taskListContainer}>
             {Object.values(data.cares).length > 0 ?
               <>
-                {selected === 'day' &&
-                  <NestedList data={[...data.cares['Daily'], ...data.cares['Others']]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
-                }
+                { selected === 'day' && <NestedList data={[...data.cares['Daily'], ...data.cares['Others']]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' /> }
                 
-                {selected === 'week' &&
-                  <NestedList data={data.cares['Weekly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
-                }
+                { selected === 'week' && <NestedList data={data.cares['Weekly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' /> }
 
-                {selected === 'month' && 
-                  <NestedList data={data.cares['Monthly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
-                }
+                { selected === 'month' &&  <NestedList data={data.cares['Monthly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' /> }
 
-                {selected === 'year' && 
-                  <NestedList data={data.cares['Yearly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' />
-                }
+                { selected === 'year' &&  <NestedList data={data.cares['Yearly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type='care' /> }
               </>
-            : <PlaceHolder navigation={navigation}/> }
+            : <PlaceHolder type='task' navigation={navigation}/> }
 
           </View>
         </>

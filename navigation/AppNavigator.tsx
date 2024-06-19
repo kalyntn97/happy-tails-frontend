@@ -7,11 +7,7 @@ import { useAuth } from '@auth/AuthContext'
 //components
 import PrivateApp from './PrivateApp'
 import PublicApp from './PublicApp'
-import { CatToast } from '@components/UIComponents'
-
-export const toastConfig = {
-  catToast: ({ text1, text2, props }: ToastConfigParams<any>) => ( <CatToast text1={text1} text2={text2} props={props} /> )
-}
+import { toastConfig } from '@components/UIComponents'
 
 const AppNavigator: React.FC = () => {
   const { authState } = useAuth()

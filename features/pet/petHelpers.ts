@@ -62,8 +62,8 @@ export const SERVICE_TYPES = ['ER Hospital', 'Clinic', 'School', 'Boarding', 'Gr
 export const PET_DETAILS = {
   id: 'Pet Identifications',
   med: 'Pet Medications',
-  service: 'Pet Services',
   illness: 'Pet Conditions',
+  service: 'Pet Services',
 }
 
 export const getDetailHeader = (key: string) => {

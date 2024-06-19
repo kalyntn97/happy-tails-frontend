@@ -85,5 +85,5 @@ export const roundButton = { ...solid, ...roundedBase, width: 60, height: 60 }
 
 export const smallRoundButton = { ...solid, ...roundedBase, width: 20, height: 20 }
 
-export const mediumRoundButton = { ...solid, ...roundedBase, width: 30, height: 30 }
+export const mediumRoundButton = { ...solid, ...roundedBase, width: 40, height: 40 }
 

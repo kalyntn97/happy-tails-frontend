@@ -4,7 +4,7 @@ import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 //types & utils
 import { Health } from '@health/HealthInterface'
 import { getActionIconSource, getHealthIconSource } from '@utils/ui'
-import { useShallowPetColor } from '@hooks/sharedHooks'
+import { useShallowPets } from '@hooks/sharedHooks'
 import { HEALTHS, VACCINES } from '@health/healthHelpers'
 //components
 import PetInfo from '@components/PetInfo/PetInfo'
@@ -23,7 +23,7 @@ interface HealthCardProps {
 const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activeDateObj }) => {
   const iconSource = getHealthIconSource(health.name)
 
-  const petIdToColor = useShallowPetColor()
+  const { petIdToColor } = useShallowPets()
   const petColor = Colors.multi.lightest[petIdToColor(health.pet._id) ?? health.pet.color]
   const pastDue = new Date(health.nextDue.date) < new Date()
   
