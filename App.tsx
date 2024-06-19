@@ -1,22 +1,29 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 //npm modules
+import Toast from 'react-native-toast-message'
 import * as React from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 //context
 import { AuthProvider } from '@auth/AuthContext'
+//components & utils
 import AppNavigator from '@navigation/AppNavigator'
-//components
-
-
+import { showToast } from '@utils/misc'
+import { toastConfig } from '@components/UIComponents'
 
 const App: React.FC = () => {
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient({
+    queryCache: new QueryCache({
+      onError: (error) =>
+        showToast({ text1: 'Something went wrong.', text2: `${error}`, style: 'error' })
+    }),
+  })
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <AppNavigator />
+          <Toast config={toastConfig} />
         </GestureHandlerRootView>
       </AuthProvider>
     </QueryClientProvider>

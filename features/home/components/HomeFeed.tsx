@@ -5,9 +5,9 @@ import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Modal, Pre
 import { Care } from "@care/CareInterface"
 import { Health } from "@health/HealthInterface"
 //store & queries
-import { useGetProfile, useUpdateStreak } from "@profile/profileQueries"
-import { useActiveDate, useBoundStore, useCurrentIsActive, useSetActions } from "@store/store"
-import { AlertForm, getCalendarIconSource, getNavigationIconSource } from "@utils/ui"
+import { useGetProfile } from "@profile/profileQueries"
+import { useActiveDate, useCurrentIsActive } from "@store/store"
+import { getCalendarIconSource, getNavigationIconSource } from "@utils/ui"
 //components
 import CareCard from "@care/components/CareCard"
 import Loader from "@components/Loader"
@@ -19,8 +19,6 @@ import { getMonth } from "@utils/datetime"
 //styles
 import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
 import { ErrorImage } from "@components/UIComponents"
-import { useQueryClient } from "@tanstack/react-query"
-import { petKeyFactory } from "@pet/petQueries"
 
 interface HomeFeedProps {
   navigation: any

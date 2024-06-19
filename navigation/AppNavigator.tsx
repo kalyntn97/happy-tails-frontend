@@ -21,7 +21,6 @@ const AppNavigator: React.FC = () => {
           <PublicApp />
         }
       </NavigationContainer>
-      <Toast config={toastConfig} />
     </>
   )
 }
