@@ -27,13 +27,14 @@ const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
     food: 'g',
     water: 'ml',
   },
+  getDisplayUnit: (name) => get().displayUnits[name],
   petSettings : {},
   getPetSettings: (petId, setting) => get().petSettings[petId]?.[setting],
   setActions: {
     setHealthInterval: interval => set({ healthInterval: interval }),
     setActiveDate: dateObj => set({ activeDate: dateObj }),
     setActiveTaskCounts: activeTaskObj => set({ activeTaskCounts: activeTaskObj }),
-    setDisplayUnits: displayUnitObj => set({ displayUnits: displayUnitObj }),
+    setDisplayUnits: (name, value) => set(state => ({ displayUnits: { ...state.displayUnits, [name]: value } })),
     setPetSettings: (petId, setting, value) => set(state => ({ petSettings: { ...state.petSettings, [petId]: { ...state.petSettings[petId], [setting]: value } } }))
   },
 })
@@ -89,6 +90,7 @@ export const useActiveDate = () => useBoundStore(state => state.activeDate)
 export const useActiveTaskCounts = () => useBoundStore(state => state.activeTaskCounts)
 export const useCurrentIsActive = () => useBoundStore(state => state.currentIsActive)
 export const useDisplayUnits = () => useBoundStore(state => state.displayUnits)
+export const useGetDisplayUnits = (name: string) => useBoundStore(state => state.getDisplayUnit(name))
 export const useGetPetSettings = (petId: string, setting: string) => useBoundStore(state => state.getPetSettings(petId, setting))
 //actions
 export const useSetActions = () => useBoundStore(state => state.setActions)

@@ -8,13 +8,14 @@ export interface SettingSlice {
   activeTaskCounts: { care: number, health: number }
   healthInterval: number
   displayUnits: { weight: string, food: string, water: string }
+  getDisplayUnit: (name: string) => string
   petSettings: { [petId: string]: { setting: string, value: any } }
   getPetSettings: (petId: string, setting: string) => any
   setActions : {
     setActiveDate: (dateObj: { date: number, week: number, month: number, year: number }) => void
     setActiveTaskCounts: (activeTaskObj: { care: number, health: number }) => void
     setHealthInterval: (interval: number) => void,
-    setDisplayUnits: (displayUnitObj: { weight: string, food: string, water: string }) => void
+    setDisplayUnits: (name: string, value: string) => void
     setPetSettings: (petId: string, setting: string, value: any) => void
   }
 }

@@ -26,9 +26,10 @@ export const settingTitles = {
 
 const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
   const displayUnits = useDisplayUnits()
-  const { weight, food } = displayUnits
   const { setDisplayUnits } = useSetActions()
-  const { onLogout, onDeleteAccount } = useAuth()
+
+  const { weight, food } = displayUnits
+  const { onLogout } = useAuth()
 
   const logout = async () => {
     const { status, error } = await onLogout!()
@@ -50,30 +51,30 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
     )
   }
 
+  const displaySettings = [
+    { key: 'weight', title: settingTitles['weight'], units: WEIGHT_UNITS,currentValue: weight, setValue: () => setDisplayUnits('weight', weight === WEIGHT_UNITS[0] ? WEIGHT_UNITS[1] : WEIGHT_UNITS[0])},
+    { key: 'food', title: settingTitles['food'], units: FOOD_UNITS, currentValue: food, setValue: () => setDisplayUnits('food', food === FOOD_UNITS[0] ? FOOD_UNITS[1]: FOOD_UNITS[0]) },
+  ]
+  const accountSettings =[
+    { key: 'update', title: settingTitles['update'], onPress: () => navigation.navigate('Account', { form: 'update' }) },
+    { key: 'delete', title: settingTitles['delete'], onPress: () => navigation.navigate('Account', { form: 'delete' }) },
+    { key: 'logout', title: settingTitles['logout'], onPress: () => showLogoutConfirmDialog() },
+  ]
+  
   return (
-    <ScrollView 
-      contentContainerStyle={styles.scrollViewContent}
-      
-    > 
+    <ScrollView contentContainerStyle={styles.scrollViewContent}> 
       <Text style={styles.sectionHeader}>Account settings</Text>
       <View style={{ ...Forms.roundedCon }}>
-        <BoxHeader title={settingTitles['update']} mode='light' onPress={() => navigation.navigate('Account', { form: 'update' })} />
-        <BoxHeader title={settingTitles['delete']} mode='light' onPress={() => navigation.navigate('Account', { form: 'delete' })} />
-        <BoxHeader title={settingTitles['logout']} mode='light' onPress={showLogoutConfirmDialog} />
+        { accountSettings.map(setting =>
+          <BoxHeader key={setting.key} title={setting.title} mode='light' onPress={setting.onPress} />
+        )}
       </View>
 
       <Text style={styles.sectionHeader}>Display settings</Text>
       <View style={{ ...Forms.roundedCon }}>
-        <BoxHeader title={settingTitles['weight']} mode='light' 
-          onPress={() => setDisplayUnits({ ...displayUnits, weight: weight === WEIGHT_UNITS[0] ? WEIGHT_UNITS[1] : WEIGHT_UNITS[0] })} 
-          rightContent={ <Text>{weight}</Text> } 
-        />
-        <BoxHeader title={settingTitles['food']} mode='light' 
-          onPress={() => setDisplayUnits({ ...displayUnits, food: food === FOOD_UNITS[0] ? FOOD_UNITS[1]: FOOD_UNITS[0] })} 
-          rightContent={ <Text>{food}</Text> }
-        />
-        
-  
+        { displaySettings.map(setting =>
+          <BoxHeader key={setting.key} title={setting.title} mode='light' rightContent={ <Text>{setting.currentValue}</Text>} onPress={setting.setValue} />
+        )}
       </View>
     
     </ScrollView>
