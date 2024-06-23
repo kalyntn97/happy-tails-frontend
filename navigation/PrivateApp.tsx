@@ -109,7 +109,7 @@ const PrivateApp = () => {
           <ProfileStack.Navigator screenOptions={{ ...stackOptions, ...modalPresentation }}>
             <ProfileStack.Screen name='Profile' component={ProfileScreen} options={{ headerShown: false }} />
             <ProfileStack.Screen name='Edit' component={EditProfileScreen} options={{ title: 'Edit Profile'}} />
-            <ProfileStack.Screen name='Settings' component={SettingsScreen} />
+            <ProfileStack.Screen name='Settings' component={SettingsScreen} options={{ title: 'Settings' }} />
             <ProfileStack.Screen name='Account' component={EditAccountScreen} options={{ title: 'Edit Account' }} />
           </ProfileStack.Navigator>
         )}

@@ -11,7 +11,7 @@ type BoxHeaderProps = {
   onPress?: () => void
   titleColor?: string
   arrow?: string
-  mode?: 'light'
+  mode?: 'light' | 'dark'
   rightContent?: any
 }
 

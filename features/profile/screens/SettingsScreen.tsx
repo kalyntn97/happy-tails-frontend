@@ -14,8 +14,8 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 interface AccountProps {
   navigation: any
-  route: { params: {  } }
 }
+
 export const settingTitles = {
   update: 'Update account information', 
   delete: 'Delete account and all pet profiles', 
@@ -63,20 +63,20 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
   
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}> 
-      <Text style={styles.sectionHeader}>Account settings</Text>
-      <View style={{ ...Forms.roundedCon }}>
-        { accountSettings.map(setting =>
-          <BoxHeader key={setting.key} title={setting.title} mode='light' onPress={setting.onPress} />
-        )}
-      </View>
-
       <Text style={styles.sectionHeader}>Display settings</Text>
       <View style={{ ...Forms.roundedCon }}>
         { displaySettings.map(setting =>
-          <BoxHeader key={setting.key} title={setting.title} mode='light' rightContent={ <Text>{setting.currentValue}</Text>} onPress={setting.setValue} />
+          <BoxHeader key={setting.key} title={setting.title} rightContent={ <Text>{setting.currentValue}</Text>} onPress={setting.setValue} mode='light' />
         )}
       </View>
-    
+
+      <Text style={styles.sectionHeader}>Account settings</Text>
+      <View style={{ ...Forms.roundedCon }}>
+        { accountSettings.map(setting =>
+          <BoxHeader key={setting.key} title={setting.title} onPress={setting.onPress} mode={ setting.key === 'delete' ? 'dark' : 'light'} titleColor={setting.key === 'delete' && Colors.red.darkest} />
+        )}
+      </View>
+
     </ScrollView>
   )
 }
