@@ -1,7 +1,7 @@
 //npm
 import { Image, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { FC, useState } from 'react'
-import { Id, IdFormData } from '@pet/PetInterface'
+import { DetailType, Id, IdFormData } from '@pet/PetInterface'
 //components
 import Dropdown from '@components/Dropdown/Dropdown'
 import { MainButton, TransparentButton } from '@components/ButtonComponent'
@@ -15,7 +15,7 @@ import useForm from '@hooks/useForm'
 
 interface IdFormProps {
   initialValues?: IdFormData
-  onSubmit: (type: string, idFormData: IdFormData) => void
+  onSubmit: (type: 'ids', idFormData: IdFormData) => void
 }
 
 const IdForm : FC<IdFormProps> = ({ initialValues, onSubmit }) => {
@@ -36,13 +36,13 @@ const IdForm : FC<IdFormProps> = ({ initialValues, onSubmit }) => {
   }
 
   function handleSubmit() {
-    onSubmit('id', { name, type, no, notes })
+    onSubmit('ids', { name, type, no, notes })
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Add an ID</Text>
-      <CircleIcon iconSource={getPetIconSource('id')} />
+      <CircleIcon iconSource={getPetIconSource('ids')} />
       <View style={[styles.labelCon, { marginTop: 20 }]}>
         <Text>ID type</Text>
         <Text>Registry name</Text>

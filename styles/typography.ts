@@ -88,7 +88,13 @@ export const xSmallSubHeader: TextStyle = {
 }
 
 export const body: TextStyle = {
+  marginVertical: 5,
+  color: Colors.black,
+}
 
+export const subBody: TextStyle = {
+  fontStyle: 'italic',
+  color: Colors.shadow.darkest,
 }
 
 export const regBody = {
@@ -104,7 +110,7 @@ export const smallBody = {
 export const smallSubBody: TextStyle = {
   ...xSmall,
   ...body,
-  fontStyle: 'italic',
+  ...subBody,
 }
 
 export const xSmallBody = {
@@ -115,7 +121,7 @@ export const xSmallBody = {
 export const xSmallSubBody: TextStyle = {
   ...xxSmall,
   ...body,
-  fontStyle: 'italic',
+  ...subBody,
 }
 
 export const focused: TextStyle = {

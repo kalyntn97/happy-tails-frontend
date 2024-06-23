@@ -147,7 +147,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
             showsVerticalScrollIndicator={false}
             style={{ width: '100%' }}
           />
-        : <PlaceHolder type='task' navigation={navigation} />
+        : <PlaceHolder key='task' navigation={navigation} />
       )}
         
     </View> 

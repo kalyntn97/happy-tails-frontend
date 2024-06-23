@@ -4,22 +4,31 @@ import { Typography, Colors, Spacing } from "@styles/index"
 import { TransparentButton } from "./ButtonComponent"
 
 type Props = {
-  type: 'pet' | 'task' | 'vet visit'
+  type: 'task' | 'vet' | 'ids' | 'services'
+  petId?: string
   navigation: any
 }
 
-const PlaceHolder = ({ type, navigation }: Props) => {
+const PlaceHolder = ({ type, petId, navigation }: Props) => {
+  const map = {
+    task: { text: 'task', subText: '' },
+    vet: { text: 'vet visit', subText: '' },
+    ids: { text: 'ID', subText: '' },
+    services: { text: 'service', subText: '' },
+  }
+
   return (  
     <View style={styles.container}>
       <LottieView source={require('@assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
-      <TransparentButton title={`Add ${type}`} onPress={() => {
-          type === 'task' ? navigation.navigate('Care', { screen: 'Create' })
-          : type === 'vet visit' ? navigation.navigate('Health', { screen: 'Create' })
-          : type === 'pet' ? navigation.navigate('Pets', { screen: 'Create' })
-          : null
+      <TransparentButton title={`Add ${map[type].text}`} onPress={() => {
+          type === 'task' ? navigation.navigate('CareCreate')
+          : type === 'vet' ? navigation.navigate('HealthCreate')
+          // : type === 'id' ? navigation.navigate('EditDetails', { form: type, petId })
+          // : type === 'service' ? navigation.navigate('EditDetails', { form: type, petId })
+          : navigation.navigate('EditDetails', { type, petId })
         }} color={Colors.pink.dark} bdColor={Colors.pink.dark} top={-40}
       />
-      <Text style={styles.msg}>No {type}s.</Text>
+      <Text style={styles.msg}>No {map[type].text}s found. {map[type].subText}</Text>
     </View>
   )
 }

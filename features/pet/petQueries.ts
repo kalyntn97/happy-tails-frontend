@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { Id, IdFormData, Illness, IllnessFormData, Medication, Pet, PetFormData, PetMutationFormData, PhotoFormData, Service, ServiceFormData } from './PetInterface'
+import { Detail, DetailType, Id, IdFormData, Illness, IllnessFormData, Medication, Pet, PetFormData, PetMutationFormData, PhotoFormData, Service, ServiceFormData } from './PetInterface'
 //utils
 import { profileKeyFactory } from '@profile/profileQueries'
 import { ProfileData } from '@profile/ProfileInterface'
@@ -27,7 +27,7 @@ export const useGetPetById = (petId: string, isEnabled: boolean) => {
   return useQuery({
     queryKey: [...petKeyFactory.petById(petId)],
     queryFn: () => petService.getPetById(petId),
-    initialData: queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).profile?.pets.find((pet: Pet) => pet._id === petId),
+    initialData: queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).pets.find((pet: Pet) => pet._id === petId),
     enabled: isEnabled,
   })
 } 
@@ -39,7 +39,7 @@ export const useAddPet = (navigation: any) => {
     mutationFn: ({ formData, photoData } : PetMutationFormData) => petService.create(formData, photoData),
     onSuccess: (data: Pet) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return {...oldData, profile: { ...oldData.profile, pets: [...oldData.profile.pets, data]}}
+        return {...oldData, pets: [...oldData.pets, data]}
       })
       navigation.navigate('Index')
       showToast({ text1: 'Pet added.', style: 'success' })
@@ -55,7 +55,7 @@ export const useUpdatePet = (navigation: any) => {
     mutationFn: ({ formData, photoData } : PetMutationFormData) => petService.update(formData, photoData),
     onSuccess: (data: Pet) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return {...oldData, profile: { ...oldData.profile, pets: oldData.profile.pets.map(pet => pet._id === data._id ? data : pet) }}
+        return {...oldData, pets: oldData.pets.map(pet => pet._id === data._id ? data : pet) }
       })
       navigation.navigate('Details', { petId: data._id })
       showToast({ text1: 'Pet updated.', style: 'success' })
@@ -71,7 +71,7 @@ export const useDeletePet = (navigation: any) => {
     mutationFn: (petId: string) => petService.deletePet(petId),
     onSuccess: (data: string) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return {...oldData, profile: { ...oldData.profile, pets: oldData.profile.pets.filter(pet => pet._id !== data) }}
+        return {...oldData, pets: oldData.pets.filter(pet => pet._id !== data) }
       })
       navigation.navigate('Index')
       showToast({ text1: 'Pet removed.', style: 'success' })
@@ -83,23 +83,23 @@ export const useDeletePet = (navigation: any) => {
 export const useAddPetDetail = (petId: string, navigation: any) => {
   const queryClient = useQueryClient()
 
-  const addPetDetail = (key: string, formData: any) => {
-    const keyToService = {
-      id: () => petService.addId(formData, petId),
-      service: () => petService.addService(formData, petId),
-      illness: () => petService.addIllness(formData, petId),
-      med: () => petService.addMedication(formData, petId),
+  const addPetDetail = (type: string, formData: any) => {
+    const typeToService = {
+      ids: () => petService.addId(formData, petId),
+      services: () => petService.addService(formData, petId),
+      illnesses: () => petService.addIllness(formData, petId),
+      meds: () => petService.addMedication(formData, petId),
     }
-    return keyToService[key]()
+    return typeToService[type]()
   }
 
   return useMutation({
-    mutationFn: ({ key, formData }: { key: string, formData: any }) => addPetDetail(key, formData),
-    onSuccess: (data: { item: Id | Service | Illness | Medication, key: string }) => {
+    mutationFn: ({ type, formData }: { type: DetailType, formData: any }) => addPetDetail(type, formData),
+    onSuccess: (data: { item: Detail, type: DetailType }) => {
       queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) => {
-        return { ...oldData, [data.key]: [...oldData[data.key], data.item] }
+        return { ...oldData, [data.type]: [...oldData[data.type], data.item] }
       })
-      navigation.navigate('MoreDetails', { petId })
+      navigation.navigate('MoreDetails', { petId, show: data.type })
       showToast({ text1: 'Detail added.', style: 'success' })
     }, 
     onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
@@ -109,23 +109,23 @@ export const useAddPetDetail = (petId: string, navigation: any) => {
 export const useDeletePetDetail = (petId: string, navigation: any) => {
   const queryClient = useQueryClient()
   
-  const deletePetDetail = (key: string, detailId: string) => {
-    const keyToService = {
-      id: () => petService.deleteId(petId, detailId),
-      service: () => petService.deleteService(petId, detailId),
-      illness: () => petService.deleteIllness(petId, detailId),
-      med: () => petService.deleteMedication(petId, detailId),
+  const deletePetDetail = (type: string, detailId: string) => {
+    const typeToService = {
+      ids: () => petService.deleteId(petId, detailId),
+      services: () => petService.deleteService(petId, detailId),
+      illnesses: () => petService.deleteIllness(petId, detailId),
+      meds: () => petService.deleteMedication(petId, detailId),
     }
-    return keyToService[key]()
+    return typeToService[type]()
   }
 
   return useMutation({
-    mutationFn: ({ key, detailId }: { key: string, detailId: string }) => deletePetDetail(key, detailId),
-    onSuccess: (data: { itemId: string, key: string }) => {
+    mutationFn: ({ type, detailId }: { type: DetailType, detailId: string }) => deletePetDetail(type, detailId),
+    onSuccess: (data: { itemId: string, type: DetailType }) => {
       queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) => {
-        return { ...oldData, [data.key]: oldData[data.key].filter((item: Id | Service | Illness | Medication) => item._id !== data.itemId) }
+        return { ...oldData, [data.type]: oldData[data.type].filter((item: Detail) => item._id !== data.itemId) }
       })
-      navigation.navigate('MoreDetails', { petId })
+      navigation.navigate('MoreDetails', { petId, show: data.type })
       showToast({ text1: 'Detail deleted.', style: 'success' })
     },
     onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })

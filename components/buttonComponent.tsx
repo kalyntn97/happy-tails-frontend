@@ -4,11 +4,6 @@ import { FC, useEffect, useState } from "react"
 import { transparent } from "@styles/buttons"
 import { getActionIconSource } from "@utils/ui"
 
-const whiteBtnTextStyles: TextStyle = {
-  color: Colors.white,
-  fontWeight: 'bold'
-}
-
 const smallIconButtonStyles: ViewStyle = {
   marginHorizontal: 5,
 }
@@ -18,6 +13,7 @@ type BaseButtonProps = {
   onPress?: () => void
   top?: number | 'auto'
   bottom?: number | 'auto'
+  left?: number | 'auto'
   bgColor?: string
   color?: string
   bdColor?: string
@@ -35,25 +31,25 @@ const roundButtonTypes = {
 
 export const RoundButton: FC<RoundButtonProps> = ({ onPress, size, bgColor, color, type, position }) => (
   <TouchableOpacity onPress={onPress} style={[
+    { backgroundColor: bgColor ?? Colors.pink.darkest },
     size === 'small' ? { ...Buttons.smallRoundButton as ViewStyle, margin: 0 } : size === 'medium' ? { ...Buttons.mediumRoundButton as ViewStyle } : { ...Buttons.roundButton as ViewStyle },
-    bgColor && { backgroundColor: bgColor },
     position === 'bottomRight' && { position: 'absolute', bottom: 10, right: 10, zIndex: 2, }
   ]}>
     <Text style={[
-      { ...whiteBtnTextStyles, fontSize: size === 'small' ? 9 : size === 'medium' ? 20 : 30 },
-      color && { color: color }
+      { ...Buttons.whiteButtonText, fontSize: size === 'small' ? 9 : size === 'medium' ? 20 : 30 },
+      color && { color: color },
     ]}>
       {roundButtonTypes[type]}
     </Text>
   </TouchableOpacity>
 )
 
-export const ActionButton: FC<BaseButtonProps> = ({ title, onPress, size }) => (
-  <TouchableOpacity onPress={onPress}>
+export const ActionButton: FC<BaseButtonProps> = ({ title, onPress, size, top, left }) => (
+  <TouchableOpacity onPress={onPress} style={ left && { marginLeft: left } }>
     <Image 
       source={getActionIconSource(title)}
       style={[
-        { marginHorizontal: 10 },
+        { marginHorizontal: 10, marginLeft: 'auto' },
         size === 'large'? { ...Forms.largeIcon } : size === 'small' ? { ...Forms.xSmallIcon } : { ...Forms.smallIcon },
       ]}
     />
@@ -123,20 +119,18 @@ interface BaseWithIconButtonProps extends BaseButtonProps {
 
 export const MainButton: FC<BaseWithIconButtonProps> = ({ onPress, title, top, bottom, bgColor, color, size, icon }) => (
   <TouchableOpacity onPress={onPress} style={[
+    { backgroundColor: bgColor ?? Colors.pink.reg },
     size === 'small' ? { ...Buttons.xSmallRoundButton } 
     : size === 'smallSquare' ? { ...Buttons.xSmallSquareButton } 
     : size === 'large' ? { ...Buttons.longSquareSolid } 
     : { ...Buttons.smallRoundedSolid },
-    { backgroundColor: bgColor ?? Colors.pink.reg },
     top && { marginTop: top },
     bottom && { marginBottom: bottom },
   ]}>
     {icon && <Image source={getActionIconSource(icon)} style={{ ...Forms.smallIcon, marginRight: 5 }} /> }
     <Text style={[
-      { ...Buttons.buttonText, fontSize: icon ? 12 : 15 }, 
-      color && { color: color },
-      // size === 'small' && { fontSize: icon ? 12 : 15 },
-      size === 'large' && { fontSize: icon ? 15 : 20 },
+      { ...Buttons.buttonText, color: color ?? Colors.shadow.darkest }, 
+      icon ? { fontSize: size === 'large' ? 15 : 12 } : { fontSize: size === 'large' ? 20 : 15 },
     ]}>
       {title}
     </Text>
@@ -167,13 +161,13 @@ export const TransparentButton: FC<BaseWithIconButtonProps> = ({ title, onPress,
 
 export const SubButton: FC<BaseButtonProps> = ({ onPress, title, color, top, bottom, size }) => (
   <TouchableOpacity onPress={onPress} style={[
-    { ...Buttons.smallSubButton, borderColor: color ?? Colors.pink.darkest },
+    { ...Buttons.subButton, borderColor: color ?? Colors.shadow.darkest },
     top && { marginTop: top },
     bottom && { marginBottom: bottom },
     size === 'small' && { marginTop: 5 },
   ]}>
     <Text style={[
-      { ...Buttons.buttonText, color: color ?? Colors.pink.darkest,},
+      { ...Buttons.buttonText, color: color ?? Colors.shadow.darkest,},
       size === 'small' && { fontSize: 13 },
     ]}>
       {title}

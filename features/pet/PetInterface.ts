@@ -2,9 +2,6 @@ export interface Pet extends PetFormData {
   _id: string
   ids: Id[]
   services: Service[]
-  medications: Medication[]
-  illnesses: Illness[]
-  stats: Stat[]
 }
 export interface PetBasic {
   _id: string
@@ -112,3 +109,8 @@ export interface CatBreed {
 export interface BirdListResponse {
   commonFeederBirds: Array<{commonNameEnglish: string}>
 }
+
+export type DetailType = 'ids' | 'services' | 'illnesses' | 'meds'
+
+export type Detail = Id | Service | Illness | Medication
+

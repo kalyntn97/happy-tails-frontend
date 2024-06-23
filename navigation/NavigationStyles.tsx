@@ -21,9 +21,9 @@ const Header = ({ title, navigation, top }: { title: string, navigation: any, to
   </View>
 )
 
-const TitleOnlyHeader = ({ title }: { title: string }) => (
-  <View style={styles.headerCon}>
-    <Text style={[styles.headerText, { marginTop: 50 }]}>{title}</Text>
+const TitleOnlyHeader = ({ title, top }: { title: string, top?: number }) => (
+  <View style={[styles.headerCon, { marginTop: top ?? 50 }]}>
+    <Text style={styles.headerText}>{title}</Text>
   </View>
 )
 

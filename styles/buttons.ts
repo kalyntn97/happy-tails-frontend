@@ -7,33 +7,41 @@ import { centered } from "./spacing"
 export const base: ViewStyle = {
   ...centered,
   margin: 10,
-  padding: 5
+  cursor: 'pointer',
 }
-
-export const roundedBase = {
-  marginHorizontal: 10,
-  ...centered,
-  borderRadius: 99,
-  backgroundColor: Colors.pink.reg
-}
-
-export const solid: ViewStyle = {
+export const main: ViewStyle = {
   ...base,
-  ...boxShadow,
-  backgroundColor: Colors.pink.reg,
-}
-
-export const transparent: ViewStyle = {
-  ...base,
-  borderWidth: 1.5,
+  paddingHorizontal: 20,
+  paddingVertical: 10,
 }
 
 export const sub: ViewStyle = {
-  borderBottomWidth: 2
+  ...base,
+  borderBottomWidth: 2,
+  paddingBottom: 0,
+  paddingHorizontal: 0,
+}
+
+export const roundedBase = {
+  ...centered,
+  marginHorizontal: 10,
+  borderRadius: 99,
+  ...boxShadow,
+}
+
+export const solid: ViewStyle = {
+  ...main,
+  ...boxShadow,
+}
+
+export const transparent: ViewStyle = {
+  ...main,
+  borderWidth: 1.5,
 }
 //text
 export const baseButtonText: TextStyle = {
   fontWeight: 'bold',
+  textTransform: 'capitalize',
 }
 export const smallText: TextStyle = {
   fontSize: 12,
@@ -52,15 +60,15 @@ export const buttonText = { ...baseButtonText, ...mediumText }
 
 export const smallButtonText = { ...baseButtonText, ...smallText }
 
-export const whiteButtonText = { ...smallButtonText, ...whiteText }
+export const whiteButtonText = { ...baseButtonText, ...whiteText }
 //sizes: ViewStyle
-export const xSmall = {width: 100, height: 40 }
+export const xSmall = { minWidth: 100, height: 40 }
 
-export const xxSmall = {width: 80, height: 30 }
+export const xxSmall = { minWidth: 80, height: 30 }
 
-export const small = {width: 120, height: 50 }
+export const small = { minWidth: 120, height: 50 }
 
-export const long = {width: 250, height: 50 }
+export const long = { minWidth: 250, height: 50 }
 
 export const rounded: ViewStyle = { borderRadius: 30 }
 
@@ -76,14 +84,14 @@ export const xSmallRoundedTransparent: ViewStyle = { ...xSmall, ...rounded, ...t
 export const longRoundedTransparent: ViewStyle = { ...long, ...transparent, ...rounded }
 export const xxSmallRoundedSolid: ViewStyle = { ...xxSmall, ...solid, ...rounded }
 
-export const smallSubButton: ViewStyle = { ...sub, ...base }
+export const subButton: ViewStyle = { ...sub }
 
 export const xSmallSquareButton: ViewStyle = { ...xSmall, ...square, ...solid }
 export const xSmallRoundButton: ViewStyle = { ...xSmall, ...rounded, ...solid }
 
-export const roundButton = { ...solid, ...roundedBase, width: 60, height: 60 }
+export const roundButton = { ...roundedBase, width: 60, height: 60 }
 
-export const smallRoundButton = { ...solid, ...roundedBase, width: 20, height: 20 }
+export const smallRoundButton = { ...roundedBase, width: 20, height: 20 }
 
-export const mediumRoundButton = { ...solid, ...roundedBase, width: 40, height: 40 }
+export const mediumRoundButton = { ...roundedBase, width: 40, height: 40 }
 

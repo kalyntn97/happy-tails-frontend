@@ -15,8 +15,8 @@ export const shouldRenderCareTask = (item: Care, selectedDate: Date) => {
   return isRepeating || isOneTime
 }
 
-export const shouldRenderHealthTask = (item: Health, selectedDate: Date, reminderInterval: number) => {
-  const startDate = getStartDate(item.nextDue.date, reminderInterval) //start date to show task
+export const shouldRenderHealthTask = (item: Health, selectedDate: Date, healthInterval: number) => {
+  const startDate = getStartDate(item.nextDue.date, healthInterval) //start date to show task
   let filteredVisits: Visit[] = item.lastDone.filter((visit: Visit) => 
     new Date(visit.date).getMonth() === selectedDate.getMonth() && new Date(visit.date).getFullYear() === selectedDate.getFullYear()
   ).sort((a: Visit, b: Visit) => new Date(b.date).getTime() - new Date(a.date).getTime())

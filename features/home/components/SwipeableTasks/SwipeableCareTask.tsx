@@ -5,7 +5,7 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 //types & helpers
 import { Care } from '@care/CareInterface'
 import * as careHelpers from '@care/careHelpers'
-//store & queries & hooks
+//queries & hooks
 import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
 import { useDeleteCareCard } from '@hooks/sharedHooks'
 //components
@@ -24,7 +24,7 @@ interface SwipeableCareTaskProps {
   onPress: any
 }
 
-const SwipeableCareTask: FC<SwipeableCareTaskProps> = ({ care, navigation, onPress }) => {
+const SwipeableCareTask = ({ care, navigation, onPress }: SwipeableCareTaskProps) => {
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const checkAllDoneMutation = useCheckAllDoneCare()
   const uncheckAllDoneMutation = useUncheckAllDoneCare()

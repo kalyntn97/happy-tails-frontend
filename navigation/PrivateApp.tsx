@@ -1,5 +1,5 @@
 //npm
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import { BottomTabScreenProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { Image, Text } from "react-native"
 //screens
@@ -51,7 +51,6 @@ const PrivateApp = () => {
           switch (route.name) {
             case 'Home': name = 'Home'; break
             case 'Pets': name = 'Pets'; break
-            case 'Account': name = 'Account'; break
             case 'User': name = 'Profile'; break
             default: name = 'Home'
           }
@@ -97,7 +96,7 @@ const PrivateApp = () => {
             <PetStack.Screen name='Create' component={NewPetScreen} options={{ title: 'Add a Pet' }} />
             <PetStack.Screen name='Edit' component={EditPetScreen} options={({ route }) => ({ title: 'Edit Pet' })} />
             <PetStack.Screen name='Details' component={PetDetailsScreen} options={{ ...noTitleCardHeaderStyle }} />
-            <PetStack.Screen name='MoreDetails' component={MorePetDetailsScreen} options={{ title: 'More Details' }} />
+            <PetStack.Screen name='MoreDetails' component={MorePetDetailsScreen} options={{ ...noTitleModalHeaderStyle }} />
             <PetStack.Screen name='EditDetails' component={EditMorePetDetailsScreen} options={{ ...noTitleModalHeaderStyle }} />
             <PetStack.Screen name='CreateLog' component={NewStatScreen} options={{ title: 'New Log' }} />
             <PetStack.Screen name='LogDetails' component={StatDetails} options={{ title: 'Details' }} />

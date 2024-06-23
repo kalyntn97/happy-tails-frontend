@@ -45,9 +45,7 @@ export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor, arro
 )
 
 export const BoxWithHeader: FC<BoxProps> = ({ title, titleIconSource, onPress, content, titleColor, arrow }) => (
-  <View style={{
-    ...Forms.roundedCon,
-  }}>
+  <View style={{ ...Forms.roundedCon }}>
     <BoxHeader title={title} onPress={onPress} titleColor={titleColor} arrow={arrow} titleIconSource={titleIconSource}/>
     <View style={{
       width: '100%'
@@ -80,7 +78,7 @@ export const ErrorImage: FC<{ top?: number }> = ({ top }) => (
 )
 
 export const CatToast = ({ text1, text2, props }) => (
-  <View style={{ ...Spacing.flexRow, backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', height: 70, borderLeftWidth: 7, borderLeftColor: props.style === 'success' ? Colors.green.dark : Colors.red.dark, ...Forms.boxShadow }}>
+  <View style={{ ...Spacing.flexRow, backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', height: 70, ...Forms.boxShadow, shadowColor: props.style === 'success' ? Colors.green.dark : Colors.red.dark, ...Forms.boxShadow }}>
     <Image source={props.style === 'success' ? require('assets/icons/ui-cat-happy.png') : require('assets/icons/ui-cat-sad.png')} style={{ ...Forms.icon}} />
     <View style={{ ...Spacing.flexColumn, marginLeft: 10, alignItems: 'flex-start' }}>  
       <Text style={{ textTransform: 'capitalize', fontWeight: 'bold', fontSize: 15, marginBottom: 5 }}>{props.style}!</Text>
@@ -93,10 +91,11 @@ export const CatToast = ({ text1, text2, props }) => (
   </View>
 )
 
-export const EmptyList: FC<{ type?: string }> = ({ type }) => (
-  <Text style={type === 'task' ? { ...Typography.smallSubHeader } : { ...Typography.xSmallSubHeader }}>{type === 'task' ? 'No tasks to manage.' : type === 'log' ? 'No logs created.' : 'No item added'}</Text>
-) 
-
 export const toastConfig = {
   catToast: ({ text1, text2, props }: ToastConfigParams<any>) => ( <CatToast text1={text1} text2={text2} props={props} /> )
 }
+
+export const EmptyList = ({ type }: { type: string }) => (
+  <Text style={type === 'task' ? { ...Typography.smallSubHeader } : { ...Typography.xSmallSubHeader }}>No {type}s added.</Text>
+) 
+

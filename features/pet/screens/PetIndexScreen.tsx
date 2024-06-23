@@ -1,29 +1,26 @@
 //npm modules
-import { useState, useRef, useEffect, FC } from 'react'
+import { useState, useRef } from 'react'
 import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image, ScrollView } from "react-native"
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 //components
 import PetCard from '../components/PetCard'
 import { PhotoButton, RoundButton } from '@components/ButtonComponent'
-import PlaceHolder from '@components/PlaceHolder'
 import { ErrorImage } from '@components/UIComponents'
-//store & queries
-import { Pet } from '../PetInterface'
-import { profileKeyFactory, useGetProfile } from '@profile/profileQueries'
+import Loader from '@components/Loader'
+import EmptyPetList from '@pet/components/EmptyPetList'
+//store & queries & types
+import type { PetTabScreenProps } from '@navigation/types'
+import type { Pet } from '../PetInterface'
+import { useGetProfile } from '@profile/profileQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
 import { Spacing, Typography, Colors, Forms } from '@styles/index'
-import Loader from '@components/Loader'
 
-interface PetIndexProps {
-  navigation: any
-}
-
-const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
+const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
   const [currCard, setCurrCard] = useState<number>(0)
-  const { data, isFetching, isError } = useGetProfile()
+  const { data, isSuccess, isFetching, isError } = useGetProfile()
 
-  const pets = data.profile?.pets
+  const pets = data.pets
 
   const petCount: number = pets?.length ?? 0
   
@@ -74,16 +71,13 @@ const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
         [1, 1.3, 1],
         'clamp'
       )
-
-
       return {
         backgroundColor: color === 1 ? Colors.pink.reg : 'black',
         transform: [{ scale }],
       }    
     })
-
     return (
-      <Animated.View style={[styles.dot, animatedDot, index === 1 && currCard > 1 && { width: 15 }]} />
+      <Animated.View style={[styles.dot, animatedDot, petCount > 3 && index === 1 && currCard > 1 && { width: 15 }]} />
     )
   }
 
@@ -92,10 +86,10 @@ const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
 
   return ( 
     <View style={styles.container}>
-      { pets.length > 0 ? 
+      { isSuccess && pets.length > 0 ? 
         <>
           <View style={styles.petNav}>
-            <ScrollView horizontal contentContainerStyle={{ minWidth: '100%', justifyContent: 'space-evenly', alignItems: 'center' }} showsHorizontalScrollIndicator={false}>
+            <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 10, justifyContent: 'flex-start', alignItems: 'center' }} showsHorizontalScrollIndicator={false}>
               <RoundButton type='add' size='medium' onPress={() => navigation.navigate('Create')} />
               {pets.map((pet, index) => 
                 <PhotoButton key={`photo-${pet._id}`} photo={pet.photo} placeholder={getPetIconSource('AnimalProfile')} size='small' onPress={() => handleClickPhoto(index)} />
@@ -148,7 +142,7 @@ const PetIndexScreen: FC<PetIndexProps> = ({ navigation }) => {
           </View>
         </> : 
           <View style={{ ...Spacing.fullWH, justifyContent: 'center' }}> 
-            <PlaceHolder type='pet' navigation={navigation} /> 
+            <EmptyPetList navigation={navigation} />
           </View> 
       }
     </View>

@@ -77,15 +77,13 @@ export const useShallowPets = () => {
 }
 
 
-export const useSelectPhoto = async  () => {
+export const useSelectPhoto = async () => {
   let _image = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,
-    aspect: [4,3],
+    aspect: [4, 3],
     quality: 1,
   })
-  console.log(JSON.stringify(_image))
-
   if (!_image.canceled) {
     return _image.assets[0].uri
   }

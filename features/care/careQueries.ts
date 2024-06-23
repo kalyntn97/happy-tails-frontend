@@ -84,8 +84,8 @@ export const useCheckAllDoneCare = () => {
   
   return useMutation({
     mutationFn: ({ careId, trackerId, index }: TrackerFormData) => careService.checkAllDone(careId, trackerId, index),
-    onSuccess: () => {
-      // return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
+    onSuccess: (data) => {
+      // queryClient.setQueryData(careKeyFactory.)
     }
   })
 }

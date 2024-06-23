@@ -4,7 +4,6 @@ import { Alert, StyleSheet, View } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 //queries & store
 import { useAddPet } from "../petQueries"
-import { usePetActions } from "@store/store"
 //components
 import PetForm from "../components/PetForm"
 //utils

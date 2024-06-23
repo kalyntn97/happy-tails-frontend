@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
-  reminderInterval: 30,
+  healthInterval: 30,
   activeDate: { 
     date: getDateInfo('today').date - 1, 
     week: getDateInfo('today').week - 1, 
@@ -27,11 +27,14 @@ const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
     food: 'g',
     water: 'ml',
   },
+  petSettings : {},
+  getPetSettings: (petId, setting) => get().petSettings[petId]?.[setting],
   setActions: {
-    setReminderInterval: interval => set({ reminderInterval: interval }),
+    setHealthInterval: interval => set({ healthInterval: interval }),
     setActiveDate: dateObj => set({ activeDate: dateObj }),
     setActiveTaskCounts: activeTaskObj => set({ activeTaskCounts: activeTaskObj }),
     setDisplayUnits: displayUnitObj => set({ displayUnits: displayUnitObj }),
+    setPetSettings: (petId, setting, value) => set(state => ({ petSettings: { ...state.petSettings, [petId]: { ...state.petSettings[petId], [setting]: value } } }))
   },
 })
 
@@ -75,16 +78,17 @@ export const useBoundStore= create<SettingSlice>()(
     }), {
       name: 'setting-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({ reminderInterval: state.reminderInterval, displayUnits: state.displayUnits }),
+      partialize: (state) => ({ reminderInterval: state.healthInterval, displayUnits: state.displayUnits, petSettings: state.petSettings }),
     }
   )
 )
 
 //states
-export const useReminderInterval = () => useBoundStore(state => state.reminderInterval)
+export const useHealthInterval = () => useBoundStore(state => state.healthInterval)
 export const useActiveDate = () => useBoundStore(state => state.activeDate)
 export const useActiveTaskCounts = () => useBoundStore(state => state.activeTaskCounts)
 export const useCurrentIsActive = () => useBoundStore(state => state.currentIsActive)
 export const useDisplayUnits = () => useBoundStore(state => state.displayUnits)
+export const useGetPetSettings = (petId: string, setting: string) => useBoundStore(state => state.getPetSettings(petId, setting))
 //actions
 export const useSetActions = () => useBoundStore(state => state.setActions)

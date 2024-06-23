@@ -30,17 +30,17 @@ export const filterByRange = (range: string, records: Record[], startDate: strin
 
 export const STATS = {
   mood: { name: 'Mood', type: 'qual' },
-  appetite: { name: 'Appetite', type: 'qual' },
+  weight: { name: 'Weight', type: 'quant', unit: DEFAULT_WEIGHT_UNIT },
   energy: { name: 'Energy', type: 'qual' },
   sleep: { name: 'Sleep', type: 'qual' },
+  appetite: { name: 'Appetite', type: 'qual' },
+  wetFood: { name: 'Wet food', type: 'quant', unit: DEFAULT_FOOD_UNIT },
+  dryFood: { name: 'Dry food', type: 'quant', unit: DEFAULT_FOOD_UNIT },
+  treats: { name: 'Treats', type: 'quant', unit: DEFAULT_FOOD_UNIT },
+  water: { name: 'Water', type: 'mixed', unit: DEFAULT_WATER_UNIT },
   vomit: { name: 'Vomit', type: 'mixed', unit: '' },
   urine: { name: 'Urine', type: 'mixed', unit: '' },
   feces: { name: 'Feces', type: 'mixed', unit: '' },
-  water: { name: 'Water', type: 'mixed', unit: DEFAULT_WATER_UNIT },
-  dryFood: { name: 'Dry food', type: 'quant', unit: DEFAULT_FOOD_UNIT },
-  wetFood: { name: 'Wet food', type: 'quant', unit: DEFAULT_FOOD_UNIT },
-  treats: { name: 'Treats', type: 'quant', unit: DEFAULT_FOOD_UNIT },
-  weight: { name: 'Weight', type: 'quant', unit: DEFAULT_WEIGHT_UNIT },
 }
 
 export const getUnitKey = (name: string) => {

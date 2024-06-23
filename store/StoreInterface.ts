@@ -6,13 +6,16 @@ export interface SettingSlice {
   activeDate: { date: number, week: number, month: number, year: number }
   currentIsActive: { date: boolean, week: boolean, month: boolean, year: boolean }
   activeTaskCounts: { care: number, health: number }
-  reminderInterval: number
+  healthInterval: number
   displayUnits: { weight: string, food: string, water: string }
+  petSettings: { [petId: string]: { setting: string, value: any } }
+  getPetSettings: (petId: string, setting: string) => any
   setActions : {
     setActiveDate: (dateObj: { date: number, week: number, month: number, year: number }) => void
     setActiveTaskCounts: (activeTaskObj: { care: number, health: number }) => void
-    setReminderInterval: (interval: number) => void,
+    setHealthInterval: (interval: number) => void,
     setDisplayUnits: (displayUnitObj: { weight: string, food: string, water: string }) => void
+    setPetSettings: (petId: string, setting: string, value: any) => void
   }
 }
 
@@ -22,7 +25,7 @@ export interface ProfileSlice {
     setProfile: (profile: Profile) => void
     setActiveDate: (dateObj: { date: number, week: number, month: number, year: number }) => void
     setActiveTaskCounts: (activeTaskObj: { care: number, health: number }) => void
-    setReminderInterval: (interval: number) => void,
+    setHealthInterval: (interval: number) => void,
     setDisplayUnits: (displayUnitObj: { weight: string, food: string, water: string }) => void
     setPets: (pets: Pet[]) => void
     setCares: (cares: { [key: string]: Care[] }) => void

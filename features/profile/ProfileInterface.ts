@@ -3,15 +3,16 @@ import { Care } from "../care/CareInterface"
 import { Health } from "@health/HealthInterface"
 
 export interface Streak {
-  streak: number
+  current: number
   lastDate: Date
-  longestStreak: number
+  longest: number
 }
 
 export interface ProfileData {
   profile: Profile
-  healths: Health[]
+  pets: Pet[]
   cares: { [key: string]: Care[] }
+  healths: Health[]
 }
 
 export interface Profile {
@@ -21,7 +22,6 @@ export interface Profile {
   photo: string | null
   banner: string | null
   bio: string
-  pets: Pet[]
 }
 
 export interface ProfileFormData {

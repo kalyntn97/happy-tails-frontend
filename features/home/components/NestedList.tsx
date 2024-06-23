@@ -1,37 +1,38 @@
 //npm
-import { View, Text, Modal, Pressable, FlatList, StyleSheet, useWindowDimensions } from 'react-native'
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import { View, StyleSheet, useWindowDimensions, Text } from 'react-native'
+import React, { useEffect, useState } from 'react'
 //components
 import SwipeableCareTask from './SwipeableTasks/SwipeableCareTask'
 import SwipeableHealthTask from './SwipeableTasks/SwipeableHealthTask'
 import { EmptyList } from '@components/UIComponents'
+//store
+import { useHealthInterval } from '@store/store'
 //types & utils
-import { Care } from '@care/CareInterface'
-import { Health, Visit } from '@health/HealthInterface'
-import { getDateConstructor, getDateInfo, getStartDate } from '@utils/datetime'
-//styles
-import { Spacing } from '@styles/index'
-import { useReminderInterval } from '@store/store'
+import type { HomeTabScreenProps } from '@navigation/types'
+import type { Care } from '@care/CareInterface'
+import type { Health, Visit } from '@health/HealthInterface'
+import { Feed } from '@home/HomeInterface'
 import { shouldRenderCareTask, shouldRenderHealthTask } from '@home/helpers'
+import { Typography } from '@styles/index'
 
 interface NestedListProps {
   data: Array<any>
-  type: string
-  navigation: any
+  type: Feed
+  navigation: HomeTabScreenProps
   activeDateObj: Date
   onPressTask: (item: Care | Health, type: string) => void
 }
 
-const NestedList: FC<NestedListProps> = ({ data, type, navigation, activeDateObj, onPressTask }) => {
+const NestedList = ({ data, type, navigation, activeDateObj, onPressTask }: NestedListProps) => {
   const [counts, setCounts] = useState({ care: 0, health: 0 })
-  const reminderInterval = useReminderInterval()
+  const healthInterval = useHealthInterval()
   const windowWidth = useWindowDimensions().width
   
   const renderItem = (item: any) => {
     if (type === 'care' && shouldRenderCareTask(item, activeDateObj)) {
       return <SwipeableCareTask key={item._id} care={item} navigation={navigation} onPress={() => onPressTask(item, 'care')} />
 
-    } else if (type === 'health' && shouldRenderHealthTask(item, activeDateObj, reminderInterval)) {
+    } else if (type === 'health' && shouldRenderHealthTask(item, activeDateObj, healthInterval)) {
       //*show future tasks based on user's selected interval, show completed tasks for the whole month
       let filteredVisits: Visit[] = item.lastDone.filter((visit: Visit) => 
         new Date(visit.date).getMonth() === activeDateObj.getMonth() && new Date(visit.date).getFullYear() === activeDateObj.getFullYear()
@@ -50,7 +51,7 @@ const NestedList: FC<NestedListProps> = ({ data, type, navigation, activeDateObj
       let healthCounter = 0
       data.forEach(item => {
         if (type === 'care' && shouldRenderCareTask(item, activeDateObj)) careCounter++
-        if (type === 'health' && shouldRenderHealthTask(item, activeDateObj, reminderInterval)) healthCounter++
+        if (type === 'health' && shouldRenderHealthTask(item, activeDateObj, healthInterval)) healthCounter++
       })
       setCounts({ care: careCounter, health: healthCounter })
     }
@@ -59,6 +60,7 @@ const NestedList: FC<NestedListProps> = ({ data, type, navigation, activeDateObj
 
   return (
     <View style={[styles.list, { width: windowWidth * 0.95 }]}>
+      { type === 'health' && <Text style={styles.header}>Due in {healthInterval} days:</Text> }
       {data.map(item =>  renderItem(item))}
       { counts[type] === 0 && <EmptyList type='task' /> }
     </View>
@@ -69,6 +71,9 @@ const styles = StyleSheet.create({
   list: {
     
   },
+  header: {
+    ...Typography.smallHeader,
+  }
 })
 
 export default NestedList

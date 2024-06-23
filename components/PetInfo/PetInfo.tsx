@@ -24,7 +24,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
       size === 'mini' ? { width: 40, height: 40 } 
       : size === 'small' ? { width: 60, height: 100 } 
       : size === 'compact' ? { width: 90, height: 120 }
-      : { ...Spacing.flexRow }
+      : { ...Spacing.flexRow, height: 120 }
     ]}>
       <View style={size === 'expanded' ? styles.photoContainerExpanded : styles.photoContainerCompact}>
         {size === 'expanded' && 

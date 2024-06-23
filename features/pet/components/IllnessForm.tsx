@@ -16,7 +16,7 @@ import { Colors, Spacing } from '@styles/index'
 
 interface IllnessFormProps {
   initialValues?: IllnessFormData
-  onSubmit: (type: string, formData: IllnessFormData) => void
+  onSubmit: (type: 'illnesses', formData: IllnessFormData) => void
 }
 
 const IllnessForm: FC<IllnessFormProps> = ({ initialValues, onSubmit }) => {
@@ -40,13 +40,13 @@ const IllnessForm: FC<IllnessFormProps> = ({ initialValues, onSubmit }) => {
   }
 
   function handleSubmit() {
-    onSubmit('illness', { name, type, timeline, description, status })
+    onSubmit('illnesses', { name, type, timeline, description, status })
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Add an Illness</Text>
-      <CircleIcon iconSource={getPetIconSource('illness')}/>
+      <CircleIcon iconSource={getPetIconSource('illnesses')}/>
       <Text style={styles.label}>Name</Text>
       <TextInput 
         style={styles.input}

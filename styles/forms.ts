@@ -155,7 +155,6 @@ export const roundedCon: ViewStyle = {
   paddingHorizontal: 15,
   paddingTop: 10,
   paddingBottom: 20,
-  // paddingVertical: 10,
   marginVertical: 10,
 }
 
@@ -188,6 +187,20 @@ export const rightMoreRounded: ViewStyle = {
   borderBottomRightRadius: 15,
 }
 
+export const topRounded: ViewStyle = {
+  borderTopLeftRadius: 30,
+  borderTopRightRadius: 30,
+}
+
 export const successToast: ViewStyle = {
   backgroundColor: Colors.pink.lightest,
+}
+
+export const active: ViewStyle = {
+  opacity: 1,
+  elevation: 3
+}
+
+export const inactive: ViewStyle = {
+  opacity: 0.3,
 }

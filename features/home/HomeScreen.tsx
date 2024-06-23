@@ -1,19 +1,20 @@
 //npm modules
-import { useRef, useState, useEffect } from "react"
+import { useRef } from "react"
 import { View, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimensions, ScrollView, Image, ImageStyle, SafeAreaView, StatusBar, Alert } from "react-native"
 import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from "@auth/AuthContext"
+//types
+import type { HomeTabScreenProps } from "@navigation/types"
 //components
 import HomeFeed from "@home/components/HomeFeed"
 import FloatingButton from "@components/FloatingButton/FloatingButton"
 import ScrollCalendar from "@home/components/ScrollCalendar"
-import Loader from "@components/Loader"
+import { MainButton, SubButton, TransparentButton } from "@components/ButtonComponent"
 //styles
 import { Buttons, Typography, Colors, Forms, Spacing } from '@styles/index'
-import { MainButton, SubButton, TransparentButton } from "@components/ButtonComponent"
 
-const HomeScreen: React.FC = ({ navigation }) => {
+const HomeScreen = ({ navigation }: HomeTabScreenProps) => {
   const { authState } = useAuth()
 
   const windowWidth = useWindowDimensions().width
@@ -26,7 +27,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
       scrollViewRef.current.scrollTo({ y: pageNum * windowHeight, animated: true })
     }
   }
- 
+
   return ( 
     <View>
       <StatusBar barStyle="dark-content" />
@@ -40,6 +41,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
             <View style={[styles.body, { width: windowWidth, height: windowHeight * 0.7 }]}>
               <HomeFeed navigation={navigation} />
             </View>
+            
             <FloatingButton navigation={navigation} />
           </View>
         </>
@@ -77,7 +79,6 @@ const HomeScreen: React.FC = ({ navigation }) => {
           </View>
 
           <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.yellow.light }]}>
-
             <TouchableOpacity style={styles.link} onPress={() => scrollToNext(0)}>
               <MainButton title='Continue' size='small' bgColor={Colors.yellow.dark} />
               <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>

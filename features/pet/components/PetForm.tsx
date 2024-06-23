@@ -59,11 +59,10 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
     onSubmit({ name, species, breed, dob, firstMet, altered, status, color, petId }, photoData)
   }
   
-
   return ( 
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
       <View style={styles.photoUpload}>
-        <Image source={photo ? { uri: photo } : species && getPetIconSource(`${species}Profile`)} style={styles.image as ImageStyle} />
+        <Image source={photo ? { uri: photo } : species ? getPetIconSource(`${species}Profile`) : require('assets/icons/ui-image.png')} style={styles.image as ImageStyle} />
         <View style={styles.uploadBtnContainer}>
           <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
             <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>

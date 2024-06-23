@@ -16,7 +16,7 @@ import { MED_STATUS } from '@pet/petHelpers'
 
 interface MedicationFormProps {
   initialValues?: Medication
-  onSubmit: (type: string, medFormData: MedicationFormData) => void
+  onSubmit: (type: 'meds', medFormData: MedicationFormData) => void
 }
 
 const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => {
@@ -28,13 +28,13 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => 
   const refill = status !== 'Inactive' && refillReminder ? { times: refillTimes, frequency: refillFrequency } : null
 
   function handleSubmit() {
-    onSubmit('med', { name, dosage, refill, status, medReminder, refillReminder })
+    onSubmit('meds', { name, dosage, refill, status, medReminder, refillReminder })
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Add a Medication</Text>
-      <CircleIcon iconSource={getCareIconSource('med')}/>
+      <CircleIcon iconSource={getCareIconSource('meds')}/>
       <Text style={styles.label}>Name</Text>
       <TextInput 
         style={styles.input}

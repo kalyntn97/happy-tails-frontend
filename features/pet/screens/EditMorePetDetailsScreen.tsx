@@ -6,29 +6,28 @@ import ServiceForm from '@pet/components/ServiceForm'
 import IllnessForm from '@pet/components/IllnessForm'
 import { useAddPetDetail } from '@pet/petQueries'
 import { AlertForm } from '@utils/ui'
+import { DetailType } from '@pet/PetInterface'
 
 interface EditMorePetDetailsScreenProps {
-  route: { params: { form: string, petId: string } }
+  route: { params: { type: string, petId: string } }
   navigation: any
 } 
 
-
-
 const EditMorePetDetailsScreen: FC<EditMorePetDetailsScreenProps> = ({ route, navigation }) => {
-  const { form, petId } = route.params
+  const { type, petId } = route.params
 
   const addDetailMutation = useAddPetDetail(petId, navigation)
 
-  const handleSubmit = (type: string, formData: any) => {
-    addDetailMutation.mutate({ key: type, formData })
+  const handleSubmit = (type: DetailType, formData: any) => {
+    addDetailMutation.mutate({ type, formData })
   }
 
   return (
     <ScrollView>
-      {form === 'id' && <IdForm onSubmit={handleSubmit} />} 
-      {form === 'med' && <MedicationForm onSubmit={handleSubmit} />}
-      {form === 'service' && <ServiceForm onSubmit={handleSubmit} />}
-      {form === 'illness' && <IllnessForm onSubmit={handleSubmit} />}
+      {type === 'ids' && <IdForm onSubmit={handleSubmit} />} 
+      {type === 'meds' && <MedicationForm onSubmit={handleSubmit} />}
+      {type === 'services' && <ServiceForm onSubmit={handleSubmit} />}
+      {type === 'illnesses' && <IllnessForm onSubmit={handleSubmit} />}
     </ScrollView>
   )
 }

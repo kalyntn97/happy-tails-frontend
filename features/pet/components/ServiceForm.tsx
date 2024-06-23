@@ -16,7 +16,7 @@ import useForm from '@hooks/useForm'
 
 interface ServiceFormProps {
   initialValues?: ServiceFormData
-  onSubmit: (type: string, formData: ServiceFormData) => void
+  onSubmit: (type: 'services', formData: ServiceFormData) => void
 } 
 
 const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
@@ -28,13 +28,13 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
   const { name, type, address, email, phones, notes, errorMsg } = values
 
   function handleSubmit() {
-    onSubmit('service', { name, type, address, email, phones, notes })
+    onSubmit('services', { name, type, address, email, phones, notes })
   }
   
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Add a Service</Text>
-      <CircleIcon iconSource={getPetIconSource('service')} />
+      <CircleIcon iconSource={getPetIconSource('services')} />
       <View style={styles.labelCon}>
         <Text>Name</Text>
         <Text>Type</Text>

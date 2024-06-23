@@ -33,3 +33,8 @@ export const fullScreenAcross: ViewStyle = {
   ...fullWH,
   ...flexRow
 }
+
+export const fullScreenCentered: ViewStyle = {
+  ...fullWH,
+  ...centered,
+}

@@ -1,12 +1,12 @@
 //npm
 import { FC, useRef, useState } from "react"
-import { Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList } from "react-native"
+import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View, FlatList } from "react-native"
 //utils & store
 import { getDateInfo, getDayOfWeek, getDaysInMonth, getMonth, getWeekIndex, getYears, months } from "@utils/datetime"
 import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
 //components
-import ScrollSelector from "../../../components/ScrollSelector"
-import { SubButton } from "../../../components/ButtonComponent"
+import ScrollSelector from "@components/ScrollSelector"
+import { SubButton } from "@components/ButtonComponent"
 //styles
 import { Colors, Spacing, Typography } from "@styles/index"
 
@@ -82,9 +82,7 @@ const ScrollCalendar = () => {
 
   return (
     <View style={styles.container}>
-      {/* <View style={[, styles.middle]}> */}
-        <Text style={styles.middle}>{activeMonthName}</Text>
-      {/* </View> */}
+      <Text style={styles.middle}>{activeMonthName}</Text>
       
       <TouchableOpacity style={[todayIsActive && styles.activeHeaderBtnCon, styles.headerBtnCon, styles.left]} 
         onPress={() => {
@@ -127,7 +125,7 @@ const ScrollCalendar = () => {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(!modalVisible)}
       >
-        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={styles.modalCon}>
+        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...Spacing.fullScreenCentered }}>
           <View style={styles.modalItemCon}>
             <Text style={{ ...Typography.smallHeader }}>Show past data</Text>
             <View style={styles.selectors}>
@@ -136,7 +134,7 @@ const ScrollCalendar = () => {
             </View>
             <View style={styles.modalBtnCon}>
               
-              <SubButton title='Confirm' top={0} bottom={0}
+              <SubButton title='Confirm' color={Colors.pink.darkest} top={0} bottom={0}
                 onPress={() => {
                   setActiveDate({ 
                     date: selectedMonth === currMonth - 1 ? currDate - 1 : 0, 
@@ -241,10 +239,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.pink.dark,
   },
-  modalCon: {
-    ...Spacing.fullWH,
-    ...Spacing.centered,
-  },
   modalItemCon: {
     width: '70%',
     height: '40%',
@@ -252,9 +246,11 @@ const styles = StyleSheet.create({
   },
   selectors: {
     ...Spacing.flexRow,
+    marginTop: 10,
   },
   modalBtnCon: {
     ...Spacing.flexRow,
+    marginTop: 30,
   }
 })
  

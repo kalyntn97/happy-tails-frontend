@@ -60,10 +60,11 @@ export const DISEASE_STATUS = ['Active', 'Cured', 'Chronic']
 export const SERVICE_TYPES = ['ER Hospital', 'Clinic', 'School', 'Boarding', 'Groomer', 'Sitter', 'Pet store']
 
 export const PET_DETAILS = {
-  id: 'Pet Identifications',
-  med: 'Pet Medications',
-  illness: 'Pet Conditions',
-  service: 'Pet Services',
+  ids: 'Identifications',
+  services: 'Services',
+  meds: 'Medications',
+  allergies: 'Allergies',
+  illnesses: 'Health Conditions',
 }
 
 export const getDetailHeader = (key: string) => {

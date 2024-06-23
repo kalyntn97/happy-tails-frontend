@@ -142,7 +142,7 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
             showsVerticalScrollIndicator={false}
             style={styles.list}
           /> 
-        : <PlaceHolder navigation={navigation} type='vet visit' />
+        : <PlaceHolder navigation={navigation} key='vet' />
       )}
         
     </View> 
