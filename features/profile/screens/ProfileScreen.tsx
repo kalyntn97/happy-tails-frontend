@@ -85,7 +85,7 @@ const ProfileScreen = ({ navigation, route }) => {
         <View style={styles.bodyCon}>
           <BoxWithHeader title='All Pets' titleIconSource={getActionIconSource('home')} onPress={() => navigation.navigate('Pets', { screen: 'Index' })} content={
             <View style={{ width: '100%', paddingTop: 10 }}>
-              <PetList petArray={profile.pets} size='compact' />
+              <PetList petArray={data.pets} size='compact' />
             </View>
           } />
           <View style={{...Forms.roundedCon}}>

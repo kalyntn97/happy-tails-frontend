@@ -9,7 +9,7 @@ import { CheckboxButton, MainButton, ToggleButton, TransparentButton } from '@co
 import { Medication, MedicationFormData } from '@pet/PetInterface'
 import { getCareIconSource, getPetIconSource } from '@utils/ui'
 //styles
-import { styles } from '@styles/FormStyles'
+import { styles } from '@styles/stylesheets/FormStyles'
 import { Colors, Forms, Spacing, Typography } from '@styles/index'
 import useForm from '@hooks/useForm'
 import { MED_STATUS } from '@pet/petHelpers'

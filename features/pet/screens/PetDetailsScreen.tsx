@@ -18,6 +18,7 @@ import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
 import { useGetPetSettings, useSetActions } from "@store/store"
 //styles
 import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
+import StatButtonList from "@pet/components/StatButtonList"
 
 interface PetDetailsProps {
   navigation: any
@@ -39,20 +40,27 @@ const SectionHeader = ({ type, onPress }: { type: SectionType, onPress?: () => v
   )
 }
 
-const ItemHeaderList= ({ type, logs, info, onPress }: { type: SectionType, logs: string[], info: string[], onPress: () => void }) => {
+const ItemHeaderList= ({ type, logs, info, navigation, onReset, petId }: { type: SectionType, logs: string[], info: string[], navigation: any, onReset: () => void, petId: string }) => {
   const getHeader = () => ({
     key: (log: string) => log,
     titles: () => type === 'logs' ? logs : info, 
     getIcon: (log: string) => type === 'logs' ? getStatIconSource(log) : getActionIconSource(log), 
-    getName: (log: string) => type === 'logs' ? STATS[log].name : PET_DETAILS[log]
+    getName: (log: string) => type === 'logs' ? STATS[log].name : PET_DETAILS[log],
+    onNavigate: (log: string) => {
+      switch(type) {
+        case 'info': return navigation.navigate('MoreDetails', { petId, show: log })
+        case 'logs': return navigation.navigate('LogDetails', { stat: log })
+        default: return null
+      }
+    } 
   })
   const header = getHeader()
   const titles = header.titles()
 
   return (
     titles.length > 0 ? titles.map(log =>
-      <BoxHeader key={header.key(log)} title={header.getName(log)} titleIconSource={header.getIcon(log)} mode='light' />
-    ) : <TransparentButton title='Reset' onPress={onPress} />
+      <BoxHeader key={header.key(log)} title={header.getName(log)} titleIconSource={header.getIcon(log)} mode='light' onPress={() => header.onNavigate(log)} />
+    ) : <TransparentButton title='Reset' onPress={onReset} />
   )
 }
 
@@ -133,7 +141,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   return (    
     <View style={pet?.color && { backgroundColor: Colors.multi.lightest[pet.color] }}>
       <View style={styles.conHeader}>
-        { topActions.map(action => <ActionButton key={action.key} title={action.key} onPress={action.onPress} />) }
+        { topActions.map(action => <ActionButton key={action.key} title={action.key} onPress={action.onPress} size='small' />) }
       </View>
 
       <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.container}>  
@@ -143,6 +151,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
         { isSuccess && <>
           <View style={styles.infoCard}>
             <PetInfo pet={pet} size='expanded' />
+            <StatButtonList petId={pet._id} petColor={pet.color} size='large' navigation={navigation} />
           </View>
 
           { ['info', 'logs'].map((type: SectionType) =>
@@ -152,14 +161,14 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
                 setOption(type)
               }} />
               <View style={{ ...Forms.roundedCon, ...Spacing.flexColumn }}>
-                <ItemHeaderList type={type} logs={logs} info={info} onPress={() => handleReset(type)} />
+                <ItemHeaderList type={type} logs={logs} info={info} onReset={() => handleReset(type)} navigation={navigation} petId={petId} />
               </View>
             </View>
           ) } 
             
           <SectionHeader type='actions' />
           <View style={{ ...Forms.roundedCon }}>
-            { bottomActions.map(action => <BoxHeader key={action.key} title={action.title} titleIconSource={getActionIconSource(action.icon)} onPress={action.onPress} titleColor={action.key === 'delete' && Colors.red.darkest} />) }
+            { bottomActions.map(action => <BoxHeader key={action.key} title={action.title} titleIconSource={getActionIconSource(action.icon)} onPress={action.onPress} titleColor={action.key === 'delete' && Colors.red.darkest} mode={action.key === 'delete' ? 'dark' : 'light'} />) }
           </View>
 
         </> }
@@ -206,10 +215,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', 
   },
   infoCard: {
+    ...Spacing.flexColumn,
     ...Forms.card,
     width: '90%',
     height: 290,
-    justifyContent: 'flex-start',
+    justifyContent: 'space-around',
     borderRadius: 20,
     backgroundColor: Colors.white,
   },

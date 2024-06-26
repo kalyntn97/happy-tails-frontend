@@ -16,7 +16,7 @@ import NoteInput from "@health/components/NoteInput"
 import { BoxHeader } from "@components/UIComponents"
 import { StatButton, TransparentButton } from "@components/ButtonComponent"
 //styles
-import { styles } from "@styles/DetailsScreenStyles"
+import { styles } from "@styles/stylesheets/DetailsScreenStyles"
 import { Colors, Forms, Typography } from "@styles/index"
 
 

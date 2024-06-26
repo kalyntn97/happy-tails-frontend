@@ -1,7 +1,7 @@
 import Toast, { ToastConfigParams } from "react-native-toast-message"
 import { AlertForm } from "./ui"
 import { CatToast } from '@components/UIComponents'
-import { styles } from "@styles/FormStyles"
+import { styles } from "@styles/stylesheets/FormStyles"
 
 export const keyFromName = (data: {[key: string]: string}) => {
   const map = {}

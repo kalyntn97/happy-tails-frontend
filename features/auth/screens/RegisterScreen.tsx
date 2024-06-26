@@ -8,7 +8,7 @@ import { useAuth } from '@auth/AuthContext'
 import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponent'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { styles } from '@styles/FormStyles'
+import { styles } from '@styles/stylesheets/FormStyles'
 
 
 const RegisterScreen = ({ navigation }) => {

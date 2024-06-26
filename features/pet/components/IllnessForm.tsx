@@ -11,7 +11,7 @@ import { IllnessFormData, Timeline } from '@pet/PetInterface'
 //hooks
 import useForm from '@hooks/useForm'
 //styles
-import { styles } from '@styles/FormStyles'
+import { styles } from '@styles/stylesheets/FormStyles'
 import { Colors, Spacing } from '@styles/index'
 
 interface IllnessFormProps {

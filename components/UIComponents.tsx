@@ -99,3 +99,11 @@ export const EmptyList = ({ type }: { type: string }) => (
   <Text style={type === 'task' ? { ...Typography.smallSubHeader } : { ...Typography.xSmallSubHeader }}>No {type}s added.</Text>
 ) 
 
+export const TopRightHeader = ({ onPress }) => (
+  <Pressable onPress={onPress} style={{
+    ...Spacing.flexRow, position: 'absolute', right: -5, top: 0,
+  }}>
+    <Text style={{ ...Typography.xSmallHeader, marginRight: 10 }}>Add</Text>
+    <Image source={getActionIconSource('add')} style={{ ... Forms.xSmallIcon }} />
+  </Pressable>
+)

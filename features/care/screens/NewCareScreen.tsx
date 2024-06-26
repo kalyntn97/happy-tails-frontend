@@ -8,21 +8,14 @@ import { useAddCare } from "@care/careQueries"
 import { AlertForm } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Typography, Colors } from '@styles/index'
+import { CareFormData } from "@care/CareInterface"
 
-const NewCareScreen: React.FC = ({ navigation }) => {
+const NewCareScreen = ({ navigation }) => {
   const isFocused = useIsFocused()
-  const addCareMutation = useAddCare()
+  const addCareMutation = useAddCare(navigation)
 
-  const handleSubmit = (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string | null, times: number | null, color: number) => {
-    addCareMutation.mutate({ name, pets, repeat, ending, date, endDate, frequency, times, color}, {
-      onSuccess: () => {
-        navigation.navigate('Main')
-        return AlertForm({ body: `Added successfully`, button: 'OK' })
-      },
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      },
-    })
+  const handleSubmit = (formData: CareFormData) => {
+    addCareMutation.mutate(formData)
   }
 
   useEffect(() => {

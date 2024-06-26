@@ -7,7 +7,7 @@ import { useAuth } from '@auth/AuthContext'
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponent'
-import { styles } from '@styles/FormStyles'
+import { styles } from '@styles/stylesheets/FormStyles'
 import { ErrorMessage } from '@components/UIComponents'
 
 const LoginScreen: FC = ({ navigation }) => {

@@ -16,7 +16,7 @@ import Loader from "@components/Loader"
 import { BoxHeader, BoxWithHeader } from "@components/UIComponents"
 import { StatButton } from "@components/ButtonComponent"
 //styles
-import { styles } from "@styles/DetailsScreenStyles"
+import { styles } from "@styles/stylesheets/DetailsScreenStyles"
 import { Colors, Forms } from '@styles/index'
 
 interface CareDetailsProps {

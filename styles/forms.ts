@@ -204,3 +204,9 @@ export const active: ViewStyle = {
 export const inactive: ViewStyle = {
   opacity: 0.3,
 }
+
+export const scrollContent: ViewStyle = {
+  alignItems: 'center',
+  position: 'relative',
+  paddingBottom: 20,
+}

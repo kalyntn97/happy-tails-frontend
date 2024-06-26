@@ -57,7 +57,7 @@ export const useDeleteHealthCard = (navigation: any) => {
 export const useShallowPets = () => {
   const queryClient = useQueryClient()
 
-  const pets = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).profile.pets
+  const pets = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).pets
 
   const PET_BASICS = pets.map(pet => ({ _id: pet._id, name: pet.name, photo: pet.photo, species: pet.species, color: pet.color }))
   const PET_NAMES = PET_BASICS.map(pet => pet.name)
@@ -89,7 +89,7 @@ export const useSelectPhoto = async () => {
   }
 }
 
-export const useCaresByPet = (petId: string) => {
+export const useCaresByPet = (petId: string): Care[] => {
   const queryClient = useQueryClient()
   const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
   
@@ -101,8 +101,7 @@ export const useCaresByPet = (petId: string) => {
     })
     return filtered
   }
-
-  return caresByPet
+  return caresByPet()
 }
 
 export const useCaresByFrequency = (frequency: string) => {
@@ -116,22 +115,26 @@ export const useCaresByFrequency = (frequency: string) => {
   return caresByFrequency
 }
 
-export const useHealthDueByPet = (petId: string) => {
+export const useHealthDueByPet = (petId: string): { minDays: number, healthId: string } => {
   const queryClient = useQueryClient()
   const healths = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).healths
 
   const healthDueByPet = () => {
     let minDays = Infinity
+    let healthId = null
     healths.filter(health => health.pet._id === petId).forEach(health => {
       if (health.nextDue) {
         const daysToNextDue = countDaysBetween('today', health.nextDue.date)
-        if (daysToNextDue < minDays) minDays = daysToNextDue
+        if (daysToNextDue < minDays) {
+          minDays = daysToNextDue
+          healthId = health._id
+        }
       }
-    })
-    return minDays
+    }) 
+    if (minDays && healthId) return { minDays, healthId }
+    else return null
   }
-
-  return healthDueByPet
+  return healthDueByPet()
 }
 
 export const useTaskCounts = () => {

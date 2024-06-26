@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import * as careService from "./careService"
-import { CareFormData, TrackerFormData } from "./CareInterface"
-import { useSetActions } from "@store/store"
-import { alertError, alertSuccess } from "@utils/misc"
+import { Care, CareFormData, TrackerFormData } from "./CareInterface"
+import { alertError, alertSuccess, showToast } from "@utils/misc"
+import { profileKeyFactory } from "@profile/profileQueries"
+import { ProfileData } from "@profile/ProfileInterface"
 
 export const careKeyFactory = {
   cares: ['all-cares'],
@@ -23,14 +24,19 @@ export const useGetCareById = (careId: string) => {
   })
 }
 
-export const useAddCare = () => {
+export const useAddCare = (navigation: any) => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ name, pets, repeat, ending, date, endDate, frequency, times, color }: CareFormData) => careService.create(name, pets, repeat, ending, date, endDate, frequency, times, color),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
-    }
+    mutationFn: (formData: CareFormData) => careService.create(formData),
+    onSuccess: (data: Care) => {
+      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+        return { ...oldData, cares: { ...oldData.cares, [data.frequency || 'Others']: [ ...oldData.cares[data.frequency || 'Others'], data] } }
+      })
+      navigation.navigate('Main')
+      showToast({ text1: 'Task added.', style: 'success' })
+    },
+    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 

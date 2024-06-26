@@ -10,7 +10,7 @@ import { HEALTHS, VACCINES } from '@health/healthHelpers'
 import PetInfo from '@components/PetInfo/PetInfo'
 import { CloseButton, TransparentButton } from '@components/ButtonComponent'
 //styles
-import { styles } from '@styles/ModalCardStyles'
+import { styles } from '@styles/stylesheets/ModalCardStyles'
 import { Colors, Spacing, Typography, Forms } from "@styles/index"
 
 interface HealthCardProps {

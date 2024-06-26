@@ -9,22 +9,24 @@ import * as careHelpers from '@care/careHelpers'
 import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
 import { useDeleteCareCard } from '@hooks/sharedHooks'
 //components
+import SwipeableItem from '@components/SwipeableItem'
 import { useActiveDate } from '@store/store'
-import { AlertForm, getActionIconSource } from '@utils/ui'
-import { IconButton } from '@components/ButtonComponent'
+import { AlertForm } from '@utils/ui'
 import PetList from '@components/PetInfo/PetList'
 //styles
-import { styles } from '@styles/SwipeableTaskStyles'
 import Colors from '@styles/colors'
+import { styles } from './styles'
 
 interface SwipeableCareTaskProps {
   care: Care
   taskIndex?: number
   navigation: any
   onPress: any
+  onLongPress: any
+  disabled: boolean
 }
 
-const SwipeableCareTask = ({ care, navigation, onPress }: SwipeableCareTaskProps) => {
+const SwipeableCareTask = ({ care, navigation, onPress, onLongPress, disabled }: SwipeableCareTaskProps) => {
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const checkAllDoneMutation = useCheckAllDoneCare()
   const uncheckAllDoneMutation = useUncheckAllDoneCare()
@@ -66,59 +68,38 @@ const SwipeableCareTask = ({ care, navigation, onPress }: SwipeableCareTaskProps
       })
   }
 
-  const swipeableRef = useRef(null)
-
-  const closeSwipeable = () => {
-    swipeableRef.current.close()
-  }
+  const toggle = { onToggle: toggleAllDone, initial: done === times }
   
-  const rightSwipeActions = () => (
-    <View style={styles.squareBtnContainer}>
-      <IconButton type='edit' size='medium' onPress={() => {
-        navigation.navigate('CareEdit', { care })
-        closeSwipeable()
-      }} />
-      {care.repeat &&
-        <IconButton type='details' size='medium' onPress={() => {
-          navigation.navigate('CareDetails', { care })
-          closeSwipeable()
-        }} />
-      }
-      <IconButton type='delete' size='medium' onPress={() => showDeleteConfirmDialog(care, handleDeleteCareCard)} />
-    </View>
+  const actions = {
+    edit: () => navigation.navigate('CareEdit', { care }),
+    details: () => navigation.navigate('CareDetails', { care }),
+    delete: () => showDeleteConfirmDialog(care, handleDeleteCareCard)
+  }
+
+  const { details, ...filteredActions } = actions
+
+  const CareContent = () => (
+    <>
+      <Text style={[styles.taskTitle, done === times && styles.done]}>
+        {careHelpers.CARES[care.name] ?? care.name}
+      </Text>
+      <Text style={styles.taskStatus}><Text style={{ fontSize: 15 }}>{done}</Text>/{times}</Text>
+      <View style={styles.taskPetList}>
+        <PetList petArray={care.pets} size='mini' />
+      </View>
+    </>
   )
 
   return (
-    <Swipeable ref={swipeableRef} renderRightActions={() => rightSwipeActions()}>
-      <TouchableOpacity 
-        key={care._id}
-        style={[
-          styles.task, 
-          { backgroundColor: Colors.multi.light[care.color] }
-        ]} 
-        onPress={onPress}
-      > 
-        <View style={styles.taskContent}>
-          <Text style={[
-            done === times && styles.done, 
-            styles.taskTitle
-          ]}>
-            {careHelpers.CARES[care.name] ?? care.name}
-          </Text>
-          <Text style={styles.taskStatus}><Text style={{ fontSize: 15 }}>{done}</Text>/{times}</Text>
-          <View style={styles.taskPetList}>
-            <PetList petArray={care.pets} size='mini' />
-          </View>
-        </View>
-
-        <TouchableOpacity style={styles.bulletBtn} onPress={() => toggleAllDone()}>
-          {done === times 
-          ? <Image source={getActionIconSource('check')} style={styles.check}/>
-          : <Text style={styles.bulletBtnText}>○</Text> }
-        </TouchableOpacity>
-
-      </TouchableOpacity>
-    </Swipeable>
+    <SwipeableItem
+      color={Colors.multi.light[care.color]}
+      content={<CareContent />}
+      swipeRightActions={care.repeat ? actions : filteredActions}
+      onPress={onPress}
+      onLongPress={onLongPress}
+      disabled={disabled}
+      toggle={toggle}
+    />
   )
 }
 

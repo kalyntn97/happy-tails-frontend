@@ -57,6 +57,7 @@ export const useUpdatePet = (navigation: any) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
         return {...oldData, pets: oldData.pets.map(pet => pet._id === data._id ? data : pet) }
       })
+      queryClient.prefetchQuery({ queryKey: petKeyFactory.petById(data._id) })
       navigation.navigate('Details', { petId: data._id })
       showToast({ text1: 'Pet updated.', style: 'success' })
     },

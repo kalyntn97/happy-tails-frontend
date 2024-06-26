@@ -10,7 +10,7 @@ import PetList from "@components/PetInfo/PetList"
 import TrackerPanel from "./TrackerPanel"
 import { CloseButton, TransparentButton } from "@components/ButtonComponent"
 //styles
-import { styles } from "@styles/ModalCardStyles"
+import { styles } from "@styles/stylesheets/ModalCardStyles"
 import { Colors, Spacing, Forms, Typography } from "@styles/index"
 
 interface CareCardProps {

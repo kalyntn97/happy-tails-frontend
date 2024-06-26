@@ -1,12 +1,12 @@
 // npm
 import React, { useEffect, useState } from "react"
 import { StyleSheet, View, Text, useWindowDimensions, DeviceEventEmitter, Alert, TouchableWithoutFeedback } from "react-native"
-import { PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler"
-import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
-//components
+import { Gesture, GestureDetector, PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler"
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from "react-native-reanimated"
 import SubFloatingButton from "./SubFloatingButton"
 // styles & constants
 import { Button, ButtonStyles, Animation, ChildrenAnimation } from "./constants"
+import { transform } from "typescript"
 
 const FloatingButton = ({ navigation }) => {
   const [opened, setOpened] = useState(false)
@@ -19,6 +19,8 @@ const FloatingButton = ({ navigation }) => {
   // initial position
   const positionX = useSharedValue(0)
   const positionY = useSharedValue(0)
+  const prevPositionX = useSharedValue(0)
+  const prevPositionY = useSharedValue(0)
   // plus sign of button
   const rotation = useSharedValue(ChildrenAnimation.rotation_close)
   const plusTranslateY = useSharedValue(ChildrenAnimation.plus_translate_y_close)
@@ -45,25 +47,20 @@ const FloatingButton = ({ navigation }) => {
     }, 300)
   }
   // tap animation 
-  const _onTapHandlerStateChange = ({ nativeEvent }) => {
-    if (nativeEvent.state === State.END) {
-      opened ? _close() : _open()
-    }
-  }
-
-  //calculate the distances to corners
-
+  const tap = Gesture.Tap().onEnd(e => {
+    opened ? runOnJS(_close)() : runOnJS(_open)() 
+  })
   // drag animation
-  const _onPanHandlerStateChange = useAnimatedGestureHandler({
-    onStart: (_, ctx: {startX: number, startY: number }) => {
-      ctx.startX = positionX.value
-      ctx.startY = positionY.value
-    },
-    onActive: (event, ctx) => {
-      positionX.value = ctx.startX + event.translationX
-      positionY.value = ctx.startY + event.translationY
-    },
-    onEnd: _ => {
+  const pan = Gesture.Pan()
+    .onStart(() => { 
+      prevPositionX.value = positionX.value
+      prevPositionY.value = positionY.value
+    })
+    .onUpdate(e => {
+      positionX.value = e.translationX + prevPositionX.value
+      positionY.value = e.translationY + prevPositionY.value
+    })
+    .onEnd(e => {
       if (positionX.value > -width / 2 + snapThreshold) {
         positionX.value = withSpring(Animation.starting_position)
       } else if (positionX.value < -width + snapThreshold) {
@@ -74,15 +71,11 @@ const FloatingButton = ({ navigation }) => {
       } else if (positionY.value < -height + snapThreshold + 150) {
         positionY.value = withSpring(-height + snapThreshold + 150)
       }
-    }
-  })
-
+    })
+ 
   const animatedRootStyles = useAnimatedStyle(() => {
     return {
-      transform: [
-        { translateX: positionX.value },
-        { translateY: positionY.value },
-      ]
+      transform: [{ translateX: positionX.value }, { translateY: positionY.value }]
     }
   })
 
@@ -105,6 +98,12 @@ const FloatingButton = ({ navigation }) => {
     }
   })
 
+  const subButtons = [
+    { key: 'pets', label: 'Manage Pets', index: 2, onPress: () => navigation.navigate('Pets', { screen: 'Index' }) },
+    { key: 'vet', label: 'Add a Vet Visit', index: 1, onPress: () => navigation.navigate('HealthCreate') },
+    { key: 'task', label: 'Add a Task', index: 0, onPress: () => navigation.navigate('CareCreate') },
+  ]
+
   useEffect(() => {
     let listener = DeviceEventEmitter.addListener(subBtn_tap_event, () => _close())
     return () => listener.remove()
@@ -117,29 +116,22 @@ const FloatingButton = ({ navigation }) => {
           <View style={[styles.overlay, { width: width, height: height}]} />
         </TouchableWithoutFeedback> 
       }
-      <PanGestureHandler onHandlerStateChange={_onPanHandlerStateChange}>
-        <Animated.View style={[styles.buttonContainer, { bottom: height * 0.08 }, animatedRootStyles]}>
+      <GestureDetector gesture={Gesture.Simultaneous(pan, tap)}>
+        <Animated.View style={[styles.buttonContainer, { bottom: 20 }, animatedRootStyles]}>
           
           {opened &&
             <Animated.View style={[styles.children, animatedChildrenStyles]}>
-              <SubFloatingButton label='Manage Pets' index={2} x={positionX.value} 
-                onPress={() => navigation.navigate('Pets', { screen: 'Index' })} 
-              />
-              <SubFloatingButton label='Add a Vet Visit' index={1} x={positionX.value} 
-                onPress={() => navigation.navigate('HealthCreate')} 
-              />
-              <SubFloatingButton label='Add a Task' index={0} x={positionX.value} 
-                onPress={() => navigation.navigate('CareCreate')} 
-              />
+              {subButtons.map(subButton => 
+                <SubFloatingButton key={subButton.key} label={subButton.label} index={subButton.index} x={positionX.value} onPress={subButton.onPress} />
+              )}
             </Animated.View>
           }
-          <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
-            <Animated.View style={[styles.button, animatedBtnStyles]}>
-              <Animated.Text style={[styles.text, animatedText]}>+</Animated.Text>
-            </Animated.View>
-          </TapGestureHandler>
+          <Animated.View style={[styles.button, animatedBtnStyles]}>
+            <Animated.Text style={[styles.text, animatedText]}>+</Animated.Text>
+          </Animated.View>
+
         </Animated.View>
-      </PanGestureHandler>
+      </GestureDetector>
     </>
   )
 }

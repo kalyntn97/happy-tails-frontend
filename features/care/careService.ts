@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { CARE_BASE_URL } from '../../services/urls'
-import { Care, Tracker } from './CareInterface'
+import { Care, CareFormData, Tracker } from './CareInterface'
 
 const BASE_URL = CARE_BASE_URL
 
@@ -8,8 +8,8 @@ export const getAllCares = async (): Promise<{[key: string]: Care[]}> => {
   return (await axios.get<{[key: string]: Care[]}>(BASE_URL)).data
 }
 
-export const create = async (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string | null, times: number | null, color: number): Promise<Care>  => {
-  return (await axios.post<Care>(BASE_URL, { name, pets, repeat, ending, date, endDate, frequency, times, color })).data
+export const create = async (formData: CareFormData): Promise<Care>  => {
+  return (await axios.post<Care>(BASE_URL, formData)).data
 }
 
 export const update = async (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string | null, times: number | null, color: number, careId: string): Promise<Care>  => {

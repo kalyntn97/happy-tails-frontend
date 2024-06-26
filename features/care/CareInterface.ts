@@ -1,10 +1,11 @@
 import { Pet } from "@pet/PetInterface"
 
+export type CareFrequency = 'Daily' | 'Weekly' | 'Monthly' | 'Yearly' | 'Others'
 
 type Done = {
   value: number
   notes: string
-}
+} 
 export interface Tracker {
   _id: string
   name: string
@@ -22,7 +23,7 @@ export interface Care {
   repeat: boolean
   date: string
   endDate: string | null
-  frequency: string | null
+  frequency: CareFrequency | null
   times: number | null
   color: number
   trackers: Tracker[]
@@ -30,7 +31,7 @@ export interface Care {
 
 export interface CareFormData {
   name: string
-  pets: string[]
+  pets: string[] | Pet[]
   repeat: boolean
   date: Date
   endDate: Date | null

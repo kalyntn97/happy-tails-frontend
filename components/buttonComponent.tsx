@@ -29,7 +29,7 @@ const roundButtonTypes = {
   'remove': '−',
 }
 
-export const RoundButton: FC<RoundButtonProps> = ({ onPress, size, bgColor, color, type, position }) => (
+export const RoundButton = ({ onPress, size, bgColor, color, type, position }: RoundButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
     { backgroundColor: bgColor ?? Colors.pink.darkest },
     size === 'small' ? { ...Buttons.smallRoundButton as ViewStyle, margin: 0 } : size === 'medium' ? { ...Buttons.mediumRoundButton as ViewStyle } : { ...Buttons.roundButton as ViewStyle },
@@ -44,7 +44,7 @@ export const RoundButton: FC<RoundButtonProps> = ({ onPress, size, bgColor, colo
   </TouchableOpacity>
 )
 
-export const ActionButton: FC<BaseButtonProps> = ({ title, onPress, size, top, left }) => (
+export const ActionButton= ({ title, onPress, size, top, left }: BaseButtonProps) => (
   <TouchableOpacity onPress={onPress} style={ left && { marginLeft: left } }>
     <Image 
       source={getActionIconSource(title)}
@@ -67,7 +67,7 @@ const iconButtonStyles = {
   'details': { bgColor: Colors.green.light },
 }
 
-export const IconButton: FC<IconButtonProps> = ({ onPress, type, size }) => (
+export const IconButton = ({ onPress, type, size }: IconButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
     size === 'small' && {...smallIconButtonStyles as ViewStyle},
     size === 'medium' && { 
@@ -88,7 +88,7 @@ interface PhotoButtonProps extends BaseButtonProps {
   placeholder?: string
 }
 
-export const PhotoButton = ({ photo, onPress, size, placeholder }) => (
+export const PhotoButton = ({ photo, onPress, size, placeholder }: PhotoButtonProps) => (
   <TouchableOpacity onPress={onPress} style={{ margin: 5 }}>
     <View style={[size === 'small' ? { ...Forms.xxSmallPhoto } : { ...Forms.xSmallPhoto }, { backgroundColor: Colors.pink.light, ...Spacing.centered }]}>
       <Image source={photo ? { uri: photo } : placeholder} style={size === 'small' ? { ...Forms.xxSmallPhoto } : { ...Forms.xSmallPhoto }} />
@@ -104,7 +104,7 @@ interface CornerButtonProps extends BaseButtonProps {
   bottom?: number
 }
 
-export const CloseButton: FC<CornerButtonProps> = ({ onPress, size, position }) => (
+export const CloseButton = ({ onPress, size, position }: CornerButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[position === 'topRight' && { position: 'absolute', top: 10, right: 10 }, { zIndex: 1 }]}>
     <Image source={getActionIconSource('close')} style={[
       size === 'small' ? { width: 25, height: 25, margin: 5 } 
@@ -117,7 +117,7 @@ interface BaseWithIconButtonProps extends BaseButtonProps {
   icon?: string
 }
 
-export const MainButton: FC<BaseWithIconButtonProps> = ({ onPress, title, top, bottom, bgColor, color, size, icon }) => (
+export const MainButton= ({ onPress, title, top, bottom, bgColor, color, size, icon }: BaseWithIconButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
     { backgroundColor: bgColor ?? Colors.pink.reg },
     size === 'small' ? { ...Buttons.xSmallRoundButton } 
@@ -137,7 +137,7 @@ export const MainButton: FC<BaseWithIconButtonProps> = ({ onPress, title, top, b
   </TouchableOpacity>
 )
 
-export const TransparentButton: FC<BaseWithIconButtonProps> = ({ title, onPress, size, top, bottom, color, bgColor, bdColor, icon }) => (
+export const TransparentButton= ({ title, onPress, size, top, bottom, color, bgColor, bdColor, icon }: BaseWithIconButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
     { ...Spacing.flexRow, borderColor: bdColor ?? Colors.transparent.dark, backgroundColor: bgColor ?? Colors.transparent.light, },
     size === 'small' ? { ...Buttons.xSmallRoundedTransparent } 
@@ -159,7 +159,7 @@ export const TransparentButton: FC<BaseWithIconButtonProps> = ({ title, onPress,
   </TouchableOpacity>
 )
 
-export const SubButton: FC<BaseButtonProps> = ({ onPress, title, color, top, bottom, size }) => (
+export const SubButton = ({ onPress, title, color, top, bottom, size }: BaseButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
     { ...Buttons.subButton, borderColor: color ?? Colors.shadow.darkest },
     top && { marginTop: top },
@@ -175,7 +175,7 @@ export const SubButton: FC<BaseButtonProps> = ({ onPress, title, color, top, bot
   </TouchableOpacity>
 )
 
-export const GoBackButton: FC<CornerButtonProps> = ({ onPress, top, left, position }) => (
+export const GoBackButton = ({ onPress, top, left, position }: CornerButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
     position === 'topLeft' && { position: 'absolute', top: top ?? 5, left: left ?? 5,
   }]}>     
@@ -187,53 +187,34 @@ export const GoBackButton: FC<CornerButtonProps> = ({ onPress, top, left, positi
 )
 
 interface StatButtonProps extends BaseButtonProps {
-  item: { header: string, stat?: number, iconUri?: any, body: string }
+  header: string
+  stat?: number
+  iconUri?: any
+  body: string
+  disabled?: boolean
 }
 
-export const StatButton: FC<StatButtonProps> = ({ item, bgColor, color, onPress }) => (
-  <Pressable onPress={onPress} style={{
-    ...Spacing.flexColumn,
-    borderRadius: 15,
-    backgroundColor: bgColor ?? Colors.white,
-    padding: 10,
-    width: 71,
-    height: 83,
-  }}>
-    <Text style={{
-      fontSize: 12,
-      fontStyle: 'italic',
-      marginBottom: 2,
-    }}>
-      {item.header}
-    </Text>
-
-    {!item.iconUri && 
-      <Text style={[{
-      fontSize: 18,
-      fontWeight: 'bold',
-      marginVertical: 2,
-      }, { color: item.stat === 0 ? Colors.red.dark : color ? color : 'black' }
-      ]}>
-        {item.stat >= 0 && item.stat !== Infinity ? item.stat : '?'}
+export const StatButton = ({ header, stat, iconUri, body, bgColor, color, size, onPress, disabled }: StatButtonProps) => (
+  <TouchableOpacity disabled={disabled} onPress={onPress} style={[
+    { ...Spacing.flexColumn, justifyContent: 'space-evenly', borderRadius: 15, backgroundColor: bgColor ?? Colors.white, padding: 10 },
+    size === 'large' ? { width: 90, height: 110 } : { width: 80 , height: 95 }
+  ]}>
+    <Text style={{ fontSize: size === 'large' ? 15 : 12, marginBottom: 2, }}>{header}</Text>
+    { !iconUri && 
+      <Text style={{ fontSize: size === 'large' ? 22 : 18, fontWeight: 'bold', marginVertical: 2, color: stat === 0 ? Colors.red.dark : color ? color : 'black' }}>
+        {stat >= 0 && stat !== Infinity ? stat : '?'}
       </Text> 
     }
-    
-    {item.iconUri && 
-      <Image source={item.iconUri as ImageSourcePropType} style={{
-        ...Forms.smallIcon, margin: 0,
-      }}/>
-    }
-    <Text style={{ ...Typography.xSmallBody }}>
-      {item.body}
-    </Text>
-  </Pressable>
+    { iconUri && <Image source={iconUri as ImageSourcePropType} style={{ ...Forms.smallIcon, margin: 0 }}/> }
+    <Text style={{ ...Typography.xSmallBody }}>{body}</Text>
+  </TouchableOpacity>
 )
 
 interface CheckboxButtonProps extends BaseButtonProps {
   initial: boolean
 }
 
-export const CheckboxButton: FC<CheckboxButtonProps> = ({ onPress, size, initial, bgColor, color }) => {
+export const CheckboxButton = ({ onPress, size, initial, bgColor, color }: CheckboxButtonProps) => {
   const [check, setCheck] = useState<boolean>(initial)
 
   const handlePress = () => {
@@ -259,7 +240,7 @@ export const CheckboxButton: FC<CheckboxButtonProps> = ({ onPress, size, initial
   )
 }
 
-export const ToggleButton: FC<CheckboxButtonProps> = ({ onPress, size, initial, bgColor }) => {
+export const ToggleButton = ({ onPress, size, initial, bgColor }: CheckboxButtonProps) => {
   const [on, setOn] = useState<boolean>(initial)
 
   const handlePress = () => {

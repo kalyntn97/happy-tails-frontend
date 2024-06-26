@@ -8,7 +8,7 @@ import { AlertForm, getActionIconSource } from "@utils/ui"
 import { Visit } from "@health/HealthInterface"
 import { useAddVisitNotes } from "@health/healthQueries"
 //styles
-import { styles } from "@styles/DetailsScreenStyles"
+import { styles } from "@styles/stylesheets/DetailsScreenStyles"
 import Colors from "@styles/colors"
 
 interface NoteInputProps {

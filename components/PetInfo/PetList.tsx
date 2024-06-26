@@ -9,10 +9,9 @@ import { Spacing } from '@styles/index'
 interface PetListProps {
   petArray: Pet[] | PetBasic[]
   size: 'compact' | 'small' | 'mini' // small < compact
-  navigation?: any
 }
 
-const PetList: React.FC<PetListProps> = ({ petArray, size, navigation }) => {
+const PetList: React.FC<PetListProps> = ({ petArray, size }) => {
   return (  
     <View style={[styles.container, 
       size === 'mini' ? { maxWidth: 225 } 

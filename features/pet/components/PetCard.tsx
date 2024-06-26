@@ -11,6 +11,7 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { countYearsBetween } from "@utils/datetime"
 import { useCaresByPet, useHealthDueByPet } from "@hooks/sharedHooks"
 import { SPECIES_OPTIONS } from "@pet/petHelpers"
+import StatButtonList from "./StatButtonList"
 interface PetCardProps {
   pet: Pet
   index: number
@@ -20,9 +21,7 @@ interface PetCardProps {
 
 const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) => {
   const petAge = pet.dob ? countYearsBetween(pet.dob, 'today') : 'Unknown'
-  const caresByPet = useCaresByPet(pet._id)
-  const healthDueByPet = useHealthDueByPet(pet._id)
-
+  
   const { width } = useWindowDimensions()
   
   const animatedStyles = useAnimatedStyle(() => {
@@ -68,11 +67,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
         <Image style={styles.petPhoto } 
           source={pet.photo ? {uri: pet.photo} : getPetIconSource(['Dog', 'Cat'].includes(pet.species) ? `${pet.species}Profile` : 'AnimalProfile')} 
         />
-        <View style={{...Forms.rowCon, marginTop: 'auto'}}>
-          <StatButton item={ {header: 'vet visit', stat: healthDueByPet(), body: 'days'}} bgColor={Colors.multi.light[pet.color]} />
-          <StatButton item={ {header: 'tasks', stat: caresByPet().length, body: 'today'}} bgColor={Colors.multi.light[pet.color]} />
-          <StatButton item={ {header: 'status', iconUri: require('@assets/icons/stat-mood-4.png'), body: '12/30/24'}} bgColor={Colors.multi.light[pet.color]} />
-        </View>
+
+        <StatButtonList petId={pet._id} petColor={pet.color} navigation={navigation}/>
 
         <View style={{ ...Spacing.flexRow, marginTop: 'auto' }}>
           <TransparentButton title='Log' icon="logPet" onPress={() => navigation.navigate('CreateLog', { pet })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />

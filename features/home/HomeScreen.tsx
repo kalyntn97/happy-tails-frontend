@@ -1,11 +1,12 @@
 //npm modules
 import { useRef } from "react"
-import { View, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimensions, ScrollView, Image, ImageStyle, SafeAreaView, StatusBar, Alert } from "react-native"
+import { View, Text, Pressable, TouchableOpacity, StyleSheet, ScrollView, Image, ImageStyle, SafeAreaView, StatusBar, Alert, Dimensions } from "react-native"
 import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from "@auth/AuthContext"
-//types
+//types & helpers
 import type { HomeTabScreenProps } from "@navigation/types"
+import { centerHeight, windowHeight } from "./helpers"
 //components
 import HomeFeed from "@home/components/HomeFeed"
 import FloatingButton from "@components/FloatingButton/FloatingButton"
@@ -17,9 +18,6 @@ import { Buttons, Typography, Colors, Forms, Spacing } from '@styles/index'
 const HomeScreen = ({ navigation }: HomeTabScreenProps) => {
   const { authState } = useAuth()
 
-  const windowWidth = useWindowDimensions().width
-  const windowHeight = useWindowDimensions().height
-  const centerHeight = windowHeight - 191
   const scrollViewRef = useRef<ScrollView>(null)
   
   const scrollToNext = (pageNum: number) => {
@@ -31,29 +29,25 @@ const HomeScreen = ({ navigation }: HomeTabScreenProps) => {
   return ( 
     <View>
       <StatusBar barStyle="dark-content" />
-      {authState.authenticated ? (
-        <>
-          <View style={[styles.screen, { minHeight: centerHeight }]}>
-            <View style={{ height: windowHeight * 0.22, justifyContent: 'flex-end' }}>
-              <ScrollCalendar />
-            </View>
+      { authState.authenticated ? 
+        <View style={styles.screen}>
+          <ScrollCalendar />
 
-            <View style={[styles.body, { width: windowWidth, height: windowHeight * 0.7 }]}>
-              <HomeFeed navigation={navigation} />
-            </View>
-            
-            <FloatingButton navigation={navigation} />
+          <View style={[styles.body, { height: centerHeight }]}>
+            <HomeFeed navigation={navigation} />
           </View>
-        </>
-      ) : (
-        <ScrollView
+          
+          <FloatingButton navigation={navigation} />
+        </View>
+        
+      : <ScrollView
           ref={scrollViewRef}
           pagingEnabled
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={200}
           decelerationRate="fast"
         >
-          <View style={[styles.screen, { width: windowWidth, height: windowHeight, backgroundColor: Colors.white }]}>
+          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.white }]}>
             <LottieView source={require('@assets/animations/happy.json')} autoPlay loop style={styles.homeAnimation} />
             <View style={styles.headers}>
                 <Text style={styles.mainHeader}>
@@ -84,8 +78,7 @@ const HomeScreen = ({ navigation }: HomeTabScreenProps) => {
               <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
             </TouchableOpacity>
           </View>
-        </ScrollView>
-      )}
+      </ScrollView> }
     </View>
   )
 }
@@ -95,12 +88,17 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     backgroundColor: Colors.shadow.lightest,
+    paddingTop: 40,
+  },
+  header: {
+    width: '100%',
+    justifyContent: 'flex-end',
   },
   body: {
+    width: '100%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     backgroundColor: Colors.white,
-    alignItems: 'center',
   },
   headers:{
     width: '80%',

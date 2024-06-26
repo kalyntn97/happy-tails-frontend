@@ -118,7 +118,9 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
     if (route.params) {
       const { sectionIndex, itemIndex } = route.params
       const setInitialListPosition = () => {
-        sectionListRef.current.scrollToLocation({ sectionIndex: sectionIndex, itemIndex: itemIndex + 1})
+        if (sectionListRef.current) {
+          sectionListRef.current.scrollToLocation({ sectionIndex: sectionIndex, itemIndex: itemIndex + 1})
+        }
       }
       setInitialListPosition()
     }
@@ -147,7 +149,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
             showsVerticalScrollIndicator={false}
             style={{ width: '100%' }}
           />
-        : <PlaceHolder key='task' navigation={navigation} />
+        : <PlaceHolder type='task' navigation={navigation} />
       )}
         
     </View> 

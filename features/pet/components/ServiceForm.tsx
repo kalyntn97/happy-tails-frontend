@@ -9,7 +9,7 @@ import { CircleIcon, ErrorMessage } from '@components/UIComponents'
 import { ActionButton, MainButton, TransparentButton } from '@components/ButtonComponent'
 import Dropdown from '@components/Dropdown/Dropdown'
 //styles
-import { styles } from '@styles/FormStyles'
+import { styles } from '@styles/stylesheets/FormStyles'
 import { Colors, Forms, Spacing, Typography } from '@styles/index'
 import MultipleInputs from '@components/MultipleInputs'
 import useForm from '@hooks/useForm'

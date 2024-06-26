@@ -7,7 +7,7 @@ import LottieView from "lottie-react-native"
 import { RoundButton } from "@components/ButtonComponent"
 import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
-import { ErrorImage } from "@components/UIComponents"
+import { ErrorImage, TopRightHeader } from "@components/UIComponents"
 //types & helpers
 import PetInfo from "@components/PetInfo/PetInfo"
 import { Health } from "@health/HealthInterface"
@@ -126,7 +126,10 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <RoundButton onPress={() => navigation.navigate('Create')} type='add' position='bottomRight' />
+      <View style={{ position: 'absolute', padding: -10}}>
+        <Image source={getActionIconSource('add')} style={{ ... Forms.xSmallIcon }} />
+        
+      </View>
       {isSuccess && (
         healths.length > 0 ?
           <SectionList
@@ -142,7 +145,7 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
             showsVerticalScrollIndicator={false}
             style={styles.list}
           /> 
-        : <PlaceHolder navigation={navigation} key='vet' />
+        : <PlaceHolder navigation={navigation} type='vet' />
       )}
         
     </View> 
@@ -152,6 +155,7 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     ...Spacing.fullScreenDown,
+    position: 'relative',
   },
   btnCon: {
     width: 80,

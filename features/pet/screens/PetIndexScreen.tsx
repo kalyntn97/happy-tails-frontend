@@ -86,64 +86,63 @@ const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
 
   return ( 
     <View style={styles.container}>
-      { isSuccess && pets.length > 0 ? 
-        <>
-          <View style={styles.petNav}>
-            <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 10, justifyContent: 'flex-start', alignItems: 'center' }} showsHorizontalScrollIndicator={false}>
-              <RoundButton type='add' size='medium' onPress={() => navigation.navigate('Create')} />
-              {pets.map((pet, index) => 
-                <PhotoButton key={`photo-${pet._id}`} photo={pet.photo} placeholder={getPetIconSource('AnimalProfile')} size='small' onPress={() => handleClickPhoto(index)} />
-              )}
-            </ScrollView>
-          </View>
-        
-          <View style={styles.carousel}>
-            <Animated.FlatList 
-              ref={FlatListRef}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              onScroll={onScrollHandler}
-              onMomentumScrollEnd={onScrollEnd}
-              data={pets}
-              keyExtractor={item => item._id}
-              pagingEnabled={true}
-              renderItem={({ item, index }) => {
-                return <PetCard pet={item} index={index} scrollX={scrollX} navigation={navigation} />
-              }}
-              ListEmptyComponent={
-                <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
-              }
-            />
-            
-          </View>
+      { isSuccess && pets.length > 0 ? <>
+        <View style={styles.petNav}>
+          <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 10, justifyContent: 'flex-start', alignItems: 'center' }} showsHorizontalScrollIndicator={false}>
+            <RoundButton type='add' size='medium' onPress={() => navigation.navigate('Create')} />
+            {pets.map((pet, index) => 
+              <PhotoButton key={`photo-${pet._id}`} photo={pet.photo} placeholder={getPetIconSource('AnimalProfile')} size='small' onPress={() => handleClickPhoto(index)} />
+            )}
+          </ScrollView>
+        </View>
+      
+        <View style={styles.carousel}>
+          <Animated.FlatList 
+            ref={FlatListRef}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            onScroll={onScrollHandler}
+            onMomentumScrollEnd={onScrollEnd}
+            data={pets}
+            keyExtractor={item => item._id}
+            pagingEnabled={true}
+            renderItem={({ item, index }) => {
+              return <PetCard pet={item} index={index} scrollX={scrollX} navigation={navigation} />
+            }}
+            ListEmptyComponent={
+              <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
+            }
+          />
+          
+        </View>
 
-          <View style={styles.rowCon}>
-            <Pressable 
-              onPress={handleClickPrev} 
-              style={[styles.prevBtn, currCard == 0 && styles.disabled, styles.baseNavBtn]}
-              disabled={currCard == 0}
-            >
-              <Image source={getActionIconSource('prev')} style={{...Forms.xSmallIcon}}/> 
-            </Pressable>
-            
-            <View style={styles.dotNav}>
-              {petCount > 2 && Array(3).fill(0).map((_, i) =>
-                <DotNav key={i} index={i} />
-              )}
-            </View>
-            
-            <Pressable 
-              onPress={handleClickNext} 
-              style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled, styles.baseNavBtn]}
-              disabled={currCard == petCount - 1}
-            >
-              <Image source={getActionIconSource('next')} style={{ ...Forms.xSmallIcon }}/> 
-            </Pressable>
+        <View style={styles.rowCon}>
+          <Pressable 
+            onPress={handleClickPrev} 
+            style={[styles.prevBtn, currCard == 0 && styles.disabled, styles.baseNavBtn]}
+            disabled={currCard == 0}
+          >
+            <Image source={getActionIconSource('prev')} style={{...Forms.xSmallIcon}}/> 
+          </Pressable>
+          
+          <View style={styles.dotNav}>
+            {petCount > 2 && Array(3).fill(0).map((_, i) =>
+              <DotNav key={i} index={i} />
+            )}
           </View>
-        </> : 
-          <View style={{ ...Spacing.fullWH, justifyContent: 'center' }}> 
-            <EmptyPetList navigation={navigation} />
-          </View> 
+          
+          <Pressable 
+            onPress={handleClickNext} 
+            style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled, styles.baseNavBtn]}
+            disabled={currCard == petCount - 1}
+          >
+            <Image source={getActionIconSource('next')} style={{ ...Forms.xSmallIcon }}/> 
+          </Pressable>
+        </View>
+      </> : 
+        <View style={{ ...Spacing.fullWH, justifyContent: 'center' }}> 
+          <EmptyPetList navigation={navigation} />
+        </View> 
       }
     </View>
   )
@@ -180,7 +179,7 @@ const styles = StyleSheet.create({
   },
   carousel: {
     width: '100%',
-    height: '65%',
+    height: '70%',
   },
   petNav: {
     marginTop: 50,

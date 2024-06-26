@@ -44,7 +44,7 @@ const Row = ({ item, index, height, scrollY }) => {
   )
 }
 
-const ScrollSelector = ({ data, onSelect, initialPos }) => {
+const ScrollSelector = ({ data, onSelect, initial }) => {
   let selected: number
 
   const height = 50
@@ -86,7 +86,7 @@ const ScrollSelector = ({ data, onSelect, initialPos }) => {
         scrollEnabled={data.length > 1}
         onScroll={onScrollHandler}
         onMomentumScrollEnd={onScrollEnd}
-        initialScrollIndex={initialPos}
+        initialScrollIndex={initial}
       />
     </View>
   )

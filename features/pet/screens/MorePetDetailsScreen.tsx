@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import IdForm from '@pet/components/IdForm'
 import { CloseButton, MainButton } from '@components/ButtonComponent'
 import Loader from '@components/Loader'
-import { EmptyList, ErrorImage, toastConfig } from '@components/UIComponents'
+import { EmptyList, ErrorImage, TopRightHeader, toastConfig } from '@components/UIComponents'
 import PlaceHolder from '@components/PlaceHolder'
 //utils & types
 import { PET_DETAILS } from '@pet/petHelpers'
@@ -33,10 +33,7 @@ const ListHeader = ({ name, onPress }: ListHeaderProps) => (
       <Image source={getActionIconSource(name)} style={{ ...Forms.icon }} />
       <Text style={styles.listHeaderText}>{PET_DETAILS[name]}</Text>
     </View>
-    <Pressable onPress={onPress} style={styles.listHeaderRight}>
-      <Text style={styles.listHeaderBtnText}>Add</Text>
-      <Image source={getActionIconSource('add')} style={{ ... Forms.xSmallIcon }} />
-    </Pressable>
+    <TopRightHeader onPress={onPress} />
   </>
 )
 
@@ -122,19 +119,9 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow, 
     marginTop: 50,
   },
-  listHeaderRight: {
-    ...Spacing.flexRow, 
-    position: 'absolute', 
-    right: -5, 
-    top: 0,
-  },
   listHeaderText: {
     ...Typography.smallHeader, 
     marginLeft: 10,
-  },
-  listHeaderBtnText: {
-    ...Typography.xSmallHeader,
-    marginRight: 10,
   },
   itemHeader: {
     ...Typography.xSmallHeader, 

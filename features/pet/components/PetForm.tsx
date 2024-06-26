@@ -12,7 +12,7 @@ import { SPECIES, STATUS } from "@pet/petHelpers"
 import { getPetIconSource } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
-import { styles } from "@styles/FormStyles"
+import { styles } from "@styles/stylesheets/FormStyles"
 import { PetFormData, PhotoFormData } from "@pet/PetInterface"
 import { ErrorMessage } from "@components/UIComponents"
 import useForm from "@hooks/useForm"
@@ -55,7 +55,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
   }
 
   function handleSubmit() {
-    const photoData = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
+    const photoData = photo && photo !== initialState.photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
     onSubmit({ name, species, breed, dob, firstMet, altered, status, color, petId }, photoData)
   }
   
@@ -160,7 +160,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
       <ColorPickingPanel onPress={selected => onChange('color', selected)} initial={color} />
 
       <View style={{ ...Spacing.flexRow}}>
-        <MainButton onPress={() => onValidate(name, species)} title={formStatus === 'pending' ? 'Submitting' : !!name ? 'Save' : 'Add Pet'} top={0} bottom={10} />
+        <MainButton onPress={() => onValidate(name, species)} title={formStatus === 'pending' ? 'Submitting' : !!name ? 'Save' : 'Create'} top={0} bottom={10} />
         <TransparentButton onPress={onReset} title='Clear' />
       </View>
 

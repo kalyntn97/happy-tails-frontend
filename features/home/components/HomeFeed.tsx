@@ -12,7 +12,7 @@ import { getCalendarIconSource, getNavigationIconSource } from "@utils/ui"
 import CareCard from "@care/components/CareCard"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
-import NestedList from './NestedList'
+import NestedList from './DraggableList'
 import HealthCard from "@health/components/HealthCard"
 import { ErrorImage } from "@components/UIComponents"
 //types & utils
@@ -61,7 +61,7 @@ const HomeFeed = ({ navigation }) => {
   }
 
   return (  
-    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
       <View style={styles.headerCon}>  
         <TouchableOpacity onPress={() => setFeed('care')} style={[styles.iconHeaderCon, feed === 'care' && { borderColor: Colors.pink.dark }]}>
           <Image source={getNavigationIconSource('care', feed === 'care' ? 'active' : 'inactive')} style={{...Forms.smallIcon}} />
@@ -80,16 +80,15 @@ const HomeFeed = ({ navigation }) => {
         { (feed === 'care' && Object.values(data.cares).flat().length > 0) || (feed === 'health' && data.healths.length > 0) ? <>
           { feed === 'care' && <View style={styles.iconMenuContainer}>
             {['day', 'week', 'month', 'year'].map((selection: Selection) =>
-              <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected(selection)}>
+              <TouchableOpacity key={selection} style={styles.iconMenu} onPress={() => setSelected(selection)}>
                 <Image source={getCalendarIconSource(selection, selected === selection ? 'active' : 'inactive')} style={{...Forms.icon}} />
                 <Text style={[styles.iconText, selected === selection ? {...Typography.focused} : {...Typography.unFocused}]}>{getIconText(selection)}</Text>
               </TouchableOpacity>
             )}
           </View> }
         
-          <View style={styles.taskListContainer}>
-            <NestedList data={feed === 'care' ? caresByFreq() : data.healths} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type={feed} />
-          </View>
+          <NestedList data={feed === 'care' ? caresByFreq() : data.healths} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type={feed} />
+          
         </> : <PlaceHolder type={feed === 'care' ? 'task' : 'vet'} navigation={navigation} /> }
       </> }
 
@@ -111,15 +110,14 @@ const HomeFeed = ({ navigation }) => {
         </Pressable>
       </Modal> 
       
-    </ScrollView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    alignItems: 'center',
-    position: 'relative',
+    ...Spacing.flexColumn,
+    ...Spacing.fullWH,
   },
   headerCon: {
     ...Spacing.flexRow,
@@ -154,6 +152,7 @@ const styles = StyleSheet.create({
   },
   taskListContainer : {
     width: '90%',
+    ...Forms.scrollContent,
   },
   detailContainer: {
     width: '100%',

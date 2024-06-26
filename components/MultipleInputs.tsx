@@ -6,7 +6,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { ActionButton } from '@components/ButtonComponent'
 //styles
 import { Spacing, Colors } from '@styles/index'
-import { styles } from '@styles/FormStyles'
+import { styles } from '@styles/stylesheets/FormStyles'
 
 type MultipleInputsProps = {
   initials?: any[]

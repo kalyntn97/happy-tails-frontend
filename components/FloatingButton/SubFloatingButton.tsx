@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { Text, View, StyleSheet, DeviceEventEmitter, useWindowDimensions, Image, ImageStyle, ViewStyle } from "react-native"
 import { State, TapGestureHandler } from "react-native-gesture-handler"
-import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated"
+import Animated, { BounceInDown, BounceInUp, BounceOutDown, FadeInUp, useAnimatedStyle, useSharedValue } from "react-native-reanimated"
 // styles
 import { ButtonStyles, Button, subBtn_tap_event } from "./constants"
 import { Spacing, Colors, Forms } from "@styles/index"
@@ -39,7 +39,7 @@ const SubFloatingButton = ({ onPress, label, index, x }) => {
 
   return (
     <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
-      <Animated.View style={[
+      <Animated.View entering={BounceInDown.delay(100 * index)} exiting={BounceOutDown.delay(100 * index)} style={[
         styles.button, 
         { backgroundColor: Colors.multi.dark[index + 1] }, 
         animatedStyles

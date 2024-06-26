@@ -4,75 +4,87 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWin
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
-import MultiselectDropdown from "@components/Dropdown/MultiselectDropdown"
-import { CheckboxButton, MainButton, SubButton, ToggleButton } from "@components/ButtonComponent"
+import { CheckboxButton, MainButton, SubButton, ToggleButton, TransparentButton } from "@components/ButtonComponent"
 import ColorPickingPanel from "@components/ColorPickingPanel"
+import PetSelectForm from "@components/PetSelectForm"
+import { ErrorMessage } from "@components/UIComponents"
 //types
 import { Pet } from "@pet/PetInterface"
 import { CARES, careKeyFromName } from "@care/careHelpers"
+import type { Care, CareFormData, CareFrequency } from "@care/CareInterface"
 
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { styles } from "@styles/FormStyles"
-import { ErrorMessage } from "@components/UIComponents"
-import PetSelectForm from "@components/PetSelectForm"
-import { Care } from "@care/CareInterface"
+import { styles } from "@styles/stylesheets/FormStyles"
+import useForm from "@hooks/useForm"
 
-interface initialStates extends Care {
+interface InitialState {
+  name: string
+  allowManualName: boolean,
+  pets: string[] | Pet[]
+  date: string
+  repeat: boolean
+  ending: boolean
+  endDate: string
+  frequency: CareFrequency
+  times: number
+  color: number
+  careId: string
+  errorMsg: string,
+}
+interface InitialValues extends Care {
   careId: string
 }
 interface CareFormProps {
-  onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, color: number, careId: string | null) => void
-  initialValues?: initialStates
+  onSubmit: (formData: CareFormData) => void
+  initialValues?: InitialValues
   navigation: any
   status: string
 }
 
 const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
   const initialPets = initialValues?.pets.map(pet => pet._id)
-  const [name, setName] = useState<string>(initialValues?.name ?? null)
-  const [petData, setPetData] = useState<string[] | Pet[]>(initialValues?.pets ?? [])
-  const [repeat, setRepeat] = useState<boolean>(initialValues?.repeat ?? false)
-  const [ending, setEnding] = useState<boolean>(initialValues ? !!initialValues.endDate : false)
-  const [date, setDate] = useState<string | null>(initialValues?.date ?? new Date().toISOString())
-  const [endDate, setEndDate] = useState<string | null>(initialValues?.endDate ?? null)
-  const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
-  const [times, setTimes] = useState<number>(initialValues?.times ?? null)
-  const [color, setColor] = useState<number>(initialValues?.color ?? 0)
-  const [errorMsg, setErrorMsg] = useState<string>('')
-  const [allowManualName, setAllowManualName] = useState<boolean>(false)
-  const careId: string | null = initialValues?.careId ?? null
+  const initialState: InitialState= {
+    name: initialValues?.name ?? null, 
+    allowManualName: false,
+    pets: initialValues?.pets ?? [],
+    repeat: initialValues?.repeat ?? false,
+    ending: initialValues ? !!initialValues.endDate : false,
+    date: initialValues?.date ?? new Date().toISOString(),
+    endDate: initialValues?.endDate ?? null,
+    frequency: initialValues?.frequency ?? null,
+    times: initialValues?.times ?? null,
+    color: initialValues?.color ?? 0,
+    careId: initialValues?.careId ?? null,
+    errorMsg: '',
+  }
+  const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
+  const { name, allowManualName, pets, repeat, ending, date, endDate, frequency, times, color, careId, errorMsg } = values
 
   const height = useWindowDimensions().height
 
   // handle input custom name for form
   const handleSelectName = (selected: string) => {
-    setName(() => {
-      if (selected === 'Others') {
-        setAllowManualName(true)
-        return ''
-      } else {
-        setAllowManualName(false)       
-        const careKey = careKeyFromName[selected]
-        return careKey
-      }
-    })
+    if (selected === 'Others') {
+      onChange('allowManualName', true)
+      onChange('name', '')
+    } else {
+      onChange('allowManualName', false)
+      const careKey = careKeyFromName[selected]
+      onChange('name', careKey)
+    }
   }
 
-  const handleSubmit = async () => {
-    if (!name || !petData.length || !date) {
-      setErrorMsg('Please enter all fields.')
+  function handleSubmit() {
+    if (!name || !pets.length || !date) {
+      onChange('errorMsg', 'Please enter all fields.')
     } else {
-      setErrorMsg('')
-      if (!repeat) {
-        setFrequency(null)
-        setTimes(null)
-        setEndDate(null)
-      }
-      if (!ending) {
-        setEndDate(null)
-      }
-      onSubmit(name, petData, repeat, ending, date, endDate, frequency, times, color, careId)
+      onChange('errorMsg', '')
+
+      if (!repeat) ['frequency', 'times', 'endDate'].map(value => onChange(value, null))
+      
+      if (!ending) onChange('endDate', null)
+      onSubmit({ name, pets, repeat, date, endDate, frequency, times, color, careId })
     }
   }
 
@@ -92,18 +104,18 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
           style={styles.input}
           placeholder="Specify name"
           placeholderTextColor={Colors.shadow.reg}
-          onChangeText={(text: string) => setName(text)}
+          onChangeText={(text: string) => onChange('name', text)}
           value={name}
           autoCapitalize="words"
         />
       }
 
       <Text style={styles.label}>Pets</Text>
-      {/* <MultiselectDropdown label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialPetNames} /> */}
-      <PetSelectForm mode="multi" onSelect={setPetData} initials={initialPets} />
+
+      <PetSelectForm mode="multi" onSelect={(selections) => onChange('pets', selections)} initials={initialPets} />
       <View style={[styles.labelCon]}>
           <Text style={styles.rowText}>Repeat</Text>
-          <ToggleButton onPress={() => setRepeat(!repeat)} initial={repeat} size='small' />
+          <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
         </View>
 
       <View style={styles.labelCon}>
@@ -111,18 +123,18 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         {repeat &&
           <View style={{ ...Spacing.flexRow }}>
             <Text style={styles.rowText}>End</Text>
-            <CheckboxButton onPress={() => setEnding(!ending)} initial={ending} />
+            <CheckboxButton onPress={() => onChange('ending', !ending)} initial={ending} />
           </View>
         }
       </View>
       <View style={styles.rowCon}>
         <View style={(!repeat || !ending) && { width: 300, alignItems: 'center' }}>
-          <RNDateTimePicker themeVariant="light" value={new Date(date)} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.pink.dark} />
+          <RNDateTimePicker themeVariant="light" value={new Date(date)} minimumDate={new Date(date)} onChange={(event, selectedDate) => { onChange('date', selectedDate) }} accentColor={Colors.pink.dark} />
         </View>
         { repeat && ending &&
           <>
             <Text style={{ marginLeft: 15 }}> - </Text>
-            <RNDateTimePicker themeVariant='light' value={new Date(endDate) ?? new Date()} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setEndDate(selectedDate) }} accentColor={Colors.pink.dark} />
+            <RNDateTimePicker themeVariant='light' value={new Date(endDate) ?? new Date()} minimumDate={new Date(date)} onChange={(event, selectedDate) => { onChange('endDate', selectedDate) }} accentColor={Colors.pink.dark} />
           </>
         }
       </View>
@@ -135,13 +147,13 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       
       {repeat &&
         <View style={styles.rowCon}>
-          <Dropdown label={'Select Frequency'} dataType="frequency" onSelect={setFrequency} initial={frequency} width={195} />
+          <Dropdown label={'Select Frequency'} dataType="frequency" onSelect={(selected) => onChange('frequency', selected)} initial={frequency} width={195} />
           
           <TextInput 
             style={[styles.input, { width: 100, textAlign: 'right' }]} 
             placeholder='Times' 
             placeholderTextColor={Colors.shadow.reg}
-            onChangeText={(text: string) => setTimes(Number(text))} 
+            onChangeText={(text: string) => onChange('times', Number(text))} 
             value={(times ?? '').toString()} 
             keyboardType="numeric"
           />
@@ -149,13 +161,15 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       }
       
       <View style={styles.bottomCon}>
-        <ColorPickingPanel onPress={setColor} initial={initialValues?.color} />
-        <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
-        <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
+        <ColorPickingPanel onPress={(selected) => onChange('color', selected)} initial={color} />
+        <View style={{ ...Spacing.flexRow, marginTop: 30 }}>
+          <MainButton onPress={() => onValidate(name, pets.length, date)} title={status === 'pending' ? 'Submitting...' : !!name ? 'Save' : 'Create'} />
+          <TransparentButton onPress={onReset} title='Clear' />
+        </View>
       </View>
 
     </ScrollView>
   )
 }
- 
+
 export default CareForm

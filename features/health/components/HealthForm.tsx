@@ -13,7 +13,7 @@ import MultipleInputs from "@components/MultipleInputs"
 import PetSelectForm from "@components/PetSelectForm"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { styles } from "@styles/FormStyles"
+import { styles } from "@styles/stylesheets/FormStyles"
 import { ErrorMessage } from "@components/UIComponents"
 import { useShallowPets } from "@hooks/sharedHooks"
 

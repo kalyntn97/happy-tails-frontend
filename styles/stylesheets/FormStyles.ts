@@ -5,7 +5,6 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 export const styles = StyleSheet.create({
   container: {
     ...Forms.form,
-    paddingBottom: 20,
   },
   header: {
     ...Typography.mediumHeader,
