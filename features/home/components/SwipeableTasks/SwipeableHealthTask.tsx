@@ -18,11 +18,11 @@ import { styles } from './styles'
 
 interface SwipeableHealthTaskProps {
   health: Health
-  onPress: any
-  pastVisit: Visit
+  onPress?: any
+  pastVisit?: Visit
   navigation: any
-  onLongPress: () => void
-  disabled: boolean
+  onLongPress?: () => void
+  disabled?: boolean
 }
 
 const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, pastVisit, navigation, onLongPress, disabled }) => {

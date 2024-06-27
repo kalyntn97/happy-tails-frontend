@@ -1,5 +1,5 @@
 //npm
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Modal, Pressable } from "react-native"
 //types & helpers
 import { Care } from "@care/CareInterface"
@@ -12,7 +12,7 @@ import { getCalendarIconSource, getNavigationIconSource } from "@utils/ui"
 import CareCard from "@care/components/CareCard"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
-import NestedList from './DraggableList'
+import DraggableList from './DraggableList'
 import HealthCard from "@health/components/HealthCard"
 import { ErrorImage } from "@components/UIComponents"
 //types & utils
@@ -35,16 +35,6 @@ const HomeFeed = ({ navigation }) => {
   
   const { date: currDateIsActive, week: currWeekIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
 
-  const caresByFreq = () => {
-    const cares = {
-      day: [...data.cares['Daily'], ...data.cares['Others']],
-      week: data.cares['Weekly'], 
-      month: data.cares['Monthly'],
-      year: data.cares['Yearly']
-    }
-    return cares[selected]
-  }
-
   const getIconText = (selection: Selection) => {
     const iconTexts = {
       day: () => (currDateIsActive && currMonthIsActive ? 'Today' : `${activeMonthName} ${activeDate + 1}`),
@@ -58,6 +48,13 @@ const HomeFeed = ({ navigation }) => {
   const handleClickTask = (item: Care | Health, type: string) => {
     setClickedTask({ item, type })
     setModalVisible(true)
+  }
+
+  const listProps = { 
+    navigation: navigation,
+    activeDateObj: activeDateObj,
+    onPressTask: handleClickTask,
+    type: feed
   }
 
   return (  
@@ -78,16 +75,20 @@ const HomeFeed = ({ navigation }) => {
 
       { isSuccess && <>
         { (feed === 'care' && Object.values(data.cares).flat().length > 0) || (feed === 'health' && data.healths.length > 0) ? <>
-          { feed === 'care' && <View style={styles.iconMenuContainer}>
-            {['day', 'week', 'month', 'year'].map((selection: Selection) =>
-              <TouchableOpacity key={selection} style={styles.iconMenu} onPress={() => setSelected(selection)}>
-                <Image source={getCalendarIconSource(selection, selected === selection ? 'active' : 'inactive')} style={{...Forms.icon}} />
-                <Text style={[styles.iconText, selected === selection ? {...Typography.focused} : {...Typography.unFocused}]}>{getIconText(selection)}</Text>
-              </TouchableOpacity>
-            )}
-          </View> }
-        
-          <NestedList data={feed === 'care' ? caresByFreq() : data.healths} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} type={feed} />
+          { feed === 'care' ? <>
+            <View style={styles.iconMenuContainer}>
+              {['day', 'week', 'month', 'year'].map((selection: Selection) =>
+                <TouchableOpacity key={selection} style={styles.iconMenu} onPress={() => setSelected(selection)}>
+                  <Image source={getCalendarIconSource(selection, selected === selection ? 'active' : 'inactive')} style={{...Forms.icon}} />
+                  <Text style={[styles.iconText, selected === selection ? {...Typography.focused} : {...Typography.unFocused}]}>{getIconText(selection)}</Text>
+                </TouchableOpacity>
+              )}
+            </View> 
+            { selected === 'day' && <DraggableList initialData={[...data.cares['Daily'], ...data.cares['Others']]} { ...listProps } /> }
+            { selected === 'week' && <DraggableList initialData={data.cares['Weekly']} { ...listProps } /> }
+            { selected === 'month' && <DraggableList initialData={data.cares['Monthly']} { ...listProps } /> }
+            { selected === 'year' && <DraggableList initialData={data.cares['Yearly']} { ...listProps } /> }
+          </> : <DraggableList initialData={data.healths} { ...listProps } /> }
           
         </> : <PlaceHolder type={feed === 'care' ? 'task' : 'vet'} navigation={navigation} /> }
       </> }

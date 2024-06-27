@@ -21,9 +21,9 @@ interface SwipeableCareTaskProps {
   care: Care
   taskIndex?: number
   navigation: any
-  onPress: any
-  onLongPress: any
-  disabled: boolean
+  onPress?: any
+  onLongPress?: any
+  disabled?: boolean
 }
 
 const SwipeableCareTask = ({ care, navigation, onPress, onLongPress, disabled }: SwipeableCareTaskProps) => {

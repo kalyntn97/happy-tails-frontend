@@ -8,11 +8,11 @@ import { getActionIconSource } from '@utils/ui'
 type Props = {
   swipeRightActions?: { [action: string]: () => void }
   swipeLeftActions?: { [action: string]: () => void }
-  onPress: () => void, 
-  onLongPress: () => void
+  onPress?: () => void, 
+  onLongPress?: () => void
   toggle?: { onToggle: () => void, initial: boolean }
   content: ReactNode
-  disabled: boolean
+  disabled?: boolean
   color: string, 
   
 }
@@ -27,7 +27,7 @@ const SwipeableItem = ({ color, content, swipeRightActions, swipeLeftActions, on
   const rightSwipeActions = () => (
     <View style={styles.squareBtnContainer}>
       { Object.keys(swipeRightActions).map(action => 
-        <IconButton type={action} size='medium' onPress={() => {
+        <IconButton key={action} type={action} size='medium' onPress={() => {
           swipeRightActions[action]
           closeSwipeable()
         } } />
@@ -48,11 +48,13 @@ const SwipeableItem = ({ color, content, swipeRightActions, swipeLeftActions, on
       >
         <View style={styles.taskContent}>{content}</View>
 
-        <TouchableOpacity style={styles.bulletBtn} onPress={toggle.onToggle}>
-          {toggle.initial ? <Image source={getActionIconSource('check')} style={styles.check} />
-            : <Text style={styles.bulletBtnText}>○</Text>
+        { toggle && 
+          <TouchableOpacity style={styles.bulletBtn} onPress={toggle.onToggle}>
+          { toggle.initial ? <Image source={getActionIconSource('check')} style={styles.check} />
+            : <Text style={styles.bulletBtnText}>○</Text> 
           }
-        </TouchableOpacity>
+          </TouchableOpacity> 
+        }
       </TouchableOpacity>
     </Swipeable>
   )
