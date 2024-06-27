@@ -28,7 +28,7 @@ const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
   const scrollX = useSharedValue(0)
   const FlatListRef = useRef<Animated.FlatList<Pet>>(null)
 
-  const onScrollHandler = useAnimatedScrollHandler((event) => {
+  const onScrollHandler = useAnimatedScrollHandler(event => {
     scrollX.value = event.contentOffset.x
   })
 

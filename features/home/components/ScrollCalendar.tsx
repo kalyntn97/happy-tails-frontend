@@ -9,6 +9,7 @@ import ScrollSelector from "@components/ScrollSelector"
 import { SubButton } from "@components/ButtonComponent"
 //styles
 import { Colors, Spacing, Typography, Forms } from "@styles/index"
+import Animated, { runOnJS, useAnimatedRef, useAnimatedScrollHandler, useDerivedValue, useSharedValue } from "react-native-reanimated"
 
 type Style = ViewStyle | TextStyle
 
@@ -34,6 +35,21 @@ const ScrollCalendar = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const scrollViewRef = useRef(null)
+  const scrollX = useSharedValue(0)
+  const onScrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollX.value = event.contentOffset.x
+    },
+    onMomentumBegin: (event) => {
+      if (scrollX.value < 0 || scrollX.value > event.contentSize.width - event.layoutMeasurement.width) runOnJS(setModalVisible)(true)
+    }
+  })
+
+  const scrollToPos = (index: number) => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToIndex({ index: index, viewPosition: 0 })
+    }
+  }
 
   const {date: activeDate, month: activeMonth, year: activeYear } = useActiveDate()
   const { date: currDateIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
@@ -101,22 +117,16 @@ const ScrollCalendar = () => {
     { key: 'year', data: years, onSelect: setSelectedYear, initial: years.findIndex(e => e === currYear) },
   ]
 
-  const scrollToPos = (index: number) => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollToIndex({ index: index, viewPosition: 0 })
-    }
-  }
-
   return (
     <View style={styles.container}>
-      <Text style={[styles.middle, { top: NAV_TOP }]}>{activeMonthName}</Text>
+      <Text style={[styles.middle, { top: NAV_TOP }]}>{activeMonthName.slice(0, 3)} {activeDate}, {activeYear}</Text>
       <View style={[styles.navCon, { marginBottom: NAV_TOP }]}>
         {nav.map(n =>
           <NavButtons key={n.title} title={n.title} condition={n.condition} onPress={n.onPress} position={n.position} />
         )}
       </View>
 
-      <FlatList
+      <Animated.FlatList
         ref={scrollViewRef}
         horizontal
         data={month}
@@ -124,6 +134,7 @@ const ScrollCalendar = () => {
           {length: 50, offset: 58 * index, index}
         )}
         renderItem={({ item, index }) => item}
+        onScroll={onScrollHandler}
         initialScrollIndex={currDate - 1}
         snapToAlignment="start"
         snapToInterval={VISIBLE_WIDTH}
