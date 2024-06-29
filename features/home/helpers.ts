@@ -1,7 +1,9 @@
-import { Care } from "@care/CareInterface"
+import { Care, Tracker } from "@care/CareInterface"
 import { Health, Visit } from "@health/HealthInterface"
+import { ProfileData } from "@profile/ProfileInterface"
 import { compareDates, getDateConstructor, getStartDate } from "@utils/datetime"
 import { Dimensions } from "react-native"
+import { produce } from "immer"
 
 export const shouldRenderCareTask = (item: Care, selectedDate: Date) => {
   const { date: date, endDate, repeat } = item
@@ -28,3 +30,11 @@ export const shouldRenderHealthTask = (item: Health, selectedDate: Date, healthI
 export const windowWidth = Dimensions.get('window').width
 export const windowHeight = Dimensions.get('window').height
 export const centerHeight = windowHeight - 191 - windowHeight * 0.11
+
+export const updateTrackerData = (oldData: ProfileData, data: Tracker, careId: string, trackerId: string, frequency: string) => {
+  return produce(oldData, draft => {
+    const careCard = draft.cares[frequency].find(c => c._id === careId)
+    const trackerIndex = careCard.trackers.findIndex(t => t._id === trackerId)
+    careCard.trackers[trackerIndex] = data
+  })
+}

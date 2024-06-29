@@ -10,7 +10,6 @@ export const useGetProfile = (isEnabled?: boolean) => {
   return useQuery({
     queryKey: [...profileKeyFactory.profile],
     queryFn: profileService.getProfile,
-    enabled: isEnabled,
   })
 }
 

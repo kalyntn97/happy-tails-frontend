@@ -2,8 +2,9 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { View, TouchableOpacity, Text, StyleSheet, Image, Alert } from 'react-native'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
+import {produce} from "immer"
 //types & helpers
-import { Care } from '@care/CareInterface'
+import { Care, Tracker } from '@care/CareInterface'
 import * as careHelpers from '@care/careHelpers'
 //queries & hooks
 import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
@@ -16,6 +17,10 @@ import PetList from '@components/PetInfo/PetList'
 //styles
 import Colors from '@styles/colors'
 import { styles } from './styles'
+import { useQueryClient } from '@tanstack/react-query'
+import { profileKeyFactory } from '@profile/profileQueries'
+import { ProfileData } from '@profile/ProfileInterface'
+import { updateTrackerData } from '@home/helpers'
 
 interface SwipeableCareTaskProps {
   care: Care
@@ -31,7 +36,7 @@ const SwipeableCareTask = ({ care, navigation, onPress, onLongPress, disabled }:
   const checkAllDoneMutation = useCheckAllDoneCare()
   const uncheckAllDoneMutation = useUncheckAllDoneCare()
   const { showDeleteConfirmDialog, handleDeleteCareCard } = useDeleteCareCard(navigation)
-  
+
   let trackerIndex: number, index: number, done: number
   const times = care.repeat ? care.times : 1
   //get the active trackerIndex or default to latest tracker
@@ -50,21 +55,19 @@ const SwipeableCareTask = ({ care, navigation, onPress, onLongPress, disabled }:
   const careId = care._id
   const trackerId = care.trackers[trackerIndex]._id
   
+  const queryClient = useQueryClient()
+  
   const toggleAllDone = async () => {
     done === times
       ? uncheckAllDoneMutation.mutate({ careId, trackerId, index }, {
-        // onSuccess: () => {
-        // },
-        onError: (error) => {
-          return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-        }
+        onSuccess: (data: Tracker) => {
+          queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => updateTrackerData(oldData, data, careId, trackerId, care.frequency))
+        },
       })
       : checkAllDoneMutation.mutate({ careId, trackerId, index }, {
-        // onSuccess: () => {
-        // },
-        onError: (error) => {
-          return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-        }
+        onSuccess: (data: Tracker) => {
+          queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => updateTrackerData(oldData, data, careId, trackerId, care.frequency))
+        },
       })
   }
 

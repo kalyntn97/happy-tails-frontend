@@ -54,6 +54,7 @@ const DraggableList= ({ initialData, type, navigation, activeDateObj, onPressTas
   }
 
   useEffect(() => {
+    setData(initialData)
     const checkCount = () => {
       let careCounter = 0
       let healthCounter = 0
@@ -64,13 +65,13 @@ const DraggableList= ({ initialData, type, navigation, activeDateObj, onPressTas
       setCounts({ care: careCounter, health: healthCounter })
     }
     checkCount()
-  }, [activeDateObj])
+  }, [activeDateObj, initialData])
 
   return (
     <View style={styles.list}>
       { type === 'health' && <Text style={styles.header}>Due in {healthInterval} days:</Text> }
       { counts[type] === 0 ? <EmptyList type='task' /> : 
-        <DraggableFlatList 
+        <DraggableFlatList
           data={data}
           onDragEnd={({ data }) => setData(data)}
           keyExtractor={item => item._id}

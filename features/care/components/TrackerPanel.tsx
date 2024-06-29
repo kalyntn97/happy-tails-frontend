@@ -13,6 +13,10 @@ import { getMonth } from "@utils/datetime"
 import { Spacing, Typography, Colors, Forms } from '@styles/index'
 import { useCheckDoneCare,  useUncheckDoneCare } from "@care/careQueries"
 import { AlertForm, getActionIconSource } from "@utils/ui"
+import { useQueryClient } from "@tanstack/react-query"
+import { profileKeyFactory } from "@profile/profileQueries"
+import { ProfileData } from "@profile/ProfileInterface"
+import { updateTrackerData } from "@home/helpers"
 
 interface CurrentTrackerProps {
   care: Care
@@ -40,24 +44,22 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   //set displaying tracker
   const [tracker, setTracker] = useState<Tracker>(care.trackers[trackerIndex])
 
+  const queryClient = useQueryClient()
+
   const checkDone = (careId: string, trackerId: string, index: number) => {
     checkDoneMutation.mutate({ careId, trackerId, index }, {
-      onSuccess: (data) => {
+      onSuccess: (data: Tracker) => {
+        queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => updateTrackerData(oldData, data, careId, trackerId, care.frequency))
         setTracker(data)
-      },
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
       },
     })
   }
 
   const uncheckDone = async (careId: string, trackerId: string, index: number) => {
     uncheckDoneMutation.mutate({ careId, trackerId, index }, {
-      onSuccess: (data) => {
+      onSuccess: (data: Tracker) => {
+        queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => updateTrackerData(oldData, data, careId, trackerId, care.frequency))
         setTracker(data)
-      },
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
       },
     })
   }

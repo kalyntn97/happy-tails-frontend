@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
   },
   bottomCon: {
     ...Spacing.flexColumn,
-    marginTop: 'auto',
+    marginTop: 30,
   },
   labelCon: {
     ...Spacing.flexRow,

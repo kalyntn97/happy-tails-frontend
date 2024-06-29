@@ -5,7 +5,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Modal, Pre
 import { Care } from "@care/CareInterface"
 import { Health } from "@health/HealthInterface"
 //store & queries
-import { useGetProfile } from "@profile/profileQueries"
+import { profileKeyFactory, useGetProfile } from "@profile/profileQueries"
 import { useActiveDate, useCurrentIsActive } from "@store/store"
 import { getCalendarIconSource, getNavigationIconSource } from "@utils/ui"
 //components
@@ -20,6 +20,10 @@ import { ClickedTask, Feed, Selection } from "@home/HomeInterface"
 import { getMonth } from "@utils/datetime"
 //styles
 import { Spacing, Forms, Colors, Typography } from '@styles/index'
+import Animated, { ZoomIn, ZoomInDown, ZoomInUp, ZoomOut, ZoomOutDown, ZoomOutUp } from "react-native-reanimated"
+import { QueryClient, useQueryClient } from "@tanstack/react-query"
+import { ProfileData } from "@profile/ProfileInterface"
+import { getProfile } from "@profile/profileService"
 
 const HomeFeed = ({ navigation }) => {
   const [feed, setFeed] = useState<Feed>('care')
@@ -94,20 +98,20 @@ const HomeFeed = ({ navigation }) => {
       </> }
 
       <Modal
-        animationType="slide"
+        animationType="fade"
         visible={modalVisible}
         onRequestClose={() => setModalVisible(!modalVisible)}
         onDismiss={() => setClickedTask(null)}
         transparent={true}
       >
         <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...Forms.modal }}> 
-          <View style={styles.detailContainer}>
+          <Animated.View entering={ZoomIn} exiting={ZoomOut} style={styles.detailContainer}>
             {clickedTask && <>
               { clickedTask.type === 'care' ? <CareCard care={clickedTask.item as Care} navigation={navigation} onNavigate={() => setModalVisible(false)} />
               : clickedTask.type === 'health' ? <HealthCard health={clickedTask.item as Health} navigation={navigation} onNavigate={() => setModalVisible(false)} activeDateObj = {activeDateObj} />
               : null }
             </> }
-          </View>
+          </Animated.View>
         </Pressable>
       </Modal> 
       
@@ -117,8 +121,8 @@ const HomeFeed = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.flexColumn,
     ...Spacing.fullWH,
+    ...Spacing.flexColumn,
   },
   headerCon: {
     ...Spacing.flexRow,

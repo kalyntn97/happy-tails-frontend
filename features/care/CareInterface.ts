@@ -15,17 +15,21 @@ export interface Tracker {
   left: number
 }
 
-export interface Care {
+export interface InitialCare {
   _id: string
   name: string
-  medication: { name: string, amount?: string } | null
+  medication: { name: string, amount: string } | null
   pets: Pet[]
   repeat: boolean
   date: string
+  ending?: boolean
   endDate: string | null
   frequency: CareFrequency | null
   times: number | null
   color: number
+}
+
+export interface Care extends InitialCare {
   trackers: Tracker[]
 }
 

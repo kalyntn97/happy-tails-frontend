@@ -9,9 +9,9 @@ import ColorPickingPanel from "@components/ColorPickingPanel"
 import PetSelectForm from "@components/PetSelectForm"
 import { ErrorMessage } from "@components/UIComponents"
 //types
-import { Pet } from "@pet/PetInterface"
+import { Pet, PetBasic } from "@pet/PetInterface"
 import { CARES, careKeyFromName } from "@care/careHelpers"
-import type { Care, CareFormData, CareFrequency } from "@care/CareInterface"
+import type { Care, CareFormData, CareFrequency, InitialCare } from "@care/CareInterface"
 
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
@@ -32,21 +32,18 @@ interface InitialState {
   careId: string
   errorMsg: string,
 }
-interface InitialValues extends Care {
-  careId: string
-}
+
 interface CareFormProps {
   onSubmit: (formData: CareFormData) => void
-  initialValues?: InitialValues
+  initialValues?: InitialCare
   navigation: any
   status: string
 }
 
 const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
-  const initialPets = initialValues?.pets.map(pet => pet._id)
   const initialState: InitialState= {
     name: initialValues?.name ?? null, 
-    allowManualName: false,
+    allowManualName: initialValues ? !CARES[initialValues?.name] : false,
     pets: initialValues?.pets ?? [],
     repeat: initialValues?.repeat ?? false,
     ending: initialValues ? !!initialValues.endDate : false,
@@ -55,12 +52,11 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
     frequency: initialValues?.frequency ?? null,
     times: initialValues?.times ?? null,
     color: initialValues?.color ?? 0,
-    careId: initialValues?.careId ?? null,
+    careId: initialValues?._id ?? null,
     errorMsg: '',
   }
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
   const { name, allowManualName, pets, repeat, ending, date, endDate, frequency, times, color, careId, errorMsg } = values
-
   const height = useWindowDimensions().height
 
   // handle input custom name for form
@@ -95,10 +91,8 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       showsVerticalScrollIndicator={false}
       alwaysBounceVertical={false}
     >
-      {errorMsg && <ErrorMessage error={errorMsg} />}
-
       <Text style={styles.label}>Name</Text>
-      <Dropdown label={'Select Name'} dataType="care" onSelect={handleSelectName} initial={CARES[name]} />
+      <Dropdown label={'Select Name'} dataType="care" onSelect={handleSelectName} initial={initialValues ? (CARES[name] ?? 'Others') : CARES[name]} />
       {allowManualName && 
         <TextInput 
           style={styles.input}
@@ -109,10 +103,11 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
           autoCapitalize="words"
         />
       }
-
+ 
       <Text style={styles.label}>Pets</Text>
 
-      <PetSelectForm mode="multi" onSelect={(selections) => onChange('pets', selections)} initials={initialPets} />
+      <PetSelectForm mode="multi" onSelect={(selections) => onChange('pets', selections)} initials={pets?.map((pet: PetBasic) => pet._id ?? pet)} />
+
       <View style={[styles.labelCon]}>
           <Text style={styles.rowText}>Repeat</Text>
           <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
@@ -159,10 +154,11 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
           />
         </View>
       }
-      
+      <ColorPickingPanel onPress={(selected) => onChange('color', selected)} initial={color} />
+
       <View style={styles.bottomCon}>
-        <ColorPickingPanel onPress={(selected) => onChange('color', selected)} initial={color} />
-        <View style={{ ...Spacing.flexRow, marginTop: 30 }}>
+        {errorMsg && <ErrorMessage error={errorMsg} />}
+        <View style={{ ...Spacing.flexRow }}>
           <MainButton onPress={() => onValidate(name, pets.length, date)} title={status === 'pending' ? 'Submitting...' : !!name ? 'Save' : 'Create'} />
           <TransparentButton onPress={onReset} title='Clear' />
         </View>

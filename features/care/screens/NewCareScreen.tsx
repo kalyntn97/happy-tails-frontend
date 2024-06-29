@@ -25,17 +25,10 @@ const NewCareScreen = ({ navigation }) => {
   }, [navigation, isFocused])
 
   return (
-    <View style={styles.container}>
+    <View style={{ ...Spacing.fullScreenDown }}>
       <CareForm onSubmit={handleSubmit} navigation={navigation} status={addCareMutation.status} />
     </View>  
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-    ...Spacing.centered
-  }
-})
 
 export default NewCareScreen

@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PetInfo from './PetInfo/PetInfo'
 import { Spacing } from '@styles/index'
 import { PetBasic } from '@pet/PetInterface'
@@ -29,6 +29,10 @@ const PetSelectForm = ({ mode, onSelect, initials }: Props) => {
       })
     }
   }
+  
+  useEffect(() => {
+    setSelected(initials)
+  }, [initials])
 
   return (
     <View style={styles.container}>

@@ -65,7 +65,7 @@ export const getTaskStatus = (task: Care, trackerIndex: number, taskIndex: numbe
   switch (task.frequency) {
     case 'Daily': 
       return task.trackers[trackerIndex].done[taskIndex].value
-    case 'Weekly': 
+    case 'Weekly':
       return task.trackers[trackerIndex].done[taskIndex].value
     case 'Monthly':
       return task.trackers[trackerIndex].done[taskIndex].value

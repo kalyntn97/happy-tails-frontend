@@ -28,7 +28,7 @@ const SwipeableItem = ({ color, content, swipeRightActions, swipeLeftActions, on
     <View style={styles.squareBtnContainer}>
       { Object.keys(swipeRightActions).map(action => 
         <IconButton key={action} type={action} size='medium' onPress={() => {
-          swipeRightActions[action]
+          swipeRightActions[action]()
           closeSwipeable()
         } } />
       )}
