@@ -1,8 +1,11 @@
 import { ViewStyle } from "react-native"
 
-export const basePadding = 10
-
 export const baseMargin = 10
+
+export const basePadding: ViewStyle = {
+  paddingVertical: 15,
+  paddingHorizontal: 20,
+}
 
 export const centered: ViewStyle = {
   justifyContent: 'center',
@@ -37,4 +40,15 @@ export const fullScreenAcross: ViewStyle = {
 export const fullScreenCentered: ViewStyle = {
   ...fullWH,
   ...centered,
+}
+
+export const scrollScreenDown: ViewStyle = {
+  ...flexColumn,
+  width: '100%',
+  paddingBottom: 60,
+}
+
+export const scrollContent: ViewStyle = {
+  ...flexColumn,
+  paddingBottom: 20,
 }

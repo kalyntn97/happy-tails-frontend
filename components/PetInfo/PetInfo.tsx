@@ -22,7 +22,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
   return ( 
     <View style={[styles.container, 
       size === 'mini' ? { width: 40, height: 40 } 
-      : size === 'small' ? { width: 60, height: 100 } 
+      : size === 'small' ? { width: 60, height: 85 } 
       : size === 'compact' ? { width: 90, height: 120 }
       : { ...Spacing.flexRow, height: 120 }
     ]}>
@@ -56,7 +56,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
  
 const styles = StyleSheet.create({
   container: {
-    
+    // ...Spacing.centered,
   },
   shortName: {
     ...Typography.xSmallHeader,

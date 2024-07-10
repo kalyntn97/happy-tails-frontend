@@ -39,7 +39,7 @@ const SubFloatingButton = ({ onPress, label, index, x }) => {
 
   return (
     <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
-      <Animated.View entering={BounceInDown.delay(100 * index)} exiting={BounceOutDown.delay(100 * index)} style={[
+      <Animated.View entering={BounceInDown.delay(100 * index)} style={[
         styles.button, 
         { backgroundColor: Colors.multi.dark[index + 1] }, 
         animatedStyles

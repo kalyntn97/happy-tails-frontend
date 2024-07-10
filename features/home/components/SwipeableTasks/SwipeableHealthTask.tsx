@@ -72,6 +72,7 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, pa
   return (
     <SwipeableItem 
       color={Colors.multi.light[petColor ?? health.pet.color]}
+      title={health.name}
       content={<HealthContent />}
       swipeRightActions={actions}
       onPress={onPress}

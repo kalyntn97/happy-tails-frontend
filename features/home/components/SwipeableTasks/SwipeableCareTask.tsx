@@ -1,26 +1,24 @@
 //npm
 import { FC, useEffect, useRef, useState } from 'react'
 import { View, TouchableOpacity, Text, StyleSheet, Image, Alert } from 'react-native'
-import Swipeable from 'react-native-gesture-handler/Swipeable'
-import {produce} from "immer"
+import { useQueryClient } from '@tanstack/react-query'
+import * as Progress from 'react-native-progress'
 //types & helpers
 import { Care, Tracker } from '@care/CareInterface'
+import { updateTrackerData } from '@home/helpers'
 import * as careHelpers from '@care/careHelpers'
+import { profileKeyFactory } from '@profile/profileQueries'
+import { ProfileData } from '@profile/ProfileInterface'
 //queries & hooks
 import { useCheckAllDoneCare, useUncheckAllDoneCare } from '@care/careQueries'
 import { useDeleteCareCard } from '@hooks/sharedHooks'
 //components
 import SwipeableItem from '@components/SwipeableItem'
 import { useActiveDate } from '@store/store'
-import { AlertForm } from '@utils/ui'
 import PetList from '@components/PetInfo/PetList'
 //styles
 import Colors from '@styles/colors'
 import { styles } from './styles'
-import { useQueryClient } from '@tanstack/react-query'
-import { profileKeyFactory } from '@profile/profileQueries'
-import { ProfileData } from '@profile/ProfileInterface'
-import { updateTrackerData } from '@home/helpers'
 
 interface SwipeableCareTaskProps {
   care: Care
@@ -96,6 +94,7 @@ const SwipeableCareTask = ({ care, navigation, onPress, onLongPress, disabled }:
   return (
     <SwipeableItem
       color={Colors.multi.light[care.color]}
+      title={care.name}
       content={<CareContent />}
       swipeRightActions={care.repeat ? actions : filteredActions}
       onPress={onPress}

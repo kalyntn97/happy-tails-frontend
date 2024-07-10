@@ -14,7 +14,7 @@ const App: React.FC = () => {
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
       onError: (error) =>
-        showToast({ text1: 'Something went wrong.', text2: `${error}`, style: 'error' })
+        showToast({ text1: 'Something went wrong.', style: 'error' })
     }),
   })
 

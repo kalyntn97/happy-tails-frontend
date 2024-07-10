@@ -4,6 +4,7 @@ import { Care, CareFormData, Tracker, TrackerFormData } from "./CareInterface"
 import { alertError, alertSuccess, showToast } from "@utils/misc"
 import { profileKeyFactory } from "@profile/profileQueries"
 import { ProfileData } from "@profile/ProfileInterface"
+import { useAllCares } from "@hooks/sharedHooks"
 
 export const careKeyFactory = {
   cares: ['all-cares'],
@@ -11,16 +12,25 @@ export const careKeyFactory = {
 }
 
 export const useGetAllCares = () => {
+  const queryClient = useQueryClient()
+  const caresCache = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
+
   return useQuery({
     queryKey: [...careKeyFactory.cares],
     queryFn: careService.getAllCares,
+    enabled: !caresCache,
   })
 }
 
-export const useGetCareById = (careId: string) => {
+export const useGetCareById = (careId: string, initialCare?: Care) => {
+  const queryClient = useQueryClient()
+  const careCache = queryClient.getQueryData(careKeyFactory.careById(initialCare._id))
+
   return useQuery({
     queryKey: [...careKeyFactory.careById(careId)],
-    queryFn: () => careService.getCare(careId)
+    queryFn: () => careService.getCare(careId),
+    initialData: initialCare,
+    enabled: !careCache,
   })
 }
 

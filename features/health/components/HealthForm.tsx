@@ -10,7 +10,7 @@ import { useShallowPetBasics } from "@store/storeUtils"
 import Dropdown from "@components/Dropdown/Dropdown"
 import { CheckboxButton, MainButton, SubButton } from "@components/ButtonComponent"
 import MultipleInputs from "@components/MultipleInputs"
-import PetSelectForm from "@components/PetSelectForm"
+import PetPicker from "@components/PetPicker"
 //styles
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
@@ -94,7 +94,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
 
       <Text style={styles.label}>Pet</Text>
       {/* <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} width={300} /> */}
-      <PetSelectForm onSelect={handleSelectPet} initials={[pet]} />
+      <PetPicker onSelect={handleSelectPet} initials={[pet]} />
       <View style={styles.labelCon}>
         <Text>Name</Text>
         <Text>Type</Text>
@@ -122,7 +122,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
 
       <View style={styles.labelCon}>
         <Text>Next visit due in</Text>
-        <View style={{ ...Spacing.flexRow }}>
+        <View style={Spacing.flexRow}>
           <Text>Enter manually</Text>
           <CheckboxButton initial={allowManualDueDate} onPress={() => setAllowManualDueDate(!allowManualDueDate)} />
         </View>

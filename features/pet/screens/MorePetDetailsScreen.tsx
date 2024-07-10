@@ -73,7 +73,7 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
 
   const Item = ({ item, type }: { item: any, type: DetailType }) => (
     <View style={styles.itemCon}>
-      <View style={{ ...Spacing.flexRow }}>
+      <View style={Spacing.flexRow}>
         <Image source={getPetIconSource(item.type) || getPetIconSource(type)} style={{ ...Forms.smallIcon }} />
         <Text style={styles.itemHeader}>
           {item.name}

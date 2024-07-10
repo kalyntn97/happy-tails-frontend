@@ -7,12 +7,15 @@ import SubFloatingButton from "./SubFloatingButton"
 // styles & constants
 import { Button, ButtonStyles, Animation, ChildrenAnimation } from "./constants"
 import { transform } from "typescript"
+import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
+import { centerHeight, windowHeight } from "@home/helpers"
+
+const snapThreshold = ButtonStyles.width + ButtonStyles.margin * 2
 
 const FloatingButton = ({ navigation }) => {
   const [opened, setOpened] = useState(false)
 
   const { width, height } = useWindowDimensions()
-  const snapThreshold = ButtonStyles.width + ButtonStyles.margin * 2
 
   const subBtn_tap_event = 'subBtn_tap_event'
 
@@ -117,7 +120,7 @@ const FloatingButton = ({ navigation }) => {
         </TouchableWithoutFeedback> 
       }
       <GestureDetector gesture={Gesture.Simultaneous(pan, tap)}>
-        <Animated.View style={[styles.buttonContainer, { bottom: 20 }, animatedRootStyles]}>
+        <Animated.View style={[styles.buttonContainer, animatedRootStyles]}>
           
           {opened &&
             <Animated.View style={[styles.children, animatedChildrenStyles]}>
@@ -139,6 +142,7 @@ const FloatingButton = ({ navigation }) => {
 const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
+    bottom: ButtonStyles.margin,
     right: ButtonStyles.margin,
   },
   button: {

@@ -1,11 +1,28 @@
-import { Pet } from "@pet/PetInterface"
+import { Pet, PetBasic } from "@pet/PetInterface"
 
-export type CareFrequency = 'Daily' | 'Weekly' | 'Monthly' | 'Yearly' | 'Others'
+export type CareFrequency = {
+  type: 'days' | 'weeks' | 'months' | 'years'
+  interval: number
+  timesPerInterval: any[]
+}
 
 type Done = {
   value: number
   notes: string
 } 
+export interface CareFormData {
+  name: string
+  pets: string[] | PetBasic[]
+  repeat: boolean
+  startDate: string | Date
+  endDate: string | null
+  frequency: CareFrequency | null
+  color: number
+  icon?: string
+}
+export interface Care extends CareFormData {
+  _id: string
+}
 export interface Tracker {
   _id: string
   name: string
@@ -13,36 +30,6 @@ export interface Tracker {
   done: Done[]
   skipped: number
   left: number
-}
-
-export interface InitialCare {
-  _id: string
-  name: string
-  medication: { name: string, amount: string } | null
-  pets: Pet[]
-  repeat: boolean
-  date: string
-  ending?: boolean
-  endDate: string | null
-  frequency: CareFrequency | null
-  times: number | null
-  color: number
-}
-
-export interface Care extends InitialCare {
-  trackers: Tracker[]
-}
-
-export interface CareFormData {
-  name: string
-  pets: string[] | Pet[]
-  repeat: boolean
-  date: Date
-  endDate: Date | null
-  frequency: string | null
-  times: number | null
-  color: number
-  careId?: string
 }
 
 export interface TrackerFormData {

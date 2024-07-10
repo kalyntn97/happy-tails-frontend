@@ -27,7 +27,7 @@ export const useGetPetById = (petId: string, isEnabled: boolean) => {
   return useQuery({
     queryKey: [...petKeyFactory.petById(petId)],
     queryFn: () => petService.getPetById(petId),
-    initialData: queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).pets.find((pet: Pet) => pet._id === petId),
+    initialData: () => queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).pets.find((pet: Pet) => pet._id === petId),
     enabled: isEnabled,
   })
 } 

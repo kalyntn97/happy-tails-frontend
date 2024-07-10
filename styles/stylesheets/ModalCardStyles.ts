@@ -4,28 +4,29 @@ import { Spacing, Forms, Typography } from '@styles/index'
 
 export const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
     ...Forms.cardWithShadow,
     width: '90%',
-    height: 400,
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    paddingBottom: 20,
+    paddingHorizontal: 10,
   },
   header: {
     ...Spacing.flexRow,
-    margin: 0,
-    padding: 0,
     justifyContent: 'flex-start',
     width: '100%',
   },
   subHeader: {
     ...Spacing.flexRow,
     width: '100%',
-    height: 80,
     justifyContent: 'space-between',
+    height: 80,
   },
   title: {
     ...Typography.smallHeader,
     marginVertical: 0,
+    marginHorizontal: 10,
+    width: '70%',
+    textAlign: 'left',
   },
   freq: {
     ...Typography.smallSubBody,

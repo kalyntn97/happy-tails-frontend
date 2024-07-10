@@ -1,6 +1,6 @@
 //npm modules
 import { useRef } from "react"
-import { View, Text, Pressable, TouchableOpacity, StyleSheet, ScrollView, Image, ImageStyle, SafeAreaView, StatusBar, Alert, Dimensions } from "react-native"
+import { View, Text, Pressable, TouchableOpacity, StyleSheet, ScrollView, Image, ImageStyle, SafeAreaView, StatusBar, Alert, Dimensions, useWindowDimensions } from "react-native"
 import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from "@auth/AuthContext"
@@ -19,6 +19,8 @@ const HomeScreen = ({ navigation }: HomeTabScreenProps) => {
   const { authState } = useAuth()
 
   const scrollViewRef = useRef<ScrollView>(null)
+
+  const { width, height } = useWindowDimensions()
   
   const scrollToNext = (pageNum: number) => {
     if (scrollViewRef.current) {
@@ -30,16 +32,14 @@ const HomeScreen = ({ navigation }: HomeTabScreenProps) => {
     <View>
       <StatusBar barStyle="dark-content" />
       { authState.authenticated ? 
-        <View style={styles.screen}>
+        <View style={[styles.screen, { height: centerHeight }]}>
           <ScrollCalendar />
-
-          <View style={[styles.body, { height: centerHeight }]}>
+          <View style={styles.body}>
             <HomeFeed navigation={navigation} />
           </View>
           
           <FloatingButton navigation={navigation} />
         </View>
-        
       : <ScrollView
           ref={scrollViewRef}
           pagingEnabled
@@ -47,9 +47,9 @@ const HomeScreen = ({ navigation }: HomeTabScreenProps) => {
           scrollEventThrottle={200}
           decelerationRate="fast"
         >
-          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.white }]}>
+          <View style={[styles.screen, { minHeight: windowHeight, backgroundColor: Colors.white }]}>
             <LottieView source={require('@assets/animations/happy.json')} autoPlay loop style={styles.homeAnimation} />
-            <View style={styles.headers}>
+            <View style={styles.header}>
                 <Text style={styles.mainHeader}>
                   <Text style={{ color: Colors.blue.reg }}>Care.</Text>{'\n'}
                   <Text style={{ color: Colors.green.reg }}>Connection.</Text>{'\n'}
@@ -61,20 +61,6 @@ const HomeScreen = ({ navigation }: HomeTabScreenProps) => {
             <SubButton title="Already have an account? Login here" size='small' color={Colors.shadow.darkest} onPress={() => navigation.navigate('Login')} />
             
             <TouchableOpacity style={styles.link} onPress={() => scrollToNext(1)}>
-              <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
-            </TouchableOpacity>
-          </View>
-
-          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.pink.light }]}>
-            <TouchableOpacity style={styles.link} onPress={() => scrollToNext(2)}>
-              <MainButton title='Continue' size='small' onPress={() => scrollToNext(2)} />
-              <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
-            </TouchableOpacity>
-          </View>
-
-          <View style={[styles.screen, { height: windowHeight, backgroundColor: Colors.yellow.light }]}>
-            <TouchableOpacity style={styles.link} onPress={() => scrollToNext(0)}>
-              <MainButton title='Continue' size='small' bgColor={Colors.yellow.dark} />
               <LottieView source={require('@assets/animations/downArrow.json')} autoPlay loop style={styles.icon}/>
             </TouchableOpacity>
           </View>
@@ -92,6 +78,7 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
+    paddingHorizontal: 20,
     justifyContent: 'flex-end',
   },
   body: {
@@ -102,7 +89,7 @@ const styles = StyleSheet.create({
   },
   headers:{
     width: '80%',
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
   mainHeader: {
     fontSize: 45,

@@ -57,7 +57,7 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
         <View style={{ width: 80, height: 100 }}>
           <PetInfo pet={health.pet} size='small' />
         </View>
-        <View style={{ ...Spacing.flexRow }}>
+        <View style={Spacing.flexRow}>
           <Image source={getActionIconSource('repeat')} style={{ ...Forms.smallIcon }} />
           <Text style={styles.freq}>Every {health.times} {health.frequency}</Text>
         </View>

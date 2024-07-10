@@ -57,9 +57,9 @@ export const useDeleteHealthCard = (navigation: any) => {
 export const useShallowPets = () => {
   const queryClient = useQueryClient()
 
-  const pets = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).pets
+  const pets = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile)?.pets
 
-  const PET_BASICS = pets.map(pet => ({ _id: pet._id, name: pet.name, photo: pet.photo, species: pet.species, color: pet.color }))
+  const PET_BASICS = pets?.map(pet => ({ _id: pet._id, name: pet.name, photo: pet.photo, species: pet.species, color: pet.color }))
   const PET_NAMES = PET_BASICS.map(pet => pet.name)
   const PET_IDS = PET_BASICS.map(pet => pet._id)
 
@@ -104,7 +104,7 @@ export const useCaresByPet = (petId: string): Care[] => {
   return caresByPet()
 }
 
-export const useCaresByFrequency = (frequency: string) => {
+export const useCaresByFrequency = (frequency: string): Care[] => {
   const queryClient = useQueryClient()
   const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
   
@@ -112,7 +112,18 @@ export const useCaresByFrequency = (frequency: string) => {
     return cares[frequency] ?? []
   }
 
-  return caresByFrequency
+  return caresByFrequency()
+}
+
+export const useAllCares = (): Care[] => {
+  const queryClient = useQueryClient()
+  const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
+  
+  const allCares = () => {
+    return Object.values(cares).flat()
+  }
+
+  return allCares()
 }
 
 export const useHealthDueByPet = (petId: string): { minDays: number, healthId: string } => {

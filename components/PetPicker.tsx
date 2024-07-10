@@ -1,9 +1,10 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import PetInfo from './PetInfo/PetInfo'
-import { Spacing } from '@styles/index'
+import { Colors, Spacing } from '@styles/index'
 import { PetBasic } from '@pet/PetInterface'
 import { useShallowPets } from '@hooks/sharedHooks'
+import { Buttons } from '@styles/index'
 
 type Props = {
   mode?: 'multi',
@@ -11,9 +12,10 @@ type Props = {
   initials: string[]
 }
 
-const PetSelectForm = ({ mode, onSelect, initials }: Props) => {
+const PetPicker = ({ mode, onSelect, initials }: Props) => {
   const { PET_BASICS } = useShallowPets()
-  const [selected, setSelected] = useState<string[]>(initials ?? [])
+  const initialSelections = initials.length > 0 ? initials : [PET_BASICS[0]._id]
+  const [selected, setSelected] = useState<string[]>(initialSelections)
 
   const handleSelect = (petId: string) => {
     if (mode === 'multi') {
@@ -31,7 +33,7 @@ const PetSelectForm = ({ mode, onSelect, initials }: Props) => {
   }
   
   useEffect(() => {
-    setSelected(initials)
+    setSelected(initialSelections)
   }, [initials])
 
   return (
@@ -45,7 +47,7 @@ const PetSelectForm = ({ mode, onSelect, initials }: Props) => {
   )
 }
 
-export default PetSelectForm
+export default PetPicker
 
 const styles = StyleSheet.create({
   container: {
@@ -54,8 +56,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   petBtn: {
-    width: 80,
-    height: 100,
+    width: 100,
+    height: 110,
+    borderWidth: 1,
+    borderRadius: 8,
+    ...Spacing.centered,
+    borderColor: Colors.shadow.dark,
   },
   selected: {
     opacity: 1

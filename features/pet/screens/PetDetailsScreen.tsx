@@ -127,7 +127,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
     { key: 'search' },
     { key: 'edit', onPress: () => navigation.navigate('Edit', { pet: pet }) },
     { key: 'add', onPress:() => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
-  ]
+  ] 
 
   useEffect(() => {
     if (!modalVisible) {
@@ -139,12 +139,12 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   }, [modalVisible, info, logs]);
 
   return (    
-    <View style={pet?.color && { backgroundColor: Colors.multi.lightest[pet.color] }}>
+    <View style={{ ...Spacing.scrollScreenDown, backgroundColor: Colors.multi.lightest[pet?.color] }}>
       <View style={styles.conHeader}>
         { topActions.map(action => <ActionButton key={action.key} title={action.key} onPress={action.onPress} size='small' />) }
       </View>
 
-      <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.container}>  
+      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false} contentContainerStyle={{ ...Spacing.scrollContent, width: '100%' }}>  
         { isError && <ErrorImage /> }
         { isFetching && <Loader /> }
         
@@ -155,20 +155,22 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
           </View>
 
           { ['info', 'logs'].map((type: SectionType) =>
-            <View key={type} style={{ ...Spacing.flexColumn, width: '100%' }}>
+            <View key={type}>
               <SectionHeader type={type} onPress={() => {
                 setModalVisible(true)
                 setOption(type)
               }} />
-              <View style={{ ...Forms.roundedCon, ...Spacing.flexColumn }}>
+              <View style={{ ...Forms.roundedCon }}>
                 <ItemHeaderList type={type} logs={logs} info={info} onReset={() => handleReset(type)} navigation={navigation} petId={petId} />
               </View>
             </View>
           ) } 
-            
-          <SectionHeader type='actions' />
-          <View style={{ ...Forms.roundedCon }}>
-            { bottomActions.map(action => <BoxHeader key={action.key} title={action.title} titleIconSource={getActionIconSource(action.icon)} onPress={action.onPress} titleColor={action.key === 'delete' && Colors.red.darkest} mode={action.key === 'delete' ? 'dark' : 'light'} />) }
+          
+          <View>
+            <SectionHeader type='actions' />
+            <View style={{ ...Forms.roundedCon }}>
+              { bottomActions.map(action => <BoxHeader key={action.key} title={action.title} titleIconSource={getActionIconSource(action.icon)} onPress={action.onPress} titleColor={action.key === 'delete' && Colors.red.dark} mode={action.key === 'delete' ? 'dark' : 'light'} />) }
+            </View>
           </View>
 
         </> }
@@ -186,7 +188,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
       >
         <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...Forms.modal }}>
           <View style={styles.modalCon}>
-            <View style={{ ...Spacing.flexRow }}>
+            <View style={Spacing.flexRow}>
               <Text style={{ ...Typography.smallHeader }}>{option === 'info' ? 'Show Pet Details' : 'Show Pet Logs'}</Text>
               <Image source={getActionIconSource('filter')} style={{ ...Forms.smallIcon }} />
             </View>
@@ -201,16 +203,12 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
 }
  
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.flexColumn,
-    paddingBottom: 100,
-  },
   conHeader: {
     ...Spacing.flexRow, 
     marginLeft: 'auto', 
     paddingTop: 50, 
-    marginRight: 10,
     paddingBottom: 10,
+    marginRight: 10,
     width: '40%', 
     justifyContent: 'space-between', 
   },
@@ -239,14 +237,8 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   modalCon: {
-    ...Spacing.flexColumn,
-    width: '100%',
     height: '80%',
-    marginTop: 'auto',
-    padding: 20,
-    backgroundColor: Colors.shadow.lightest,
-    ...Forms.topRounded,
-    ...Forms.boxShadow,
+    ...Forms.bottomModal,
   },
   modalBody: {
     ...Spacing.flexRow,

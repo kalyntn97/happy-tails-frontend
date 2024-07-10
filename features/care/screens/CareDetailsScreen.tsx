@@ -1,10 +1,11 @@
 //npm
 import React, { FC } from "react"
-import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView } from "react-native"
+import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView, Pressable } from "react-native"
 //types & helpers & queries
 import { Care, Tracker } from "@care/CareInterface"
 import { useDeleteCareCard } from "@hooks/sharedHooks"
-import { CARES, getCurrentTrackerIndex } from "@care/careHelpers"
+import { CARES, getCareIcon, getCurrentTrackerIndex } from "@care/careHelpers"
+import { careKeyFactory, useGetCareById } from "@care/careQueries"
 //components
 import { getActionIconSource, getCareIconSource } from "@utils/ui"
 import PetList from "@components/PetInfo/PetList"
@@ -13,11 +14,12 @@ import BarChart from "@components/Charts/BarChart"
 import YearChart from "@components/Charts/YearChart"
 import FillChart from "@components/Charts/FillChart"
 import Loader from "@components/Loader"
-import { BoxHeader, BoxWithHeader } from "@components/UIComponents"
-import { StatButton } from "@components/ButtonComponent"
+import { BoxHeader, BoxWithHeader, ErrorImage } from "@components/UIComponents"
+import { ActionButton, StatButton } from "@components/ButtonComponent"
 //styles
 import { styles } from "@styles/stylesheets/DetailsScreenStyles"
-import { Colors, Forms } from '@styles/index'
+import { Colors, Forms, Spacing } from '@styles/index'
+import { useQueryClient } from "@tanstack/react-query"
 
 interface CareDetailsProps {
   navigation: any
@@ -25,24 +27,41 @@ interface CareDetailsProps {
 }
 
 const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
-
-  const { care } = route.params
+  const { care: initialCare } = route.params
+  const { data: care, isSuccess, isFetching, isError } = useGetCareById(initialCare._id, initialCare)
   const { showDeleteConfirmDialog, handleDeleteCareCard } = useDeleteCareCard(navigation)
-  const trackers = care.trackers.reverse()
-  const taskIndex = getCurrentTrackerIndex(care.frequency)
   
-  const iconSource = getCareIconSource(care.name)
+  const trackers = [...care.trackers].reverse()
+  const taskIndex = getCurrentTrackerIndex(care.frequency)
+
+  const careStats = [
+    { header: 'streak', stat: 0, body: 'days' },
+    { header: 'current', stat: trackers[0].done[taskIndex].value, body: `of ${care.times}`},
+    { header: 'longest', stat: 0, body: 'days' },
+  ]
+
+  const actions = [
+    { key: 'edit', icon: 'editSquare', onPress: () => navigation.navigate('CareEdit', { care }) },
+    { key: 'delete', icon: 'deleteSquare', onPress: () => showDeleteConfirmDialog(care, handleDeleteCareCard) },
+  ]
 
   return (
-    <ScrollView
-      style={{ backgroundColor: Colors.multi.lightest[care.color]}}
-      contentContainerStyle={styles.scrollContent}
-      scrollEventThrottle={200}
-      decelerationRate="fast" 
-    >
-      {care ?
-        <>
+    <View style={{ ...Spacing.scrollScreenDown, backgroundColor: Colors.multi.lightest[care.color] }}>
+      <View style={styles.topBtnCon}>
+        { actions.map(action => <ActionButton key={action.key} title={action.key} onPress={action.onPress} size='small' />) }
+      </View>
+
+      { isError && <ErrorImage /> }                                                              
+      { isFetching && <Loader /> }
+
+    { isSuccess &&
+        <ScrollView
+          contentContainerStyle={Spacing.scrollContent}
+          scrollEventThrottle={200}
+          decelerationRate="fast" 
+        >
           <View style={styles.headerContainer}>
+            <Image source={getCareIcon(care.name)} style={{ ...Forms.largeIcon }} />
             <Text style={styles.header}>{CARES[care.name] ?? care.name}</Text>
             <View style={[styles.itemInfo]}>
               <View style={styles.rowCon}>
@@ -55,7 +74,7 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
                 </Text>
               </View>
               <View style={styles.rowCon}>
-                <Image source={iconSource} style={styles.itemIcon} />
+                <Image source={getActionIconSource('freq')} style={styles.itemIcon} />
                 <Text style={styles.subHeader}>
                   {care.times} times / {
                     care.frequency === 'Daily' ? 'day' 
@@ -70,16 +89,11 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
           
             <PetList petArray={care.pets} size='small' />
 
-            <View style={{...Forms.rowCon}}>
-              <StatButton item={{ header: 'streak', stat: 0, body: 'days' }} />
-              <StatButton item={{ header: 'current', stat: trackers[0].done[taskIndex].value, body: `of ${care.times}` }} />
-              <StatButton item={{ header: 'longest', stat: 0, body: 'days' }} />
+            <View style={styles.btnContainer}>
+              {careStats.map(stat =>
+                <StatButton key={stat.header} header={stat.header} body={stat.body} stat={stat.stat} bgColor={Colors.multi.light[care.color]} size='medium' disabled={true} />
+              )}
             </View>
-          </View>
-
-          <View style={{ ...Forms.roundedCon}}>
-            <BoxHeader title='Update' titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('CareEdit', { care })} />
-            <BoxHeader title='Delete' titleIconSource={getActionIconSource('deleteSquare')} onPress={() => showDeleteConfirmDialog(care, handleDeleteCareCard)} titleColor={Colors.red.reg} />
           </View>
 
           <BoxWithHeader 
@@ -100,14 +114,16 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
               )
             }
           />
-        </> 
-        : <Loader />
-      }
 
-    </ScrollView> 
+          <View style={{ ...Forms.roundedCon}}>
+            {actions.map(action => 
+              <BoxHeader key={action.key} title={action.key} titleIconSource={getActionIconSource(action.icon)} onPress={action.onPress} titleColor={action.key === 'delete' && Colors.red.dark} />
+            )}
+          </View>
+        </ScrollView> 
+      } 
+    </View>
   )
 }
-
-
 
 export default CareDetailsScreen                                           

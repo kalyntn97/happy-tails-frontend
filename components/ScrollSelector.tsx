@@ -1,16 +1,28 @@
 //npm
-import { useEffect, useRef, useState } from "react"
+import { Children, useEffect, useRef, useState } from "react"
 import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated"
+import Animated, { SharedValue, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated"
 //styles
-import { Buttons, Spacing, Forms, Colors } from '@styles/index'
+import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
 
-interface DateTimeProps {
-  initials: { month: number, year: number }
+type ScrollSelectorProps = {
+  data: any[]
+  onSelect: (selected: any) => void
+  initial?: number
+  leftLabel?: string
+  rightLabel?: string
 }
 
-const Row = ({ item, index, height, scrollY }) => {
+type RowProps = {
+  item: any
+  index: number
+  height: number
+  scrollY: SharedValue<number>
+}
 
+const height = 50
+
+const Row = ({ item, index, height, scrollY }: RowProps) => {
   const animatedView = useAnimatedStyle(() => {
 
     return {
@@ -38,18 +50,17 @@ const Row = ({ item, index, height, scrollY }) => {
   })
 
   return (  
-    <Animated.View style={[styles.itemCon, animatedView]} key={index}>
+    <Animated.View style={[styles.itemCon, animatedView]}>
       <Text style={styles.itemText}>{item}</Text>
     </Animated.View>
   )
 }
 
-const ScrollSelector = ({ data, onSelect, initial }) => {
+const ScrollSelector = ({ data, onSelect, initial, leftLabel, rightLabel }: ScrollSelectorProps) => {
   let selected: number
 
-  const height = 50
   const scrollY = useSharedValue(0)
-  const FlatListRef = useRef(null)
+  const ScrollViewRef = useRef(null)
 
   const onScrollHandler = useAnimatedScrollHandler((event) => {
     const offset = event.contentOffset.y
@@ -61,50 +72,62 @@ const ScrollSelector = ({ data, onSelect, initial }) => {
     onSelect(selected)
   }
 
+  const initialScroll = () => {
+    if (ScrollViewRef.current && initial) {
+      ScrollViewRef.current.scrollTo({ y: initial * height, animated: true })
+    }
+  }
+
   return (
     <View style={styles.carousel}>
-
-      <Animated.FlatList
-        ref={FlatListRef}
-        data={data}
-        renderItem={({ item, index }) => {
-          return (
-            <Pressable>
-              <Row key={index} item={item} index={index} height={height} scrollY={scrollY}/>
-            </Pressable>
-          )
-        }}
-        getItemLayout={(data, index) => (
-          {length: 50, offset: 50 * index, index}
-        )}
+      {leftLabel && <Text style={styles.label}>{leftLabel}</Text> }
+      <Animated.ScrollView
+        ref={ScrollViewRef}
         snapToInterval={height}
         snapToAlignment={'center'}
         disableScrollViewPanResponder={true}
         decelerationRate="fast"
-        contentContainerStyle={{ height: 700, marginTop: height }}
+        contentContainerStyle={{ height: height * (data.length + 2), marginTop: height }}
         showsVerticalScrollIndicator={false}
         scrollEnabled={data.length > 1}
         onScroll={onScrollHandler}
+        scrollEventThrottle={50}
         onMomentumScrollEnd={onScrollEnd}
-        initialScrollIndex={initial}
-      />
+        onContentSizeChange={initialScroll}
+        pinchGestureEnabled={false}
+        directionalLockEnabled={true}
+      >
+        {data.map((item: any, index: number) =>
+          <Pressable key={index} style={styles.itemCon}>
+            <Row item={item} index={index} height={height} scrollY={scrollY} />
+          </Pressable>
+        )}
+      </Animated.ScrollView>
+      { rightLabel && <Text style={styles.label}>{rightLabel}</Text> }
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   carousel: {
-    width: 130,
-    height: 150,
+    ...Spacing.flexRow,
+    flex: 1,
+    height: height * 3,
+    marginHorizontal: 10,
   },
   itemCon: {
-    width: '100%',
-    height: 50,
     ...Spacing.centered,
+    height: height,
   },
   itemText: {
     fontSize: 18,
   },
+  label: {
+    ...Typography.regBody,
+    letterSpacing: 1,
+    margin: 0,
+    marginHorizontal: 30,
+  }
 })
 
 export default ScrollSelector

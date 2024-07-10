@@ -4,6 +4,7 @@ import { ProfileData } from "@profile/ProfileInterface"
 import { compareDates, getDateConstructor, getStartDate } from "@utils/datetime"
 import { Dimensions } from "react-native"
 import { produce } from "immer"
+import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
 
 export const shouldRenderCareTask = (item: Care, selectedDate: Date) => {
   const { date: date, endDate, repeat } = item
@@ -29,7 +30,7 @@ export const shouldRenderHealthTask = (item: Health, selectedDate: Date, healthI
 
 export const windowWidth = Dimensions.get('window').width
 export const windowHeight = Dimensions.get('window').height
-export const centerHeight = windowHeight - 191 - windowHeight * 0.11
+export const centerHeight = windowHeight - TAB_BAR_HEIGHT
 
 export const updateTrackerData = (oldData: ProfileData, data: Tracker, careId: string, trackerId: string, frequency: string) => {
   return produce(oldData, draft => {

@@ -14,7 +14,7 @@ interface PetListProps {
 const PetList: React.FC<PetListProps> = ({ petArray, size }) => {
   return (  
     <View style={[styles.container, 
-      size === 'mini' ? { maxWidth: 225 } 
+      size === 'mini' ? { maxWidth: 225, height: 40 } 
       : size === 'small' ? { maxWidth: 300 } 
       : { width: '100%' }
     ]}>

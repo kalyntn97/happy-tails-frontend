@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     fontSize: 12,
   },
   taskPetList: {
-    flex: 3
+    flex: 3,
   },
   done: {
     textDecorationLine: 'line-through',

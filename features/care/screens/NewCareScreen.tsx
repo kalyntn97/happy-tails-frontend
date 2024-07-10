@@ -1,5 +1,5 @@
 //npm
-import { useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useIsFocused, useNavigation } from "@react-navigation/native"
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native"
 //components
@@ -8,9 +8,10 @@ import { useAddCare } from "@care/careQueries"
 import { AlertForm } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Typography, Colors } from '@styles/index'
-import { CareFormData } from "@care/CareInterface"
 
 const NewCareScreen = ({ navigation }) => {
+  const [color, setColor] = useState<number>(null)
+
   const isFocused = useIsFocused()
   const addCareMutation = useAddCare(navigation)
 
@@ -22,11 +23,12 @@ const NewCareScreen = ({ navigation }) => {
     if (!isFocused) {
       navigation.goBack()
     }
-  }, [navigation, isFocused])
+    navigation.setOptions({ headerStyle: { backgroundColor: Colors.multi.lightest[color] } })
+  }, [navigation, isFocused, color])
 
   return (
-    <View style={{ ...Spacing.fullScreenDown }}>
-      <CareForm onSubmit={handleSubmit} navigation={navigation} status={addCareMutation.status} />
+    <View style={{ ...Spacing.fullScreenDown, backgroundColor: Colors.multi.lightest[color] }}>
+      <CareForm onSubmit={handleSubmit} navigation={navigation} status={addCareMutation.status} setColor={setColor} />
     </View>  
   )
 }

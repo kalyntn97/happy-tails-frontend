@@ -11,13 +11,17 @@ type Props = {
   onPress?: () => void, 
   onLongPress?: () => void
   toggle?: { onToggle: () => void, initial: boolean }
+  title: string
   content: ReactNode
   disabled?: boolean
   color: string, 
   
 }
 
-const SwipeableItem = ({ color, content, swipeRightActions, swipeLeftActions, onPress, onLongPress, toggle, disabled }: Props) => {
+const MIN_TASK_HEIGHT = 60
+const MAX_TASK_HEIGHT = 70
+
+const SwipeableItem = ({ color, title, content, swipeRightActions, swipeLeftActions, onPress, onLongPress, toggle, disabled }: Props) => {
   const swipeableRef = useRef(null)
 
   const closeSwipeable = () => {
@@ -25,9 +29,9 @@ const SwipeableItem = ({ color, content, swipeRightActions, swipeLeftActions, on
   }
 
   const rightSwipeActions = () => (
-    <View style={styles.squareBtnContainer}>
+    <View style={[styles.squareBtnContainer, { height: TASK_HEIGHT }]}>
       { Object.keys(swipeRightActions).map(action => 
-        <IconButton key={action} type={action} size='medium' onPress={() => {
+        <IconButton key={action} type={action} size='medium' height={TASK_HEIGHT} onPress={() => {
           swipeRightActions[action]()
           closeSwipeable()
         } } />
@@ -35,12 +39,14 @@ const SwipeableItem = ({ color, content, swipeRightActions, swipeLeftActions, on
     </View>
   )
 
+  const TASK_HEIGHT = title.length < 30 ? MIN_TASK_HEIGHT : MAX_TASK_HEIGHT
+
   return (
     <Swipeable ref={swipeableRef} renderRightActions={rightSwipeActions}>
       <TouchableOpacity
         style={[
           styles.task, 
-          { backgroundColor: color }
+          { backgroundColor: color, height: TASK_HEIGHT }
         ]} 
         onPress={onPress}
         onLongPress={onLongPress}
@@ -62,11 +68,10 @@ const SwipeableItem = ({ color, content, swipeRightActions, swipeLeftActions, on
 
 const styles = StyleSheet.create({
   task: {
+    ...Spacing.flexRow,
     width: '100%',
-    height: 60,
     borderRadius: 15,
     marginVertical: 5,
-    ...Spacing.flexRow,
     justifyContent: 'space-between'
   },
   taskContent: {
@@ -77,15 +82,15 @@ const styles = StyleSheet.create({
   },
   squareBtnContainer: {
     ...Spacing.flexRow,
-    height: 70,
+    marginVertical: 5,
     marginLeft: 10
   },
   check: {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 30,
   },
   bulletBtn: {
-    marginRight: 15,
+    marginRight: 20,
     flex: 1,
   },
   bulletBtnText: {

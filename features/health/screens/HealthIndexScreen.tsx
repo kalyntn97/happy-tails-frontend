@@ -126,10 +126,7 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ position: 'absolute', padding: -10}}>
-        <Image source={getActionIconSource('add')} style={{ ... Forms.xSmallIcon }} />
-        
-      </View>
+      <RoundButton onPress={() => navigation.navigate('HealthCreate')} type='add' position="bottomRight" />
       {isSuccess && (
         healths.length > 0 ?
           <SectionList

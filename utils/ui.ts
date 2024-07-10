@@ -36,9 +36,10 @@ const actionIconSource = {
   increase: require('@assets/icons/action-increase.png'),
   decrease: require('@assets/icons/action-decrease.png'),
   add: require('@assets/icons/action-add.png'),
+  delete: require('@assets/icons/action-delete.png'),
   edit: require('@assets/icons/action-edit.png'),
   editSquare: require('@assets/icons/action-edit_square.png'),
-  delete: require('@assets/icons/action-delete.png'),
+  deleteColor: require('@assets/icons/action-delete_color.png'),
   deleteSquare: require('@assets/icons/action-delete_square.png'),
   show: require('@assets/icons/action-show.png'),
   hide: require('@assets/icons/action-hide.png'),
@@ -61,6 +62,7 @@ const actionIconSource = {
   prev: require('@assets/icons/action-prev.png'),
   prevThin: require('@assets/icons/action-prev_thin.png'),
   prevRound: require('@assets/icons/action-prev_round.png'),
+  freq: require('@assets/icons/action-calendar_freq.png'),
   due: require('@assets/icons/action-calendar_due.png'),
   done: require('@assets/icons/action-calendar_done.png'),
   overdue: require('@assets/icons/action-calendar_overdue.png'),
@@ -74,6 +76,8 @@ const actionIconSource = {
   care: require('@assets/icons/action-care.png'),
   home: require('@assets/icons/action-home.png'),
   settings: require('@assets/icons/action-settings.png'),
+  pets: require('@assets/icons/action-pets.png'),
+  schedule: require('@assets/icons/action-schedule.png'),
   allergies: require('@assets/icons/action-pet_allergy.png'),
   ids: require('@assets/icons/action-pet_id.png'),
   illnesses: require('@assets/icons/action-pet_illness.png'),
@@ -237,7 +241,7 @@ export const getActionIconSource = (name: string) => {
 }
 
 export const getCareIconSource = (name: string) => {
-  return careIconSource[name] || require('@assets/icons/care-others.png')
+  return careIconSource[name] || careIconSource['others']
 }
 export const getHealthIconSource = (name: string) => {
   return healthIconSource[name] || require('@assets/icons/health-misc_exam.png')

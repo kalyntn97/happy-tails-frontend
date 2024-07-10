@@ -4,20 +4,28 @@ import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 export const styles = StyleSheet.create({
   container: {
-    ...Forms.form,
+    ...Spacing.scrollScreenDown,
+    width: '90%',
+    paddingTop: 50,
   },
   header: {
     ...Typography.mediumHeader,
     marginTop: 30,
     color: Colors.pink.darkest
   },
-  input: {
-    ...Forms.input,
+  inputFocused: {
+    borderColor: Colors.pink.darkest,
+    color: Colors.pink.darkest,
+  },
+  inputUnfocused: {
+    borderColor: Colors.shadow.dark,
+    color: Colors.black,
   },
   rowCon: {
     ...Spacing.flexRow,
     justifyContent: 'space-between',
     width: 300,
+    marginTop: 10,
   },
   rowText: {
     fontSize: 15
@@ -29,14 +37,12 @@ export const styles = StyleSheet.create({
   labelCon: {
     ...Spacing.flexRow,
     justifyContent: 'space-between',
-    width: 300,
-    marginTop: 25,
-    marginBottom: 10,
-    paddingHorizontal: 5,
+    width: '100%',
+    marginVertical: 10,
   },
   label: {
     textAlign: 'left',
-    width: 300,
+    width: '100%',
     paddingHorizontal: 5,
     marginTop: 15,
     marginBottom: 5,

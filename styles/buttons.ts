@@ -22,11 +22,15 @@ export const sub: ViewStyle = {
   paddingHorizontal: 0,
 }
 
-export const roundedBase = {
+export const circle = {
   ...centered,
-  marginHorizontal: 10,
   borderRadius: 99,
+}
+
+export const circleBase = {
+  ...circle,
   ...boxShadow,
+  marginHorizontal: 10,
 }
 
 export const solid: ViewStyle = {
@@ -45,12 +49,10 @@ export const baseButtonText: TextStyle = {
 }
 export const smallText: TextStyle = {
   fontSize: 12,
-  lineHeight: 15,
   letterSpacing: 0.15,
 }
 export const mediumText: TextStyle = {
   fontSize: 16,
-  lineHeight: 21,
   letterSpacing: 0.25,
 }
 
@@ -64,7 +66,7 @@ export const whiteButtonText = { ...baseButtonText, ...whiteText }
 //sizes: ViewStyle
 export const xSmall = { minWidth: 100, height: 40 }
 
-export const xxSmall = { minWidth: 80, height: 30 }
+export const xxSmall = { minWidth: 80, height: 35 }
 
 export const small = { minWidth: 120, height: 50 }
 
@@ -89,9 +91,9 @@ export const subButton: ViewStyle = { ...sub }
 export const xSmallSquareButton: ViewStyle = { ...xSmall, ...square, ...solid }
 export const xSmallRoundButton: ViewStyle = { ...xSmall, ...rounded, ...solid }
 
-export const roundButton = { ...roundedBase, width: 60, height: 60 }
+export const roundButton = { ...circleBase, width: 60, height: 60 }
 
-export const smallRoundButton = { ...roundedBase, width: 20, height: 20 }
+export const smallRoundButton = { ...circleBase, width: 20, height: 20 }
 
-export const mediumRoundButton = { ...roundedBase, width: 40, height: 40 }
+export const mediumRoundButton = { ...circleBase, width: 40, height: 40 }
 

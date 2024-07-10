@@ -5,21 +5,17 @@ import RegisterScreen from "@auth/screens/RegisterScreen"
 import HomeScreen from "@home/HomeScreen"
 //style
 import { Colors } from "@styles/index"
-import { noTitleModalHeaderStyle, modalPresentation } from "./NavigationStyles"
+import { dynamicStackOptions } from "./NavigationStyles"
 
 
 const PublicApp = () => {
   const Stack = createNativeStackNavigator()
 
   return (
-    <Stack.Navigator screenOptions={{
-      ...modalPresentation,
-      contentStyle: { backgroundColor: Colors.white},
-    }}>
+    <Stack.Navigator screenOptions={{ contentStyle: { backgroundColor: Colors.white} }}>
       <Stack.Screen name='Home' component={HomeScreen} options={{ headerShown: false }} />
-      <Stack.Screen name='Login' component={LoginScreen} options={{ ...noTitleModalHeaderStyle }} />
-      <Stack.Screen name='Register' component={RegisterScreen} options={{ ...noTitleModalHeaderStyle }} />
-      
+      <Stack.Screen name='Login' component={LoginScreen} options={dynamicStackOptions('modal', true, false)} />
+      <Stack.Screen name='Register' component={RegisterScreen} options={dynamicStackOptions('modal', true, false)} />
     </Stack.Navigator>
   )
 }

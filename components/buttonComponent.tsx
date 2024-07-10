@@ -59,23 +59,24 @@ export const ActionButton= ({ title, onPress, size, top, left }: BaseButtonProps
 interface IconButtonProps extends BaseButtonProps {
   type: string
   size: string
+  height?: number
 }
 
 const iconButtonStyles = {
-  'edit': { bgColor: Colors.yellow.light },
-  'delete': { bgColor: Colors.red.light },
-  'details': { bgColor: Colors.green.light },
+  'edit': { icon: 'edit', bgColor: Colors.yellow.light },
+  'delete': { icon: 'deleteColor', bgColor: Colors.red.light },
+  'details': { icon: 'details', bgColor: Colors.green.light },
 }
 
-export const IconButton = ({ onPress, type, size }: IconButtonProps) => (
+export const IconButton = ({ onPress, type, size, height }: IconButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
     size === 'small' && {...smallIconButtonStyles as ViewStyle},
     size === 'medium' && { 
-      width: 50, height: 60, borderRadius: 10, marginHorizontal: 2, paddingVertical: 10,
+      width: 50, height: height ?? 60, borderRadius: 10, marginHorizontal: 2, paddingVertical: 10,
       backgroundColor: iconButtonStyles[type].bgColor, alignItems: 'center', justifyContent: 'space-around',
     }
   ]}>
-    <Image source={getActionIconSource(type)} style={[
+    <Image source={getActionIconSource(iconButtonStyles[type].icon)} style={[
       size === 'medium' && {...Forms.xSmallIcon},
       size === 'small' && {...Forms.xSmallIcon},
     ]} />
@@ -139,7 +140,7 @@ export const MainButton= ({ onPress, title, top, bottom, bgColor, color, size, i
 
 export const TransparentButton= ({ title, onPress, size, top, bottom, color, bgColor, bdColor, icon }: BaseWithIconButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
-    { ...Spacing.flexRow, borderColor: bdColor ?? Colors.transparent.dark, backgroundColor: bgColor ?? Colors.transparent.light, },
+    { ...Spacing.flexRow, borderColor: bdColor ?? Colors.shadow.darkest, backgroundColor: bgColor ?? 'transparent', },
     size === 'small' ? { ...Buttons.xSmallRoundedTransparent } 
       : size === 'large' ? { ...Buttons.longRoundedTransparent }
       : { ...Buttons.smallRoundedTransparent },
@@ -260,7 +261,7 @@ export const ToggleButton = ({ onPress, size, initial, bgColor }: CheckboxButton
     <Pressable onPress={handlePress} style={{
       ...Spacing.flexRow, borderRadius: 30, backgroundColor: bgColor ?? Colors.shadow.light, padding: 2
     }}>
-      <View style={[circleStyles, !on && { backgroundColor: Colors.shadow.reg }]} />
+      <View style={[circleStyles, !on && { backgroundColor: Colors.shadow.lightest }]} />
       <View style={[circleStyles, on && { backgroundColor: Colors.green.reg }]} />            
     </Pressable>
   )

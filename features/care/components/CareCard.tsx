@@ -3,8 +3,8 @@ import { useState, useEffect, FC } from "react"
 import { View, StyleSheet, Text, Image, ImageStyle, ScrollView, TouchableOpacity } from "react-native"
 //types & helpers
 import { Care } from "@care/CareInterface"
-import { CARES } from "@care/careHelpers"
-import { getActionIconSource, getCareIconSource } from "@utils/ui"
+import { CARES, getCareIcon } from "@care/careHelpers"
+import { getActionIconSource } from "@utils/ui"
 //components
 import PetList from "@components/PetInfo/PetList"
 import TrackerPanel from "./TrackerPanel"
@@ -20,8 +20,7 @@ interface CareCardProps {
 }
 
 const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
-  const iconSource = getCareIconSource(care.name)
-  
+  const iconSource = getCareIcon(care.name)
   const handleNavigate = () => {
     onNavigate()
     navigation.navigate('CareDetails', { care })
@@ -35,7 +34,7 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
         <Text style={styles.title}>{CARES[care.name] ?? care.name}</Text>
       </View>
 
-      {care.medication &&
+      { care.medication &&
         <View style={styles.desCon}>
           <Text style={styles.des}>
             {care.medication.name}
@@ -44,9 +43,9 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
         </View>
       }
       <View style={styles.subHeader}>
-        <PetList petArray={care.pets} size='small' navigation={navigation}/>
+        <PetList petArray={care.pets} size='small' />
           {care.repeat &&
-            <View style={{ ...Spacing.flexRow }}>
+            <View style={Spacing.flexRow}>
               <Image source={getActionIconSource('repeat')} style={{ ...Forms.smallIcon }} />
               <Text style={styles.freq}>
                 {care.times} times / {care.frequency === 'Daily' ? 'day' : care.frequency === 'Weekly' ? 'week' : care.frequency === 'Monthly' ? 'month' : 'year'}
@@ -55,12 +54,10 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
           }
       </View>
       
-      <View style={styles.currentTracker}>
-        <TrackerPanel care={care} />
-      </View>
+      <TrackerPanel care={care} />
       
       {care.repeat &&
-        <TransparentButton size='small' title='See more' onPress={handleNavigate} color={Colors.shadow.darkest} top='auto' />
+        <TransparentButton size='small' title='See more' onPress={handleNavigate} top={20} />
       }
     </View>
   )

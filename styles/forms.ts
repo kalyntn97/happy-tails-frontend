@@ -1,12 +1,12 @@
 import { ViewStyle, ImageStyle } from "react-native"
 import Colors from "./colors"
-import { fullWH, centered, flexRow, flexColumn } from "./spacing"
+import { fullWH, centered, flexRow, flexColumn, basePadding } from "./spacing"
 
 export const boxShadow: ViewStyle = {
   elevation: 3,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.5,
+  shadowColor: Colors.black,
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 0.3,
   shadowRadius: 2,
 }
 
@@ -16,19 +16,14 @@ export const form: ViewStyle = {
 }
 
 export const inputBase: ViewStyle = {
-  height: 50,
-  paddingHorizontal: 10,
-  paddingVertical: 10,
+  ...basePadding,
   marginVertical: 10,
-  borderRadius: 8,
-  borderWidth: 1,
-  backgroundColor: '#FBFFFE',
-  borderColor: Colors.pink.reg,
 }
 
 export const input: ViewStyle = {
   ...inputBase,
-  width: 300,
+  borderRadius: 8,
+  borderWidth: 1,
 }
 
 export const card: ViewStyle = {
@@ -37,7 +32,7 @@ export const card: ViewStyle = {
   margin: 10,
   paddingHorizontal: 12,
   paddingVertical: 10,
-  borderRadius: 8,
+  borderRadius: 15
 }
 
 export const cardWithShadow = {
@@ -134,11 +129,51 @@ export const xLargeIcon: ImageStyle = {
   margin: 5,
 }
 
+export const leftRounded: ViewStyle = {
+  borderTopLeftRadius: 8,
+  borderBottomLeftRadius: 8,
+}
+
+export const rightRounded: ViewStyle = {
+  borderTopRightRadius: 8,
+  borderBottomRightRadius: 8,
+}
+
+export const leftMoreRounded: ViewStyle = {
+  borderTopLeftRadius: 15,
+  borderBottomLeftRadius: 15,
+}
+
+export const rightMoreRounded: ViewStyle = {
+  borderTopRightRadius: 15,
+  borderBottomRightRadius: 15,
+}
+
+export const topRounded: ViewStyle = {
+  borderTopLeftRadius: 30,
+  borderTopRightRadius: 30,
+}
+
 export const modal: ViewStyle = {
   ...fullWH,
   ...centered,
   position: 'relative',
   backgroundColor: Colors.transparent.semiLight,
+}
+
+export const bottomModal: ViewStyle = {
+  ...flexColumn,
+    width: '100%',
+    marginTop: 'auto',
+    padding: 20,
+    backgroundColor: Colors.shadow.lightest,
+    ...topRounded,
+    ...boxShadow,
+}
+
+export const overlay: ViewStyle = {
+  ...fullWH,
+  alignItems: 'center',
 }
 
 export const rowCon: ViewStyle = {
@@ -165,31 +200,6 @@ export const roundedIconCon: ViewStyle = {
   backgroundColor: Colors.shadow.light,
   width: 100,
   height: 100,
-}
-
-export const leftRounded: ViewStyle = {
-  borderTopLeftRadius: 8,
-  borderBottomLeftRadius: 8,
-}
-
-export const rightRounded: ViewStyle = {
-  borderTopRightRadius: 8,
-  borderBottomRightRadius: 8,
-}
-
-export const leftMoreRounded: ViewStyle = {
-  borderTopLeftRadius: 15,
-  borderBottomLeftRadius: 15,
-}
-
-export const rightMoreRounded: ViewStyle = {
-  borderTopRightRadius: 15,
-  borderBottomRightRadius: 15,
-}
-
-export const topRounded: ViewStyle = {
-  borderTopLeftRadius: 30,
-  borderTopRightRadius: 30,
 }
 
 export const successToast: ViewStyle = {

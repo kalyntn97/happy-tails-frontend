@@ -1,8 +1,10 @@
 import { GoBackButton } from "@components/ButtonComponent"
+import { windowHeight } from "@home/helpers"
 import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs"
-import { NativeStackNavigationOptions } from "@react-navigation/native-stack"
+import { NativeStackHeaderProps, NativeStackNavigationOptions } from "@react-navigation/native-stack"
 import { Colors, Forms, Typography } from "@styles/index"
 import { StyleSheet, Text, View } from "react-native"
+import { moderateScale, moderateVerticalScale } from "react-native-size-matters"
 
 const headerOptions: any = {
   headerTitleStyle: { fontSize: 18, fontWeight: 'bold' },
@@ -14,100 +16,40 @@ const contentStyle: NativeStackNavigationOptions = {
   contentStyle: { backgroundColor: Colors.shadow.lightest },
 }
 
-const Header = ({ title, navigation, top }: { title: string, navigation: any, top?: number }) => (
-  <View style={[styles.headerCon, top && { marginTop: top }]}>
-    <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={10} left={10} />
-    <Text style={styles.headerText}>{title}</Text>
-  </View>
+export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
+
+const Header = ({ title, navigation, showGoBackButton, mode }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string }) => (
+  title ? 
+    <View style={[styles.headerCon, { marginTop: mode === 'card' ? 25 : 15 }]}>
+      { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={mode === 'card' ? 15 : 10} left={10} /> }
+      { title && <Text style={styles.headerText}>{title}</Text>}
+    </View> 
+  : showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={mode === 'card' ? 45 : 15} left={10} />
 )
 
-const TitleOnlyHeader = ({ title, top }: { title: string, top?: number }) => (
-  <View style={[styles.headerCon, { marginTop: top ?? 50 }]}>
-    <Text style={styles.headerText}>{title}</Text>
-  </View>
-)
-
-const NoTitleHeader = ({ navigation, top }) => (
-  <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={top} left={10} />
-)
-
-const baseHeaderStyle: any = {
-  header: ({ navigation, options }) => {
-    const title = options.title
-    return (
-      <Header title={title} navigation={navigation} />
-    )
-  },
-}
-
-export const noTitleModalHeaderStyle: any = {
-  header: ({ navigation }) => {
-    return (
-      <NoTitleHeader navigation={navigation} top={10} />
-    )
-  },
-}
-
-export const baseCardHeaderStyle: any = {
-  header: ({ navigation, options }) => {
-    const title = options.title
-    return (
-      <Header title={title} navigation={navigation} top={30} />
-    )
-  },
-  presentation: 'card'
-}
-
-export const noTitleCardHeaderStyle: any = {
-  header: ({ navigation }) => {
-    return (
-      <NoTitleHeader navigation={navigation} top={40} />
-    )
-  },
-  presentation: 'card'
-}
-
- export const titleOnlyHeaderStyle: any = {
-  header: ({ options }) => {
-    const title = options.title
-    return (
-      <TitleOnlyHeader title={title} />
-    )
+export const dynamicStackOptions = (mode: string = 'modal', showGoBackButton: boolean = true, showTitle: boolean = true): NativeStackNavigationOptions => {
+  return {
+    ...headerOptions,
+    presentation: mode,
+    gestureEnabled: true,
+    ...contentStyle,
+    header: ({ navigation, options }) => <Header title={showTitle && options.title} navigation={navigation} mode={mode} showGoBackButton={showGoBackButton} />
   }
 }
 
-const headerStyle: any = {
-  ...baseHeaderStyle,
-  ...headerOptions,
-}
-
-export const cardHeaderStyle: any = {
-  ...baseCardHeaderStyle,
-  ...headerOptions,
-}
-
-export const stackOptions: NativeStackNavigationOptions = {
-  ...headerStyle,
-  ...contentStyle,
-}
-
-export const modalPresentation: NativeStackNavigationOptions = {
-  presentation: 'modal',
-  gestureEnabled: true,
-}
-
 export const tabBarOptions: BottomTabNavigationOptions = {
-  tabBarStyle: { padding : 10, height: 100, backgroundColor: Colors.white},
+  tabBarStyle: { padding : 10, height: TAB_BAR_HEIGHT, backgroundColor: Colors.white },
   headerShown: false,
 }
 
 export const styles = StyleSheet.create({
-  icon: { ...Forms.icon },
-  iconLabel: { fontWeight: 'bold' },
+  icon: { ...Forms.smallIcon },
+  iconLabel: { fontWeight: 'bold', fontSize: 12 },
   headerText: {
-    ...Typography.mediumHeader, color: Colors.pink.darkest, marginTop: 30,
+    ...Typography.mediumHeader, color: Colors.pink.darkest,
   },
   headerCon: { 
-    backgroundColor: Colors.shadow.lightest, height: 100
+    height: 70,
+    backgroundColor: Colors.shadow.lightest,
   },
 })

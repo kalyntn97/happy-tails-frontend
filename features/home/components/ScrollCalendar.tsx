@@ -1,6 +1,7 @@
 //npm
 import { FC, useRef, useState } from "react"
 import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View, FlatList, ViewStyle, TextStyle, useWindowDimensions } from "react-native"
+import Animated, { runOnJS, useAnimatedRef, useAnimatedScrollHandler, useDerivedValue, useSharedValue } from "react-native-reanimated"
 //utils & store
 import { getDateInfo, getDayOfWeek, getDaysInMonth, getMonth, getWeekIndex, getYears, months } from "@utils/datetime"
 import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
@@ -9,7 +10,6 @@ import ScrollSelector from "@components/ScrollSelector"
 import { SubButton } from "@components/ButtonComponent"
 //styles
 import { Colors, Spacing, Typography, Forms } from "@styles/index"
-import Animated, { runOnJS, useAnimatedRef, useAnimatedScrollHandler, useDerivedValue, useSharedValue } from "react-native-reanimated"
 
 type Style = ViewStyle | TextStyle
 
@@ -114,8 +114,8 @@ const ScrollCalendar = () => {
   ]
 
   const selectors = [
-    { key: 'month', data: months, onSelect: setSelectedMonth, initial: currMonth - 1},
-    { key: 'year', data: years, onSelect: setSelectedYear, initial: years.findIndex(e => e === currYear) },
+    { key: 'month', data: months, onSelect: (selected: number) => setSelectedMonth(selected), initial: activeMonth },
+    { key: 'year', data: years, onSelect: (selected: number) => setSelectedYear(years[selected]), initial: years.findIndex(e => e === activeYear) },
   ]
 
   return (
@@ -169,7 +169,7 @@ const ScrollCalendar = () => {
                   setModalVisible(false)
                 }}
               />
-              <SubButton title='Cancel' top={0} bottom={0}
+              <SubButton title='Reset' top={0} bottom={0}
                 onPress={() => {
                   setActiveDate({
                     date: currDate - 1, 
@@ -234,12 +234,12 @@ const styles = StyleSheet.create({
   },
   modalItemCon: {
     ...Spacing.centered,
-    width: '70%',
-    height: '40%',
+    width: '100%',
   },
   selectors: {
     ...Spacing.flexRow,
     marginTop: 10,
+    width: '90%',
   },
   modalBtnCon: {
     ...Spacing.flexRow,

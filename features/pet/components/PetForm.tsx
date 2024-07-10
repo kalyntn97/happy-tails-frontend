@@ -6,7 +6,7 @@ import RNDateTimePicker from "@react-native-community/datetimepicker"
 //components
 import { CheckboxButton, MainButton, SubButton, TransparentButton } from '@components/ButtonComponent'
 import Dropdown from "@components/Dropdown/Dropdown"
-import ColorPickingPanel from "@components/ColorPickingPanel"
+import ColorPicker from "@components/ColorPicker"
 //helpers & utils
 import { SPECIES, STATUS } from "@pet/petHelpers"
 import { getPetIconSource } from "@utils/ui"
@@ -110,7 +110,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
         {showDob && <RNDateTimePicker themeVariant='light' value={dob ? new Date(dob) : new Date()} onChange={(event, selectedDate) => onChange('dob', selectedDate) } /> }
         <View style={styles.labelCon}>
           <Text>Date you first met</Text>
-          <View style={{ ...Spacing.flexRow }}>
+          <View style={Spacing.flexRow}>
             <Text>Unknown</Text>
             <CheckboxButton onPress={() => { onChange('showFirstMet', !showFirstMet); !showFirstMet && onChange('firstMet', null) }} initial={!showFirstMet} />
           </View>
@@ -126,7 +126,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
         <>
           <View style={styles.labelCon}>
             <Text>Surgery Date</Text>
-              <View style={{ ...Spacing.flexRow }}>
+              <View style={Spacing.flexRow}>
                 <Text>Unknown</Text>
                 <CheckboxButton onPress={() => { onChange('showAlteredDate', !showAlteredDate); !showAlteredDate && onChange('altered', { ...altered, date: null }) }} initial={!showAlteredDate} />
               </View>
@@ -143,7 +143,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
         <>
           <View style={styles.labelCon}>
             <Text>Date</Text>
-              <View style={{ ...Spacing.flexRow }}>
+              <View style={Spacing.flexRow}>
                 <Text>Unknown</Text>
                 <CheckboxButton onPress={() => { onChange('showPassedDate', !showPassedDate); !showPassedDate && onChange('status', {...status, date: null }) }} initial={!showPassedDate} />
               </View>
@@ -157,7 +157,7 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
         </>
       }
 
-      <ColorPickingPanel onPress={selected => onChange('color', selected)} initial={color} />
+      <ColorPicker onPress={selected => onChange('color', selected)} initial={color} />
 
       <View style={{ ...Spacing.flexRow}}>
         <MainButton onPress={() => onValidate(name, species)} title={formStatus === 'pending' ? 'Submitting' : !!name ? 'Save' : 'Create'} top={0} bottom={10} />

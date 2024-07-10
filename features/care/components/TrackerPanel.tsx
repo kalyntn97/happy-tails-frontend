@@ -1,6 +1,7 @@
 //npm
 import { useState, useEffect } from "react"
 import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import * as Progress from 'react-native-progress'
 //types & helpers
 import { Care, Tracker } from "@care/CareInterface"
 import * as careHelpers from "@care/careHelpers"
@@ -23,8 +24,7 @@ interface CurrentTrackerProps {
 }
 
 const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
-  const {frequency: freq, _id: careId } = care
-  const times = care.repeat ? care.times : 1
+  const {frequency, _id: careId } = care
   
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const activeMonthName = getMonth(activeMonth + 1)
@@ -36,16 +36,19 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   //get the active trackerIndex or default to latest tracker
   if (care.repeat) {
     trackerIndex = careHelpers.getTrackerIndex(care.trackers, care.frequency, activeMonth, activeYear)
-    index = careHelpers.getTaskIndex(freq, activeDate, activeWeek, activeMonth)
+    index = careHelpers.getTaskIndex(frequency, activeDate, activeWeek, activeMonth)
   } else {
     trackerIndex = 0
     index = 0
   }
   //set displaying tracker
   const [tracker, setTracker] = useState<Tracker>(care.trackers[trackerIndex])
-
+  const times = care.repeat ? care.times : 1
+  const done = tracker.done[index].value
+  const progress = done / times
+  const color = Colors.multi.dark[care.color]
+  
   const queryClient = useQueryClient()
-
   const checkDone = (careId: string, trackerId: string, index: number) => {
     checkDoneMutation.mutate({ careId, trackerId, index }, {
       onSuccess: (data: Tracker) => {
@@ -66,123 +69,62 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
 
   return (
     <View style={styles.container}>
-
       <Text style={styles.title}>
         { care.repeat 
-        ? careHelpers.getTrackerDisplayName(freq, activeDate, activeWeek, activeMonthName, activeYear)
+        ? careHelpers.getTrackerDisplayName(frequency, activeDate, activeWeek, activeMonthName, activeYear)
         : new Date(care.date).toLocaleDateString()
         }
       </Text>
       <Text style={styles.status}>
         {tracker.done[index].value === times ? 'You did it! ' : `Only ${times - tracker.done[index].value} more to go! `}
       </Text>
-      {care.repeat && times === 1 && freq !== 'Yearly'
-        ? <>
-            <View style={styles.ScrollChart}>
-              <Pressable>
-                <ScrollChart careId={careId} tracker={tracker} index={index} onCheckDone={checkDone} onUncheckDone={uncheckDone} frequency={freq} />
-              </Pressable>
-            </View>
-        </> : <>
-          <View style={styles.countBox}>
-            <TouchableOpacity 
-              style={styles.iconBtn}
-              onPress={() => uncheckDone(careId, tracker._id, index)}
-              disabled={tracker.done[index].value === 0}
-            >
-              <Image source={getActionIconSource('decrease')} style={styles.icon } />
-            </TouchableOpacity>
+     
+      <View style={styles.countBox}>
+        <TouchableOpacity 
+          style={styles.iconBtn}
+          onPress={() => uncheckDone(careId, tracker._id, index)}
+          disabled={tracker.done[index].value === 0}
+        >
+          <Image source={getActionIconSource('decrease')} style={styles.icon } />
+        </TouchableOpacity>
 
-            <Text style={[styles.count, { color: times === tracker.done[index].value ? Colors.green.reg : Colors.red.reg }]}>
-              {tracker.done[index].value}
-            </Text>
-              <Text style={styles.subCount}>of</Text> 
-            <Text style={styles.count}>{times}</Text>
+        <Progress.Circle progress={progress} showsText={true} formatText={() => `${progress * 100}%`} color={color} size={80} thickness={5} borderWidth={2} borderColor={color} />
 
-            <TouchableOpacity 
-              style={styles.iconBtn} 
-              onPress={() => checkDone(careId, tracker._id, index)}
-              disabled={tracker.done[index].value >= times}
-            >
-              <Image source={getActionIconSource('increase')} style={styles.icon } />
-            </TouchableOpacity>
-            
-          </View>
-        </>
-      }
+        <TouchableOpacity 
+          style={styles.iconBtn} 
+          onPress={() => checkDone(careId, tracker._id, index)}
+          disabled={tracker.done[index].value >= times}
+        >
+          <Image source={getActionIconSource('increase')} style={styles.icon } />
+        </TouchableOpacity>
+        
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
-  },
-  progress: {
-    ...Spacing.flexRow
-  },
-  tracker: {
-  },
-  count: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    padding: 5,
-  },
-  subCount: {
-    ...Typography.smallHeader,
-    color: 'black',
-    marginHorizontal: 10,
+    ...Spacing.flexColumn,
+    width: '100%'
   },
   countBox: {
     ...Spacing.flexRow,
     marginVertical: 10,
   },
-  statusCon: {
-    ...Spacing.flexRow,
-  },
   status: {
     ...Typography.xSmallSubHeader,
     margin: 0,
   },
-  heartBtn: {
-    ...Spacing.flexRow,
-  },
-  heart: {
-    width: 40,
-    height: 40,
-    marginHorizontal: 2,
-  },  
   title: {
     ...Typography.smallHeader,
     marginVertical: 10,
-  },
-  dateContainer: {
-    width: 50,
-    height: 60,
-    backgroundColor: Colors.pink.lightest,
-    borderRadius: 8,
-    justifyContent: 'space-around'
-  },
-  date: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-  ScrollChart: {
-    width: 275,
-    height: '45%',
-    borderRadius: 8,
-    marginVertical: 10
   },
   icon: {
     ...Forms.smallIcon,
   },
   iconBtn: {
     marginHorizontal: 15,
-  },
-  ScrollChartIcon: {
-    ...Forms.xSmallIcon,
-    transform: [{ rotate: '180deg' }]
   },
 })
 

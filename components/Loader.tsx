@@ -57,9 +57,7 @@ const Loader = () => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullWH,
     ...Spacing.centered,
-    backgroundColor: Colors.transparent.semiLight
   },
   paw: {
     position: 'absolute',

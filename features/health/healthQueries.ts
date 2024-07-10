@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import * as healthService from "./healthService"
 import { AddVisitNotesFormData, DeleteVisitFormData, HealthFormData, VisitFormData } from "./HealthInterface"
+import { profileKeyFactory } from "@profile/profileQueries"
+import { ProfileData } from "@profile/ProfileInterface"
 
 export const healthKeyFactory = {
   healths: ['all-healths'],
@@ -8,9 +10,13 @@ export const healthKeyFactory = {
 }
 
 export const useGetAllHealths = () => {
+  const queryClient = useQueryClient()
+  const healthsCache = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).healths
+
   return useQuery({
     queryKey: [...healthKeyFactory.healths],
-    queryFn: healthService.getAllHealths
+    queryFn: healthService.getAllHealths,
+    enabled: !healthsCache,
   })
 }
 

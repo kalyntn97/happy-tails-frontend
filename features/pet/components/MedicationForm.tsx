@@ -61,7 +61,7 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => 
       
         <View style={styles.labelCon}>
           <Text style={styles.rowText}>Start date</Text>
-          <View style={{ ...Spacing.flexRow }}>
+          <View style={Spacing.flexRow}>
             <Text style={styles.rowText}>End date</Text>
             <CheckboxButton onPress={() => onChange('ending', !ending)} initial={ending} />
           </View>

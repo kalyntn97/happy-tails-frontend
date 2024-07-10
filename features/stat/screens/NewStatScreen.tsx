@@ -77,7 +77,7 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
 
       <View style={styles.footerCon}>
         {errorMsg && <ErrorMessage error={errorMsg} />}
-        <View style={{ ...Spacing.flexRow }}>
+        <View style={Spacing.flexRow}>
           {index === 0 &&
             <TransparentButton title='Cancel' size='small' onPress={() => navigation.goBack()} />
           }

@@ -44,7 +44,7 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMod
     <View style={{ width: width ?? 300 }}>
       {inputs.length > 0 &&
         inputs.map((input, index) =>
-          <View style={{ ...Spacing.flexRow }} key={`${inputName}-${index}`}>
+          <View style={Spacing.flexRow} key={`${inputName}-${index}`}>
             <ActionButton title='decrease' size='small' onPress={() => handleRemoveInput(input)} />
             <View style={type === 'date' && { marginVertical: 5 }}>
               {type === 'date' ?

@@ -2,6 +2,7 @@
 import { useState, useRef } from 'react'
 import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image, ScrollView } from "react-native"
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
+import { moderateVerticalScale } from 'react-native-size-matters'
 //components
 import PetCard from '../components/PetCard'
 import { PhotoButton, RoundButton } from '@components/ButtonComponent'
@@ -15,6 +16,7 @@ import { useGetProfile } from '@profile/profileQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
 import { Spacing, Typography, Colors, Forms } from '@styles/index'
+import { moderateScale } from 'react-native-size-matters'
 
 const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
   const [currCard, setCurrCard] = useState<number>(0)
@@ -116,29 +118,31 @@ const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
           
         </View>
 
-        <View style={styles.rowCon}>
-          <Pressable 
-            onPress={handleClickPrev} 
-            style={[styles.prevBtn, currCard == 0 && styles.disabled, styles.baseNavBtn]}
-            disabled={currCard == 0}
-          >
-            <Image source={getActionIconSource('prev')} style={{...Forms.xSmallIcon}}/> 
-          </Pressable>
-          
-          <View style={styles.dotNav}>
-            {petCount > 2 && Array(3).fill(0).map((_, i) =>
-              <DotNav key={i} index={i} />
-            )}
+        { petCount > 2 &&
+          <View style={styles.rowCon}>
+            <Pressable 
+              onPress={handleClickPrev} 
+              style={[styles.prevBtn, currCard == 0 && styles.disabled, styles.baseNavBtn]}
+              disabled={currCard == 0}
+            >
+              <Image source={getActionIconSource('prev')} style={{...Forms.xSmallIcon}}/> 
+            </Pressable>
+            
+            <View style={styles.dotNav}>
+              {Array(3).fill(0).map((_, i) =>
+                <DotNav key={i} index={i} />
+              )}
+            </View>
+            
+            <Pressable 
+              onPress={handleClickNext} 
+              style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled, styles.baseNavBtn]}
+              disabled={currCard == petCount - 1}
+            >
+              <Image source={getActionIconSource('next')} style={{ ...Forms.xSmallIcon }}/> 
+            </Pressable>
           </View>
-          
-          <Pressable 
-            onPress={handleClickNext} 
-            style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled, styles.baseNavBtn]}
-            disabled={currCard == petCount - 1}
-          >
-            <Image source={getActionIconSource('next')} style={{ ...Forms.xSmallIcon }}/> 
-          </Pressable>
-        </View>
+        }
       </> : 
         <View style={{ ...Spacing.fullWH, justifyContent: 'center' }}> 
           <EmptyPetList navigation={navigation} />
@@ -179,7 +183,6 @@ const styles = StyleSheet.create({
   },
   carousel: {
     width: '100%',
-    height: '70%',
   },
   petNav: {
     marginTop: 50,

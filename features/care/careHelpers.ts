@@ -3,20 +3,27 @@ import { Colors } from "@styles/index"
 import { Care, Tracker } from "@care/CareInterface"
 import { getMonth, getDateInfo } from "@utils/datetime"
 import { keyFromName } from "@utils/misc"
+import Fuse from "fuse.js"
+import { getCareIconSource } from "@utils/ui"
 
-export const CARES = {
-  nail: 'Clip nail', 
-  teeth: 'Brush teeth', 
-  walk: 'Walk', 
-  brush: 'Brush', 
-  litter: 'Clean litter box', 
-  groom: 'Groom service', 
-  bath: 'Give bath',
-  med: 'Give medication',
-  train: 'Train commands',
-  feed: 'Feed',
-  refillMed: 'Refill medication',
-  others: 'Others',
+export const CARES = [
+  { title: 'Clip nail', icon: 'nail' },
+  { title: 'Brush teeth', icon: 'teeth' },
+  { title: 'Walk', icon: 'walk' },
+  { title: 'Brush', icon: 'brush' },
+  { title: 'Clean litter box', icon: 'litter' },
+  { title: 'Groom service', icon: 'groom' },
+  { title: 'Give bath', icon: 'bath' },
+  { title: 'Give medication', icon: 'med' },
+  { title: 'Train commands', icon: 'train' },
+  { title: 'Feed', icon: 'feed' },
+  { title: 'Refill medication', icon: 'refill' },
+]
+
+export const getCareIcon = (title: string): ImageSourcePropType => {
+  const fuse = new Fuse(CARES, { keys: ['title', 'icon'] })
+  const icon = fuse.search(title)[0]?.item.icon ?? 'others'
+  return getCareIconSource(icon)
 }
 
 export const CARE_NAMES = Object.keys(CARES).map(key => CARES[key])

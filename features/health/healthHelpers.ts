@@ -1,17 +1,16 @@
 //constants
-export const HEALTHS = {
-  vax: 'Vaccine', 
-  physical: 'Physical Exam', 
-  dental: 'Dental Cleaning',
-  skin: 'Skin Exam',
-  xray: 'X-ray Exam',
-  ultra: 'Ultrasound',
-  blood: 'Blood Testing', 
-  urine: 'Urinalysis', 
-  fecal: 'Fecal Exam',
-  iv: 'IV drip',
-  others: 'Others'
-}
+export const HEALTHS = [
+  { icon: 'vax', title: 'Vaccine' },
+  { icon: 'physical', title: 'Physical Exam' },
+  { icon: 'dental', title: 'Dental Cleaning' },
+  { icon: 'skin', title: 'Skin Exam' },
+  { icon: 'xray', title: 'X-ray Exam' },
+  { icon: 'ultra', title: 'Ultrasound' },
+  { icon: 'blood', title: 'Blood Testing' },
+  { icon: 'urine', title: 'Urinalysis' },
+  { icon: 'fecal', title: 'Fecal Exam'},
+  { icon: 'iv', title: 'IV drip' },
+]
 
 export const HEALTH_NAMES = Object.keys(HEALTHS).map(key => HEALTHS[key])
 

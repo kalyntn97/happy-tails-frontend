@@ -2,7 +2,7 @@ import { TextStyle } from "react-native"
 import Colors from "./colors"
 
 const base = {
-  // color: Colors.shadow.darkest,
+  color: Colors.black,
 }
 
 export const header: TextStyle = {

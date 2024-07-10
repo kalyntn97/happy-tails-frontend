@@ -1,6 +1,7 @@
 //npm modules
 import { StyleSheet, Text, View, Image, TouchableOpacity, useWindowDimensions } from "react-native"
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated"
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters'
 //types & utils
 import { Pet } from "@pet/PetInterface"
 import { getActionIconSource, getPetIconSource } from "@utils/ui"
@@ -21,7 +22,7 @@ interface PetCardProps {
 
 const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) => {
   const petAge = pet.dob ? countYearsBetween(pet.dob, 'today') : 'Unknown'
-  
+
   const { width } = useWindowDimensions()
   
   const animatedStyles = useAnimatedStyle(() => {
@@ -68,9 +69,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
           source={pet.photo ? {uri: pet.photo} : getPetIconSource(['Dog', 'Cat'].includes(pet.species) ? `${pet.species}Profile` : 'AnimalProfile')} 
         />
 
-        <StatButtonList petId={pet._id} petColor={pet.color} navigation={navigation}/>
+        <StatButtonList petId={pet._id} petColor={pet.color} navigation={navigation} size="small" />
 
-        <View style={{ ...Spacing.flexRow, marginTop: 'auto' }}>
+        <View style={styles.btnCon}>
           <TransparentButton title='Log' icon="logPet" onPress={() => navigation.navigate('CreateLog', { pet })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
 
           <TransparentButton title='Details' icon='detailsPet' onPress={() => navigation.navigate('Details', { petId: pet._id })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
@@ -85,15 +86,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
 const styles = StyleSheet.create({
   container: {
     ...Spacing.centered,
-    height: '100%'
   },
   base: {
     ...Forms.cardWithShadow,
-    width: '90%',
-    height: '90%',
     justifyContent: 'flex-start',
-    
     alignItems: 'center',
+    transform: [{ scale: moderateScale(0.8, 1.5) }],
   },
   headerContainer: {
     ...Spacing.flexColumn,
@@ -121,15 +119,10 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: Colors.pink.light
   },
-  detailBtnCon: {
+  btnCon: { 
     ...Spacing.flexRow, 
-    ...Spacing.centered, 
-    paddingTop: 5
-  },
-  detailBtnText: {
-    ...Buttons.smallButtonText,
-    marginHorizontal: 5,
-  },
+    marginTop: 10,
+  }
 })
  
 export default PetCard

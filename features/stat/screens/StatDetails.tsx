@@ -72,7 +72,7 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
             <Text style={[{ fontSize: 17 }, !endDate && { ...Typography.unFocused, fontStyle: 'italic' }]}>{endDate ?? 'M D Y'}</Text>
           </View>
         </View>
-        <View style={{ ...Spacing.flexRow }}>
+        <View style={Spacing.flexRow}>
           <Text>Avg: </Text>
           <Text style={{ ...Typography.focused, fontSize: 25 }}>{avg}</Text>
           <Text>{ STATS[stat.name].type === 'qual' && ' / 5' }</Text>

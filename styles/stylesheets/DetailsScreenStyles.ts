@@ -3,18 +3,23 @@ import { StyleSheet } from "react-native"
 import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
 
 export const styles = StyleSheet.create({
-  scrollContent: {
-    ...Spacing.flexColumn,
-    paddingVertical: 20,
-    marginTop: 30,
+  topBtnCon: {
+    ...Spacing.flexRow,
+    marginLeft: 'auto', 
+    paddingTop: 50,
+    marginRight: 10,
+    paddingBottom: 10,
+    width: '20%', 
+    justifyContent: 'space-between', 
   },
   headerContainer: {
     ...Spacing.flexColumn,
     width: '100%',
+    marginBottom: 20,
   },
   header: {
     ...Typography.mediumHeader,
-    marginBottom: 0,
+    marginVertical: 10,
     color: Colors.shadow.darkest,
   },
   petCon: {
@@ -25,20 +30,24 @@ export const styles = StyleSheet.create({
     ...Spacing.flexRow,
     width: '100%',
     justifyContent: 'space-between',
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
   itemIcon: {
     ...Forms.smallIcon,
   },
   subHeader: {
     ...Typography.xSmallSubHeader,
+    letterSpacing: 0,
   },
   rowCon: {
     ...Spacing.flexRow,
   },
   btnContainer: {
     ...Spacing.flexRow,
-    marginVertical: 10
+    width: '100%',
+    justifyContent: 'space-evenly',
+    marginVertical: 10,
   },
   smallBtnCon: {
     ...Spacing.flexRow,
@@ -48,13 +57,6 @@ export const styles = StyleSheet.create({
     left: 95,
     width: '80%',
     justifyContent: 'space-evenly',
-  },
-  mainBtn: {
-    ...Buttons.xSmallSquare
-  },
-  subBtn: {
-    ...Buttons.smallSub,
-    marginLeft: 'auto',
   },
   btnText: {
     ...Buttons.buttonText
