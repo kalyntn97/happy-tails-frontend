@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 export const styles = StyleSheet.create({
   container: {
@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
   },
   photoUpload: {
-    ...Forms.photo,
+    ...UI.photo,
     position: 'relative',
     overflow: 'hidden',
     margin: 20,

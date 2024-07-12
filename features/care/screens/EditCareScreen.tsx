@@ -12,7 +12,7 @@ import { Pet } from "@pet/PetInterface"
 import { useUpdateCare } from "@care/careQueries"
 import { AlertForm } from "@utils/ui"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 interface EditCareProps {
   navigation: any

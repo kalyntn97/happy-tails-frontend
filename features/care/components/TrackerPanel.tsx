@@ -11,7 +11,7 @@ import ScrollChart from "@components/Charts/ScrollChart"
 import { useActiveDate } from "@store/store"
 import { getMonth } from "@utils/datetime"
 //styles
-import { Spacing, Typography, Colors, Forms } from '@styles/index'
+import { Spacing, Typography, Colors, UI } from '@styles/index'
 import { useCheckDoneCare,  useUncheckDoneCare } from "@care/careQueries"
 import { AlertForm, getActionIconSource } from "@utils/ui"
 import { useQueryClient } from "@tanstack/react-query"
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   icon: {
-    ...Forms.smallIcon,
+    ...UI.smallIcon,
   },
   iconBtn: {
     marginHorizontal: 15,

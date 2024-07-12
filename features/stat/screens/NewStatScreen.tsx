@@ -10,7 +10,7 @@ import { Pet } from '@pet/PetInterface'
 import { CheckboxButton, MainButton, TransparentButton } from '../../../components/ButtonComponent'
 import IconStatForm from '../components/IconStatForm'
 //styles
-import { Colors, Forms, Spacing, Typography } from '@styles/index'
+import { Colors, UI, Spacing, Typography } from '@styles/index'
 import RatingForm from '../components/RatingForm'
 import InputForm from '../components/InputForm'
 import { useAddStats } from '../statQueries'
@@ -57,7 +57,7 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
                 ? setNames(prev => prev.filter(n => n !== stat))
                 : setNames(prev => [...prev, stat])
             }} />
-            <Image source={getStatIconSource(stat)} style={{ ...Forms.icon }} />
+            <Image source={getStatIconSource(stat)} style={{ ...UI.icon }} />
             <Text style={styles.typeText}>{STATS[stat].name}</Text>
           </View>
         )}
@@ -81,7 +81,7 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
           {index === 0 &&
             <TransparentButton title='Cancel' size='small' onPress={() => navigation.goBack()} />
           }
-          {index > 1 && <Image source={getStatIconSource(names[index - 2])} style={{ ...Forms.smallIcon }} /> }
+          {index > 1 && <Image source={getStatIconSource(names[index - 2])} style={{ ...UI.smallIcon }} /> }
           {index > 0 &&
             <TransparentButton title='Back' size='small' onPress={() => {setIndex(prev => prev - 1)}} />
           }
@@ -91,7 +91,7 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
           {index !== 0 && index === names.length &&
             <MainButton title='Submit' size='small' onPress={() => handleSubmit(pet._id, logs)} />
           }
-        {index < names.length && <Image source={getStatIconSource(names[index])} style={{ ...Forms.smallIcon }} /> }
+        {index < names.length && <Image source={getStatIconSource(names[index])} style={{ ...UI.smallIcon }} /> }
         </View>
       </View>
 

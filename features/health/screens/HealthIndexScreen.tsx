@@ -17,7 +17,7 @@ import { useShallowPets } from "@hooks/sharedHooks"
 //queries
 import { profileKeyFactory, useGetProfile } from "@profile/profileQueries"
 //styles
-import { Buttons, Spacing, Typography, Colors, Forms } from '@styles/index'
+import { Buttons, Spacing, Typography, Colors, UI } from '@styles/index'
 import { useQueryClient } from "@tanstack/react-query"
 import { ProfileData } from "@profile/ProfileInterface"
 
@@ -47,7 +47,7 @@ const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
           <PetInfo pet={health.pet} size='mini' />
         </View>
       </View>
-      <Image source={getActionIconSource('nextRound')} style={{...Forms.smallIcon, marginRight: 10 }} />
+      <Image source={getActionIconSource('nextRound')} style={{...UI.smallIcon, marginRight: 10 }} />
     </TouchableOpacity>
   )
 }
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     width: '100%',    
   },
   headerIcon: {
-    ...Forms.xxSmallPhoto,
+    ...UI.xxSmallPhoto,
   },
   headerCount: {
     color: Colors.red.reg,
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
   },
   itemIcon: {
-    ...Forms.icon,
+    ...UI.icon,
     marginHorizontal: 10,
   },
   itemBtn: {

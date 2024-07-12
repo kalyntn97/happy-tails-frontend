@@ -15,7 +15,7 @@ import { BoxHeader, BoxWithHeader, ErrorImage } from "@components/UIComponents"
 import { AlertForm, getActionIconSource } from "@utils/ui"
 import { useCaresByFrequency, useSelectPhoto, useTaskCounts } from "@hooks/sharedHooks"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 const ProfileScreen = ({ navigation, route }) => {
   const { data, isFetching, isError } = useGetProfile()
@@ -58,7 +58,7 @@ const ProfileScreen = ({ navigation, route }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <Pressable style={styles.bannerCon} onPress={addBanner}>
         <View style={styles.cameraIcon}>
-          <Image source={require('@assets/icons/action-camera.png')} style={{...Forms.smallIcon}} />
+          <Image source={require('@assets/icons/action-camera.png')} style={{...UI.smallIcon}} />
         </View>
         { banner && <Image source={{ uri: banner }} style={styles.banner as ImageStyle} /> }
       </Pressable>
@@ -75,7 +75,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <Text style={styles.bioText}>{profile.bio}</Text>
           </View>
             
-          {/* <View style={{...Forms.rowCon}}>
+          {/* <View style={{...UI.rowCon}}>
             <StatButton item={ {header: 'streak', stat: 0, body: 'days'}} />
             <StatButton item={ {header: 'tasks', stat: careCounts(new Date()) , body: 'today'}} />
             <StatButton item={ {header: 'visit due', stat: Math.abs(healthCounter), body: `days ${healthCounter < 0 && 'ago'}`}} color={healthCounter < 0 && Colors.red.reg} />
@@ -88,7 +88,7 @@ const ProfileScreen = ({ navigation, route }) => {
               <PetList petArray={data.pets} size='compact' />
             </View>
           } />
-          <View style={{...Forms.roundedCon}}>
+          <View style={{...UI.roundedCon}}>
             <BoxHeader title="All pet care tasks" titleIconSource={getActionIconSource('care')} onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
             <BoxHeader title="All vet visits" titleIconSource={getActionIconSource('health')} onPress={() => navigation.navigate('Home', { screen: 'HealthIndex' })} />
             <BoxHeader title="Update profile" titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('Edit', { profile : profile })} />
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   profilePhoto: {
-    ...Forms.smallPhoto,
+    ...UI.smallPhoto,
     backgroundColor: Colors.pink.light,
     margin: 10,
   },

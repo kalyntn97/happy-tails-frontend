@@ -13,7 +13,7 @@ import { getActionIconSource, getCareIconSource } from "@utils/ui"
 //queries
 import { profileKeyFactory, useGetProfile } from "@profile/profileQueries"
 //styles
-import { Buttons, Spacing, Colors, Forms } from '@styles/index'
+import { Buttons, Spacing, Colors, UI } from '@styles/index'
 import { EmptyList, ErrorImage } from "@components/UIComponents"
 import { useQueryClient } from "@tanstack/react-query"
 import { ProfileData } from "@profile/ProfileInterface"
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     flex: 6,
   },
   itemIcon: {
-    ...Forms.icon,
+    ...UI.icon,
     marginHorizontal: 10,
   },
   itemBtn: {
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     width: '40%',
   },
   rightIcon: {
-    ...Forms.xSmallIcon, 
+    ...UI.xSmallIcon, 
     marginRight: 15,
   }
 })

@@ -7,7 +7,7 @@ import { CARES } from '@care/careHelpers'
 import { HEALTHS } from '@health/healthHelpers'
 import { STATS } from '@stat/statHelpers'
 //styles
-import { Spacing, Typography, Colors, Forms } from '@styles/index'
+import { Spacing, Typography, Colors, UI } from '@styles/index'
 import { FormInput } from './UIComponents'
 
 type Props = {
@@ -74,7 +74,7 @@ const TitleInput = ({ type, initial, onChange, placeholder }: Props) => {
 
   return (
     <View style={styles.container}>
-      { iconSource ? <Image source={iconSource} style={Forms.largeIcon}/> : <ActivityIndicator /> }
+      { iconSource ? <Image source={iconSource} style={UI.largeIcon}/> : <ActivityIndicator /> }
       <FormInput value={title} placeholder={placeholder} onChange={handleChange} props={{ autoCapitalize: 'words', multiline: true, ref: titleBtn }} styles={styles.input} />
       { visible && titleSearch.length > 0 &&
         <View style={[styles.content, { top: dropdownTop, left: dropdownLeft }]}>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     maxWidth: '60%',
   },
   content: {
-    ...Forms.boxShadow,
+    ...UI.boxShadow,
     position: 'absolute',
     backgroundColor: Colors.pink.lightest,
     padding: 20,

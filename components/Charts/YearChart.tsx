@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image } from "react-native"
 import * as careHelpers from "@care/careHelpers"
 import { getDateInfo } from "@utils/datetime"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { getStatIconSource } from "@utils/ui"
 
 interface YearChartProps {
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 8,
     backgroundColor: Colors.white,
-    ...Forms.boxShadow
+    ...UI.boxShadow
   },
   header: {
     fontSize: 35,

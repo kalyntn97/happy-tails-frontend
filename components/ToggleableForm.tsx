@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity, Text, View, Image, ImageStyle, Pressable } from "react-native"
 import { FC, ReactNode, useEffect, useState } from "react"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { getActionIconSource } from "@utils/ui"
 import { TransparentButton } from "./ButtonComponent"
 
@@ -24,7 +24,7 @@ const ToggleableForm: React.FC<FormProps> = ({ title, content, onPress, buttonSi
   
   return (
     <View style={styles.container}>
-      <TransparentButton title={title} onPress={handlePress} icon='downThin' color={buttonColor} bgColor={buttonBgColor} size={buttonSize} />
+      <TransparentButton title={title} onPress={handlePress} icon='down' color={buttonColor} bgColor={buttonBgColor} size={buttonSize} />
       {visible && content}
     </View>
   )
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   icon: {
-    ...Forms.xSmallIcon
+    ...UI.xSmallIcon
   },
 })
  

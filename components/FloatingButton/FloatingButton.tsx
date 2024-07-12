@@ -6,9 +6,6 @@ import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withDelay, withSpr
 import SubFloatingButton from "./SubFloatingButton"
 // styles & constants
 import { Button, ButtonStyles, Animation, ChildrenAnimation } from "./constants"
-import { transform } from "typescript"
-import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
-import { centerHeight, windowHeight } from "@home/helpers"
 
 const snapThreshold = ButtonStyles.width + ButtonStyles.margin * 2
 

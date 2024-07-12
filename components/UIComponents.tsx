@@ -1,11 +1,11 @@
-import { ActivityIndicator, DimensionValue, Image, Modal, Pressable, Text, TextInput, TouchableOpacity, View, ViewStyle } from "react-native"
-import { Spacing, Colors, Typography, Forms } from "@styles/index"
-import { FC, ReactElement, useEffect, useState } from "react"
+import { ActivityIndicator, DimensionValue, Image, Modal, Pressable, StyleSheetProperties, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Spacing, Colors, Typography, UI } from "@styles/index"
+import { ComponentProps, FC, ReactElement, ReactNode, useEffect, useState } from "react"
 import { getActionIconSource } from "@utils/ui"
 import { ImageSourcePropType } from "react-native"
-import { ToastConfigParams } from "react-native-toast-message"
+import { ToastConfig, ToastConfigParams, ToastOptions, ToastProps } from "react-native-toast-message"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
-import { SubButton } from "./ButtonComponent"
+import { GoBackButton, SubButton } from "./ButtonComponent"
 import Animated, { FadeInDown, FadeOutDown, LayoutAnimationConfig, SlideInDown, SlideOutDown, ZoomInUp } from "react-native-reanimated"
 
 type BoxHeaderProps = {
@@ -32,7 +32,7 @@ export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor, arro
   }}
     onPress={onPress}
   >
-    { titleIconSource && <Image source={titleIconSource} style={{ ...Forms.smallIcon }} /> }
+    { titleIconSource && <Image source={titleIconSource} style={{ ...UI.smallIcon }} /> }
     <Text style={[
       { ...Typography.xSmallHeader, margin: 0, marginLeft: titleIconSource ? 7 : 2, textAlign: 'left', textTransform: 'capitalize' }, 
     titleColor && { color: titleColor },
@@ -42,13 +42,13 @@ export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor, arro
     </Text>
     <View style={{ ...Spacing.flexRow, marginLeft: 'auto' }}>
       { rightContent && rightContent }
-      <Image source={arrow === 'down' ? getActionIconSource('down') : getActionIconSource('next')} style={{ ...Forms.xSmallIcon, marginLeft: 10 }} />
+      <Image source={arrow === 'down' ? getActionIconSource('down') : getActionIconSource('next')} style={{ ...UI.xSmallIcon, marginLeft: 10 }} />
     </View>
   </Pressable>
 )
 
 export const BoxWithHeader: FC<BoxProps> = ({ title, titleIconSource, onPress, content, titleColor, arrow }) => (
-  <View style={{ ...Forms.roundedCon }}>
+  <View style={{ ...UI.roundedCon }}>
     <BoxHeader title={title} onPress={onPress} titleColor={titleColor} arrow={arrow} titleIconSource={titleIconSource}/>
     <View style={{
       width: '100%'
@@ -64,32 +64,32 @@ type CircleIconProps = {
   bgColor?: string
 }
 
-export const CircleIcon: FC<CircleIconProps> = ({ iconSource, size, bgColor }) => (
-  <View style={{ backgroundColor: bgColor ?? Colors.shadow.light, ...Forms.roundedIconCon }}>
-    <Image source={iconSource} style={{ ...Forms.largeIcon }} />
+export const CircleIcon = ({ iconSource, size, bgColor }: CircleIconProps) => (
+  <View style={{ backgroundColor: bgColor ?? Colors.shadow.light, ...UI.roundedIconCon }}>
+    <Image source={iconSource} style={{ ...UI.largeIcon }} />
   </View>
 )
  
-export const ErrorMessage: FC<{ error: string, top?: number }> = ({ error, top }) => (
+export const ErrorMessage = ({ error, top }: { error: string, top?: number }) => (
   <Text style={{ ...Typography.errorMsg, marginTop: top ?? 0 }}>{error}</Text>
 )
 
-export const ErrorImage: FC<{ top?: number }> = ({ top }) => (
+export const ErrorImage = ({ top }: { top?: number }) => (
   <View style={[top && { marginTop: top }, { ...Spacing.centered }]}>
     <Image source={require('assets/images/error.png')} style={{ maxWidth: 300, resizeMode: 'contain' }} />
   </View>
 )
 
-export const CatToast = ({ text1, text2, props }) => (
-  <View style={{ ...Spacing.flexRow, backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', minHeight: 70, ...Forms.boxShadow, shadowColor: props.style === 'success' ? Colors.green.dark : Colors.red.dark, ...Forms.boxShadow }}>
-    <Image source={props.style === 'success' ? require('assets/icons/ui-cat-happy.png') : require('assets/icons/ui-cat-sad.png')} style={{ ...Forms.icon}} />
+export const CatToast = ({ text1, text2, props }: { text1: string, text2: string, props: any }) => (
+  <View style={{ ...Spacing.flexRow, backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', minHeight: 70, ...UI.boxShadow, shadowColor: props.style === 'success' ? Colors.green.dark : Colors.red.dark, ...UI.boxShadow }}>
+    <Image source={props.style === 'success' ? require('assets/icons/ui-cat-happy.png') : require('assets/icons/ui-cat-sad.png')} style={{ ...UI.icon}} />
     <View style={{ ...Spacing.flexColumn, marginLeft: 10, alignItems: 'flex-start' }}>  
       <Text style={{ textTransform: 'capitalize', fontWeight: 'bold', fontSize: 15, marginBottom: 5 }}>{props.style}!</Text>
       <Text>{text1}</Text>
       { text2 && <Text style={{ flex: 1 }}>{text2}</Text> }
     </View>
     <Pressable style={{ marginLeft: 'auto' }} onPress={props.onClose}>
-      <Image source={getActionIconSource('close')} style={{ ...Forms.smallIcon}} />
+      <Image source={getActionIconSource('close')} style={{ ...UI.smallIcon}} />
     </Pressable>
   </View>
 )
@@ -107,19 +107,26 @@ export const TopRightHeader = ({ onPress }) => (
     ...Spacing.flexRow, position: 'absolute', right: -5, top: 0,
   }}>
     <Text style={{ ...Typography.xSmallHeader, marginRight: 10 }}>Add</Text>
-    <Image source={getActionIconSource('add')} style={{ ... Forms.xSmallIcon }} />
+    <Image source={getActionIconSource('add')} style={{ ... UI.xSmallIcon }} />
   </Pressable>
 )
 
 export const FormLabel = ({ label, icon, width, top, bottom }: { label: string, icon: string, width?: string | number, top?: number, bottom?:number }) => (
   <View style={{...Spacing.flexRow, width: width as DimensionValue, alignSelf: 'flex-start', marginTop: top ?? 20, marginBottom: bottom ?? 10 }}>
-    <Image source={getActionIconSource(icon)} style={{ ...Forms.xSmallIcon, marginRight: 10 }} />
+    <Image source={getActionIconSource(icon)} style={{ ...UI.xSmallIcon, marginRight: 10 }} />
     <Text style={{ ...Typography.xSmallHeader, margin: 0 }}>{label}</Text>
   </View>
 )
 
-export const ModalCon = ({ children, modalVisible, height, onDismiss, modalBgColor }: { children: ReactElement, modalVisible: boolean, height: string | number, onDismiss: () => void, modalBgColor?: string }) => {
+export const BottomModal = ({ children, modalVisible, height, maxHeight, onDismiss, background = Colors.shadow.lightest, overlay = Colors.white }: { children: ReactNode, modalVisible: boolean, height: string | number, maxHeight?: string | number, onDismiss: () => void, background?: string, overlay?: string }) => {
   const [childrenVisible, setChildrenVisible] = useState(modalVisible)
+
+  const dismissModal = () => {
+    setChildrenVisible(false)
+    setTimeout(() => {
+      onDismiss()
+    }, 300)
+  }
 
   useEffect(() => {
     setChildrenVisible(modalVisible)
@@ -134,30 +141,26 @@ export const ModalCon = ({ children, modalVisible, height, onDismiss, modalBgCol
       transparent={true}
     > 
       <Pressable onPress={e => {
-        if (e.target === e.currentTarget) {
-          setChildrenVisible(false)
-          setTimeout(() => {
-            onDismiss()
-          }, 300)
+        if (e.target === e.currentTarget) dismissModal()
+      }} style={{ ...UI.modalOverlay, backgroundColor: overlay}}>
+        { childrenVisible && 
+          <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{ ...UI.bottomModal, height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, alignItems: 'center', backgroundColor: background }}>
+            <GoBackButton position="topLeft" onPress={dismissModal} left={10} top={10} />
+            { children }
+          </Animated.View> 
         }
-      }} style={{ ...Forms.modal, backgroundColor: modalBgColor ?? 'transparent' }}>
-        { childrenVisible && <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{ ...Forms.bottomModal, height: height as DimensionValue, alignItems: 'center' }}>
-          { children }
-        </Animated.View> }
       </Pressable>
     </Modal>
-      
-    
   )
 }
 
-export const FormInput = ({ value, placeholder, onChange, styles, props }) => {
+export const FormInput = ({ value, placeholder, onChange, styles, props }: { value: string, placeholder: string, onChange: () => void, styles: TextStyle, props: TextInputProps}) => {
   const [isFocused, setIsFocused] = useState(false)
   const focusedColor = isFocused ? Colors.pink.darkest : Colors.black
   
   return (
     <TextInput
-      style={[styles ?? Forms.input, { color: focusedColor, borderColor: focusedColor }]}
+      style={[styles ?? UI.input, { color: focusedColor, borderColor: focusedColor }]}
       placeholder={placeholder ?? 'Title'}
       placeholderTextColor={Colors.shadow.reg}
       value={value}
@@ -171,32 +174,31 @@ export const FormInput = ({ value, placeholder, onChange, styles, props }) => {
   )
 }
 
-export const DateInput = ({ date, onChangeDate, color }: { date: Date, onChangeDate: (selected: Date) => void, color?: number }) => {
+export const ModalInput = ({ children, label, onReset, height = 'fit-content', maxHeight, color, overlay, background }: { children: ReactNode, label: string | ReactElement, onReset: () => void, height?: number | string, maxHeight?: number | string, color?: number, overlay?: string, background?: string }) => {
   const [modalVisible, setModalVisible] = useState(false)
-  const focusedColor = Colors.multi.dark[color] ?? Colors.pink.darkest
+  const focusedColor = Colors.multi.dark[color] ?? UI.lightPalette.focused
   const focusedStyles = { borderColor: focusedColor, color: focusedColor }
-  const unfocusedStyles = { borderColor: Colors.shadow.dark, color: Colors.black }
+  const unfocusedStyles = { borderColor: UI.lightPalette.border, color: UI.lightPalette.text }
 
   const dismissModal = () => setModalVisible(false)
 
   return (
     <>
       <Pressable onPress={() => setModalVisible(!modalVisible)}>
-        <Text style={[Forms.input, modalVisible ? focusedStyles : unfocusedStyles]}>{date.toDateString()}</Text>
+        <Text style={[UI.input, modalVisible ? focusedStyles : unfocusedStyles]}>{label}</Text>
       </Pressable>
 
-      <ModalCon modalVisible={modalVisible} onDismiss={dismissModal} height='50%' modalBgColor={Colors.white}>
-        <View style={Spacing.flexColumn}>
-          <RNDateTimePicker display="inline" themeVariant="light" value={new Date(date)} minimumDate={new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate)} accentColor={focusedColor} />
-          <View style={Spacing.flexRow}>
-            <SubButton title='Submit' onPress={dismissModal} color={focusedColor} />
-            <SubButton title='Cancel' onPress={() => {
-              onChangeDate(new Date())
-              dismissModal()
-            }}/>
-          </View>
-        </View>
-      </ModalCon>
+      <BottomModal modalVisible={modalVisible} onDismiss={dismissModal} height={height} maxHeight={maxHeight} overlay={overlay} background={background}>
+        { children }
+        <SubButton title='Reset' onPress={onReset} color={UI.lightPalette.unfocused} bottom={20} />
+      </BottomModal>
     </>
   )
 }
+
+export const DateInput = ({ date, onChangeDate, color }: { date: Date, onChangeDate: (selected: Date) => void, color?: number }) => (
+  <ModalInput label={date.toDateString()} onReset={() => onChangeDate(new Date())} color={color}>
+    <RNDateTimePicker display="inline" themeVariant="light" value={new Date(date)} minimumDate={new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate)} accentColor={Colors.multi.dark[color]} />
+  </ModalInput>
+)
+

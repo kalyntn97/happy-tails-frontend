@@ -5,7 +5,7 @@ import { State, TapGestureHandler } from "react-native-gesture-handler"
 import Animated, { BounceInDown, BounceInUp, BounceOutDown, FadeInUp, useAnimatedStyle, useSharedValue } from "react-native-reanimated"
 // styles
 import { ButtonStyles, Button, subBtn_tap_event } from "./constants"
-import { Spacing, Colors, Forms } from "@styles/index"
+import { Spacing, Colors, UI } from "@styles/index"
 import { getActionIconSource } from "@utils/ui"
 
 
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   icon: {
-   ...Forms.smallIcon,
+   ...UI.smallIcon,
    position: 'absolute',
    bottom: 10,
    left: 10

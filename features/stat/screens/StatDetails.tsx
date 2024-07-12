@@ -12,7 +12,7 @@ import { CircleIcon } from '@components/UIComponents'
 import ToggleableForm from '@components/ToggleableForm'
 import LineChart from '@components/Charts/LineChart'
 //styles
-import { Typography, Forms, Spacing, Colors } from '@styles/index'
+import { Typography, UI, Spacing, Colors } from '@styles/index'
 
 interface StatDetailsProps {
   navigation: any
@@ -82,7 +82,7 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
 
       <View style={[styles.rowCon, styles.tableHeaderCon]}>
         <View style={[styles.columnCon, styles.leftColumn]}>
-          <Image source={getActionIconSource('date')} style={{ ...Forms.smallIcon, marginRight: 10 }} />
+          <Image source={getActionIconSource('date')} style={{ ...UI.smallIcon, marginRight: 10 }} />
           <Text>Date</Text>
         </View>
         <View style={[styles.columnCon, styles.rightColumn]}>
@@ -96,7 +96,7 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
             <Text style={styles.column}>{new Date(record.createdAt).toLocaleDateString()}</Text>
           </View>
           <View style={[styles.columnCon, styles.rightColumn]}>
-            {stat.name === 'mood' ? <Image source={getStatQualIconSource(stat.name, record.value)} style={{ ...Forms.icon }} /> 
+            {stat.name === 'mood' ? <Image source={getStatQualIconSource(stat.name, record.value)} style={{ ...UI.icon }} /> 
             : <Text style={styles.column}>{(unit === defaultUnit || !unit) ? record.value : statConverter(stat.name, record.value.toString(), unit)}</Text>
             }
             

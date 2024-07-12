@@ -3,7 +3,7 @@ import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, Fla
 //store
 import { usePetNames } from "@store/storeUtils"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 interface MultiselectDropdownProps {
   label: string | string[]
@@ -59,7 +59,7 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
     <TouchableOpacity style={[styles.dropDownBtn, width && { width: width }]} onPress={toggleDropdown} ref={DropdownBtn}>
       {visible && (
         <Modal visible={visible} transparent animationType="none">
-          <TouchableOpacity style={styles.overlay} onPress={() => setVisible(false)}>
+          <TouchableOpacity style={UI.overlay} onPress={() => setVisible(false)}>
             <View style={[styles.content, { top: dropdownTop, width: width ?? 250 }]}>
               <FlatList 
                 data={data} 
@@ -94,7 +94,7 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
 const styles = StyleSheet.create({
   dropDownBtn: {
     ...Spacing.flexRow,
-    ...Forms.input,
+    ...UI.input,
     height: 'auto',
     borderColor: Colors.pink.reg,
     justifyContent: 'space-between',
@@ -106,16 +106,12 @@ const styles = StyleSheet.create({
     height: 30,
     marginHorizontal: 10
   },
-  overlay: {
-    ...Spacing.fullWH,
-    alignItems: 'center'
-  },
   content: {
     position: 'absolute',
     backgroundColor: Colors.pink.lightest,
     height: 200,
     padding: 10,
-    ...Forms.boxShadow
+    ...UI.boxShadow
   },
   label: {
     marginVertical: 5

@@ -6,7 +6,7 @@ import * as careHelpers from "@care/careHelpers"
 import { getDateInfo, getMonth, getDayOfWeek } from "@utils/datetime"
 //styles
 import { getStatQualIconSource } from "@utils/ui"
-import { Colors, Forms, Spacing } from '@styles/index'
+import { Colors, UI, Spacing } from '@styles/index'
 
 const ScrollChart = ({ careId, tracker, index, onCheckDone, onUncheckDone, frequency }) => {
   const { date: currDate, year: currYear, month: monthIdx, week: currWeek, daysInMonth, weeksInMonth } = getDateInfo('today')

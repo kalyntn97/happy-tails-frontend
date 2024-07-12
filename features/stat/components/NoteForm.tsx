@@ -4,7 +4,7 @@ import { Image, StyleSheet, Text, View, TextInput } from 'react-native'
 //helpers
 import { getActionIconSource } from '@utils/ui'
 //styles
-import { Colors, Forms, Spacing } from '@styles/index'
+import { Colors, UI, Spacing } from '@styles/index'
 
 interface NoteFormProps {
   onAddNote: (notes: string) => void
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     ...Spacing.fullWH,
   },
   icon: {
-    ...Forms.icon,
+    ...UI.icon,
   },
   iconCon: {
     position: 'absolute',

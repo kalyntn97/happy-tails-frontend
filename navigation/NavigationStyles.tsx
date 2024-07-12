@@ -1,10 +1,11 @@
-import { GoBackButton } from "@components/ButtonComponent"
-import { windowHeight } from "@home/helpers"
 import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs"
-import { NativeStackHeaderProps, NativeStackNavigationOptions } from "@react-navigation/native-stack"
-import { Colors, Forms, Typography } from "@styles/index"
+import { NativeStackNavigationOptions } from "@react-navigation/native-stack"
+import { moderateVerticalScale } from "react-native-size-matters"
 import { StyleSheet, Text, View } from "react-native"
-import { moderateScale, moderateVerticalScale } from "react-native-size-matters"
+//components
+import { GoBackButton } from "@components/ButtonComponent"
+//styles
+import { Colors, UI, Typography } from "@styles/index"
 
 const headerOptions: any = {
   headerTitleStyle: { fontSize: 18, fontWeight: 'bold' },
@@ -43,7 +44,7 @@ export const tabBarOptions: BottomTabNavigationOptions = {
 }
 
 export const styles = StyleSheet.create({
-  icon: { ...Forms.smallIcon },
+  icon: { ...UI.smallIcon },
   iconLabel: { fontWeight: 'bold', fontSize: 12 },
   headerText: {
     ...Typography.mediumHeader, color: Colors.pink.darkest,

@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native"
 //styles
-import { Spacing, Forms, Typography } from '@styles/index'
+import { Spacing, UI, Typography } from '@styles/index'
 
 export const styles = StyleSheet.create({
   container: {
-    ...Forms.cardWithShadow,
+    ...UI.cardWithShadow,
     width: '90%',
     justifyContent: 'flex-start',
     paddingBottom: 20,
@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
     marginTop: 10,
   },
   icon: {
-    ...Forms.icon
+    ...UI.icon
   },
   body: {
     width: '100%',

@@ -7,7 +7,7 @@ import { useAuth } from '@auth/AuthContext'
 //components
 import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponent'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { styles } from '@styles/stylesheets/FormStyles'
 
 

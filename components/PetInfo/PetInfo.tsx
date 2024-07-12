@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, View } from "react-native"
 import { getPetIconSource } from "@utils/ui"
-import { Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Spacing, UI, Typography, Colors } from '@styles/index'
 import { countYearsBetween } from "@utils/datetime"
 
 interface PetInfoProps {
@@ -34,10 +34,10 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
           source={pet.photo ? {uri: pet.photo} : pet.species && getPetIconSource(`${pet.species}Profile`)} 
           style={[
             styles.petPhoto , 
-            size === 'expanded' ? {...Forms.smallPhoto} 
-            : size === 'compact' ? {...Forms.xSmallPhoto} 
-            : size === 'small' ? {...Forms.xxSmallPhoto} 
-            : {...Forms.tinyPhoto}
+            size === 'expanded' ? {...UI.smallPhoto} 
+            : size === 'compact' ? {...UI.xSmallPhoto} 
+            : size === 'small' ? {...UI.xxSmallPhoto} 
+            : {...UI.tinyPhoto}
           ]} />
         {(size === 'compact' || size === 'small' ) &&
           <Text style={styles.shortName}>{pet.name.split(' ')[0]}</Text>
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.shadow.lightest
   },
   petIcon: {
-    ...Forms.icon,
+    ...UI.icon,
     position: 'absolute',
     top: '60%',
     left: '-7%',

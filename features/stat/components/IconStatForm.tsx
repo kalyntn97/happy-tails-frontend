@@ -5,7 +5,7 @@ import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native"
 import { getActionIconSource, statQualIconSource } from "@utils/ui"
 import { STATS, STAT_QUAL_VALUES } from "../statHelpers"
 //styles
-import { Forms, Spacing, Typography } from "@styles/index"
+import { UI, Spacing, Typography } from "@styles/index"
 import { TextInput } from "react-native-gesture-handler"
 import NoteForm from "./NoteForm"
 
@@ -29,7 +29,7 @@ const IconStatForm: FC<LogFormProps> = ({ name, initialValues, onSelect }) => {
         value === i ? setValue(null) : setValue(i)
         onSelect({ name, value: i, notes })
       }}>
-        <Image source={options[i]} style={{ ...Forms.xLargeIcon, margin: 10 }} />
+        <Image source={options[i]} style={{ ...UI.xLargeIcon, margin: 10 }} />
         {value === i &&
           <>
             <Image source={getActionIconSource('check')} style={styles.selected} />
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   selected: {
-    ...Forms.smallIcon,
+    ...UI.smallIcon,
     position: 'absolute',
     zIndex: 1,
     top: 5,
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     bottom: -5,
   },
   input: {
-    ...Forms.input,
+    ...UI.input,
   }
 })
 

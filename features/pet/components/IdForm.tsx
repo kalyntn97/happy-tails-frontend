@@ -6,7 +6,7 @@ import { DetailType, Id, IdFormData } from '@pet/PetInterface'
 import Dropdown from '@components/Dropdown/Dropdown'
 import { MainButton, TransparentButton } from '@components/ButtonComponent'
 //styles
-import { Colors, Typography, Spacing, Forms } from '@styles/index'
+import { Colors, Typography, Spacing, UI } from '@styles/index'
 import { styles } from '@styles/stylesheets/FormStyles'
 import { getPetIconSource } from '@utils/ui'
 import { CircleIcon, ErrorMessage } from '@components/UIComponents'

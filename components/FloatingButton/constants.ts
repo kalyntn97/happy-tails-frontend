@@ -1,4 +1,4 @@
-import { Colors, Spacing, Forms } from "@styles/index";
+import { Colors, Spacing, UI } from "@styles/index";
 import { ViewStyle } from "react-native";
 
 export const ButtonStyles = {
@@ -16,7 +16,7 @@ export const Button: ViewStyle = {
   backgroundColor: ButtonStyles.backgroundColor,
   borderRadius: ButtonStyles.borderRadius,
   ...Spacing.centered,
-  ...Forms.boxShadow,
+  ...UI.boxShadow,
 }
 
 export const Animation = {

@@ -9,7 +9,7 @@ import * as statHelpers from '@stat/statHelpers'
 import { getActionIconSource } from "@utils/ui"
 import { useShallowPets } from "@hooks/sharedHooks"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 interface DropdownProps {
   label?: string
@@ -82,7 +82,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
     <TouchableOpacity style={[styles.dropDownBtn, width && { width: width }]} onPress={toggleDropdown} ref={DropdownBtn}>
       {visible && (
         <Modal visible={visible} transparent animationType="none">
-          <TouchableOpacity style={styles.overlay} onPress={() => setVisible(false)}>
+          <TouchableOpacity style={UI.overlay} onPress={() => setVisible(false)}>
             <View style={[styles.content, data.length > 4 && { height: 200 }, width && { width: width }, { top: dropdownTop, left: dropdownLeft }]}>
               <FlatList 
                 data={data} 
@@ -100,7 +100,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
         </Modal>
       )}
       <Text style={styles.label}>{selected ?? label}</Text>
-      <Image source={getActionIconSource('downThin')} style={styles.icon} />
+      <Image source={getActionIconSource('down')} style={styles.icon} />
     </TouchableOpacity>
   )
 }
@@ -108,7 +108,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
 const styles = StyleSheet.create({
   dropDownBtn: {
     ...Spacing.flexRow,
-    ...Forms.input,
+    ...UI.input,
     borderColor: Colors.pink.reg,
     justifyContent: 'space-between',
     marginVertical: 5,
@@ -118,15 +118,11 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-  overlay: {
-    ...Spacing.fullWH,
-    alignItems: 'center'
-  },
   content: {
     position: 'absolute',
     backgroundColor: Colors.white,
     padding: 10,
-    ...Forms.boxShadow,
+    ...UI.boxShadow,
     borderRadius: 8,
     width: 300,
   },

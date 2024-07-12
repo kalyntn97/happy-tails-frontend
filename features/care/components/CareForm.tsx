@@ -1,28 +1,30 @@
 //npm
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWindowDimensions, Pressable, Dimensions } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
 import { CheckboxButton, MainButton, SubButton, ToggleButton, TransparentButton } from "@components/ButtonComponent"
-import { DateInput, ErrorMessage, FormInput, FormLabel, ModalCon } from "@components/UIComponents"
+import { DateInput, ErrorMessage, FormInput, FormLabel, BottomModal, ModalInput } from "@components/UIComponents"
 import ColorPicker from "@components/ColorPicker"
 import PetPicker from "@components/PetPicker"
 import TitleInput from "@components/TitleInput"
-import FrequencyPicker from "@components/FrequencyPicker"
+import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/FrequencyPicker"
 //types && hooks
 import useForm from "@hooks/useForm"
 import { PetBasic } from "@pet/PetInterface"
 import type { Care, CareFormData } from "@care/CareInterface"
 
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
+import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
 
 
 interface InitialState extends Care {
   ending: boolean
   errorMsg: string
+  showFrequencyPicker: boolean
 }
 
 interface CareFormProps {
@@ -34,21 +36,22 @@ interface CareFormProps {
 }
 
 const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation, status, setColor }) => {
-  const initialState: InitialState= {
+  const initialState: InitialState = {
     name: initialValues?.name ?? null, 
     pets: initialValues?.pets ?? [],
     repeat: initialValues?.repeat ?? false,
     startDate: initialValues?.startDate ?? new Date(),
     ending: !!initialValues?.endDate,
     endDate: initialValues?.endDate ?? null,
-    frequency: initialValues?.frequency ?? null,
+    frequency: initialValues?.frequency ?? { type: 'days', interval: 1, timesPerInterval: [1] },
     color: initialValues?.color ?? 0,
     icon: initialValues?.icon ?? null,
     _id: initialValues?._id ?? null,
     errorMsg: '',
   }
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
-  const { name, pets, repeat, startDate, ending, endDate, frequency, color, icon, _id, errorMsg } = values
+  const { name, pets, repeat, startDate, ending, endDate, frequency, color, _id, errorMsg } = values
+
   const height = useWindowDimensions().height
 
   function handleSubmit() {
@@ -88,23 +91,26 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
           <FormLabel label='Repeat' icon="repeat" />
           <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
       </View>
-      
-      {repeat &&
-        <View style={Spacing.flexRow}>
-          <Text style={styles.rowText}>End Date</Text>
-          <CheckboxButton onPress={() => onChange('ending', !ending)} initial={ending} />
-        </View>
-      }
-      { repeat && ending &&
-        <>
-          <Text style={{ marginLeft: 15 }}> - </Text>
-          <RNDateTimePicker themeVariant='light' value={new Date(endDate) ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { onChange('endDate', selectedDate) }} accentColor={Colors.multi.dark[color]} />
-        </>
-      }
-      
 
-      { repeat && <View style={{ width: '90%', marginTop: 20 }}><FrequencyPicker color={color}/></View> }
-
+      { repeat &&
+        <ModalInput maxHeight='90%'
+          label={
+            <Text>Repeats {frequency && frequencyMap[frequency.type].timesPerIntervalLabel(frequency.timesPerInterval)} {intervalLabel(frequency.interval, frequency.type)} {ending && `until ${endDate && endDate.toLocaleDateString()}`}</Text>
+          }
+          onReset={() => {
+            onChange('frequency', initialState.frequency)
+            onChange('ending', initialState.ending)
+            onChange('endDate', initialState.endDate)
+            onChange('showFrequencyPicker', false)
+          }}
+        >
+          <FrequencyPicker color={color} initial={{ ...frequency, ending, endDate }}
+            onSelectFrequency={(key: string, selected: any) => onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)}
+            onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | Date) => onChange(key, value)}
+          />
+        </ModalInput>
+      }
+      
       <View style={styles.bottomCon}>
         {errorMsg && <ErrorMessage error={errorMsg} />}
         <View style={Spacing.flexRow}>

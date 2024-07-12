@@ -2,6 +2,15 @@ import { ViewStyle, ImageStyle } from "react-native"
 import Colors from "./colors"
 import { fullWH, centered, flexRow, flexColumn, basePadding } from "./spacing"
 
+export const lightPalette = {
+  text: Colors.black,
+  button: Colors.black,
+  focused: Colors.pink.darkest,
+  unfocused: Colors.shadow.dark,
+  border: Colors.shadow.dark,
+  background: Colors.shadow.lightest,
+}
+
 export const boxShadow: ViewStyle = {
   elevation: 3,
   shadowColor: Colors.black,
@@ -24,6 +33,7 @@ export const input: ViewStyle = {
   ...inputBase,
   borderRadius: 8,
   borderWidth: 1,
+  borderColor: lightPalette.border,
 }
 
 export const card: ViewStyle = {
@@ -129,32 +139,19 @@ export const xLargeIcon: ImageStyle = {
   margin: 5,
 }
 
-export const leftRounded: ViewStyle = {
-  borderTopLeftRadius: 8,
-  borderBottomLeftRadius: 8,
+export const leftRounded = (rounded: number): ViewStyle => {
+  return { borderTopLeftRadius: rounded, borderBottomLeftRadius: rounded }
 }
 
-export const rightRounded: ViewStyle = {
-  borderTopRightRadius: 8,
-  borderBottomRightRadius: 8,
+export const rightRounded = (rounded: number): ViewStyle => {
+  return { borderTopRightRadius: rounded, borderBottomRightRadius: rounded }
 }
 
-export const leftMoreRounded: ViewStyle = {
-  borderTopLeftRadius: 15,
-  borderBottomLeftRadius: 15,
+export const topRounded = (rounded: number): ViewStyle => {
+  return { borderTopLeftRadius: 30, borderTopRightRadius: 30 }
 }
 
-export const rightMoreRounded: ViewStyle = {
-  borderTopRightRadius: 15,
-  borderBottomRightRadius: 15,
-}
-
-export const topRounded: ViewStyle = {
-  borderTopLeftRadius: 30,
-  borderTopRightRadius: 30,
-}
-
-export const modal: ViewStyle = {
+export const modalOverlay: ViewStyle = {
   ...fullWH,
   ...centered,
   position: 'relative',
@@ -165,9 +162,11 @@ export const bottomModal: ViewStyle = {
   ...flexColumn,
     width: '100%',
     marginTop: 'auto',
-    padding: 20,
+    paddingTop: 30,
+    paddingBottom: 20,
+    paddingHorizontal: 10,
     backgroundColor: Colors.shadow.lightest,
-    ...topRounded,
+    ...topRounded(30),
     ...boxShadow,
 }
 
@@ -177,8 +176,8 @@ export const overlay: ViewStyle = {
 }
 
 export const rowCon: ViewStyle = {
-  width: '100%',
   ...flexRow,
+  width: '100%',
   justifyContent: 'space-evenly',
   marginVertical: 10,
 }
@@ -215,8 +214,9 @@ export const inactive: ViewStyle = {
   opacity: 0.3,
 }
 
-export const scrollContent: ViewStyle = {
-  alignItems: 'center',
-  position: 'relative',
-  paddingBottom: 20,
+export const rowWithSeparator: ViewStyle = {
+  width: '100%',
+  paddingVertical: 20,
+  borderBottomWidth: 1,
+  borderColor: Colors.shadow.dark,
 }

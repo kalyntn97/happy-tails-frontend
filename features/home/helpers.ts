@@ -28,10 +28,6 @@ export const shouldRenderHealthTask = (item: Health, selectedDate: Date, healthI
   return due || done
 }
 
-export const windowWidth = Dimensions.get('window').width
-export const windowHeight = Dimensions.get('window').height
-export const centerHeight = windowHeight - TAB_BAR_HEIGHT
-
 export const updateTrackerData = (oldData: ProfileData, data: Tracker, careId: string, trackerId: string, frequency: string) => {
   return produce(oldData, draft => {
     const careCard = draft.cares[frequency].find(c => c._id === careId)

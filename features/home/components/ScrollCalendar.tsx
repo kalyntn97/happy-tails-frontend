@@ -9,7 +9,7 @@ import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
 import ScrollSelector from "@components/ScrollSelector"
 import { SubButton } from "@components/ButtonComponent"
 //styles
-import { Colors, Spacing, Typography, Forms } from "@styles/index"
+import { Colors, Spacing, Typography, UI } from "@styles/index"
 
 type Style = ViewStyle | TextStyle
 
@@ -17,7 +17,7 @@ const NavButtons = ({ condition, position, title, onPress }) => {
   const color = condition ? Colors.white : Colors.pink.dark
 
   return (
-  <TouchableOpacity style={[condition && styles.activeHeaderBtnCon, styles.headerBtnCon, position === 'left' ? { ...Forms.rightMoreRounded} : { ...Forms.leftMoreRounded }]} 
+  <TouchableOpacity style={[condition && styles.activeHeaderBtnCon, styles.headerBtnCon, position === 'left' ? { ...UI.rightRounded(15)} : { ...UI.leftRounded(15) }]} 
       onPress={onPress}>
       { position === 'right' && <Text style={[{ color: color }, styles.headerBtnText]}>◀︎</Text> }
       <Text style={[{ color: color }, styles.headerBtnText]}>{title}</Text>

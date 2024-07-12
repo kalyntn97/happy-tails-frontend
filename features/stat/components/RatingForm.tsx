@@ -5,7 +5,7 @@ import React, { FC, useState } from 'react'
 import { STATS, STAT_QUAL_VALUES } from '../statHelpers'
 import { getStatQualIconSource } from '@utils/ui'
 //styles
-import { Colors, Spacing, Typography, Forms, Buttons } from '@styles/index'
+import { Colors, Spacing, Typography, UI, Buttons } from '@styles/index'
 import NoteForm from './NoteForm'
 
 interface RatingFormProps {
@@ -39,8 +39,8 @@ const RatingForm: FC<RatingFormProps> = ({ name, initialValues, onSelect }) => {
     <View style={styles.container}>
       <Text style={{ ...Typography.mediumHeader }}>{STATS[name].name}</Text>
       <View style={styles.iconCon}>
-        <Image source={getStatQualIconSource(name, 0)} style={{ ...Forms.largeIcon }} />
-        <Image source={getStatQualIconSource(name, 1)} style={{ ...Forms.largeIcon }} />
+        <Image source={getStatQualIconSource(name, 0)} style={{ ...UI.largeIcon }} />
+        <Image source={getStatQualIconSource(name, 1)} style={{ ...UI.largeIcon }} />
       </View>
       <View style={styles.optionCon}>{ optionCon }</View>
 

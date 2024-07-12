@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { MainButton } from "@components/ButtonComponent"
 import { ErrorMessage } from "@components/UIComponents"
 
@@ -96,12 +96,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10
   },
   form: {
-    ...Forms.form,
+    ...UI.form,
     width: '100%',
     height: '90%'
   },
   input: {
-    ...Forms.input,
+    ...UI.input,
     height: 40,
     margin: 5,
     borderColor: Colors.pink.reg,

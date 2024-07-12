@@ -1,6 +1,6 @@
 import { ViewStyle, TextStyle } from "react-native"
 import Colors from "./colors"
-import { boxShadow } from "./forms"
+import { boxShadow } from "./ui"
 import { centered } from "./spacing"
 
 //base

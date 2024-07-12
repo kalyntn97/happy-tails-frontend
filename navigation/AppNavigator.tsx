@@ -7,7 +7,6 @@ import { useAuth } from '@auth/AuthContext'
 //components
 import PrivateApp from './PrivateApp'
 import PublicApp from './PublicApp'
-import { toastConfig } from '@components/UIComponents'
 
 const AppNavigator: React.FC = () => {
   const { authState } = useAuth()

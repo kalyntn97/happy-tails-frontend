@@ -4,7 +4,7 @@ import React, { FC, useState } from 'react'
 //helpers
 import { STATS, getUnitKey, statConverter, weightConverter } from '../statHelpers'
 //styles
-import { Forms, Spacing, Colors, Typography } from '@styles/index'
+import { UI, Spacing, Colors, Typography } from '@styles/index'
 import Dropdown from '@components/Dropdown/Dropdown'
 import { getStatIconSource } from '@utils/ui'
 import { useDisplayUnits } from '@store/store'

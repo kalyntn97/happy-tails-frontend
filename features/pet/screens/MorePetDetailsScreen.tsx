@@ -14,7 +14,7 @@ import { Detail, DetailType, Service } from '@pet/PetInterface'
 import { AlertForm, getActionIconSource, getPetIconSource } from '@utils/ui'
 import { petKeyFactory, useDeletePetDetail } from '@pet/petQueries'
 //styles
-import { Colors, Forms, Spacing, Typography } from '@styles/index'
+import { Colors, UI, Spacing, Typography } from '@styles/index'
 
 
 interface EditPetDetailsScreenProps {
@@ -30,7 +30,7 @@ type ListHeaderProps = {
 const ListHeader = ({ name, onPress }: ListHeaderProps) => (
   <>
     <View style={styles.listHeaderLeft}>
-      <Image source={getActionIconSource(name)} style={{ ...Forms.icon }} />
+      <Image source={getActionIconSource(name)} style={{ ...UI.icon }} />
       <Text style={styles.listHeaderText}>{PET_DETAILS[name]}</Text>
     </View>
     <TopRightHeader onPress={onPress} />
@@ -74,7 +74,7 @@ const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route
   const Item = ({ item, type }: { item: any, type: DetailType }) => (
     <View style={styles.itemCon}>
       <View style={Spacing.flexRow}>
-        <Image source={getPetIconSource(item.type) || getPetIconSource(type)} style={{ ...Forms.smallIcon }} />
+        <Image source={getPetIconSource(item.type) || getPetIconSource(type)} style={{ ...UI.smallIcon }} />
         <Text style={styles.itemHeader}>
           {item.name}
           <Text style={{ ...Typography.xSmallSubHeader }}> - {item.type}</Text>

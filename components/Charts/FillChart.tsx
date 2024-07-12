@@ -6,7 +6,7 @@ import * as careHelpers from '@care/careHelpers'
 import { getDateInfo, getMonth } from "@utils/datetime"
 import { getColor, getColorArray } from "@utils/ui"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 const FillChart = ({ tracker, frequency, times }) => {
   const windowWidth = useWindowDimensions().width

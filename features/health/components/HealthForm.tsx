@@ -12,7 +12,7 @@ import { CheckboxButton, MainButton, SubButton } from "@components/ButtonCompone
 import MultipleInputs from "@components/MultipleInputs"
 import PetPicker from "@components/PetPicker"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
 import { ErrorMessage } from "@components/UIComponents"
 import { useShallowPets } from "@hooks/sharedHooks"

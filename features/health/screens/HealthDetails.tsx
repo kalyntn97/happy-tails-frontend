@@ -17,7 +17,7 @@ import { BoxHeader } from "@components/UIComponents"
 import { StatButton, TransparentButton } from "@components/ButtonComponent"
 //styles
 import { styles } from "@styles/stylesheets/DetailsScreenStyles"
-import { Colors, Forms, Typography } from "@styles/index"
+import { Colors, UI, Typography } from "@styles/index"
 
 
 interface HealthDetailsProps {
@@ -101,17 +101,17 @@ const HealthDetailsScreen = ({ navigation, route }) => {
               </TouchableOpacity> */}
             </View>
           
-            <View style={{...Forms.rowCon}}>
+            <View style={{...UI.rowCon}}>
               <StatButton item={{ header: 'done', stat: daysFromDone, body: 'days ago' }} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
               <StatButton item={{ header: daysToDue >= 0 ? 'due in' : 'past due', stat: Math.abs(daysToDue), body: 'days' }} color={daysToDue < 0 && Colors.red.reg} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
               <StatButton item={{ header: 'total', stat: health.lastDone.length, body: 'visits' }} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
             </View>
-            <View style={{...Forms.roundedCon}}>
+            <View style={{...UI.roundedCon}}>
               <BoxHeader title='Update' titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('EditHealth', { health: health })} />
               <BoxHeader title="Delete" titleIconSource={getActionIconSource('deleteSquare')} onPress={() => showDeleteConfirmDialog(health, handleDeleteHealthCard)} titleColor={Colors.red.reg} />
             </View>
           </View>
-          <View style={{...Forms.roundedCon}}>
+          <View style={{...UI.roundedCon}}>
             <BoxHeader title='All logs' titleIconSource={getActionIconSource('noteSquare')}/>
             {health.lastDone.length > 1 && 
               <TouchableOpacity style={styles.showButton} onPress={() => setShowAllVisits(!showAllVisits)}>

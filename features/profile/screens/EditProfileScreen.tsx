@@ -11,7 +11,7 @@ import { useUpdateProfile } from "@profile/profileQueries"
 import { MainButton, SubButton } from "@components/ButtonComponent"
 import Loader from "@components/Loader"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { AlertForm } from "@utils/ui"
 import { ErrorMessage } from "@components/UIComponents"
 
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     ...Spacing.fullScreenDown,
   },
   photoUpload: {
-    ...Forms.photo,
+    ...UI.photo,
     position: 'relative',
     overflow: 'hidden',
     margin: 20,
@@ -129,12 +129,12 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   form: {
-    ...Forms.form,
+    ...UI.form,
     height: '60%',
     margin: 10
   },
   input: {
-    ...Forms.input,
+    ...UI.input,
     borderColor: Colors.pink.reg,
   },
   multiline: {

@@ -11,7 +11,7 @@ import TrackerPanel from "./TrackerPanel"
 import { CloseButton, TransparentButton } from "@components/ButtonComponent"
 //styles
 import { styles } from "@styles/stylesheets/ModalCardStyles"
-import { Colors, Spacing, Forms, Typography } from "@styles/index"
+import { Colors, Spacing, UI, Typography } from "@styles/index"
 
 interface CareCardProps {
   care: Care
@@ -46,7 +46,7 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
         <PetList petArray={care.pets} size='small' />
           {care.repeat &&
             <View style={Spacing.flexRow}>
-              <Image source={getActionIconSource('repeat')} style={{ ...Forms.smallIcon }} />
+              <Image source={getActionIconSource('repeat')} style={{ ...UI.smallIcon }} />
               <Text style={styles.freq}>
                 {care.times} times / {care.frequency === 'Daily' ? 'day' : care.frequency === 'Weekly' ? 'week' : care.frequency === 'Monthly' ? 'month' : 'year'}
               </Text>

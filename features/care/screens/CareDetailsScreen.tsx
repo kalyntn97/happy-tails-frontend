@@ -18,7 +18,7 @@ import { BoxHeader, BoxWithHeader, ErrorImage } from "@components/UIComponents"
 import { ActionButton, StatButton } from "@components/ButtonComponent"
 //styles
 import { styles } from "@styles/stylesheets/DetailsScreenStyles"
-import { Colors, Forms, Spacing } from '@styles/index'
+import { Colors, UI, Spacing } from '@styles/index'
 import { useQueryClient } from "@tanstack/react-query"
 
 interface CareDetailsProps {
@@ -61,7 +61,7 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
           decelerationRate="fast" 
         >
           <View style={styles.headerContainer}>
-            <Image source={getCareIcon(care.name)} style={{ ...Forms.largeIcon }} />
+            <Image source={getCareIcon(care.name)} style={{ ...UI.largeIcon }} />
             <Text style={styles.header}>{CARES[care.name] ?? care.name}</Text>
             <View style={[styles.itemInfo]}>
               <View style={styles.rowCon}>
@@ -115,7 +115,7 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
             }
           />
 
-          <View style={{ ...Forms.roundedCon}}>
+          <View style={{ ...UI.roundedCon}}>
             {actions.map(action => 
               <BoxHeader key={action.key} title={action.key} titleIconSource={getActionIconSource(action.icon)} onPress={action.onPress} titleColor={action.key === 'delete' && Colors.red.dark} />
             )}

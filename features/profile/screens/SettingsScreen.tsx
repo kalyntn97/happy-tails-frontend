@@ -10,7 +10,7 @@ import { useAuth } from "@auth/AuthContext"
 //helpers
 import { FOOD_UNITS, WEIGHT_UNITS } from "@stat/statHelpers"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 interface AccountProps {
   navigation: any
@@ -64,14 +64,14 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}> 
       <Text style={styles.sectionHeader}>Display settings</Text>
-      <View style={{ ...Forms.roundedCon }}>
+      <View style={{ ...UI.roundedCon }}>
         { displaySettings.map(setting =>
           <BoxHeader key={setting.key} title={setting.title} rightContent={ <Text>{setting.currentValue}</Text>} onPress={setting.setValue} mode='light' />
         )}
       </View>
 
       <Text style={styles.sectionHeader}>Account settings</Text>
-      <View style={{ ...Forms.roundedCon }}>
+      <View style={{ ...UI.roundedCon }}>
         { accountSettings.map(setting =>
           <BoxHeader key={setting.key} title={setting.title} onPress={setting.onPress} mode={ setting.key === 'delete' ? 'dark' : 'light'} titleColor={setting.key === 'delete' && Colors.red.darkest} />
         )}

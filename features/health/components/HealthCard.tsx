@@ -11,7 +11,7 @@ import PetInfo from '@components/PetInfo/PetInfo'
 import { CloseButton, TransparentButton } from '@components/ButtonComponent'
 //styles
 import { styles } from '@styles/stylesheets/ModalCardStyles'
-import { Colors, Spacing, Typography, Forms } from "@styles/index"
+import { Colors, Spacing, Typography, UI } from "@styles/index"
 
 interface HealthCardProps {
   health: Health
@@ -58,7 +58,7 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
           <PetInfo pet={health.pet} size='small' />
         </View>
         <View style={Spacing.flexRow}>
-          <Image source={getActionIconSource('repeat')} style={{ ...Forms.smallIcon }} />
+          <Image source={getActionIconSource('repeat')} style={{ ...UI.smallIcon }} />
           <Text style={styles.freq}>Every {health.times} {health.frequency}</Text>
         </View>
       </View>

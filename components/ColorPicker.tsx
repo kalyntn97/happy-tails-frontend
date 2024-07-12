@@ -2,8 +2,8 @@ import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'reac
 import React, { FC, useEffect, useState } from 'react'
 import Fuse from 'fuse.js'
 //styles
-import { Colors, Spacing, Forms, Typography } from '@styles/index'
-import { ModalCon } from './UIComponents'
+import { Colors, Spacing, UI, Typography } from '@styles/index'
+import { BottomModal } from './UIComponents'
 
 type Props = {
   mode?: 'modal'
@@ -42,9 +42,9 @@ const ColorPicker = ({ onPress, initial, mode }: Props) => {
       { mode === 'modal' ?
         <View>
           <Pressable style={[styles.circle, { backgroundColor: Colors.multi.light[selected] }]} onPress={() => setModalVisible(!modalVisible)} />
-          <ModalCon modalVisible={modalVisible} height='30%' onDismiss={() => setModalVisible(false)}>
+          <BottomModal modalVisible={modalVisible} height='30%' onDismiss={() => setModalVisible(false)} overlayColor='transparent'>
             <View style={styles.container}>{colorOptions}</View>
-          </ModalCon>
+          </BottomModal>
         </View>
       : <View style={styles.container}>{colorOptions}</View> }
     </>
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   modalCon: {
-    ...Forms.bottomModal,
+    ...UI.bottomModal,
     height: '30%',
     alignItems: 'center',
   },

@@ -17,7 +17,7 @@ import { ActionButton, TransparentButton } from "@components/ButtonComponent"
 import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
 import { useGetPetSettings, useSetActions } from "@store/store"
 //styles
-import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
+import { Buttons, Spacing, UI, Colors, Typography } from '@styles/index'
 import StatButtonList from "@pet/components/StatButtonList"
 
 interface PetDetailsProps {
@@ -33,7 +33,7 @@ const SectionHeader = ({ type, onPress }: { type: SectionType, onPress?: () => v
 
   return (
     <View style={styles.sectionHeaderCon}>
-      <Image source={getActionIconSource(icon)} style={{ ...Forms.smallIcon }} />
+      <Image source={getActionIconSource(icon)} style={{ ...UI.smallIcon }} />
       <Text style={styles.sectionHeader}>{title}</Text>
       { onPress && <ActionButton title={'filter'} onPress={onPress} left='auto' /> }
     </View>
@@ -74,8 +74,8 @@ const ModalItem = ({ type, option, logs, info, onPress }: { type: string, option
   const item = getItem()
 
   return (
-    <Pressable style={[styles.itemCon, item.isActive() ? { ...Forms.active } : { ...Forms.inactive }]} onPress={onPress}>
-      <Image source={item.getIcon()} style={{ ...Forms.largeIcon }}/>
+    <Pressable style={[styles.itemCon, item.isActive() ? { ...UI.active } : { ...UI.inactive }]} onPress={onPress}>
+      <Image source={item.getIcon()} style={{ ...UI.largeIcon }}/>
       <Text style={{ ...Typography.xSmallHeader, margin: 0 }}>{item.getName()}</Text>
     </Pressable>
   ) 
@@ -160,7 +160,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
                 setModalVisible(true)
                 setOption(type)
               }} />
-              <View style={{ ...Forms.roundedCon }}>
+              <View style={{ ...UI.roundedCon }}>
                 <ItemHeaderList type={type} logs={logs} info={info} onReset={() => handleReset(type)} navigation={navigation} petId={petId} />
               </View>
             </View>
@@ -168,7 +168,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
           
           <View>
             <SectionHeader type='actions' />
-            <View style={{ ...Forms.roundedCon }}>
+            <View style={{ ...UI.roundedCon }}>
               { bottomActions.map(action => <BoxHeader key={action.key} title={action.title} titleIconSource={getActionIconSource(action.icon)} onPress={action.onPress} titleColor={action.key === 'delete' && Colors.red.dark} mode={action.key === 'delete' ? 'dark' : 'light'} />) }
             </View>
           </View>
@@ -186,11 +186,11 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
         }}
         transparent={true}
       >
-        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...Forms.modal }}>
+        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...UI.modalOverlay }}>
           <View style={styles.modalCon}>
             <View style={Spacing.flexRow}>
               <Text style={{ ...Typography.smallHeader }}>{option === 'info' ? 'Show Pet Details' : 'Show Pet Logs'}</Text>
-              <Image source={getActionIconSource('filter')} style={{ ...Forms.smallIcon }} />
+              <Image source={getActionIconSource('filter')} style={{ ...UI.smallIcon }} />
             </View>
             <View style={styles.modalBody}>
               { items.map((type: string, index: number) => <ModalItem key={`${type}-${index}`} type={type} option={option} logs={logs} info={info} onPress={() => toggleItem(type)} />) }
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     ...Spacing.flexColumn,
-    ...Forms.card,
+    ...UI.card,
     width: '90%',
     height: 290,
     justifyContent: 'space-around',
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   },
   modalCon: {
     height: '80%',
-    ...Forms.bottomModal,
+    ...UI.bottomModal,
   },
   modalBody: {
     ...Spacing.flexRow,

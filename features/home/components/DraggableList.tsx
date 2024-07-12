@@ -9,12 +9,13 @@ import { EmptyList } from '@components/UIComponents'
 //store
 import { useHealthInterval } from '@store/store'
 //types & utils
-import { centerHeight, shouldRenderCareTask, shouldRenderHealthTask } from '@home/helpers'
+import { shouldRenderCareTask, shouldRenderHealthTask } from '@home/helpers'
 import type { HomeTabScreenProps } from '@navigation/types'
 import type { Care } from '@care/CareInterface'
 import type { Health, Visit } from '@health/HealthInterface'
 import { Feed } from '@home/HomeInterface'
 import { Typography } from '@styles/index'
+import { centerHeight } from '@utils/constants'
 
 interface DraggableListProps {
   initialData: any

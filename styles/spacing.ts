@@ -1,3 +1,4 @@
+import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
 import { ViewStyle } from "react-native"
 
 export const baseMargin = 10
@@ -50,5 +51,6 @@ export const scrollScreenDown: ViewStyle = {
 
 export const scrollContent: ViewStyle = {
   ...flexColumn,
+  width: '100%',
   paddingBottom: 20,
 }

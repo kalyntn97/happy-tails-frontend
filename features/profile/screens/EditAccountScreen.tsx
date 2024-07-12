@@ -5,7 +5,7 @@ import React, { FC, useState } from 'react'
 import AccountForm from '@profile/components/AccountForm'
 import { GoBackButton } from '@components/ButtonComponent'
 //styles
-import { Forms, Spacing, Typography, Colors } from '@styles/index'
+import { UI, Spacing, Typography, Colors } from '@styles/index'
 
 interface EditAccountScreenProps {
   navigation: any
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   margin: 10
   },
   icon: {
-    ...Forms.smallIcon
+    ...UI.smallIcon
   },
   deleteHeaderCon: {
     backgroundColor: Colors.white,

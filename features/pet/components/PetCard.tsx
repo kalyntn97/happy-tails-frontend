@@ -8,7 +8,7 @@ import { getActionIconSource, getPetIconSource } from "@utils/ui"
 //components
 import { IconButton, MainButton, StatButton, TransparentButton } from "@components/ButtonComponent"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { countYearsBetween } from "@utils/datetime"
 import { useCaresByPet, useHealthDueByPet } from "@hooks/sharedHooks"
 import { SPECIES_OPTIONS } from "@pet/petHelpers"
@@ -52,12 +52,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
           
           <View style={styles.detailsContainer}>
             <View style={styles.petInfo}>
-              <Image style={{ ...Forms.smallIcon }} source={getPetIconSource(!SPECIES_OPTIONS.includes(pet.species) ? 'Others' : pet.species)} />
+              <Image style={{ ...UI.smallIcon }} source={getPetIconSource(!SPECIES_OPTIONS.includes(pet.species) ? 'Others' : pet.species)} />
               <Text style={styles.body}>{pet.breed ? pet.breed : 'Unknown'}</Text>
             </View>
 
             <View style={styles.petInfo}>
-              <Image style={{ ...Forms.smallIcon }} source={require('@assets/icons/info-birthday.png')} />
+              <Image style={{ ...UI.smallIcon }} source={require('@assets/icons/info-birthday.png')} />
               <Text style={styles.body}>
                 {petAge} {petAge !== 'Unknown' && (petAge <= 1 ? 'year' : 'years')}
               </Text>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     ...Spacing.centered,
   },
   base: {
-    ...Forms.cardWithShadow,
+    ...UI.cardWithShadow,
     justifyContent: 'flex-start',
     alignItems: 'center',
     transform: [{ scale: moderateScale(0.8, 1.5) }],
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   petPhoto: {
-    ...Forms.photo,
+    ...UI.photo,
     borderRadius: 100,
     backgroundColor: Colors.pink.light
   },

@@ -6,14 +6,14 @@ import LottieView from 'lottie-react-native'
 import { useAuth } from "@auth/AuthContext"
 //types & helpers
 import type { HomeTabScreenProps } from "@navigation/types"
-import { centerHeight, windowHeight } from "./helpers"
+import { centerHeight, windowHeight } from "@utils/constants"
 //components
 import HomeFeed from "@home/components/HomeFeed"
 import FloatingButton from "@components/FloatingButton/FloatingButton"
 import ScrollCalendar from "@home/components/ScrollCalendar"
 import { MainButton, SubButton, TransparentButton } from "@components/ButtonComponent"
 //styles
-import { Buttons, Typography, Colors, Forms, Spacing } from '@styles/index'
+import { Buttons, Typography, Colors, UI, Spacing } from '@styles/index'
 
 const HomeScreen = ({ navigation }: HomeTabScreenProps) => {
   const { authState } = useAuth()

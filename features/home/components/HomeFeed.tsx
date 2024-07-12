@@ -19,7 +19,7 @@ import { ErrorImage } from "@components/UIComponents"
 import { ClickedTask, Feed, Selection } from "@home/HomeInterface"
 import { getMonth } from "@utils/datetime"
 //styles
-import { Spacing, Forms, Colors, Typography } from '@styles/index'
+import { Spacing, UI, Colors, Typography } from '@styles/index'
 import Animated, { ZoomIn, ZoomInDown, ZoomInUp, ZoomOut, ZoomOutDown, ZoomOutUp } from "react-native-reanimated"
 import { QueryClient, useQueryClient } from "@tanstack/react-query"
 import { ProfileData } from "@profile/ProfileInterface"
@@ -65,11 +65,11 @@ const HomeFeed = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.headerCon}>  
         <TouchableOpacity onPress={() => setFeed('care')} style={[styles.iconHeaderCon, feed === 'care' && { borderColor: Colors.pink.dark }]}>
-          <Image source={getNavigationIconSource('care', feed === 'care' ? 'active' : 'inactive')} style={{...Forms.smallIcon}} />
+          <Image source={getNavigationIconSource('care', feed === 'care' ? 'active' : 'inactive')} style={{...UI.smallIcon}} />
           <Text style={[styles.iconHeaderText, feed === 'care' && { color: Colors.pink.dark }]}>Pet care</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setFeed('health')} style={[styles.iconHeaderCon,feed === 'health' && { borderColor: Colors.pink.dark }]}>
-          <Image source={getNavigationIconSource('health', feed === 'health' ? 'active' : 'inactive')} style={{...Forms.smallIcon}} />
+          <Image source={getNavigationIconSource('health', feed === 'health' ? 'active' : 'inactive')} style={{...UI.smallIcon}} />
           <Text style={[styles.iconHeaderText, feed === 'health' && { color: Colors.pink.dark }]}>Pet health</Text>
         </TouchableOpacity>
       </View>
@@ -83,7 +83,7 @@ const HomeFeed = ({ navigation }) => {
             <View style={styles.iconMenuContainer}>
               {['day', 'week', 'month', 'year'].map((selection: Selection) =>
                 <TouchableOpacity key={selection} style={styles.iconMenu} onPress={() => setSelected(selection)}>
-                  <Image source={getCalendarIconSource(selection, selected === selection ? 'active' : 'inactive')} style={{...Forms.icon}} />
+                  <Image source={getCalendarIconSource(selection, selected === selection ? 'active' : 'inactive')} style={{...UI.icon}} />
                   <Text style={[styles.iconText, selected === selection ? {...Typography.focused} : {...Typography.unFocused}]}>{getIconText(selection)}</Text>
                 </TouchableOpacity>
               )}
@@ -104,7 +104,7 @@ const HomeFeed = ({ navigation }) => {
         onDismiss={() => setClickedTask(null)}
         transparent={true}
       >
-        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...Forms.modal }}> 
+        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...UI.modalOverlay }}> 
           <Animated.View entering={ZoomIn} exiting={ZoomOut} style={styles.detailContainer}>
             {clickedTask && <>
               { clickedTask.type === 'care' ? <CareCard care={clickedTask.item as Care} navigation={navigation} onNavigate={() => setModalVisible(false)} />
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   taskListContainer : {
     width: '90%',
-    ...Forms.scrollContent,
+    ...UI.scrollContent,
   },
   detailContainer: {
     width: '100%',

@@ -6,7 +6,7 @@ import * as careHelpers from '@care/careHelpers'
 import { getDateInfo } from "@utils/datetime"
 import { getColor, getColorArray } from "@utils/ui"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 interface DailyChartProps {
   // tracker: Tracker

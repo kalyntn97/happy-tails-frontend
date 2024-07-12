@@ -3,7 +3,7 @@ import { Children, useEffect, useRef, useState } from "react"
 import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import Animated, { SharedValue, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated"
 //styles
-import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
+import { Buttons, Spacing, UI, Colors, Typography } from '@styles/index'
 
 type ScrollSelectorProps = {
   data: any[]
@@ -11,6 +11,7 @@ type ScrollSelectorProps = {
   initial?: number
   leftLabel?: string
   rightLabel?: string
+  height?: number
 }
 
 type RowProps = {
@@ -20,7 +21,6 @@ type RowProps = {
   scrollY: SharedValue<number>
 }
 
-const height = 50
 
 const Row = ({ item, index, height, scrollY }: RowProps) => {
   const animatedView = useAnimatedStyle(() => {
@@ -56,7 +56,7 @@ const Row = ({ item, index, height, scrollY }: RowProps) => {
   )
 }
 
-const ScrollSelector = ({ data, onSelect, initial, leftLabel, rightLabel }: ScrollSelectorProps) => {
+const ScrollSelector = ({ data, onSelect, initial, leftLabel, rightLabel, height = 50 }: ScrollSelectorProps) => {
   let selected: number
 
   const scrollY = useSharedValue(0)
@@ -79,7 +79,7 @@ const ScrollSelector = ({ data, onSelect, initial, leftLabel, rightLabel }: Scro
   }
 
   return (
-    <View style={styles.carousel}>
+    <View style={[styles.carousel, { height: height * 3 }]}>
       {leftLabel && <Text style={styles.label}>{leftLabel}</Text> }
       <Animated.ScrollView
         ref={ScrollViewRef}
@@ -98,7 +98,7 @@ const ScrollSelector = ({ data, onSelect, initial, leftLabel, rightLabel }: Scro
         directionalLockEnabled={true}
       >
         {data.map((item: any, index: number) =>
-          <Pressable key={index} style={styles.itemCon}>
+          <Pressable key={index} style={[styles.itemCon, { height: height }]}>
             <Row item={item} index={index} height={height} scrollY={scrollY} />
           </Pressable>
         )}
@@ -112,12 +112,10 @@ const styles = StyleSheet.create({
   carousel: {
     ...Spacing.flexRow,
     flex: 1,
-    height: height * 3,
     marginHorizontal: 10,
   },
   itemCon: {
     ...Spacing.centered,
-    height: height,
   },
   itemText: {
     fontSize: 18,

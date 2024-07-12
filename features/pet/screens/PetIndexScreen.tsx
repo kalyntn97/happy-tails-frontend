@@ -15,7 +15,7 @@ import type { Pet } from '../PetInterface'
 import { useGetProfile } from '@profile/profileQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
-import { Spacing, Typography, Colors, Forms } from '@styles/index'
+import { Spacing, Typography, Colors, UI } from '@styles/index'
 import { moderateScale } from 'react-native-size-matters'
 
 const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
@@ -125,7 +125,7 @@ const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
               style={[styles.prevBtn, currCard == 0 && styles.disabled, styles.baseNavBtn]}
               disabled={currCard == 0}
             >
-              <Image source={getActionIconSource('prev')} style={{...Forms.xSmallIcon}}/> 
+              <Image source={getActionIconSource('prev')} style={{...UI.xSmallIcon}}/> 
             </Pressable>
             
             <View style={styles.dotNav}>
@@ -139,7 +139,7 @@ const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
               style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled, styles.baseNavBtn]}
               disabled={currCard == petCount - 1}
             >
-              <Image source={getActionIconSource('next')} style={{ ...Forms.xSmallIcon }}/> 
+              <Image source={getActionIconSource('next')} style={{ ...UI.xSmallIcon }}/> 
             </Pressable>
           </View>
         }

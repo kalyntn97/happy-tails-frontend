@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 export const styles = StyleSheet.create({
   topBtnCon: {
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   itemIcon: {
-    ...Forms.smallIcon,
+    ...UI.smallIcon,
   },
   subHeader: {
     ...Typography.xSmallSubHeader,
@@ -78,7 +78,7 @@ export const styles = StyleSheet.create({
     margin: 5,
   },
   overlay: {
-    ...Forms.modal,
+    ...UI.modalOverlay,
   },
   noteInputCon: {
     ...Spacing.flexColumn,

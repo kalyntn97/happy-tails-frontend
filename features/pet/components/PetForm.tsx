@@ -11,7 +11,7 @@ import ColorPicker from "@components/ColorPicker"
 import { SPECIES, STATUS } from "@pet/petHelpers"
 import { getPetIconSource } from "@utils/ui"
 //styles
-import { Buttons, Spacing, Forms, Colors, Typography } from '@styles/index'
+import { Buttons, Spacing, UI, Colors, Typography } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
 import { PetFormData, PhotoFormData } from "@pet/PetInterface"
 import { ErrorMessage } from "@components/UIComponents"
