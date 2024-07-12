@@ -42,7 +42,7 @@ const ColorPicker = ({ onPress, initial, mode }: Props) => {
       { mode === 'modal' ?
         <View>
           <Pressable style={[styles.circle, { backgroundColor: Colors.multi.light[selected] }]} onPress={() => setModalVisible(!modalVisible)} />
-          <BottomModal modalVisible={modalVisible} height='30%' onDismiss={() => setModalVisible(false)} overlayColor='transparent'>
+          <BottomModal modalVisible={modalVisible} height='30%' onDismiss={() => setModalVisible(false)} overlay='transparent'>
             <View style={styles.container}>{colorOptions}</View>
           </BottomModal>
         </View>

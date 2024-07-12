@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     width: '100%',
     flexWrap: 'wrap',
+    ...Spacing.centered,
   },
   petBtn: {
     width: 100,

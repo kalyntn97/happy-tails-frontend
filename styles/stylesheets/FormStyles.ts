@@ -5,7 +5,6 @@ import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 export const styles = StyleSheet.create({
   container: {
     ...Spacing.scrollScreenDown,
-    width: '90%',
     paddingTop: 50,
   },
   header: {
@@ -38,7 +37,7 @@ export const styles = StyleSheet.create({
     ...Spacing.flexRow,
     justifyContent: 'space-between',
     width: '100%',
-    marginVertical: 10,
+    marginVertical: 20,
   },
   label: {
     textAlign: 'left',

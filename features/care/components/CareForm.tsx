@@ -24,7 +24,6 @@ import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
 interface InitialState extends Care {
   ending: boolean
   errorMsg: string
-  showFrequencyPicker: boolean
 }
 
 interface CareFormProps {
@@ -68,6 +67,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   }
   return (
     <ScrollView
+      style={{ width: '90%' }}
       keyboardShouldPersistTaps='handled'
       contentContainerStyle={[styles.container, { minHeight: height * 0.75}]}
       showsVerticalScrollIndicator={false}
@@ -87,9 +87,9 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       <FormLabel label='Start Date' icon="schedule" width='100%' top={30} />
       <DateInput date={startDate} onChangeDate={selectedDate => onChange('startDate', selectedDate)} color={color} />
 
-      <View style={[styles.labelCon]}>
-          <FormLabel label='Repeat' icon="repeat" />
-          <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
+      <View style={styles.labelCon}>
+        <FormLabel label='Repeat' icon="repeat" top={0} bottom={0} />
+        <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
       </View>
 
       { repeat &&

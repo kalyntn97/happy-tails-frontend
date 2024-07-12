@@ -50,7 +50,7 @@ const Row = ({ item, index, height, scrollY }: RowProps) => {
   })
 
   return (  
-    <Animated.View style={[styles.itemCon, animatedView]}>
+    <Animated.View style={animatedView}>
       <Text style={styles.itemText}>{item}</Text>
     </Animated.View>
   )
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
   },
   itemCon: {
     ...Spacing.centered,
+    paddingHorizontal: 15,
   },
   itemText: {
     fontSize: 18,

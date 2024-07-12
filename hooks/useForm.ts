@@ -11,7 +11,7 @@ const useForm = (callback: any, initialState: any) => {
     setValues(initialState)
   }
 
-  const onValidate = (...requiredFields) => {
+  const onValidate = (...requiredFields: any[]) => {
     if (requiredFields.some(value => !value)) {
       setValues(prev => ({ ...prev, errorMsg: 'Please enter all required fields' }))
     } else {

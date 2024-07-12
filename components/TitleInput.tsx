@@ -62,6 +62,7 @@ const TitleInput = ({ type, initial, onChange, placeholder }: Props) => {
   }
 
   const titleBtn = useRef(null)
+  const TITLE_LENGTH = 50
 
   useEffect(() => {
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
@@ -75,7 +76,10 @@ const TitleInput = ({ type, initial, onChange, placeholder }: Props) => {
   return (
     <View style={styles.container}>
       { iconSource ? <Image source={iconSource} style={UI.largeIcon}/> : <ActivityIndicator /> }
-      <FormInput value={title} placeholder={placeholder} onChange={handleChange} props={{ autoCapitalize: 'words', multiline: true, ref: titleBtn }} styles={styles.input} />
+      <View style={[Spacing.flexColumn, { width: '100%', alignItems: 'flex-start' }]}>
+        <FormInput value={title} placeholder={placeholder} onChange={handleChange} props={{ autoCapitalize: 'words', multiline: true }} ref={titleBtn} styles={styles.input} maxLength={TITLE_LENGTH} />
+        <Text style={styles.subTitle}>{title?.length > 0 ? TITLE_LENGTH - title.length : TITLE_LENGTH}/{TITLE_LENGTH}</Text>
+      </View>
       { visible && titleSearch.length > 0 &&
         <View style={[styles.content, { top: dropdownTop, left: dropdownLeft }]}>
           { titleSearch.map(t =>
@@ -103,6 +107,7 @@ const styles = StyleSheet.create({
     margin: 0,
     marginLeft: 10,
     maxWidth: '60%',
+    textAlign: 'left',
   },
   content: {
     ...UI.boxShadow,
@@ -114,6 +119,8 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   subTitle: {
-    color: Colors.shadow.reg
+    ...Typography.xSmallBody,
+    color: UI.lightPalette.unfocused,
+    marginLeft: 10,
   },
 }) 

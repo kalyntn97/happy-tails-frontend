@@ -1,6 +1,6 @@
 import { ActivityIndicator, DimensionValue, Image, Modal, Pressable, StyleSheetProperties, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Spacing, Colors, Typography, UI } from "@styles/index"
-import { ComponentProps, FC, ReactElement, ReactNode, useEffect, useState } from "react"
+import { ComponentProps, FC, MutableRefObject, ReactElement, ReactNode, forwardRef, useEffect, useState } from "react"
 import { getActionIconSource } from "@utils/ui"
 import { ImageSourcePropType } from "react-native"
 import { ToastConfig, ToastConfigParams, ToastOptions, ToastProps } from "react-native-toast-message"
@@ -111,8 +111,8 @@ export const TopRightHeader = ({ onPress }) => (
   </Pressable>
 )
 
-export const FormLabel = ({ label, icon, width, top, bottom }: { label: string, icon: string, width?: string | number, top?: number, bottom?:number }) => (
-  <View style={{...Spacing.flexRow, width: width as DimensionValue, alignSelf: 'flex-start', marginTop: top ?? 20, marginBottom: bottom ?? 10 }}>
+export const FormLabel = ({ label, icon, width, top = 20, bottom = 10 }: { label: string, icon: string, width?: string | number, top?: number, bottom?:number }) => (
+  <View style={{...Spacing.flexRow, width: width as DimensionValue, alignSelf: 'flex-start', marginTop: top, marginBottom: bottom }}>
     <Image source={getActionIconSource(icon)} style={{ ...UI.xSmallIcon, marginRight: 10 }} />
     <Text style={{ ...Typography.xSmallHeader, margin: 0 }}>{label}</Text>
   </View>
@@ -154,25 +154,26 @@ export const BottomModal = ({ children, modalVisible, height, maxHeight, onDismi
   )
 }
 
-export const FormInput = ({ value, placeholder, onChange, styles, props }: { value: string, placeholder: string, onChange: () => void, styles: TextStyle, props: TextInputProps}) => {
+export const FormInput = forwardRef(({ value, placeholder, onChange, styles, props, maxLength = 50 }: { value: string, placeholder: string, onChange: (input: string) => void, styles: TextStyle, props: TextInputProps, maxLength?: number }, ref: MutableRefObject<any>) => {
   const [isFocused, setIsFocused] = useState(false)
   const focusedColor = isFocused ? Colors.pink.darkest : Colors.black
   
   return (
     <TextInput
+      ref={ref}
       style={[styles ?? UI.input, { color: focusedColor, borderColor: focusedColor }]}
       placeholder={placeholder ?? 'Title'}
-      placeholderTextColor={Colors.shadow.reg}
+      placeholderTextColor={UI.lightPalette.unfocused}
       value={value}
       onChangeText={onChange}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
-      maxLength={50}
+      maxLength={maxLength}
       selectTextOnFocus={true}
       { ...props }
     />
   )
-}
+})
 
 export const ModalInput = ({ children, label, onReset, height = 'fit-content', maxHeight, color, overlay, background }: { children: ReactNode, label: string | ReactElement, onReset: () => void, height?: number | string, maxHeight?: number | string, color?: number, overlay?: string, background?: string }) => {
   const [modalVisible, setModalVisible] = useState(false)
