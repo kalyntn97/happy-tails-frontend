@@ -7,6 +7,7 @@ import { ToastConfig, ToastConfigParams, ToastOptions, ToastProps } from "react-
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 import { GoBackButton, SubButton } from "./ButtonComponent"
 import Animated, { FadeInDown, FadeOutDown, LayoutAnimationConfig, SlideInDown, SlideOutDown, ZoomInUp } from "react-native-reanimated"
+import { lightPalette } from "@styles/ui"
 
 type BoxHeaderProps = {
   title: string
@@ -70,8 +71,8 @@ export const CircleIcon = ({ iconSource, size, bgColor }: CircleIconProps) => (
   </View>
 )
  
-export const ErrorMessage = ({ error, top }: { error: string, top?: number }) => (
-  <Text style={{ ...Typography.errorMsg, marginTop: top ?? 0 }}>{error}</Text>
+export const ErrorMessage = ({ error, top = 0 }: { error: string, top?: number }) => (
+  <Text style={{ ...Typography.errorMsg, marginTop: top }}>{error}</Text>
 )
 
 export const ErrorImage = ({ top }: { top?: number }) => (
@@ -154,24 +155,27 @@ export const BottomModal = ({ children, modalVisible, height, maxHeight, onDismi
   )
 }
 
-export const FormInput = forwardRef(({ value, placeholder, onChange, styles, props, maxLength = 50 }: { value: string, placeholder: string, onChange: (input: string) => void, styles: TextStyle, props: TextInputProps, maxLength?: number }, ref: MutableRefObject<any>) => {
+export const FormInput = forwardRef(({ value, placeholder, onChange, styles, props, maxLength = 50, error }: { value: string, placeholder: string, onChange: (input: string) => void, styles: TextStyle, props: TextInputProps, maxLength?: number, error?: string }, ref: MutableRefObject<any>) => {
   const [isFocused, setIsFocused] = useState(false)
-  const focusedColor = isFocused ? Colors.pink.darkest : Colors.black
+  const validatedStyles = error ? UI.inputError : isFocused ? UI.inputFocused : UI.inputUnfocused
   
   return (
-    <TextInput
-      ref={ref}
-      style={[styles ?? UI.input, { color: focusedColor, borderColor: focusedColor }]}
-      placeholder={placeholder ?? 'Title'}
-      placeholderTextColor={UI.lightPalette.unfocused}
-      value={value}
-      onChangeText={onChange}
-      onFocus={() => setIsFocused(true)}
-      onBlur={() => setIsFocused(false)}
-      maxLength={maxLength}
-      selectTextOnFocus={true}
-      { ...props }
-    />
+    <>
+      <TextInput
+        ref={ref}
+        style={[styles ?? UI.input, validatedStyles]}
+        placeholder={placeholder ?? 'Title'}
+        placeholderTextColor={UI.lightPalette.unfocused}
+        value={value}
+        onChangeText={onChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        maxLength={maxLength}
+        selectTextOnFocus={true}
+        { ...props }
+      />
+      { error && <ErrorMessage error={error} top={5} /> }
+    </>
   )
 })
 

@@ -15,9 +15,10 @@ type Props = {
   initial: string
   placeholder?: string
   onChange: (title: string) => void
+  error?: string
 }
 
-const TitleInput = ({ type, initial, onChange, placeholder }: Props) => {
+const TitleInput = ({ type, initial, onChange, placeholder, error }: Props) => {
   const titleMap = {
     care: { iconSource: getCareIconSource, titles: CARES },
     health: { iconSource: getHealthIconSource, titles: HEALTHS },
@@ -77,7 +78,7 @@ const TitleInput = ({ type, initial, onChange, placeholder }: Props) => {
     <View style={styles.container}>
       { iconSource ? <Image source={iconSource} style={UI.largeIcon}/> : <ActivityIndicator /> }
       <View style={[Spacing.flexColumn, { width: '100%', alignItems: 'flex-start' }]}>
-        <FormInput value={title} placeholder={placeholder} onChange={handleChange} props={{ autoCapitalize: 'words', multiline: true }} ref={titleBtn} styles={styles.input} maxLength={TITLE_LENGTH} />
+        <FormInput value={title} placeholder={placeholder} onChange={handleChange} props={{ autoCapitalize: 'words', multiline: true }} ref={titleBtn} styles={styles.input} maxLength={TITLE_LENGTH} error={error} />
         <Text style={styles.subTitle}>{title?.length > 0 ? TITLE_LENGTH - title.length : TITLE_LENGTH}/{TITLE_LENGTH}</Text>
       </View>
       { visible && titleSearch.length > 0 &&

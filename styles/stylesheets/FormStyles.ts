@@ -12,14 +12,6 @@ export const styles = StyleSheet.create({
     marginTop: 30,
     color: Colors.pink.darkest
   },
-  inputFocused: {
-    borderColor: Colors.pink.darkest,
-    color: Colors.pink.darkest,
-  },
-  inputUnfocused: {
-    borderColor: Colors.shadow.dark,
-    color: Colors.black,
-  },
   rowCon: {
     ...Spacing.flexRow,
     justifyContent: 'space-between',

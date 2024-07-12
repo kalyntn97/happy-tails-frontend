@@ -19,6 +19,7 @@ export interface CareFormData {
   frequency: CareFrequency | null
   color: number
   icon?: string
+  _id?: string
 }
 export interface Care extends CareFormData {
   _id: string

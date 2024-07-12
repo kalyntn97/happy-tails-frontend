@@ -11,12 +11,20 @@ const useForm = (callback: any, initialState: any) => {
     setValues(initialState)
   }
 
-  const onValidate = (...requiredFields: any[]) => {
-    if (requiredFields.some(value => !value)) {
-      setValues(prev => ({ ...prev, errorMsg: 'Please enter all required fields' }))
-    } else {
-      setValues(prev => ({ ...prev, errorMsg: null }))
+  const onValidate = ({ ...requiredFields }) => {
+    if (Object.values(requiredFields).every(value => !!value)) {
+      setValues(prev => ({ ...prev, errors: null }))
       callback()
+    } else {
+      setValues(prev => ({ ...prev, errors: 
+        Object.keys(requiredFields)
+        .filter(key => !requiredFields[key])
+        .reduce((acc, key) => {
+          acc[key] = `${key} is required`
+          return acc
+        }, {}) 
+      }))
+      return
     }
   }
 

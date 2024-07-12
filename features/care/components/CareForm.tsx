@@ -23,7 +23,7 @@ import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
 
 interface InitialState extends Care {
   ending: boolean
-  errorMsg: string
+  errors: any
 }
 
 interface CareFormProps {
@@ -46,24 +46,17 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
     color: initialValues?.color ?? 0,
     icon: initialValues?.icon ?? null,
     _id: initialValues?._id ?? null,
-    errorMsg: '',
+    errors: null,
   }
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
-  const { name, pets, repeat, startDate, ending, endDate, frequency, color, _id, errorMsg } = values
-
+  const { name, pets, repeat, startDate, ending, endDate, frequency, color, _id, errors } = values
   const height = useWindowDimensions().height
 
   function handleSubmit() {
-    if (!name || !pets.length) {
-      onChange('errorMsg', 'Please enter all fields.')
-    } else {
-      onChange('errorMsg', '')
-
-      if (!repeat) ['frequency', 'endDate'].map(value => onChange(value, null))
-      
-      if (!ending) onChange('endDate', null)
-      onSubmit({ name, pets, repeat, startDate, endDate, frequency, color, _id })
-    }
+    if (!repeat) ['frequency', 'endDate'].map(value => onChange(value, null))
+    
+    if (!ending) onChange('endDate', null)
+    onSubmit({ name, pets, repeat, startDate, endDate, frequency, color, _id })
   }
   return (
     <ScrollView
@@ -79,7 +72,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
           setColor(selected)
       }} initial={color} />
       </View>
-      <TitleInput initial={name} placeholder='New Task' onChange={(input) => onChange('name', input)} type='care' />
+      <TitleInput initial={name} placeholder='New Task' onChange={(input) => onChange('name', input)} type='care' error={errors ? errors['name'] : null} />
       <FormLabel label='Select Pets' icon="pets" width='100%' top={30} />
       
       <PetPicker mode="multi" onSelect={(selections) => onChange('pets', selections)} initials={pets?.map((pet: PetBasic) => pet._id ?? pet)} />
@@ -112,9 +105,8 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       }
       
       <View style={styles.bottomCon}>
-        {errorMsg && <ErrorMessage error={errorMsg} />}
         <View style={Spacing.flexRow}>
-          <MainButton onPress={() => onValidate(name, pets.length, startDate)} title={status === 'pending' ? 'Submitting...' : !!name ? 'Save' : 'Create'} />
+          <MainButton onPress={() => onValidate({ name })} title={status === 'pending' ? 'Submitting...' : !!name ? 'Save' : 'Create'} />
           <TransparentButton onPress={onReset} title='Clear' />
         </View>
       </View>

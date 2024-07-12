@@ -1,6 +1,8 @@
 import { ViewStyle, ImageStyle } from "react-native"
 import Colors from "./colors"
 import { fullWH, centered, flexRow, flexColumn, basePadding } from "./spacing"
+import { View } from "react-native-reanimated/lib/typescript/Animated"
+import { TextStyle } from "react-native"
 
 export const lightPalette = {
   text: Colors.black,
@@ -9,6 +11,7 @@ export const lightPalette = {
   unfocused: Colors.shadow.dark,
   border: Colors.shadow.dark,
   background: Colors.shadow.lightest,
+  error: Colors.red.dark,
 }
 
 export const boxShadow: ViewStyle = {
@@ -220,3 +223,19 @@ export const rowWithSeparator: ViewStyle = {
   borderBottomWidth: 1,
   borderColor: Colors.shadow.dark,
 }
+
+export const inputFocused: TextStyle = {
+  borderColor: lightPalette.focused,
+  color: lightPalette.focused,
+}
+
+export const inputUnfocused: TextStyle = {
+  borderColor: lightPalette.unfocused,
+  color: lightPalette.text,
+}
+
+export const inputError: TextStyle = {
+  color: lightPalette.error,
+  borderColor: lightPalette.error,
+}
+
