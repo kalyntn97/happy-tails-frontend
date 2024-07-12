@@ -1,18 +1,18 @@
 // npm
 import { useEffect, useState } from "react"
-import { Text, View, StyleSheet, DeviceEventEmitter, useWindowDimensions, Image, ImageStyle } from "react-native"
+import { Text, View, StyleSheet, DeviceEventEmitter, useWindowDimensions, Image, ImageStyle, ViewStyle } from "react-native"
 import { State, TapGestureHandler } from "react-native-gesture-handler"
-import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated"
+import Animated, { BounceInDown, BounceInUp, BounceOutDown, FadeInUp, useAnimatedStyle, useSharedValue } from "react-native-reanimated"
 // styles
 import { ButtonStyles, Button, subBtn_tap_event } from "./constants"
-import { Spacing, Colors, Forms } from "@styles/index"
-import { getIconSource } from "@care/careHelpers"
+import { Spacing, Colors, UI } from "@styles/index"
+import { getActionIconSource } from "@utils/ui"
 
 
 const SubFloatingButton = ({ onPress, label, index, x }) => {
   const { width } = useWindowDimensions()
  
-  const iconSource = getIconSource(label)
+  const iconSource = getActionIconSource(label)
 
   const buttonOpacity = useSharedValue(1)
  
@@ -39,9 +39,9 @@ const SubFloatingButton = ({ onPress, label, index, x }) => {
 
   return (
     <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
-      <Animated.View style={[
+      <Animated.View entering={BounceInDown.delay(100 * index)} style={[
         styles.button, 
-        { backgroundColor: Colors.multiArray2[index] }, 
+        { backgroundColor: Colors.multi.dark[index + 1] }, 
         animatedStyles
       ]}>
         <Image style={styles.icon as ImageStyle} source={iconSource} />
@@ -76,11 +76,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: ButtonStyles.width + 10,
     fontWeight: 'bold',
-    color: Colors.darkestPink,
+    color: Colors.pink.darkest,
     fontSize: 15,
   },
   icon: {
-   ...Forms.smallIcon,
+   ...UI.smallIcon,
    position: 'absolute',
    bottom: 10,
    left: 10

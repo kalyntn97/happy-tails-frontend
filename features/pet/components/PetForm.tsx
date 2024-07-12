@@ -1,169 +1,172 @@
 //npm modules
-import { useState } from "react"
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ImageStyle } from "react-native"
+import { useEffect, useState } from "react"
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ImageStyle, ScrollView } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
+import RNDateTimePicker from "@react-native-community/datetimepicker"
 //components
-import { MainButton, SubButton } from '@components/ButtonComponent'
+import { CheckboxButton, MainButton, SubButton, TransparentButton } from '@components/ButtonComponent'
 import Dropdown from "@components/Dropdown/Dropdown"
+import ColorPicker from "@components/ColorPicker"
+//helpers & utils
+import { SPECIES, STATUS } from "@pet/petHelpers"
+import { getPetIconSource } from "@utils/ui"
 //styles
-import { Buttons, Spacing, Forms, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Colors, Typography } from '@styles/index'
+import { styles } from "@styles/stylesheets/FormStyles"
+import { PetFormData, PhotoFormData } from "@pet/PetInterface"
+import { ErrorMessage } from "@components/UIComponents"
+import useForm from "@hooks/useForm"
+import { useSelectPhoto } from "@hooks/sharedHooks"
+
+
 
 interface PetFormProps {
-  onSubmit: (name: string, age: number | '', species: string, breed: string, photoData: { uri: string, name: string, type: string } | null, petId: string | null) => Promise<any>
-  initialValues?: { name?: string, age?: number, species?: string, breed?: string, photo?: string | null, petId?: string }
+  onSubmit: (formData: PetFormData, photoData: PhotoFormData | null) => Promise<any>
+  initialValues?: any
+  formStatus: string
   navigation: any
-  status: string
 }
 
-const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
-  const [photo, setPhoto] = useState<string | null>(initialValues?.photo ?? null)
-  const [name, setName] = useState<string>(initialValues?.name ?? '')
-  const [age, setAge] = useState<number | ''>(initialValues?.age ?? '')
-  const [species, setSpecies] = useState<string>(initialValues?.species ?? '')
-  const [breed, setBreed] = useState<string>(initialValues?.breed ?? '')
-  const [errorMsg, setErrorMsg] = useState<string>('')
+const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, formStatus }) => {
+  const initialState = { name: initialValues?.name ?? null, species: initialValues?.species ?? null, allowManualSpecies: initialValues ? !SPECIES.includes(initialValues.species) : false, breed: initialValues?.breed ?? null, dob: initialValues?.dob ?? null, showDob: initialValues ? !!initialValues.dob : true, firstMet: initialValues?.firstMet ?? null, showFirstMet: initialValues ? !!initialValues.firstMet : true, altered: initialValues?.altered ?? { value: false, date: null }, showAlteredDate: initialValues ? !!initialValues.altered.date : true, status: initialValues?.status ?? { value: 'Healthy', date: null, show: true }, showPassedDate: initialValues ? !!initialValues.status.date : true, color: initialValues?.color ?? 0, photo: initialValues?.photo ?? null, photoData: null, petId: initialValues?.petId ?? null, errorMsg: '' }
 
-  const petId: string | null = initialValues?.petId ?? null
+  const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
+  const { name, species, allowManualSpecies, breed, dob, showDob, firstMet, showFirstMet, altered, showAlteredDate, status, showPassedDate, color, photo, petId, errorMsg } = values
 
   const addPhoto = async (): Promise<void> => {
-    let _image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4,3],
-      quality: 1,
-    })
-    if (!_image.canceled) {
-      setPhoto(_image.assets[0].uri)
-    }
+    const photo = await useSelectPhoto()
+    onChange('photo', photo)
   }
 
-  const handleSubmit = async () => {    
-    const photoData: { uri: string, name: string, type: string } | null 
-      = photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
-    if (!name || !species) {
-      setErrorMsg('Please enter name and type.')
+  const handleSelectSpecies = (selected: string) => {
+    if (selected === 'Others') {
+      onChange('allowManualSpecies', true)
+      onChange('breed', null)
     } else {
-      setErrorMsg('')
-      await onSubmit(name, age, species, breed, photoData, petId)
+      onChange('allowManualSpecies', false)
+      onChange('species', selected)
     }
   }
 
-  return ( 
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      
-      <View style={styles.container}>
-        <View style={styles.photoUpload}>
-          <Image source={{ uri: photo }} style={styles.image as ImageStyle} />
-          <View style={styles.uploadBtnContainer}>
-            <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
-              <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
-              <Image source={require('@assets/icons/camera.png')} style={styles.cameraIcon } />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Text style={{ color: Colors.red, fontWeight: 'bold' }}>{errorMsg}</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder='Pet Name' 
-          onChangeText={(text: string) => setName(text)} 
-          value={name} 
-          autoCapitalize="words"
-        />
-        <TextInput 
-          style={styles.input} 
-          placeholder='Age' 
-          onChangeText={(text: string) => setAge(text !== '' ? Number(text) : '')} 
-          value={age !== '' ? age.toString() : ''} 
-          keyboardType="numeric"
-        />
-        {!!species && <Text>Select Type</Text>}
-        <Dropdown 
-          label={species ? species : 'Select Type'} 
-          dataType='species' 
-          onSelect={setSpecies} 
-        />
+  const handleSelectStatus = (selected: string) => {
+    selected === 'Healthy'
+      ? onChange('status', { ...status, value: selected, date: null, show: true })
+      : onChange('status', { ...status, value: selected, date: new Date() })
+  }
 
-        {!!breed && species !== 'Others' && 
+  function handleSubmit() {
+    const photoData = photo && photo !== initialState.photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
+    onSubmit({ name, species, breed, dob, firstMet, altered, status, color, petId }, photoData)
+  }
+  
+  return ( 
+    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
+      <View style={styles.photoUpload}>
+        <Image source={photo ? { uri: photo } : species ? getPetIconSource(`${species}Profile`) : require('assets/icons/ui-image.png')} style={styles.image as ImageStyle} />
+        <View style={styles.uploadBtnContainer}>
+          <TouchableOpacity onPress={addPhoto} style={styles.uploadBtn}>
+            <Text>{photo ? 'Edit' : 'Upload'} Photo</Text>
+            <Image source={require('@assets/icons/action-camera.png')} style={styles.cameraIcon } />
+          </TouchableOpacity>
+        </View>
+      </View>
+      {errorMsg && <ErrorMessage error={errorMsg} />}
+      <Text style={styles.label}>Pet Name (required)</Text>
+      <TextInput 
+        style={styles.input} 
+        placeholder='Enter pet name'
+        placeholderTextColor={Colors.shadow.reg}
+        onChangeText={(text: string) => onChange('name', text)} 
+        value={name} 
+        autoCapitalize="words"
+      />
+      <View style={styles.labelCon}>
+        <Text>Pet Type (required)</Text>
+        {!allowManualSpecies && 
           <Text>{species === 'Dog' || species === 'Cat' ? 'Select Breed' : 'Select Species'}</Text>
         }
-        {species === 'Dog' && 
-          <Dropdown 
-            label={breed ? breed : 'Select Breed'} 
-            dataType='dogBreed' 
-            onSelect={setBreed} 
-          />
+      </View>
+      <View style={styles.rowCon}>
+        <Dropdown label='Select Type' dataType='species' onSelect={handleSelectSpecies} initial={allowManualSpecies ? 'Others' : species} width={125} />
+        {allowManualSpecies ?
+          <TextInput 
+            style={[styles.input, { width: 170 }]} 
+            placeholder='Enter pet type'
+            placeholderTextColor={Colors.shadow.reg}
+            onChangeText={(text: string) => onChange('species', text)} 
+            value={species} 
+            autoCapitalize="words"
+          /> : <Dropdown label='Select Breed' dataType={species} onSelect={selected => onChange('breed', selected)} initial={breed} width={170} />
         }
-        {species === 'Cat' && 
-          <Dropdown 
-            label={breed ? breed : 'Select Breed'} 
-            dataType='catBreed' 
-            onSelect={setBreed} 
-          />
-        }
-        {species === 'Bird' && 
-          <Dropdown 
-            label={breed ? breed : 'Select Species'} 
-            dataType='birdSpecies' 
-            onSelect={setBreed} 
-          />
-        }
-        {species === 'Fish' && 
-          <Dropdown 
-            label={breed ? breed : 'Select Species'} 
-            dataType='fishSpecies' 
-            onSelect={setBreed} 
-          />
-        }
-      
-        <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting' : initialValues?.name ? 'Save' : 'Add Pet'} top={50} bottom={10} />
-        <SubButton onPress={ () => {
-          navigation.canGoBack() ? navigation.goBack() : navigation.reset({ index: 0, routeName: 'Index'})
-        }}
-          title='Cancel' top={10} bottom={10} 
-        />
-
       </View>
 
-    </TouchableWithoutFeedback>
+        <View style={styles.labelCon}>
+          <Text>Date of birth</Text>
+          <View style={{ ...Spacing.flexRow}}>
+            <Text>Unknown</Text>
+            <CheckboxButton onPress={() => { onChange('showDob', !showDob); !showDob && onChange('dob', null) }} initial={!showDob} />
+          </View>
+        </View>
+        {showDob && <RNDateTimePicker themeVariant='light' value={dob ? new Date(dob) : new Date()} onChange={(event, selectedDate) => onChange('dob', selectedDate) } /> }
+        <View style={styles.labelCon}>
+          <Text>Date you first met</Text>
+          <View style={Spacing.flexRow}>
+            <Text>Unknown</Text>
+            <CheckboxButton onPress={() => { onChange('showFirstMet', !showFirstMet); !showFirstMet && onChange('firstMet', null) }} initial={!showFirstMet} />
+          </View>
+        </View>
+        {showFirstMet && <RNDateTimePicker themeVariant="light" value={firstMet ? new Date(firstMet) : new Date()} onChange={(event, selectedDate) => onChange('firstMet', selectedDate)} /> }
+
+      <View style={styles.labelCon}>
+        <Text>Neutered/ Spayed?</Text>
+        <CheckboxButton onPress={() => { onChange('altered', { ...altered, value: !altered.value }) }} initial={altered.value} />
+      </View>
+
+      {altered.value && 
+        <>
+          <View style={styles.labelCon}>
+            <Text>Surgery Date</Text>
+              <View style={Spacing.flexRow}>
+                <Text>Unknown</Text>
+                <CheckboxButton onPress={() => { onChange('showAlteredDate', !showAlteredDate); !showAlteredDate && onChange('altered', { ...altered, date: null }) }} initial={!showAlteredDate} />
+              </View>
+          </View>
+          {showAlteredDate && <RNDateTimePicker themeVariant='light' value={altered.date ? new Date(altered.date) : new Date()} onChange={(event, selectedDate) => onChange('altered', { ...altered, date: selectedDate }) } />}
+        </>
+      }
+      <View style={styles.labelCon}>
+        <Text>Status?</Text>
+        <Dropdown label='' dataType="petStatus" initial={status.value} onSelect={handleSelectStatus} width={140} />
+      </View>
+
+      {status.value === 'Passed away' && 
+        <>
+          <View style={styles.labelCon}>
+            <Text>Date</Text>
+              <View style={Spacing.flexRow}>
+                <Text>Unknown</Text>
+                <CheckboxButton onPress={() => { onChange('showPassedDate', !showPassedDate); !showPassedDate && onChange('status', {...status, date: null }) }} initial={!showPassedDate} />
+              </View>
+          </View>
+          {showPassedDate && <RNDateTimePicker themeVariant="light" value={status.date ? new Date(status.date) : new Date()} onChange={(event, selectedDate) => { onChange('status', {...status, date: selectedDate }) }} /> }
+
+          <View style={styles.labelCon}>
+            <Text>Archive?</Text>
+            <CheckboxButton onPress={() => onChange('status', { ...status, show: !status.show })} initial={!status.show} />
+          </View>
+        </>
+      }
+
+      <ColorPicker onPress={selected => onChange('color', selected)} initial={color} />
+
+      <View style={{ ...Spacing.flexRow}}>
+        <MainButton onPress={() => onValidate(name, species)} title={formStatus === 'pending' ? 'Submitting' : !!name ? 'Save' : 'Create'} top={0} bottom={10} />
+        <TransparentButton onPress={onReset} title='Clear' />
+      </View>
+
+    </ScrollView>
+
   )
 }
- 
-const styles = StyleSheet.create({
-  container: {
-    ...Forms.form,
-  },
-  photoUpload: {
-    ...Forms.photo,
-    position: 'relative',
-    overflow: 'hidden',
-    margin: 20,
-    backgroundColor: Colors.lightPink,
-    elevation: 2,
-  },
-  input: {
-    ...Forms.input,
-    borderColor: Colors.pink,
-  },
-  image: {
-    ...Spacing.fullWH,
-  },
-  uploadBtnContainer: {
-    opacity: 0.7,
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    backgroundColor: Colors.pink,
-    width: '100%',
-    height: '25%',
-  },
-  uploadBtn: {
-    display: 'flex',
-    ...Spacing.centered
-  },
-  cameraIcon: {
-    width: 20,
-    height: 20,
-  }
-})
 
 export default PetForm

@@ -3,16 +3,17 @@ import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, Fla
 //store
 import { usePetNames } from "@store/storeUtils"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 interface MultiselectDropdownProps {
   label: string | string[]
   dataType: 'petNames'
   onSelect: (items: string[]) => void
   initials?: string[]
+  width?: number
 }
 
-const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataType, onSelect, initials }) => {
+const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataType, onSelect, initials, width }) => {
   const [visible, setVisible] = useState<boolean>(false)
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>(initials ? initials : [])
@@ -32,7 +33,7 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
     setVisible(true)
   }
   
-  const onItemPress = (item: string ) => {
+  const onItemPress = (item: string) => {
     // use callback func with setState to handle asynchronous calls
     setSelected((prev) => {
       const selected = prev.some(p => p === item) ? prev.filter(p => p !== item) : [...prev, item]
@@ -55,18 +56,18 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
   }, [petNames])
 
   return (  
-    <TouchableOpacity style={styles.dropDownBtn} onPress={toggleDropdown} ref={DropdownBtn}>
+    <TouchableOpacity style={[styles.dropDownBtn, width && { width: width }]} onPress={toggleDropdown} ref={DropdownBtn}>
       {visible && (
         <Modal visible={visible} transparent animationType="none">
-          <TouchableOpacity style={styles.overlay} onPress={() => setVisible(false)}>
-            <View style={[styles.content, { top: dropdownTop }]}>
+          <TouchableOpacity style={UI.overlay} onPress={() => setVisible(false)}>
+            <View style={[styles.content, { top: dropdownTop, width: width ?? 250 }]}>
               <FlatList 
                 data={data} 
                 keyExtractor={(item, idx) => idx.toString()}
                 renderItem={({ item }) => (
                   <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
                       <Text style={selected.some(s => s === item) ? styles.selected : {}}>
-                        { item || label }
+                        { item }
                       </Text>
                   </TouchableOpacity>
                 )} 
@@ -78,12 +79,12 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
     {selected.length
     ? <View style={styles.labelField}>
         {selected.map((item, idx) =>
-          <Text key={idx} style={styles.label}>{item}</Text>
+          <Text key={idx} style={styles.label}>{ item ?? label}</Text>
         )}
       </View>
     : <Text>{label}</Text>
     }
-    <Image source={require('@assets/icons/dropdown.png')} style={styles.icon } />
+    <Image source={require('@assets/icons/action-down_thin.png')} style={styles.icon } />
   </TouchableOpacity>
   )
 
@@ -93,28 +94,24 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
 const styles = StyleSheet.create({
   dropDownBtn: {
     ...Spacing.flexRow,
-    ...Forms.input,
+    ...UI.input,
     height: 'auto',
-    borderColor: Colors.pink,
+    borderColor: Colors.pink.reg,
     justifyContent: 'space-between',
-    zIndex: 1
+    zIndex: 1,
+    margin: 5,
   },
   icon: {
     width: 30,
     height: 30,
     marginHorizontal: 10
   },
-  overlay: {
-    ...Spacing.fullWH,
-    alignItems: 'center'
-  },
   content: {
     position: 'absolute',
-    backgroundColor: Colors.lightestPink,
-    width: 250,
+    backgroundColor: Colors.pink.lightest,
     height: 200,
     padding: 10,
-    ...Forms.boxShadow
+    ...UI.boxShadow
   },
   label: {
     marginVertical: 5
@@ -127,7 +124,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1
   },
   selected: {
-    color: Colors.darkPink,
+    color: Colors.pink.dark,
     fontWeight: 'bold'
   }
 })

@@ -1,38 +1,39 @@
 import { ImageSourcePropType } from "react-native"
 import { Colors } from "@styles/index"
 import { Care, Tracker } from "@care/CareInterface"
-import { getCurrentDate, getMonth } from "@utils/datetime"
+import { getMonth, getDateInfo } from "@utils/datetime"
+import { keyFromName } from "@utils/misc"
+import Fuse from "fuse.js"
+import { getCareIconSource } from "@utils/ui"
 
-export const careData = ['Teeth Brushing', 'Nail Clipping', 'Walk', 'Grooming', 'Litter Box Cleaning', 'Others']
+export const CARES = [
+  { title: 'Clip nail', icon: 'nail' },
+  { title: 'Brush teeth', icon: 'teeth' },
+  { title: 'Walk', icon: 'walk' },
+  { title: 'Brush', icon: 'brush' },
+  { title: 'Clean litter box', icon: 'litter' },
+  { title: 'Groom service', icon: 'groom' },
+  { title: 'Give bath', icon: 'bath' },
+  { title: 'Give medication', icon: 'med' },
+  { title: 'Train commands', icon: 'train' },
+  { title: 'Feed', icon: 'feed' },
+  { title: 'Refill medication', icon: 'refill' },
+]
 
-export const getIconSource  = (name: string): ImageSourcePropType => {
-  switch (name) {
-    default: 
-      return require('@assets/icons/paw.png')
-    case 'Teeth Brushing':
-      return require('@assets/icons/toothbrush.png')
-    case 'Nail Clipping':
-      return require('@assets/icons/clippers.png')
-    case 'Walk':
-      return require('@assets/icons/leash-walk.png')
-    case 'Grooming':
-      return require('@assets/icons/grooming.png')
-    case 'Litter Box Cleaning':
-      return require('@assets/icons/litter-box.png')
-    //buttons
-    case 'Add a Task': 
-      return require('@assets/icons/care-filled.png')
-    case 'Add a Vet Visit': 
-      return require('@assets/icons/vet-filled.png')
-    case 'Add a Pet': 
-      return require('@assets/icons/pet-filled.png')
-  }
+export const getCareIcon = (title: string): ImageSourcePropType => {
+  const fuse = new Fuse(CARES, { keys: ['title', 'icon'] })
+  const icon = fuse.search(title)[0]?.item.icon ?? 'others'
+  return getCareIconSource(icon)
 }
 
-export const frequencyData = ['Daily', 'Weekly', 'Monthly', 'Yearly']
+export const CARE_NAMES = Object.keys(CARES).map(key => CARES[key])
+
+export const careKeyFromName = keyFromName(CARES)
+
+export const CARE_FREQ = ['Daily', 'Weekly', 'Monthly', 'Yearly']
 
 export const getCurrentTrackerIndex = (frequency: string): number => {
-  const { date, week, month } = getCurrentDate()
+  const { date, week, month } = getDateInfo('today')
   switch (frequency) {
     case 'Daily':
       return date - 1 //current date, all 0-index
@@ -56,13 +57,13 @@ export const getTrackerIndex = (trackers: Tracker[], frequency: string, activeMo
   return activeIndex !== -1 ? activeIndex : (trackers.length - 1)
 }
 
-export const getTaskIndex = (frequency: string, activeDate: number | null, activeWeek: number | null, activeMonth: number | null, activeYear: number | null): number => {
+export const getTaskIndex = (frequency: string, activeDate: number | null, activeWeek: number | null, activeMonth: number | null): number => {
   const latestIndex = getCurrentTrackerIndex(frequency)
   const mapByFrequency = {
     Daily: activeDate,
     Weekly: activeWeek,
     Monthly: activeMonth,
-    Yearly: activeYear,
+    Yearly: 0,
   }
   return mapByFrequency[frequency] ?? latestIndex
 }
@@ -70,18 +71,18 @@ export const getTaskIndex = (frequency: string, activeDate: number | null, activ
 export const getTaskStatus = (task: Care, trackerIndex: number, taskIndex: number) => {
   switch (task.frequency) {
     case 'Daily': 
-      return task.trackers[trackerIndex].done[taskIndex]
-    case 'Weekly': 
-      return task.trackers[trackerIndex].done[taskIndex]
+      return task.trackers[trackerIndex].done[taskIndex].value
+    case 'Weekly':
+      return task.trackers[trackerIndex].done[taskIndex].value
     case 'Monthly':
-      return task.trackers[trackerIndex].done[taskIndex]
+      return task.trackers[trackerIndex].done[taskIndex].value
     case 'Yearly':
-      return task.trackers[trackerIndex].done[0]
+      return task.trackers[trackerIndex].done[0].value
   }
 }
 
 export const getTrackerDisplayName = (frequency: string, activeDate: number | null, activeWeek: number | null, activeMonthName: string | null, activeYear: number | null): string => {
-  const { date, week, monthName, year } = getCurrentDate()
+  const { date, week, monthName, year } = getDateInfo('today')
   const mapByFrequency = {
     Daily: activeDate + 1 === date ? 'Today' : `${activeMonthName} ${activeDate + 1}`,
     Weekly: activeWeek + 1 === week ? 'This week' : `Week ${activeWeek + 1}`,
@@ -93,7 +94,7 @@ export const getTrackerDisplayName = (frequency: string, activeDate: number | nu
 
 export const getTrackerInfo = (trackerName: string) => {
   let trackerMonth: number, trackerMonthName: string, trackerYear: number, isCurrent: boolean
-  const { month: currMonth, year: currYear } = getCurrentDate()
+  const { month: currMonth, year: currYear } = getDateInfo('today')
   // tracker name: 'mm-yyyy'
   if (trackerName.includes('-')) { // tracker is monthly-based, new tracker every month
     const splitName = trackerName.split('-') // output 'mm' & 'yyyy'
@@ -110,27 +111,20 @@ export const getTrackerInfo = (trackerName: string) => {
 
 export const getTaskBackgroundColor = (frequency: string) => {
   switch (frequency) {
-    case 'Daily': return Colors.multiArray[0]
-    case 'Weekly': return Colors.multiArray[1]
-    case 'Monthly': return Colors.multiArray[2]
-    default: return Colors.multiArray[3]
+    case 'Daily': return Colors.multi.light[0]
+    case 'Weekly': return Colors.multi.light[1]
+    case 'Monthly': return Colors.multi.light[2]
+    default: return Colors.multi.light[3]
   }
 }
 
 export const sortByFrequency: (careArray: Care[]) => {[key: string]: Care[]} = (careArray: Care[]) => {
-  const sorted = careArray.reduce((result, careCard) => {
-    const { frequency } = careCard
+  const sorted = careArray.reduce((result, care) => {
+    const { frequency } = care
     result[frequency] = result[frequency] || []
-    result[frequency].push(careCard)
+    result[frequency].push(care)
     return result
   }, {})
   return sorted
 }
 
-export const getDateConstructor = (dateString: string): Date => {
-  return new Date(
-    new Date(dateString).getFullYear(),
-    new Date(dateString).getMonth(),
-    new Date(dateString).getDate(),
-  )
-}

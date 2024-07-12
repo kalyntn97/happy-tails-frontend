@@ -3,10 +3,10 @@ import { useWindowDimensions, StyleSheet, Text, View } from "react-native"
 //types & helpers
 import * as careHelpers from '@care/careHelpers'
 //utils
-import { getCurrentDate } from "@utils/datetime"
+import { getDateInfo } from "@utils/datetime"
 import { getColor, getColorArray } from "@utils/ui"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 interface DailyChartProps {
   // tracker: Tracker
@@ -16,12 +16,12 @@ interface DailyChartProps {
 
 const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
   const { trackerMonthName, trackerYear, isCurrent } = careHelpers.getTrackerInfo(tracker.name)
-  const { date: currDate } = getCurrentDate()
+  const { date: currDate } = getDateInfo('today')
 
   const colorArray = getColorArray()
 
   const windowWidth = useWindowDimensions().width
-  const chartWidth = windowWidth * 0.9
+  const chartWidth = windowWidth * 0.9 * 0.9
   const squareWidth = chartWidth / 7
 
   const CalendarHeader = () => {
@@ -71,11 +71,11 @@ const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
                 backgroundColor: getColor(times, value, colorArray),
                 width: squareWidth,
                 height: squareWidth,
-                borderColor: (currDate === idx + 1 && isCurrent) ? Colors.darkPink : Colors.white
+                borderColor: (currDate === idx + 1 && isCurrent) ? Colors.pink.dark : Colors.white
               }
             ]}>
               <Text style={styles.day}>{idx + 1}</Text>
-              {value === times && 
+              {value.value === times && 
                 <Text style={styles.dot}>✔︎</Text>
               }
           </View>  

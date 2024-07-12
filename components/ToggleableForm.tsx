@@ -1,25 +1,31 @@
-import { StyleSheet, TouchableOpacity, Text, View, Image, ImageStyle } from "react-native"
-import { useState } from "react"
+import { StyleSheet, TouchableOpacity, Text, View, Image, ImageStyle, Pressable } from "react-native"
+import { FC, ReactNode, useEffect, useState } from "react"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { getActionIconSource } from "@utils/ui"
+import { TransparentButton } from "./ButtonComponent"
 
 interface FormProps {
-  visible: string
   title: string
-  content: any
+  buttonColor?: string
+  buttonBgColor?: string
+  buttonSize?: string
+  content: ReactNode
+  onPress?: () => void
 }
 
-const ToggleableForm: React.FC<FormProps> = ({ visible, title, content }) => {
+const ToggleableForm: React.FC<FormProps> = ({ title, content, onPress, buttonSize, buttonColor, buttonBgColor }) => {
+  const [visible, setVisible] = useState(false)
+
+  const handlePress = () => {
+    onPress && onPress()
+    setVisible(!visible)
+  }
   
   return (
     <View style={styles.container}>
-      <View style={styles.mainBtn}>
-        <Image source={require('@assets/icons/dropdownRound.png')} style={styles.icon } />
-        <Text style={[styles.btnText, { color: visible === title ? Colors.darkPink : 'black' }]}>
-          {title}
-        </Text>
-      </View>
-      {visible === title && content}
+      <TransparentButton title={title} onPress={handlePress} icon='down' color={buttonColor} bgColor={buttonBgColor} size={buttonSize} />
+      {visible && content}
     </View>
   )
 }
@@ -28,13 +34,14 @@ const styles = StyleSheet.create({
   container: {
     width: '90%',
     alignItems: 'center',
-    maxHeight: 500,
     marginBottom: 20,
   },
   mainBtn: {
     ...Spacing.flexRow,
-    margin: 5,
     alignSelf: 'flex-start',
+    justifyContent: 'space-between',
+    width: '100%',
+    backgroundColor: Colors.pink.reg,
   },
   btnText: {
     ...Typography.xSmallHeader,
@@ -43,7 +50,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   icon: {
-    ...Forms.smallIcon
+    ...UI.xSmallIcon
   },
 })
  

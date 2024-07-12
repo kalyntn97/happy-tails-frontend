@@ -1,34 +1,36 @@
 //npm modules
-import { useState, useRef, useEffect } from 'react'
-import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image } from "react-native"
+import { useState, useRef } from 'react'
+import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image, ScrollView } from "react-native"
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
+import { moderateVerticalScale } from 'react-native-size-matters'
 //components
 import PetCard from '../components/PetCard'
-import { AddButton } from '@components/ButtonComponent'
+import { PhotoButton, RoundButton } from '@components/ButtonComponent'
+import { ErrorImage } from '@components/UIComponents'
 import Loader from '@components/Loader'
-import PlaceHolder from '@components/PlaceHolder'
-//store & queries
-import { Pet } from '../PetInterface'
-import { useSetActions } from '@store/store'
-import { useGetAllPets } from '@pet/petQueries'
-import { AlertForm } from '@utils/ui'
+import EmptyPetList from '@pet/components/EmptyPetList'
+//store & queries & types
+import type { PetTabScreenProps } from '@navigation/types'
+import type { Pet } from '../PetInterface'
+import { useGetProfile } from '@profile/profileQueries'
+import { getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
-import { Buttons, Spacing, Typography, Colors } from '@styles/index'
+import { Spacing, Typography, Colors, UI } from '@styles/index'
+import { moderateScale } from 'react-native-size-matters'
 
-
-const PetIndexScreen: React.FC = ({ navigation }) => {
+const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
   const [currCard, setCurrCard] = useState<number>(0)
+  const { data, isSuccess, isFetching, isError } = useGetProfile()
 
-  const {data: pets, isSuccess, isLoading, isError } = useGetAllPets()
-  const { setPets } = useSetActions()
+  const pets = data.pets
 
-  const petCount = pets?.length ?? 0
+  const petCount: number = pets?.length ?? 0
   
   const { width } = useWindowDimensions()
   const scrollX = useSharedValue(0)
   const FlatListRef = useRef<Animated.FlatList<Pet>>(null)
 
-  const onScrollHandler = useAnimatedScrollHandler((event) => {
+  const onScrollHandler = useAnimatedScrollHandler(event => {
     scrollX.value = event.contentOffset.x
   })
 
@@ -50,109 +52,126 @@ const PetIndexScreen: React.FC = ({ navigation }) => {
     }
   }
 
+  const handleClickPhoto = (index: number) => {
+    if (FlatListRef.current) {
+      (FlatListRef.current as any).scrollToIndex({ index: index })
+    }
+  }
+
   const DotNav = ({ index }) => {
+    const currIndex = currCard === 0 ? 0 : currCard === pets.length - 1 ? 2 : 1
     const animatedDot = useAnimatedStyle(() => {
       const color = interpolate(
-        scrollX.value,
-        [(index - 1) * width, index * width, (index + 1) * width],
+        currIndex,
+        [index - 1, index , index + 1],
         [0, 1, 0],
         'clamp'
       )
+      const scale = interpolate(
+        currIndex,
+        [index - 1, index , index + 1],
+        [1, 1.3, 1],
+        'clamp'
+      )
       return {
-        color: color === 1 ? Colors.pink : 'black',
-        transform: [
-          { scale: interpolate(
-            scrollX.value,
-            [(index - 1) * width, index * width, (index + 1) * width],
-            [1, 1.5, 1],
-            'clamp'
-          )},
-        ]
+        backgroundColor: color === 1 ? Colors.pink.reg : 'black',
+        transform: [{ scale }],
       }    
     })
-
     return (
-      <Animated.Text style={[styles.dot, animatedDot]}>•</Animated.Text>
+      <Animated.View style={[styles.dot, animatedDot, petCount > 3 && index === 1 && currCard > 1 && { width: 15 }]} />
     )
   }
 
-  useEffect(() => {
-    if (isSuccess) {
-      setPets(pets)
-    }
-  }, [isSuccess])
+  if (isFetching) return <Loader />
+  if (isError) return <ErrorImage />
 
   return ( 
     <View style={styles.container}>
-      { isLoading && <Loader /> }
-      { isError && <Text>Error fetching pets...</Text> }
-      { isSuccess &&  <>
-          { !pets.length && <PlaceHolder /> }
-  
-          <View style={styles.btnContainer}>
+      { isSuccess && pets.length > 0 ? <>
+        <View style={styles.petNav}>
+          <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 10, justifyContent: 'flex-start', alignItems: 'center' }} showsHorizontalScrollIndicator={false}>
+            <RoundButton type='add' size='medium' onPress={() => navigation.navigate('Create')} />
+            {pets.map((pet, index) => 
+              <PhotoButton key={`photo-${pet._id}`} photo={pet.photo} placeholder={getPetIconSource('AnimalProfile')} size='small' onPress={() => handleClickPhoto(index)} />
+            )}
+          </ScrollView>
+        </View>
+      
+        <View style={styles.carousel}>
+          <Animated.FlatList 
+            ref={FlatListRef}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            onScroll={onScrollHandler}
+            onMomentumScrollEnd={onScrollEnd}
+            data={pets}
+            keyExtractor={item => item._id}
+            pagingEnabled={true}
+            renderItem={({ item, index }) => {
+              return <PetCard pet={item} index={index} scrollX={scrollX} navigation={navigation} />
+            }}
+            ListEmptyComponent={
+              <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
+            }
+          />
+          
+        </View>
+
+        { petCount > 2 &&
+          <View style={styles.rowCon}>
             <Pressable 
               onPress={handleClickPrev} 
-              style={[styles.prevBtn, currCard == 0 && styles.disabled]}
+              style={[styles.prevBtn, currCard == 0 && styles.disabled, styles.baseNavBtn]}
               disabled={currCard == 0}
             >
-              <Image source={require('@assets/icons/prev2.png')} style={{ width: 30, height:  30 }}/> 
+              <Image source={getActionIconSource('prev')} style={{...UI.xSmallIcon}}/> 
             </Pressable>
+            
+            <View style={styles.dotNav}>
+              {Array(3).fill(0).map((_, i) =>
+                <DotNav key={i} index={i} />
+              )}
+            </View>
             
             <Pressable 
               onPress={handleClickNext} 
-              style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled]}
+              style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled, styles.baseNavBtn]}
               disabled={currCard == petCount - 1}
             >
-              <Image source={require('@assets/icons/next2.png')} style={{ width: 30, height: 30 }}/> 
+              <Image source={getActionIconSource('next')} style={{ ...UI.xSmallIcon }}/> 
             </Pressable>
           </View>
-          
-          <View style={styles.carousel}>
-            <Animated.FlatList 
-              ref={FlatListRef}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              onScroll={onScrollHandler}
-              onMomentumScrollEnd={onScrollEnd}
-              data={pets}
-              keyExtractor={item => item._id}
-              pagingEnabled={true}
-              renderItem={({ item, index }) => {
-                return <PetCard pet={item} index={index} scrollX={scrollX} navigation={navigation}/>
-              }}
-              ListEmptyComponent={
-                <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
-              }
-            />
-            
-          </View>
-          <View style={styles.dotNav}>
-            {pets.map((pet, index) => 
-              <DotNav key={index} index={index}/>
-            )}
-          </View>
-        </>
-      } 
-      
-      <AddButton onPress={() => navigation.navigate('Create')} />
+        }
+      </> : 
+        <View style={{ ...Spacing.fullWH, justifyContent: 'center' }}> 
+          <EmptyPetList navigation={navigation} />
+        </View> 
+      }
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.centered,
     ...Spacing.fullScreenDown,
+    alignItems: 'center',
   },
   emptyMsg: {
     ...Typography.xSmallHeader,
   },
-  btnContainer: {
+  rowCon: {
     width: '90%',
-    height: '6%',
     ...Spacing.flexRow,
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     position: 'relative'
+  },
+  baseNavBtn: {
+    padding: 5,
+    borderWidth: 1,
+    borderRadius: 99,
+    ...Spacing.centered,
+    display: 'flex'
   },
   nextBtn: {
     position: 'absolute',
@@ -164,18 +183,22 @@ const styles = StyleSheet.create({
   },
   carousel: {
     width: '100%',
-    height: '65%',
+  },
+  petNav: {
+    marginTop: 50,
+    width: '100%',
   },
   dotNav: {
     ...Spacing.flexRow,
-    width: '90%',
-    height: '10%',
-    justifyContent: 'center',
-    alignItems: 'center'
+    marginTop: 10,
+    width: 120,
+    justifyContent: 'space-between',
   },
   dot: {
     margin: 10,
-    fontSize: 30,
+    width: 8,
+    height: 8,
+    borderRadius: 99,
   },
   disabled: {
     opacity: 0.5

@@ -1,6 +1,6 @@
 //npm
-import { useEffect } from "react"
-import { useIsFocused } from "@react-navigation/native"
+import { useEffect, useRef, useState } from "react"
+import { useIsFocused, useNavigation } from "@react-navigation/native"
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native"
 //components
 import CareForm from "../components/CareForm"
@@ -9,40 +9,28 @@ import { AlertForm } from "@utils/ui"
 //styles
 import { Buttons, Spacing, Typography, Colors } from '@styles/index'
 
-const NewCareScreen: React.FC = ({ navigation }) => {
-  const isFocused = useIsFocused()
-  const addCareMutation = useAddCare()
+const NewCareScreen = ({ navigation }) => {
+  const [color, setColor] = useState<number>(null)
 
-  const handleSubmit = (name: string, pets: string[], repeat: boolean, ending: boolean, date: string, endDate: string | null, frequency: string | null, times: number | null) => {
-    addCareMutation.mutate({ name, pets, repeat, ending, date, endDate, frequency, times }, {
-      onSuccess: () => {
-        navigation.navigate('Index')
-        return AlertForm({ body: `Added successfully`, button: 'OK' })
-      },
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      },
-    })
+  const isFocused = useIsFocused()
+  const addCareMutation = useAddCare(navigation)
+
+  const handleSubmit = (formData: CareFormData) => {
+    addCareMutation.mutate(formData)
   }
 
   useEffect(() => {
     if (!isFocused) {
       navigation.goBack()
     }
-  }, [navigation, isFocused])
+    navigation.setOptions({ headerStyle: { backgroundColor: Colors.multi.lightest[color] } })
+  }, [navigation, isFocused, color])
 
   return (
-    <View style={styles.container}>
-      <CareForm onSubmit={handleSubmit} navigation={navigation} status={addCareMutation.status} />
+    <View style={{ ...Spacing.fullScreenDown, backgroundColor: Colors.multi.lightest[color] }}>
+      <CareForm onSubmit={handleSubmit} navigation={navigation} status={addCareMutation.status} setColor={setColor} />
     </View>  
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-    ...Spacing.centered
-  }
-})
 
 export default NewCareScreen

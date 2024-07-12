@@ -1,0 +1,56 @@
+import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs"
+import { NativeStackNavigationOptions } from "@react-navigation/native-stack"
+import { moderateVerticalScale } from "react-native-size-matters"
+import { StyleSheet, Text, View } from "react-native"
+//components
+import { GoBackButton } from "@components/ButtonComponent"
+//styles
+import { Colors, UI, Typography } from "@styles/index"
+
+const headerOptions: any = {
+  headerTitleStyle: { fontSize: 18, fontWeight: 'bold' },
+  headerStyle: { backgroundColor: Colors.shadow.lightest },
+  headerTintColor: Colors.black,
+}
+
+const contentStyle: NativeStackNavigationOptions = {
+  contentStyle: { backgroundColor: Colors.shadow.lightest },
+}
+
+export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
+
+const Header = ({ title, navigation, showGoBackButton, mode }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string }) => (
+  title ? 
+    <View style={[styles.headerCon, { marginTop: mode === 'card' ? 25 : 15 }]}>
+      { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={mode === 'card' ? 15 : 10} left={10} /> }
+      { title && <Text style={styles.headerText}>{title}</Text>}
+    </View> 
+  : showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={mode === 'card' ? 45 : 15} left={10} />
+)
+
+export const dynamicStackOptions = (mode: string = 'modal', showGoBackButton: boolean = true, showTitle: boolean = true): NativeStackNavigationOptions => {
+  return {
+    ...headerOptions,
+    presentation: mode,
+    gestureEnabled: true,
+    ...contentStyle,
+    header: ({ navigation, options }) => <Header title={showTitle && options.title} navigation={navigation} mode={mode} showGoBackButton={showGoBackButton} />
+  }
+}
+
+export const tabBarOptions: BottomTabNavigationOptions = {
+  tabBarStyle: { padding : 10, height: TAB_BAR_HEIGHT, backgroundColor: Colors.white },
+  headerShown: false,
+}
+
+export const styles = StyleSheet.create({
+  icon: { ...UI.smallIcon },
+  iconLabel: { fontWeight: 'bold', fontSize: 12 },
+  headerText: {
+    ...Typography.mediumHeader, color: Colors.pink.darkest,
+  },
+  headerCon: { 
+    height: 70,
+    backgroundColor: Colors.shadow.lightest,
+  },
+})

@@ -3,10 +3,10 @@ import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
 //types & helpers
 import * as careHelpers from '@care/careHelpers'
 //utils
-import { getCurrentDate, getMonth } from "@utils/datetime"
+import { getDateInfo, getMonth } from "@utils/datetime"
 import { getColor, getColorArray } from "@utils/ui"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 const FillChart = ({ tracker, frequency, times }) => {
   const windowWidth = useWindowDimensions().width
@@ -16,7 +16,7 @@ const FillChart = ({ tracker, frequency, times }) => {
   const squareWidth = frequency === 'Weekly' ? chartWidth * 0.9 / 3.2 : chartWidth * 0.9 / 4
 
   const { trackerMonthName, trackerYear, isCurrent } = careHelpers.getTrackerInfo(tracker.name)
-  const { monthName: currMonth, week: currWeek } = getCurrentDate()
+  const { monthName: currMonth, week: currWeek } = getDateInfo('today')
 
   const colorArray = getColorArray()
 
@@ -38,22 +38,14 @@ const FillChart = ({ tracker, frequency, times }) => {
               borderColor: 
               ( (currWeek === index + 1 && isCurrent && frequency === 'Weekly') 
                 || (currMonth === index + 1 && isCurrent && frequency === 'Monthly') 
-              ) ? Colors.darkPink : Colors.white,
+              ) ? Colors.pink.dark : Colors.white,
               backgroundColor: getColor(times, value, colorArray),
             }
-        
           ]}>
-            <Text style={[
-              styles.label,
-              // { color: 
-              //   ( (currWeek === index + 1 && isCurrent && frequency === 'Weekly') 
-              //     || (currMonth === index + 1 && isCurrent && frequency === 'Monthly') 
-              //   ) ? Colors.darkPink : Colors.white
-              // }
-            ]}>
+            <Text style={styles.label}>
               {frequency === 'Monthly' ? getMonth(index + 1).slice(0, 3) : `Week ${index + 1}`}
             </Text>
-            <Text style={styles.value}>{value ? '✔︎' : ''}</Text>
+            <Text style={styles.value}>{value.value === times ? '✔︎' : ''}</Text>
           </View>
         )}
       </View>
@@ -65,6 +57,8 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.flexRow,
     ...Spacing.centered,
+    marginTop: 20,
+    marginBottom: 10,
   },
   square: {
     borderWidth: 3,

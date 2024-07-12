@@ -1,22 +1,34 @@
-export const getCurrentDate = () => {
-  const today = new Date()
-  const date = today.getDate()
-  const month = today.getMonth() + 1 //0-index 
-  const year = today.getFullYear()
-  const day = getDayOfWeek(today)
+export const getDateInfo = (input: string) => {
+  const inputDate = input === 'today' ? new Date() : new Date(input)
+  const date = inputDate.getDate()
+  const month = inputDate.getMonth() + 1 //0-index 
+  const year = inputDate.getFullYear()
+  const day = getDayOfWeek(inputDate)
   const monthName = getMonth(month)
 
   const firstDayOfMonth = new Date(year, month - 1, 1)
   const lastDayOfMonth = new Date(year, month, 0)
 
   const daysInMonth = lastDayOfMonth.getDate()
-  const weeksInMonth = Math.ceil((daysInMonth /* + firstDayOfMonth.getDay() */) / 7)
+  const weeksInMonth = Math.ceil(daysInMonth / 7)
 
   const daysPassed = date - 1  
-  const weeksPassed = Math.floor((daysPassed /* + firstDayOfMonth.getDay() */) / 7)
+  const weeksPassed = Math.floor(daysPassed / 7)
   const week = weeksPassed + 1
   
-  return { date, month, monthName, year, day, week, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
+  return { inputDate, date, month, monthName, year, day, week, firstDayOfMonth, lastDayOfMonth, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
+}
+
+export const getDateConstructor = (dateString: string): Date => {
+  const date = new Date(dateString)
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
+export const compareDates = (string1: string, string2: string): number => {
+  const date1 = string1 === 'today' ? new Date() : new Date(string1)
+  const date2 = string2 === 'today' ? new Date() : new Date(string2)
+  return date1.toISOString().localeCompare(date2.toISOString())
 }
 
 export const months = [
@@ -26,8 +38,8 @@ export const months = [
 ]
 
 export const getYears = () => {
-  const { year } = getCurrentDate()
-  let years = Array.from({length: year - 2023}, (_, index) => 2024 + index)
+  const { year } = getDateInfo('today')
+  let years = Array.from({length: year - 2012}, (_, index) => 2015 + index)
   return years
 }
 
@@ -43,3 +55,50 @@ export const getDaysInMonth = (month: number, year: number) => {
 }
 
 export const getWeekIndex = (date: number) => Math.round(date / 7)
+
+export const getStartDate = (inputDate: string, interval: number) => {
+  const date = getDateConstructor(inputDate)
+  return new Date(date.getTime() - (interval * 24 * 60 * 60 * 1000))
+}
+
+export const dateIsWithinRange = (start: string, end: string, date: string) => {
+  return compareDates(start, date) <= 0 && compareDates(date, end) <= 0
+}
+
+export const countDaysBetween = (start: string, end: string) => {
+  const startDate = start === 'today' ? new Date() : new Date(start)
+  const endDate = end === 'today' ? new Date() : new Date(end)
+  const timeElapsed = endDate.getTime() - startDate.getTime()
+  return  Math.round(timeElapsed / (1000 * 3600 * 24))
+}
+
+export const countYearsBetween = (start: string, end: string) => {
+  const startDate = start === 'today' ? new Date() : new Date(start)
+  const endDate = end === 'today' ? new Date() : new Date(end)
+  const timeElapsed = endDate.getTime() - startDate.getTime()
+  const timeInYears = timeElapsed / (1000 * 60 * 60 * 24 * 365.25)
+  return parseFloat(timeInYears.toFixed(1))
+}
+
+export const getDateFromRange = (input: string, unit: string, count: number, direction: number) => {
+  //* direction is forward (1) or backward (-) from date
+  const { inputDate: output, date, month, year } = getDateInfo(input)
+  const outputMap: Record<string, () => void> = {
+    day: () => output.setDate(date + count * direction),
+    week: () => output.setDate(date + 7 * count * direction),
+    month: () => output.setMonth(month + count * direction - 1),
+    year: () => output.setFullYear(year + count * direction),
+  }
+  const getOutputDate = outputMap[unit]
+  if (getOutputDate) getOutputDate()
+  return output
+}
+
+export function getOrdinalSuffix(n: number) {
+  switch (n % 10) {
+    case 1: return `${n}st`
+    case 2: return `${n}nd`
+    case 3: return `${n}rd`
+    default: return `${n}th`
+  }
+}

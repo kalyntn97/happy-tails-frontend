@@ -1,7 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import * as careService from "./careService"
-import { CareFormData, TrackerFormData } from "./CareInterface"
-import { useSetActions } from "@store/store"
+import { Care, CareFormData, Tracker, TrackerFormData } from "./CareInterface"
+import { alertError, alertSuccess, showToast } from "@utils/misc"
+import { profileKeyFactory } from "@profile/profileQueries"
+import { ProfileData } from "@profile/ProfileInterface"
+import { useAllCares } from "@hooks/sharedHooks"
 
 export const careKeyFactory = {
   cares: ['all-cares'],
@@ -9,92 +12,107 @@ export const careKeyFactory = {
 }
 
 export const useGetAllCares = () => {
+  const queryClient = useQueryClient()
+  const caresCache = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
+
   return useQuery({
     queryKey: [...careKeyFactory.cares],
     queryFn: careService.getAllCares,
+    enabled: !caresCache,
   })
 }
 
-export const useGetCareById = (careId: string) => {
+export const useGetCareById = (careId: string, initialCare?: Care) => {
+  const queryClient = useQueryClient()
+  const careCache = queryClient.getQueryData(careKeyFactory.careById(initialCare._id))
+
   return useQuery({
     queryKey: [...careKeyFactory.careById(careId)],
-    queryFn: () => careService.getCare(careId)
+    queryFn: () => careService.getCare(careId),
+    initialData: initialCare,
+    enabled: !careCache,
   })
 }
 
-export const useAddCare = () => {
+export const useAddCare = (navigation: any) => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ name, pets, repeat, ending, date, endDate, frequency, times }: CareFormData) => careService.create(name, pets, repeat, ending, date, endDate, frequency, times),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares]})
-    }
+    mutationFn: (formData: CareFormData) => careService.create(formData),
+    onSuccess: (data: Care) => {
+      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+        return { ...oldData, cares: { ...oldData.cares, [data.frequency || 'Others']: [ ...oldData.cares[data.frequency || 'Others'], data] } }
+      })
+      navigation.navigate('Main')
+      showToast({ text1: `Task added.`, style: 'success' })
+    },
+    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
-export const useUpdateCare = () => {
+export const useUpdateCare = (navigation: any) => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ name, pets, repeat, ending, date, endDate, frequency, times, careId }: CareFormData) => careService.update(name, pets, repeat, ending, date, endDate, frequency, times, careId),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares]})
-    }
+    mutationFn: (formData: CareFormData) => careService.update(formData),
+    onSuccess: (data: Care) => {
+      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+        return { ...oldData, cares: { ...oldData.cares, [data.frequency 
+        || 'Others']: oldData.cares[data.frequency || 'Others'].map(care => care._id === data._id ? data : care) } }
+      })
+      navigation.navigate('Main')
+      showToast({ text1: `Task updated.`, style: 'success' })
+    },
+    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
-export const useDeleteCare = () => {
+export const useDeleteCare = (navigation: any) => {
   const queryClient = useQueryClient()
   
   return useMutation({
     mutationFn: (careId: string) => careService.deleteCare(careId),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares]})
-    }
+    onSuccess: (data: Care) => {
+      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+        return { ...oldData, cares: { ...oldData.cares, [data.frequency 
+        || 'Others']: oldData.cares[data.frequency || 'Others'].filter(care => care._id !== data._id) } }
+      })
+      navigation.navigate('Main')
+      showToast({ text1: `Task deleted.`, style: 'success' })
+
+    },
+    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
 export const useCheckDoneCare = () => {
-  const queryClient = useQueryClient()
   
   return useMutation({
     mutationFn: ({ careId, trackerId, index }: TrackerFormData) => careService.checkDone(careId, trackerId, index),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
-    }
+    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
 export const useUncheckDoneCare = () => {
-  const queryClient = useQueryClient()
   
   return useMutation({
     mutationFn: ({careId, trackerId, index}: TrackerFormData) => careService.uncheckDone(careId, trackerId, index),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
-    }
+    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
 export const useCheckAllDoneCare = () => {
-  const queryClient = useQueryClient()
   
   return useMutation({
     mutationFn: ({ careId, trackerId, index }: TrackerFormData) => careService.checkAllDone(careId, trackerId, index),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
-    }
+    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
 export const useUncheckAllDoneCare = () => {
-  const queryClient = useQueryClient()
   
   return useMutation({
     mutationFn: ({careId, trackerId, index}: TrackerFormData) => careService.uncheckAllDone(careId, trackerId, index),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...careKeyFactory.cares] })
-    }
+    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }

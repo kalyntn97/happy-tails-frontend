@@ -6,13 +6,13 @@ import { TouchableOpacity, Text, StyleSheet, View } from "react-native"
 import CareForm from "../components/CareForm"
 import Loader from "@components/Loader"
 //types
-import { Care } from "@care/CareInterface"
+import { Care, CareFormData, InitialCare } from "@care/CareInterface"
 import { Pet } from "@pet/PetInterface"
 //store
 import { useUpdateCare } from "@care/careQueries"
 import { AlertForm } from "@utils/ui"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 interface EditCareProps {
   navigation: any
@@ -23,25 +23,14 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   const { care } = route.params
   const isFocused = useIsFocused()
  
-  const updateCareMutation = useUpdateCare()
+  const updateCareMutation = useUpdateCare(navigation)
 
-  const initialValues: {
-    name: string, pets: Pet[], repeat: boolean, ending: boolean, date: string, endDate: string | null, frequency: string | null, times: number | null, careId: string
-  } = {
-    name: care.name, pets: care.pets, repeat: care.repeat, ending: care.ending, date: care.date, endDate: care.endDate, frequency: care.frequency, times: care.times, careId: care._id
+  const initialValues: InitialCare = {
+    name: care.name, medication: care.medication, pets: care.pets, repeat: care.repeat, ending: !!care.endDate, date: care.date, endDate: care.endDate, frequency: care.frequency, times: care.times, color: care.color, _id: care._id
   }
 
-  const handleSubmit = async (name: string, pets: string[], repeat: boolean, ending: boolean, date: string, endDate: string | null, frequency: string | null, times: number | null, careId: string) => {
-    updateCareMutation.mutate({ name, pets, repeat, ending, date, endDate, frequency, times, careId }, {
-      onSuccess: (data) => {
-        navigation.navigate('Details', { care: data })
-        return AlertForm({ body: `Updated successfully`, button: 'OK' })
-      },
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      },
-    })
-  
+  const handleSubmit = async (formData: CareFormData) => {
+    updateCareMutation.mutate(formData)
   }
 
   useEffect(() => {
@@ -51,7 +40,7 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   }, [navigation, isFocused])
 
   return (  
-    <View style={styles.container}>
+    <View style={{ ...Spacing.fullScreenDown }}>
       {care ? 
         <CareForm onSubmit={handleSubmit} initialValues={initialValues} navigation={navigation} status={updateCareMutation.status} />
         : <Loader />
@@ -59,11 +48,5 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-  }
-})
 
 export default EditCareScreen

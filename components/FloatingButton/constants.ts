@@ -1,20 +1,22 @@
-import { Colors, Spacing } from "@styles/index";
+import { Colors, Spacing, UI } from "@styles/index";
+import { ViewStyle } from "react-native";
 
 export const ButtonStyles = {
   width: 60, 
   height: 60, 
   margin: 30, 
   borderRadius: '50%', 
-  backgroundColor: Colors.pink, 
+  backgroundColor: Colors.pink.reg, 
   textColor: Colors.white
 }
 
-export const Button = {
+export const Button: ViewStyle = {
   width: ButtonStyles.width,
   height: ButtonStyles.height,
   backgroundColor: ButtonStyles.backgroundColor,
   borderRadius: ButtonStyles.borderRadius,
   ...Spacing.centered,
+  ...UI.boxShadow,
 }
 
 export const Animation = {

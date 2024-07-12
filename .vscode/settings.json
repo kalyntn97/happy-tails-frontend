@@ -1,10 +1,14 @@
 {
   "cSpell.words": [
     "datetimepicker",
+    "partialize",
     "Pressable",
     "Swipeable",
     "tanstack",
     "Toggleable",
     "zustand"
-  ]
+  ],
+  "vscode-pets.theme": "forest",
+  "vscode-pets.petSize": "small",
+  "vscode-pets.petColor": "akita"
 }

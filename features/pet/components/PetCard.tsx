@@ -1,11 +1,18 @@
 //npm modules
 import { StyleSheet, Text, View, Image, TouchableOpacity, useWindowDimensions } from "react-native"
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated"
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters'
 //types & utils
 import { Pet } from "@pet/PetInterface"
+import { getActionIconSource, getPetIconSource } from "@utils/ui"
+//components
+import { IconButton, MainButton, StatButton, TransparentButton } from "@components/ButtonComponent"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { getIconSource } from "@pet/petHelpers"
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { countYearsBetween } from "@utils/datetime"
+import { useCaresByPet, useHealthDueByPet } from "@hooks/sharedHooks"
+import { SPECIES_OPTIONS } from "@pet/petHelpers"
+import StatButtonList from "./StatButtonList"
 interface PetCardProps {
   pet: Pet
   index: number
@@ -14,6 +21,8 @@ interface PetCardProps {
 }
 
 const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) => {
+  const petAge = pet.dob ? countYearsBetween(pet.dob, 'today') : 'Unknown'
+
   const { width } = useWindowDimensions()
   
   const animatedStyles = useAnimatedStyle(() => {
@@ -34,41 +43,40 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
       ],
     }
   })
-
-  const iconSource = getIconSource(pet.species)
   
   return ( 
     <Animated.View style={[styles.container, animatedStyles, { width: width }]} key={pet._id}>
-      <View style={styles.base}>
+      <View style={[styles.base, { backgroundColor: Colors.multi.lightest[pet.color] }]}>
         <View style={styles.headerContainer}>
           <Text style={styles.petName}>{pet.name}</Text>
           
           <View style={styles.detailsContainer}>
             <View style={styles.petInfo}>
-              <Image style={{ width: 50, height: 50 }} source={iconSource} />
+              <Image style={{ ...UI.smallIcon }} source={getPetIconSource(!SPECIES_OPTIONS.includes(pet.species) ? 'Others' : pet.species)} />
               <Text style={styles.body}>{pet.breed ? pet.breed : 'Unknown'}</Text>
             </View>
 
             <View style={styles.petInfo}>
-              <Image style={{ width: 30, height: 30 }} source={require('@assets/icons/birthday.png')} />
+              <Image style={{ ...UI.smallIcon }} source={require('@assets/icons/info-birthday.png')} />
               <Text style={styles.body}>
-                {pet.age ? pet.age : 'Unknown'} {pet.age && (pet.age <= 1 ? 'year' : 'years')}
+                {petAge} {petAge !== 'Unknown' && (petAge <= 1 ? 'year' : 'years')}
               </Text>
             </View>
           </View>
         </View>
 
-        <Image 
-          source={pet.photo ? {uri: pet.photo} : require('@assets/icons/pet-profile.png')} 
-          style={styles.petPhoto } 
+        <Image style={styles.petPhoto } 
+          source={pet.photo ? {uri: pet.photo} : getPetIconSource(['Dog', 'Cat'].includes(pet.species) ? `${pet.species}Profile` : 'AnimalProfile')} 
         />
-        
-        <TouchableOpacity 
-          style={styles.mainBtn} 
-          onPress={() => navigation.navigate('Details', { pet: pet })}
-        >
-          <Text style={styles.btnText}>Details</Text>
-        </TouchableOpacity>
+
+        <StatButtonList petId={pet._id} petColor={pet.color} navigation={navigation} size="small" />
+
+        <View style={styles.btnCon}>
+          <TransparentButton title='Log' icon="logPet" onPress={() => navigation.navigate('CreateLog', { pet })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
+
+          <TransparentButton title='Details' icon='detailsPet' onPress={() => navigation.navigate('Details', { petId: pet._id })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
+        </View>  
+
       </View>
 
     </Animated.View>
@@ -78,23 +86,21 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
 const styles = StyleSheet.create({
   container: {
     ...Spacing.centered,
-    height: '100%'
   },
   base: {
-    ...Forms.card,
-    width: '90%',
-    height: '90%',
+    ...UI.cardWithShadow,
     justifyContent: 'flex-start',
-    backgroundColor: '#FBFFFE',
     alignItems: 'center',
+    transform: [{ scale: moderateScale(0.8, 1.5) }],
   },
   headerContainer: {
     ...Spacing.flexColumn,
-    width: '100%'
+    width: '100%',
   },
   petName: {
-    ...Typography.subHeader,
+    ...Typography.smallHeader,
     margin: 0,
+    padding: 10,
   },
   detailsContainer: {
     ...Spacing.flexRow,
@@ -105,20 +111,18 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
   },
   body: {
-    ...Typography.smallBody
+    ...Typography.smallBody,
+    marginHorizontal: 5,
   },
   petPhoto: {
-    ...Forms.photo,
+    ...UI.photo,
     borderRadius: 100,
-    backgroundColor: Colors.lightPink
+    backgroundColor: Colors.pink.light
   },
-  mainBtn: {
-    ...Buttons.xSmallRounded,
-    backgroundColor: Colors.green
-  },
-  btnText: {
-    ...Buttons.buttonText
-  },
+  btnCon: { 
+    ...Spacing.flexRow, 
+    marginTop: 10,
+  }
 })
  
 export default PetCard

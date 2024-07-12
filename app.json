@@ -35,6 +35,14 @@
     },
     "experiments": {
       "tsconfigPaths": true
+    },
+    "plugins": [
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0a0fcc1a-baf4-492c-b200-f09fcf0b368d"
+      }
     }
   }
 }

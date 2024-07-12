@@ -1,136 +1,189 @@
 //npm modules
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
+import { useQueryClient } from "@tanstack/react-query"
 //store & queries
-import { useGetProfile } from "@profile/profileQueries"
-import { useShallowPetBasics } from "@store/storeUtils"
+import { profileKeyFactory, useAddBanner, useGetProfile } from "@profile/profileQueries"
 //types
-import { PetBasic } from "@pet/PetInterface"
+import { Profile, ProfileData } from "@profile/ProfileInterface"
+import { Pet, PetBasic } from "@pet/PetInterface"
 //components
-import ScrollPetList from "@components/PetInfo/ScrollPetList"
+import PetList from "@components/PetInfo/PetList"
 import Loader from "@components/Loader"
+import { BoxHeader, BoxWithHeader, ErrorImage } from "@components/UIComponents"
+//hooks & utils
+import { AlertForm, getActionIconSource } from "@utils/ui"
+import { useCaresByFrequency, useSelectPhoto, useTaskCounts } from "@hooks/sharedHooks"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 const ProfileScreen = ({ navigation, route }) => {
-  const { data: profile, isLoading, isError } = useGetProfile()
-  // const { data: pets, isLoading: petsIsLoading, isError: petsError } = useGetAllPets()
-  const pets: PetBasic[] = useShallowPetBasics()
+  const { data, isFetching, isError } = useGetProfile()
+  const profile = data.profile
+
+  const [banner, setBanner] = useState<string>(profile.banner ?? null)
+  // const { careCounts, healthCounts } = useTaskCounts()
+  // const careCounter = careCounts(new Date())
+  // const healthCounter = healthCounts()
+  const addBannerMutation = useAddBanner()
   //set a random profile photo if user does not have one
   const randomProfilePhotos = [
-    require('@assets/icons/micon1.png'),
-    require('@assets/icons/micon2.png'),
-    require('@assets/icons/micon3.png'),
-    require('@assets/icons/ficon1.png'),
-    require('@assets/icons/ficon2.png'),
-    require('@assets/icons/ficon3.png'),
+    require('@assets/icons/profile-1.png'),
+    require('@assets/icons/profile-2.png'),
+    require('@assets/icons/profile-3.png'),
+    require('@assets/icons/profile-4.png'),
   ]
   const randomIdx = Math.floor(Math.random() * randomProfilePhotos.length)
 
-  return ( 
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        { profile &&
-          <>
-              <View style={styles.profileHeader}>
-                <Text style={styles.header}>{profile.name}</Text>
-                <Image source={{ uri: profile.photo ?? randomProfilePhotos[randomIdx] }} style={styles.profilePhoto }/>
-              </View>
-              
-              <View style={styles.bioBox}>
-                <Text style={styles.bioText}>{profile.bio}</Text>
-              </View>
-          </> }
-        { isLoading && <Loader /> }
-        { isError && <Text>Error fetching profile</Text> }
-        
-        <View style={styles.btnContainer}>
-          <TouchableOpacity 
-            style={[styles.mainBtn, { backgroundColor: Colors.yellow }]}
-            onPress={() => navigation.navigate('Edit', { profile : profile })}
-          >
-            <Text style={styles.btnText}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.mainBtn, { backgroundColor: Colors.red }]}
-            onPress={() => navigation.navigate('Settings', { profile : profile })}
-          >
-            <Text style={styles.btnText}>Manage</Text>
-          </TouchableOpacity>
+  const addBanner = async () => {
+    const photoUri = await useSelectPhoto()
+    const photoData = photoUri ? { uri: photoUri, name: `${profile._id}_banner`, type: 'image/jpeg' } : null
+    if (photoData) {
+      addBannerMutation.mutate(photoData , {
+        onSuccess: (data) => {
+          setBanner(data)
+          return AlertForm({ body: 'Profile updated successfully', button: 'OK' })
+        },
+        onError: (error) => {
+          return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
+        }
+      })
+    }
+  }
+
+  if (isFetching) return <Loader />
+  if (isError) return <ErrorImage />
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Pressable style={styles.bannerCon} onPress={addBanner}>
+        <View style={styles.cameraIcon}>
+          <Image source={require('@assets/icons/action-camera.png')} style={{...UI.smallIcon}} />
+        </View>
+        { banner && <Image source={{ uri: banner }} style={styles.banner as ImageStyle} /> }
+      </Pressable>
+
+      <View style={styles.profileCon}>
+        <View style={styles.headerContainer}>
+          <View style={styles.profileHeader}>
+            <Image source={{ uri: profile.photo ?? randomProfilePhotos[randomIdx] }} style={styles.profilePhoto }/>
+            <Text style={styles.header}>{profile.name}</Text>
+            <Text style={styles.subHeader}>@{profile.username}</Text>
+          </View>
+          
+          <View style={styles.bioBox}>
+            <Text style={styles.bioText}>{profile.bio}</Text>
+          </View>
+            
+          {/* <View style={{...UI.rowCon}}>
+            <StatButton item={ {header: 'streak', stat: 0, body: 'days'}} />
+            <StatButton item={ {header: 'tasks', stat: careCounts(new Date()) , body: 'today'}} />
+            <StatButton item={ {header: 'visit due', stat: Math.abs(healthCounter), body: `days ${healthCounter < 0 && 'ago'}`}} color={healthCounter < 0 && Colors.red.reg} />
+          </View> */}
+        </View>
+
+        <View style={styles.bodyCon}>
+          <BoxWithHeader title='All Pets' titleIconSource={getActionIconSource('home')} onPress={() => navigation.navigate('Pets', { screen: 'Index' })} content={
+            <View style={{ width: '100%', paddingTop: 10 }}>
+              <PetList petArray={data.pets} size='compact' />
+            </View>
+          } />
+          <View style={{...UI.roundedCon}}>
+            <BoxHeader title="All pet care tasks" titleIconSource={getActionIconSource('care')} onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
+            <BoxHeader title="All vet visits" titleIconSource={getActionIconSource('health')} onPress={() => navigation.navigate('Home', { screen: 'HealthIndex' })} />
+            <BoxHeader title="Update profile" titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('Edit', { profile : profile })} />
+            <BoxHeader title="Settings" titleIconSource={getActionIconSource('settings')} onPress={() => navigation.navigate('Settings', { profile : profile })} />
+          </View>
         </View>
       </View>
-
-      {pets &&
-        <View>
-          <ScrollPetList petArray={pets} size='compact' navigation={navigation} />
-        </View>
-      }
-      { pets && !pets.length && <Loader /> }
-      { !pets && <Text>Error fetching pets...</Text> }
-
-    </View>
+    
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    width: '100%',
+    position: 'relative',
+  },
+  bannerCon: {
+    width: '100%',
+    height: 200,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    backgroundColor: Colors.pink.light,
+    overflow: 'hidden',
+  },
+  banner: {
+    maxWidth: '100%',
+    height: '60%',
+    overflow: 'visible',
+    zIndex: 2,
+    opacity: 0.8,
+  },
+  cameraIcon: {
+    position: "absolute",
+    top: 150,
+    left: 0,
+    zIndex: 3,
+    backgroundColor: Colors.transparent.light,
+    padding: 8,
+    width: 50,
+    height: 50,
+    borderTopRightRadius: 15,
+  },
+  profileCon: {
+    width: '100%',
+    marginTop: 120,
+    ...Spacing.flexColumn,
   },
   headerContainer: {
     width: '100%',
-    height: '50%',
     ...Spacing.flexColumn,
   },
   profileHeader: {
     width: '90%',
-    height: '60%',
     ...Spacing.flexColumn,
+  },
+  bodyCon: {
+    ...Spacing.flexColumn,
+    marginVertical: 15,
   },
   header: {
     ...Typography.xSmallHeader,
-    height: '15%',
-    margin: 10
+    marginTop: 10,
+    marginBottom: 0,
+    borderTopRightRadius: 15,
+  },
+  subHeader: {
+    ...Typography.xSmallSubHeader,
+    color: 'gray',
+    marginTop: 0,
+    marginBottom: 10,
   },
   profilePhoto: {
-    ...Forms.smallPhoto,
-    backgroundColor: Colors.lightPink,
+    ...UI.smallPhoto,
+    backgroundColor: Colors.pink.light,
     margin: 10,
   },
   bioBox: {
     width: '90%',
-    maxHeight: '20%',
-    marginBottom: 10,
-    ...Spacing.centered
+    margin: 10,
+    ...Spacing.centered,
   },
   bioText: {
-    textAlign: 'left'
+    textAlign: 'left',
+    ...Typography.xSmallBody,
+    lineHeight: 20,
   },
-  btnContainer: {
+  statsCon: {
     width: '90%',
-    height: '15%',
     ...Spacing.flexRow,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
-  mainBtn : {
-    ...Buttons.xSmallRounded,
-  },
-  btnText: {
-    ...Buttons.buttonText
-  },
-  petList: {
-    ...Spacing.flexRow,
-    width: '90%',
-    flexWrap: 'wrap',
-  },
-  petInfo: {
-    width: '30%',
-    height: 130
-  },
-  logoutBtn: {
-    ...Buttons.longSquare,
-    backgroundColor: Colors.darkPink,
-    marginTop: 'auto',
-    marginBottom: 20,
+  linkBtn: {
+    width: '100%'
   }
 })
 

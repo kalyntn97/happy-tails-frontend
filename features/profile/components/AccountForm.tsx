@@ -1,14 +1,14 @@
 //npm modules
 import { useEffect, useState } from "react"
-import { Keyboard, StyleSheet, View, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback } from "react-native"
-// context
-import { useAuth } from "@auth/AuthContext"
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { MainButton } from "@components/ButtonComponent"
+import { ErrorMessage } from "@components/UIComponents"
 
 interface AccountFormProps {
   showForm: string
-  onSubmit: (username: string, password: string) => Promise<any>
+  onSubmit: (username: string, password: string) => void
 }
 
 const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
@@ -43,50 +43,47 @@ const AccountForm: React.FC<AccountFormProps> = ({ showForm, onSubmit }) => {
   }, [showForm])
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={[styles.container, { backgroundColor: showForm === 'password' ? Colors.white : showForm !== 'password' ? Colors.white : Colors.lightestPink }]}>
-        <Text style={styles.errorMsg}>{errorMsg}</Text>
-        <View style={styles.form}>
+    <View style={[styles.container, { backgroundColor: showForm === 'password' ? Colors.white : showForm !== 'password' ? Colors.white : Colors.pink.lightest }]}>
+      {errorMsg && <ErrorMessage error={errorMsg} />}
+      <View style={styles.form}>
+        <TextInput 
+          style={styles.input}
+          placeholder={showForm === 'username' ? 'New Username' : 'Current Username'}
+          placeholderTextColor={Colors.shadow.reg}
+          onChangeText={(text: string) => setUsername(text)}
+          value={username}
+          autoComplete="off"
+        />
+        {showForm === 'username' &&
           <TextInput 
             style={styles.input}
-            placeholder={showForm === 'username' ? 'New Username' : 'Current Username'}
-            onChangeText={(text: string) => setUsername(text)}
-            value={username}
+            placeholder={'Confirm New Username'}
+            placeholderTextColor={Colors.shadow.reg}
+            onChangeText={(text: string) => setUsernameConf(text)}
+            value={usernameConf}
             autoComplete="off"
           />
-          {showForm === 'username' &&
-            <TextInput 
-              style={styles.input}
-              placeholder={'Confirm New Username'}
-              onChangeText={(text: string) => setUsernameConf(text)}
-              value={usernameConf}
-              autoComplete="off"
-            />
-          }
-          
-          <TextInput
-            style={styles.input}
-            placeholder={showForm === 'password' ? 'New Password' : 'Current Password'}
-            onChangeText={(text: string) => setPassword(text)}
-            value={password}
-            secureTextEntry={true}
-          />
-          <TextInput 
-            style={styles.input}
-            placeholder={showForm === 'password' ? 'Confirm New Password' : 'Confirm Current Password'}
-            onChangeText={(text: string) => setPasswordConf(text)}
-            value={passwordConf}
-            secureTextEntry={true}
-          />
-          <View style={styles.btnContainer}>
-            <TouchableOpacity style={styles.mainBtn} onPress={handleSubmit}>
-              <Text style={styles.btnText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        }
+        
+        <TextInput
+          style={styles.input}
+          placeholder={showForm === 'password' ? 'New Password' : 'Current Password'}
+          placeholderTextColor={Colors.shadow.reg}
+          onChangeText={(text: string) => setPassword(text)}
+          value={password}
+          secureTextEntry={true}
+        />
+        <TextInput 
+          style={styles.input}
+          placeholder={showForm === 'password' ? 'Confirm New Password' : 'Confirm Current Password'}
+          placeholderTextColor={Colors.shadow.reg}
+          onChangeText={(text: string) => setPasswordConf(text)}
+          value={passwordConf}
+          secureTextEntry={true}
+        />
+        <MainButton title='Submit' size='small' onPress={handleSubmit} />
       </View>
-
-    </TouchableWithoutFeedback>
+    </View>
   )
 }
  
@@ -98,41 +95,18 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10
   },
-  errorMsg: {
-    color: Colors.red,
-    fontWeight: 'bold',
-    margin: 5,
-    height: '3%'
-  },
   form: {
-    ...Forms.form,
+    ...UI.form,
     width: '100%',
     height: '90%'
   },
   input: {
-    ...Forms.input,
+    ...UI.input,
     height: 40,
     margin: 5,
-    borderColor: Colors.pink,
-    backgroundColor: Colors.lightestPink,
+    borderColor: Colors.pink.reg,
+    backgroundColor: Colors.pink.lightest,
   },
-  mainBtn: {
-    ...Buttons.smallRounded,
-    height: 40,
-    margin: 10,
-    backgroundColor: Colors.pink
-  },
-  subBtn: {
-    ...Buttons.smallSub,
-    height: 40
-  },
-  btnText: {
-    ...Buttons.buttonText,
-    color: Colors.darkestPink
-  },
-  btnContainer: {
-    ...Spacing.flexRow
-  }
 })
 
 export default AccountForm

@@ -1,191 +1,126 @@
 //npm
-import { useState } from "react"
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ScrollView, useWindowDimensions } from "react-native"
+import { useRef, useState } from "react"
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWindowDimensions, Pressable, Dimensions } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
-import MultiselectDropdown from "@components/Dropdown/MultiselectDropdown"
-import { MainButton, SubButton } from "@components/ButtonComponent"
-//types
-import { Pet } from "@pet/PetInterface"
-//store
-import { usePetIds } from "@store/storeUtils"
-//styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
-import { usePets } from "@store/store"
+import { CheckboxButton, MainButton, SubButton, ToggleButton, TransparentButton } from "@components/ButtonComponent"
+import { DateInput, ErrorMessage, FormInput, FormLabel, BottomModal, ModalInput } from "@components/UIComponents"
+import ColorPicker from "@components/ColorPicker"
+import PetPicker from "@components/PetPicker"
+import TitleInput from "@components/TitleInput"
+import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/FrequencyPicker"
+//types && hooks
+import useForm from "@hooks/useForm"
+import { PetBasic } from "@pet/PetInterface"
+import type { Care, CareFormData } from "@care/CareInterface"
 
-interface CareFormProps {
-  onSubmit: (name: string, pets: string[], repeat: boolean, ending: boolean, date: Date, endDate: Date | null, frequency: string, times: number, careId: string | null) => Promise<any>
-  initialValues?: { name?: string, repeat?: boolean, ending?: boolean, date?: Date, endDate?: Date, frequency?: string, times?: number, pets?: Pet[], careId?: string }
-  navigation: any
-  status: string
+//styles
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { styles } from "@styles/stylesheets/FormStyles"
+import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
+
+
+interface InitialState extends Care {
+  ending: boolean
+  errorMsg: string
 }
 
-const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
-  const initialPetNames = initialValues?.pets.map(pet => pet.name) ?? null
-  const initialPets = initialValues?.pets.map(pet => pet._id)
-  const pets = usePetIds()
+interface CareFormProps {
+  onSubmit: (formData: CareFormData) => void
+  initialValues?: Care
+  navigation: any
+  status: string
+  setColor?: (color: number) => void
+}
+
+const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation, status, setColor }) => {
+  const initialState: InitialState = {
+    name: initialValues?.name ?? null, 
+    pets: initialValues?.pets ?? [],
+    repeat: initialValues?.repeat ?? false,
+    startDate: initialValues?.startDate ?? new Date(),
+    ending: !!initialValues?.endDate,
+    endDate: initialValues?.endDate ?? null,
+    frequency: initialValues?.frequency ?? { type: 'days', interval: 1, timesPerInterval: [1] },
+    color: initialValues?.color ?? 0,
+    icon: initialValues?.icon ?? null,
+    _id: initialValues?._id ?? null,
+    errorMsg: '',
+  }
+  const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
+  const { name, pets, repeat, startDate, ending, endDate, frequency, color, _id, errorMsg } = values
+
   const height = useWindowDimensions().height
 
-  const [name, setName] = useState<string>(initialValues?.name ?? '')
-  const [petData, setPetData] = useState<string[]>(initialPets ?? [])
-  const [repeat, setRepeat] = useState<boolean>(initialValues?.repeat ?? false)
-  const [ending, setEnding] = useState<boolean>(initialValues?.ending ?? false)
-  const [date, setDate] = useState<Date | null>(initialValues?.date ?? null)
-  const [endDate, setEndDate] = useState<Date | null>(initialValues?.endDate ?? null)
-  const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
-  const [times, setTimes] = useState<number>(initialValues?.times ?? null)
-  const [errorMsg, setErrorMsg] = useState<string>('')
-  const [allowManualName, setAllowManualName] = useState<boolean>(false)
-
-  const careId: string | null = initialValues?.careId ?? null
-  // handle input custom name for form
-  const handleSelectName = (selected: string) => {
-    setName(() => {
-      if (selected === 'Others') {
-        setAllowManualName(true)
-        return ''
-      } else {
-        setAllowManualName(false)
-        return selected
-      }
-    })
-  }
-
-
-  // handle select multiple pets
-  const handleSelectPets = (selected: string[]) => {
-    // convert names into ids before submitting
-    const petIds = selected.map(name => {
-      const pet = pets.find(pet => pet.name === name)
-      return pet._id
-    })
-    setPetData(petIds)
-  }
-
-  const handleSubmit = async () => {
-    if (!name || !date) {
-      setErrorMsg('Please enter all fields.')
+  function handleSubmit() {
+    if (!name || !pets.length) {
+      onChange('errorMsg', 'Please enter all fields.')
     } else {
-      setErrorMsg('')
-      if (!ending) {
-        setEndDate(null)
-      }
-      // console.log(name, petData, repeat, ending, date, endDate, frequency, times, careId)
-      await onSubmit(name, petData, repeat, ending, date, endDate, frequency, times, careId)
+      onChange('errorMsg', '')
+
+      if (!repeat) ['frequency', 'endDate'].map(value => onChange(value, null))
+      
+      if (!ending) onChange('endDate', null)
+      onSubmit({ name, pets, repeat, startDate, endDate, frequency, color, _id })
     }
   }
-
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <ScrollView
+      style={{ width: '90%' }}
+      keyboardShouldPersistTaps='handled'
+      contentContainerStyle={[styles.container, { minHeight: height * 0.75}]}
+      showsVerticalScrollIndicator={false}
+      alwaysBounceVertical={false}
+    >
+      <View style={{ position: 'absolute', right: 0, top: 20, zIndex: 999 }}>
+        <ColorPicker mode='modal' onPress={(selected) => {
+          onChange('color', selected)
+          setColor(selected)
+      }} initial={color} />
+      </View>
+      <TitleInput initial={name} placeholder='New Task' onChange={(input) => onChange('name', input)} type='care' />
+      <FormLabel label='Select Pets' icon="pets" width='100%' top={30} />
+      
+      <PetPicker mode="multi" onSelect={(selections) => onChange('pets', selections)} initials={pets?.map((pet: PetBasic) => pet._id ?? pet)} />
 
-      <ScrollView
-        contentContainerStyle={[styles.container, { minHeight: height * 0.75}]}
-        showsVerticalScrollIndicator={false}
-        alwaysBounceVertical={false}
-      >
-        <Text style={styles.header}>{initialValues?.name ? 'Edit' : 'Add'} Tracker</Text>
+      <FormLabel label='Start Date' icon="schedule" width='100%' top={30} />
+      <DateInput date={startDate} onChangeDate={selectedDate => onChange('startDate', selectedDate)} color={color} />
 
-        {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
+      <View style={styles.labelCon}>
+        <FormLabel label='Repeat' icon="repeat" top={0} bottom={0} />
+        <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
+      </View>
 
-        {!!name && <Text>Enter Name</Text>}
-        <Dropdown label={initialValues?.name ? initialValues.name : 'Select Name'} dataType="care" onSelect={handleSelectName} />
-        {allowManualName && 
-          <TextInput 
-            style={styles.input}
-            placeholder="Specify name"
-            onChangeText={(text: string) => setName(text)}
-            value={name}
-            autoCapitalize="words"
+      { repeat &&
+        <ModalInput maxHeight='90%'
+          label={
+            <Text>Repeats {frequency && frequencyMap[frequency.type].timesPerIntervalLabel(frequency.timesPerInterval)} {intervalLabel(frequency.interval, frequency.type)} {ending && `until ${endDate && endDate.toLocaleDateString()}`}</Text>
+          }
+          onReset={() => {
+            onChange('frequency', initialState.frequency)
+            onChange('ending', initialState.ending)
+            onChange('endDate', initialState.endDate)
+            onChange('showFrequencyPicker', false)
+          }}
+        >
+          <FrequencyPicker color={color} initial={{ ...frequency, ending, endDate }}
+            onSelectFrequency={(key: string, selected: any) => onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)}
+            onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | Date) => onChange(key, value)}
           />
-        }
-        <MultiselectDropdown label={'Select Pets'} dataType='petNames' onSelect={handleSelectPets} initials={initialPetNames} />
-
-        <View style={styles.rowCon}>
-          <Text style={styles.rowText}>{repeat ? 'Start Date' : 'Date'}</Text>
-          <RNDateTimePicker value={new Date(date) ?? new Date()} minimumDate={new Date()} onChange={(event, selectedDate) => { setDate(selectedDate) }} accentColor={Colors.darkPink} />
+        </ModalInput>
+      }
+      
+      <View style={styles.bottomCon}>
+        {errorMsg && <ErrorMessage error={errorMsg} />}
+        <View style={Spacing.flexRow}>
+          <MainButton onPress={() => onValidate(name, pets.length, startDate)} title={status === 'pending' ? 'Submitting...' : !!name ? 'Save' : 'Create'} />
+          <TransparentButton onPress={onReset} title='Clear' />
         </View>
+      </View>
 
-        {repeat &&
-          <>
-            {!!frequency && <Text>Select Frequency</Text>}
-            <Dropdown label={initialValues?.frequency ? initialValues.frequency : 'Select Frequency'} dataType="frequency" onSelect={setFrequency} />
-            
-            <TextInput 
-              style={styles.input} 
-              placeholder='Enter Times' 
-              onChangeText={(text: string) => setTimes(text !== '' ? Number(text) : null)} 
-              value={times !== null ? times.toString() : null} 
-              keyboardType="numeric"
-            />
-          </>
-        }
-        
-        {repeat &&
-          <View style={styles.rowCon}>
-            <Text style={styles.rowText}>Set end date? (optional)</Text>
-            <TouchableOpacity onPress={() => setEnding(!ending)}>
-              <Text style={styles.rowTextFocus}>{ending ? '☑︎' : '☐'}</Text>
-            </TouchableOpacity>
-          </View>
-        }
-        {repeat && ending &&
-          <View style={styles.rowCon}>
-            <Text style={styles.rowText}>End Date</Text>
-            <RNDateTimePicker value={new Date(endDate) ?? new Date()} minimumDate={new Date(date)} onChange={(event, selectedDate) => { setEndDate(selectedDate) }} accentColor={Colors.darkPink} />
-          </View>
-        }
-
-        <View style={styles.bottomCon}>
-          <View style={[styles.rowCon]}>
-            <Text style={styles.rowText}>Repeat is</Text>
-            <TouchableOpacity onPress={() => setRepeat(!repeat)}>
-              <Text style={[styles.rowTextFocus, { color: repeat ? Colors.green : Colors.red }]}>{repeat ? 'ON' : 'OFF'}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
-          <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
-        </View>
-
-      </ScrollView>
-    </TouchableWithoutFeedback>  
+    </ScrollView>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    ...Forms.form,
-  },
-  header: {
-    ...Typography.mainHeader,
-    color: Colors.darkPink
-  },
-  input: {
-    ...Forms.input,
-    borderColor: Colors.pink,
-  },
-  error: {
-    color: Colors.red,
-    fontWeight: 'bold'
-  },
-  rowCon: {
-    ...Spacing.flexRow,
-    justifyContent: 'space-around',
-    width: 250,
-    marginVertical: 15,
-  },
-  rowText: {
-    fontSize: 15
-  },
-  rowTextFocus: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  bottomCon: {
-    ...Spacing.flexColumn,
-    marginTop: 'auto',
-  },
-})
- 
 export default CareForm

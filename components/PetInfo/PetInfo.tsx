@@ -1,35 +1,43 @@
 import { Image, StyleSheet, Text, View } from "react-native"
-import { getIconSource } from "../../features/pet/petHelpers"
-import { Spacing, Forms, Typography, Colors } from '@styles/index'
+import { getPetIconSource } from "@utils/ui"
+import { Spacing, UI, Typography, Colors } from '@styles/index'
+import { countYearsBetween } from "@utils/datetime"
 
 interface PetInfoProps {
   pet: {
     name: string
-    age?: number
+    dob?: string,
+    firstMet?: string,
     species?: string 
     breed?: string
-    photo: string | null
+    photo?: string | null
   }
   size: 'compact' | 'expanded' | 'small' | 'mini'
 }
 
 const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
-  const iconSource = getIconSource(pet.species)
+  const iconSource = getPetIconSource(pet.species)
+  const petAge = countYearsBetween(pet.dob, 'today')
 
   return ( 
-    <View style={styles.container}>
+    <View style={[styles.container, 
+      size === 'mini' ? { width: 40, height: 40 } 
+      : size === 'small' ? { width: 60, height: 85 } 
+      : size === 'compact' ? { width: 90, height: 120 }
+      : { ...Spacing.flexRow, height: 120 }
+    ]}>
       <View style={size === 'expanded' ? styles.photoContainerExpanded : styles.photoContainerCompact}>
         {size === 'expanded' && 
           <Image source={iconSource} style={styles.petIcon } />
         }
         <Image 
-          source={pet.photo ? {uri: pet.photo} : require('@assets/icons/pet-profile.png')} 
+          source={pet.photo ? {uri: pet.photo} : pet.species && getPetIconSource(`${pet.species}Profile`)} 
           style={[
             styles.petPhoto , 
-            size === 'expanded' ? {...Forms.smallPhoto} 
-            : size === 'compact' ? {...Forms.xSmallPhoto} 
-            : size === 'small' ? {...Forms.xxSmallPhoto} 
-            : {...Forms.tinyPhoto}
+            size === 'expanded' ? {...UI.smallPhoto} 
+            : size === 'compact' ? {...UI.xSmallPhoto} 
+            : size === 'small' ? {...UI.xxSmallPhoto} 
+            : {...UI.tinyPhoto}
           ]} />
         {(size === 'compact' || size === 'small' ) &&
           <Text style={styles.shortName}>{pet.name.split(' ')[0]}</Text>
@@ -38,8 +46,8 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
       {size === 'expanded' && 
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{pet.name}</Text>
+          <Text style={styles.body}>{!!petAge && petAge} {!!petAge && (petAge !== 1 ? 'years old' : 'year old')} {pet.breed}</Text>
           <View style={styles.details}>
-            <Text style={styles.body}>{pet.age} {pet.age && (pet.age !== 1 ? 'years old' : 'year old')} {pet.breed}</Text>
           </View>
         </View>}
     </View>
@@ -48,7 +56,7 @@ const PetInfo: React.FC<PetInfoProps> = ({ pet, size }) => {
  
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenAcross
+    // ...Spacing.centered,
   },
   shortName: {
     ...Typography.xSmallHeader,
@@ -58,7 +66,7 @@ const styles = StyleSheet.create({
   photoContainerExpanded: {
     width: '40%',
     height: '100%',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   photoContainerCompact: {
     width: '100%',
@@ -68,26 +76,23 @@ const styles = StyleSheet.create({
   petPhoto: {
     position: 'relative',
     margin: 10,
-    backgroundColor: Colors.lightPink
+    backgroundColor: Colors.shadow.lightest
   },
   petIcon: {
-    width: 60,
-    height: 60,
+    ...UI.icon,
     position: 'absolute',
     top: '60%',
-    left: '-5%',
+    left: '-7%',
     zIndex: 1,
   },
   infoContainer: {
-    width: '50%',
+    width: '60%',
     height: '100%',
     ...Spacing.flexColumn,
-    alignItems: 'flex-start',
-    justifyContent: 'center'
   },
   name: {
-    ...Typography.subHeader,
-    fontSize: 15,
+    ...Typography.mediumHeader,
+    fontSize: 18,
     padding: 10,
     margin: 0,
     width: '100%',
@@ -97,7 +102,9 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   body: {
-    ...Typography.body
+    ...Typography.xSmallSubHeader,
+    marginTop: 0,
+    color: 'gray',
   }
 })
 

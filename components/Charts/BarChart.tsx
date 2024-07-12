@@ -4,10 +4,10 @@ import { StyleSheet, Text, View, useWindowDimensions } from "react-native"
 //types & helpers
 import * as careHelpers from '@care/careHelpers'
 //utils
-import { getCurrentDate, getMonth } from "@utils/datetime"
+import { getDateInfo, getMonth } from "@utils/datetime"
 import { getColor, getColorArray } from "@utils/ui"
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 interface BarChartProps {
   tracker: any
@@ -20,17 +20,17 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
   const [barHeightUnit, setBarHeightUnit] = useState<number>(0)
 
   const { trackerMonthName, trackerYear, isCurrent } = careHelpers.getTrackerInfo(tracker.name)
-  const { week: currWeek, month: monthIdx } = getCurrentDate()
+  const { week: currWeek, month: monthIdx } = getDateInfo('today')
   
   const windowWidth = useWindowDimensions().width
   const windowHeight = useWindowDimensions().height
-  const chartWidth = windowWidth * 0.9
+  const chartWidth = windowWidth * 0.9 * 0.9
   const chartHeight = windowHeight * 0.35
 
   const colorArray = getColorArray()
 
   useEffect(() => {
-    const newBarWidth = frequency === 'Weekly' ? chartWidth * 0.1 : chartWidth * 0.25 / 12
+    const newBarWidth = frequency === 'Weekly' ? chartWidth * 0.45 / 6 : chartWidth * 0.25 / 12
     const newBarHeightUnit = chartHeight * 0.7 / times
 
     setBarWidth(newBarWidth)
@@ -39,11 +39,11 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
 
   return (  
     <View style={[styles.container, { width: chartWidth, height: chartHeight }]}>
-      <View style={[styles.chartName, {  }]}>
-      <View style={[styles.header, { height: '30%' }]}>
+      <View style={styles.chartName}>
+        <View style={[styles.header, { height: '30%' }]}>
           <Text style={[
             styles.headerText,
-            { color: isCurrent ? Colors.darkPink : 'black' },
+            { color: isCurrent ? Colors.pink.dark : 'black' },
             frequency === 'Weekly' 
             ? { fontSize: 15, width: chartHeight * 0.3 }
             : { fontSize: 30, width: chartHeight}
@@ -54,7 +54,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
         <View style={[styles.header, { height: '70%' }]}>
           <Text style={[
             styles.headerText,
-            { color: isCurrent ? Colors.darkPink : 'black' },
+            { color: isCurrent ? Colors.pink.dark : 'black' },
             { fontSize: 20, width: chartHeight * 0.7 }
           ]}>
             {trackerMonthName}
@@ -68,7 +68,7 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
             style={[
               styles.column, {
                 width: barWidth,
-                height: barHeightUnit * value ,
+                height: barHeightUnit * value.value ,
                 backgroundColor: getColor(times, value, colorArray),
                 marginHorizontal: frequency === 'Weekly' ? 10 : 7
               }
@@ -80,23 +80,21 @@ const BarChart: React.FC<BarChartProps> = ({ tracker, frequency, times }) => {
               ( 
                 (currWeek === idx + 1 && isCurrent && frequency === 'Weekly') 
                 || (monthIdx === idx + 1 && isCurrent && frequency === 'Monthly') 
-              ) ? { color: Colors.darkPink, fontWeight: 'bold' } 
-              : {}
+              ) && { color: Colors.pink.dark, fontWeight: 'bold' } 
             ]}>
                 {frequency === 'Weekly' 
                   ? `Week ${idx + 1}`
                   : getMonth(idx + 1).slice(0, 3)
                 }
             </Text>
-
             <Text style={[
               styles.value, 
               { fontSize: frequency === 'Weekly' ? 15 : 10 }
             ]}>
-              {times === value && 
-                <Text style={{ fontSize: frequency === 'Weekly' ? 10 : 5, color: Colors.green }}>✔️</Text>
+              {value.value !== 0 && value.value}
+              {times === value.value && 
+                <Text style={{ fontSize: frequency === 'Weekly' ? 10 : 5, color: Colors.green.reg }}>✔️</Text>
               }
-              {value}
             </Text>
           </View>
         )}
@@ -110,7 +108,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: Colors.white,
     marginVertical: 20,
-    ...Forms.boxShadow,
+    ...UI.boxShadow,
     borderRadius: 8
   },
   chartName: {
@@ -118,7 +116,6 @@ const styles = StyleSheet.create({
     height: '100%',
     ...Spacing.flexColumn,
   },
-
 header: {
   width: '100%',
   ...Spacing.centered,

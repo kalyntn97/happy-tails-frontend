@@ -19,6 +19,7 @@
       "@pet/*": [ "features/pet/*"],
       "@care/*": [ "features/care/*"],
       "@health/*": [ "features/health/*"],
+      "@stat/*": [ "features/stat/*"],
     }
   },
   "extends": "expo/tsconfig.base"

@@ -5,8 +5,10 @@ import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from '@auth/AuthContext'
 //styles
-import { Buttons, Spacing, Forms, Typography, Colors } from '@styles/index'
+import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponent'
+import { styles } from '@styles/stylesheets/FormStyles'
+import { ErrorMessage } from '@components/UIComponents'
 
 const LoginScreen: FC = ({ navigation }) => {
   const [username, setUserName] = useState<string>('')
@@ -27,56 +29,51 @@ const LoginScreen: FC = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <GoBackButton top={50} onPress={() => navigation.goBack()}/>
       <LottieView source={require('@assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
       <Text style={styles.header}>Sign in</Text>
-      <View style={styles.form}>
-        <Text style={styles.errorMsg}>{errorMsg}</Text>
+        {errorMsg && <ErrorMessage error={errorMsg} />}
         <TextInput 
           style={styles.input} 
-          placeholder='Username' 
+          placeholder='Username'
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setUserName(text)} 
           value={username} 
           autoCapitalize='none'
         />
         <TextInput 
           style={styles.input} 
-          placeholder='Password' 
+          placeholder='Password'
+          placeholderTextColor={Colors.shadow.reg}
           onChangeText={(text: string) => setPassword(text)} 
           value={password} 
           secureTextEntry={true}
         />
         <MainButton title='Submit' onPress={login} top={40} bottom={0} />
         <SubButton title='Create Account' onPress={() => navigation.navigate('Register')} top={0} bottom={0} />
-      </View>
     </SafeAreaView>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-    ...Spacing.centered
-  },
-  catAnimation: {
-    width: '60%',
-  },
-  header: {
-    ...Typography.mainHeader,
-    marginTop: 0,
-    color: Colors.darkPink,
-  },
-  form: {
-    ...Forms.form,
-  },
-  errorMsg: {
-    color: Colors.red,
-    fontWeight: 'bold'
-  },
-  input: {
-    ...Forms.input,
-    borderColor: Colors.pink,
-  },
-})
+// const styles = StyleSheet.create({
+//   container: {
+//     ...Spacing.fullScreenDown,
+//     ...Spacing.centered
+//   },
+//   catAnimation: {
+//     width: '60%',
+//   },
+//   header: {
+//     ...Typography.mainHeader,
+//     marginTop: 0,
+//     color: Colors.pink.dark,
+//   },
+//   form: {
+//     ...UI.form,
+//   },
+//   input: {
+//     ...UI.input,
+//     borderColor: Colors.pink.reg,
+//   },
+// })
 
 export default LoginScreen

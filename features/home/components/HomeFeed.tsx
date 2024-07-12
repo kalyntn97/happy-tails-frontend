@@ -1,129 +1,117 @@
 //npm
-import { useEffect, useState } from "react"
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Modal, TouchableWithoutFeedback, Pressable, ListRenderItem } from "react-native"
-import { useQueries } from "@tanstack/react-query"
+import { useEffect, useMemo, useState } from "react"
+import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Modal, Pressable } from "react-native"
 //types & helpers
 import { Care } from "@care/CareInterface"
+import { Health } from "@health/HealthInterface"
 //store & queries
-import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
+import { profileKeyFactory, useGetProfile } from "@profile/profileQueries"
+import { useActiveDate, useCurrentIsActive } from "@store/store"
+import { getCalendarIconSource, getNavigationIconSource } from "@utils/ui"
 //components
 import CareCard from "@care/components/CareCard"
-import SwipeableTask from "@components/SwipeableTask"
-import { CloseButton } from "../../../components/ButtonComponent"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
-import CustomFlatList from './CustomFlatList';
-//utils & store
-import { useUserQueries } from "../homeQueries"
-import { getCurrentDate, getMonth, getYears, months } from "@utils/datetime"
+import DraggableList from './DraggableList'
+import HealthCard from "@health/components/HealthCard"
+import { ErrorImage } from "@components/UIComponents"
+//types & utils
+import { ClickedTask, Feed, Selection } from "@home/HomeInterface"
+import { getMonth } from "@utils/datetime"
 //styles
-import { Buttons, Spacing, Forms, Colors } from '@styles/index'
-import { useAutoCreateTracker } from "@care/careQueries"
+import { Spacing, UI, Colors, Typography } from '@styles/index'
+import Animated, { ZoomIn, ZoomInDown, ZoomInUp, ZoomOut, ZoomOutDown, ZoomOutUp } from "react-native-reanimated"
+import { QueryClient, useQueryClient } from "@tanstack/react-query"
+import { ProfileData } from "@profile/ProfileInterface"
+import { getProfile } from "@profile/profileService"
 
-interface HomeFeedProps {
-  navigation: any
-}
-
-const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
-  const [selected, setSelected] = useState<string>('day')
+const HomeFeed = ({ navigation }) => {
+  const [feed, setFeed] = useState<Feed>('care')
+  const [selected, setSelected] = useState<Selection>('day')
   const [modalVisible, setModalVisible] = useState(false)
-  const [clickedCare, setClickedCare] = useState<Care>(null)
+  const [clickedTask, setClickedTask] = useState<ClickedTask>(null)
   //queries
-  const [profile, pets, cares, healths] = useUserQueries()
-  const { setPets } = useSetActions()
+  const { data, isFetching, isSuccess, isError } = useGetProfile()
   //store
-  const isLoading = useUserQueries().some(query => query.isLoading)
-  const isSuccess = useUserQueries().every(query => query.isSuccess)
-  const isError = useUserQueries().some(query => query.isError)
-  
   const { date: activeDate, week: activeWeek, month: activeMonth, year: activeYear } = useActiveDate()
   const activeDateObj = new Date(activeYear, activeMonth, activeDate + 1)
-  
   const activeMonthName = getMonth(activeMonth + 1)
   
   const { date: currDateIsActive, week: currWeekIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
 
-  const handleClickTask = (care: Care) => {
-    setClickedCare(care)
+  const getIconText = (selection: Selection) => {
+    const iconTexts = {
+      day: () => (currDateIsActive && currMonthIsActive ? 'Today' : `${activeMonthName} ${activeDate + 1}`),
+      week: () => (currWeekIsActive && currMonthIsActive ? 'This Week' : `Week ${activeWeek + 1}`),
+      month: () => (currMonthIsActive ? 'This Month' : activeMonthName),
+      year: () => (currYearIsActive ? 'This Year' : activeYear),
+    }
+    return iconTexts[selection]()
+  }
+
+  const handleClickTask = (item: Care | Health, type: string) => {
+    setClickedTask({ item, type })
     setModalVisible(true)
   }
-  
-  useEffect(() => {
-    if (isSuccess) {
-      setPets(pets.data)
-    }
-  }, [pets.data, cares.data])
+
+  const listProps = { 
+    navigation: navigation,
+    activeDateObj: activeDateObj,
+    onPressTask: handleClickTask,
+    type: feed
+  }
 
   return (  
     <View style={styles.container}>
-      { isLoading && <Loader /> }
-      { isError && <Text>Error fetching data... </Text> }
-      { isSuccess && 
-        <>        
-          <View style={styles.iconMenuContainer}>
-            <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('day')}>
-              <Text style={styles.taskCount}>{cares.data['Daily']?.length ?? 0}</Text>
-              <Image source={require('@assets/icons/day.png')} style={styles.icon } />
-              <Text style={[styles.iconText, selected === 'day' && styles.selected]}>
-                { currDateIsActive && currMonthIsActive ? 'Today' : `${activeMonthName} ${activeDate + 1}` }
-              </Text>
+      <View style={styles.headerCon}>  
+        <TouchableOpacity onPress={() => setFeed('care')} style={[styles.iconHeaderCon, feed === 'care' && { borderColor: Colors.pink.dark }]}>
+          <Image source={getNavigationIconSource('care', feed === 'care' ? 'active' : 'inactive')} style={{...UI.smallIcon}} />
+          <Text style={[styles.iconHeaderText, feed === 'care' && { color: Colors.pink.dark }]}>Pet care</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setFeed('health')} style={[styles.iconHeaderCon,feed === 'health' && { borderColor: Colors.pink.dark }]}>
+          <Image source={getNavigationIconSource('health', feed === 'health' ? 'active' : 'inactive')} style={{...UI.smallIcon}} />
+          <Text style={[styles.iconHeaderText, feed === 'health' && { color: Colors.pink.dark }]}>Pet health</Text>
+        </TouchableOpacity>
+      </View>
+
+      { isFetching && <Loader /> }
+      { isError && <ErrorImage /> }
+
+      { isSuccess && <>
+        { (feed === 'care' && Object.values(data.cares).flat().length > 0) || (feed === 'health' && data.healths.length > 0) ? <>
+          { feed === 'care' ? <>
+            <View style={styles.iconMenuContainer}>
+              {['day', 'week', 'month', 'year'].map((selection: Selection) =>
+                <TouchableOpacity key={selection} style={styles.iconMenu} onPress={() => setSelected(selection)}>
+                  <Image source={getCalendarIconSource(selection, selected === selection ? 'active' : 'inactive')} style={{...UI.icon}} />
+                  <Text style={[styles.iconText, selected === selection ? {...Typography.focused} : {...Typography.unFocused}]}>{getIconText(selection)}</Text>
+                </TouchableOpacity>
+              )}
+            </View> 
+            { selected === 'day' && <DraggableList initialData={[...data.cares['Daily'], ...data.cares['Others']]} { ...listProps } /> }
+            { selected === 'week' && <DraggableList initialData={data.cares['Weekly']} { ...listProps } /> }
+            { selected === 'month' && <DraggableList initialData={data.cares['Monthly']} { ...listProps } /> }
+            { selected === 'year' && <DraggableList initialData={data.cares['Yearly']} { ...listProps } /> }
+          </> : <DraggableList initialData={data.healths} { ...listProps } /> }
           
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('week')}>
-              <Text style={styles.taskCount}>{cares.data['Weekly']?.length ?? 0}</Text>
-              <Image source={require('@assets/icons/week.png')} style={styles.icon } />
-              <Text style={[styles.iconText, selected === 'week' && styles.selected]}>{ 
-                currWeekIsActive && currMonthIsActive ? 'This Week' 
-                : `Week ${activeWeek + 1}`
-              }</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('month')}>
-              <Text style={styles.taskCount}>{cares.data['Monthly']?.length ?? 0}</Text>
-              <Image source={require('@assets/icons/month.png')} style={styles.icon } />
-              <Text style={[styles.iconText, selected === 'month' && styles.selected]}>{currMonthIsActive ? 'This Month' : activeMonthName}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.iconMenu} onPress={() => setSelected('year')}>
-              <Text style={styles.taskCount}>{cares.data['Yearly']?.length ?? 0}</Text>
-              <Image source={require('@assets/icons/year.png')} style={styles.icon } />
-              <Text style={[styles.iconText, selected === 'year' && styles.selected]}>{currYearIsActive ? 'This Year' : activeYear}</Text>
-            </TouchableOpacity>
-          </View>    
-          <View style={styles.taskListContainer}>
-            {!Object.keys(cares.data).length && <PlaceHolder /> }
-
-            {selected === 'day' &&
-              <CustomFlatList data={[...cares.data['Daily'], ...cares.data['Others'] ?? []]} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
-            }
-            
-            {selected === 'week' && 
-              <CustomFlatList data={cares.data['Weekly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
-            }
-
-            {selected === 'month' && 
-              <CustomFlatList data={cares.data['Monthly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
-            }
-
-            {selected === 'year' && 
-              <CustomFlatList data={cares.data['Yearly']} navigation={navigation} activeDateObj={activeDateObj} onPressTask={handleClickTask} />
-            }
-          </View>
-        </>
-      }
+        </> : <PlaceHolder type={feed === 'care' ? 'task' : 'vet'} navigation={navigation} /> }
+      </> }
 
       <Modal
-        animationType="slide"
+        animationType="fade"
         visible={modalVisible}
         onRequestClose={() => setModalVisible(!modalVisible)}
-        onDismiss={() => setClickedCare(null)}
+        onDismiss={() => setClickedTask(null)}
+        transparent={true}
       >
-        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={styles.modalContainer}> 
-          <View style={styles.detailContainer}>
-            <CloseButton onPress={() => setModalVisible(false)} />
-            <CareCard care={clickedCare} navigation={navigation} onNavigate={() => setModalVisible(false)}/>
-          </View>
+        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...UI.modalOverlay }}> 
+          <Animated.View entering={ZoomIn} exiting={ZoomOut} style={styles.detailContainer}>
+            {clickedTask && <>
+              { clickedTask.type === 'care' ? <CareCard care={clickedTask.item as Care} navigation={navigation} onNavigate={() => setModalVisible(false)} />
+              : clickedTask.type === 'health' ? <HealthCard health={clickedTask.item as Health} navigation={navigation} onNavigate={() => setModalVisible(false)} activeDateObj = {activeDateObj} />
+              : null }
+            </> }
+          </Animated.View>
         </Pressable>
       </Modal> 
       
@@ -133,13 +121,26 @@ const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    alignItems: 'center',
-    position: 'relative',
+    ...Spacing.fullWH,
+    ...Spacing.flexColumn,
   },
-  done: {
-    textDecorationLine: 'line-through',
-    fontStyle: 'italic',
+  headerCon: {
+    ...Spacing.flexRow,
+    width: '100%',
+    padding: 10,
+  },
+  iconHeaderCon: {
+    ...Spacing.flexRow,
+    ...Spacing.centered,
+    width: '45%',
+    marginHorizontal: 5,
+    borderBottomWidth: 1.5,
+    borderColor: Colors.shadow.darkest,
+  },
+  iconHeaderText: {
+    ...Typography.xSmallHeader,
+    color: Colors.shadow.darkest,
+    margin: 10,
   },
   iconMenuContainer: {
     ...Spacing.flexRow,
@@ -150,63 +151,21 @@ const styles = StyleSheet.create({
     ...Spacing.flexColumn,
     flexBasis: '25%',
   },
-  icon: {
-    ...Forms.smallIcon,
-  },
   iconText: {
-
-  },
-  taskCount: {
-    color: Colors.red,
-    fontWeight: 'bold',
-    position: 'absolute',
-    right: '25%',
-    top: '15%',
-  },
-  selected: {
-    color: Colors.red,
-    fontWeight: 'bold',
+    ...Typography.xSmallBody,
+    marginTop: -5,
   },
   taskListContainer : {
     width: '90%',
-  },
-  taskIcon: {
-    ...Forms.smallIcon,
-  },
-  mainBtn: {
-    ...Buttons.smallRounded,
-    backgroundColor: Colors.pink,
-    marginTop: 50
-  },
-  btnText: {
-    ...Buttons.buttonText,
-  },
-  modalContainer: {
-    ...Spacing.fullWH,
-    ...Spacing.centered,
-    position: 'relative',
-    backgroundColor: Colors.lightestPink,
+    ...UI.scrollContent,
   },
   detailContainer: {
     width: '100%',
-    height: '60%',
+    height: '65%',
     position: 'absolute',
     alignItems: 'center',
     bottom: 0,
   },
-  empty: {
-    marginTop: 100,
-    fontSize: 15,
-    fontWeight: 'bold',
-    textAlign: 'center'
-  },
-  subscript: {
-    position: 'absolute',
-    top: 0
-  },
-  disabled: {
-    opacity: 0.5
-  },
 })
- 
+
 export default HomeFeed

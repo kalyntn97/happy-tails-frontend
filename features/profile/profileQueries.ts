@@ -1,12 +1,12 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 import * as profileService from "./profileService"
-import { Profile, ProfileFormData } from "./ProfileInterface"
+import { PhotoData, Profile, ProfileFormData } from "./ProfileInterface"
 
 export const profileKeyFactory = {
   profile: ['profile'],
 }
 
-export const useGetProfile = () => {
+export const useGetProfile = (isEnabled?: boolean) => {
   return useQuery({
     queryKey: [...profileKeyFactory.profile],
     queryFn: profileService.getProfile,
@@ -23,3 +23,25 @@ export const useUpdateProfile = () => {
     }
   })
 }
+
+export const useAddBanner = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (photoData: PhotoData) => profileService.addBanner(photoData),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [...profileKeyFactory.profile] })
+    }
+  })
+}
+
+// export const useUpdateStreak = () => {
+//   const queryClient = useQueryClient()
+
+//   return useMutation({
+//     mutationFn: () => profileService.updateStreak(),
+//     onSuccess: () => {
+//       return queryClient.invalidateQueries({ queryKey: [...profileKeyFactory.profile] })
+//     }
+//   })
+// }

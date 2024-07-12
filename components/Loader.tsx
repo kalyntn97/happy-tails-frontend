@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react"
 import { Image, StyleSheet, View, useWindowDimensions } from "react-native"
-import { Forms } from "@styles/index"
+import { Colors, UI, Spacing } from "@styles/index"
 import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated"
+import { windowWidth } from "@utils/constants"
 
 const Loader = () => {
   const [start, setStart] = useState(true)
   const DELAY = 250
   const DURATION = 500
   const NUM_OP = 7
-  const windowWidth = useWindowDimensions().width
   const opacity = Array.from({length: NUM_OP }, () => useSharedValue(0))
 
   const animateDelayOpacity = (toValue: number) => {
@@ -32,7 +32,7 @@ const Loader = () => {
   }, [start])
   
   const container = []
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < NUM_OP; i++) {
     container.push(
       <Animated.View key={i} style={[
         styles.paw, 
@@ -41,24 +41,23 @@ const Loader = () => {
           opacity: opacity[i]
         }
       ]}>
-        <Image source={require('@assets/icons/paw-print.png')} style={{ ...Forms.smallIcon, transform: [{ 'rotate': '90deg' }] }} />
+        <Image source={require('@assets/icons/pet-paw.png')} style={{ ...UI.smallIcon, transform: [{ 'rotate': '90deg' }] }} />
       </Animated.View>
     )
   }
 
   return (
-    <View style={[
-      styles.container,
-      { width: windowWidth * 0.9, height: 120 }
-    ]}>
-      { container }
+    <View style={styles.container}>
+      <View style={{ width: windowWidth * 0.9, height: 120 }}>
+        { container }
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'center',
+    ...Spacing.centered,
   },
   paw: {
     position: 'absolute',
