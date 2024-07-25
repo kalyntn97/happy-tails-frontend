@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native"
+import { useLayoutEffect } from "react"
 
 const useCustomNavigation = () => {
   const navigation = useNavigation()
@@ -10,6 +11,7 @@ const useCustomNavigation = () => {
   const goBack = () => {
     navigation.goBack()
   }
+
   return {
     navigateTo, goBack
   }

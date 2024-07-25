@@ -73,7 +73,11 @@ export const useShallowPets = () => {
     return PET_BASICS.find(pet => pet._id === petId)
   }
 
-  return { petIdToColor, petIdToPet, PET_NAMES, PET_IDS, PET_BASICS }
+  const petServices = (petId: string) => {
+    return pets.find(pet => pet._id === petId).services ?? []
+  }
+
+  return { petIdToColor, petIdToPet, PET_NAMES, PET_IDS, PET_BASICS, petServices }
 }
 
 

@@ -1,6 +1,6 @@
 //npm modules
-import { useEffect, useState } from "react"
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ImageStyle, ScrollView } from "react-native"
+import { useEffect, useLayoutEffect, useState } from "react"
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ImageStyle, ScrollView, Button, Pressable } from "react-native"
 import * as ImagePicker from 'expo-image-picker'
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 //components
@@ -14,9 +14,10 @@ import { getPetIconSource } from "@utils/ui"
 import { Buttons, Spacing, UI, Colors, Typography } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
 import { PetFormData, PhotoFormData } from "@pet/PetInterface"
-import { ErrorMessage } from "@components/UIComponents"
+import { ErrorMessage, FormInput } from "@components/UIComponents"
 import useForm from "@hooks/useForm"
 import { useSelectPhoto } from "@hooks/sharedHooks"
+import { Header } from "@navigation/NavigationStyles"
 
 
 
@@ -58,6 +59,12 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
     const photoData = photo && photo !== initialState.photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
     onSubmit({ name, species, breed, dob, firstMet, altered, status, color, petId }, photoData)
   }
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => <Header showGoBackButton={true} rightAction={() => onValidate({ name, species })} navigation={navigation} mode='modal' />
+    });
+  }, [])
   
   return ( 
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
@@ -72,13 +79,12 @@ const PetForm: React.FC<PetFormProps> = ({ onSubmit, initialValues, navigation, 
       </View>
       {errorMsg && <ErrorMessage error={errorMsg} />}
       <Text style={styles.label}>Pet Name (required)</Text>
-      <TextInput 
-        style={styles.input} 
-        placeholder='Enter pet name'
-        placeholderTextColor={Colors.shadow.reg}
-        onChangeText={(text: string) => onChange('name', text)} 
-        value={name} 
-        autoCapitalize="words"
+      <FormInput 
+        value={name}
+        placeholder="Enter Pet Name"
+        onChange={(text: string) => onChange('name', text)}
+        styles={{ fontSize: 20, fontWeight: 'bold' }}
+        props={{ autoCapitalize: 'words' }}
       />
       <View style={styles.labelCon}>
         <Text>Pet Type (required)</Text>

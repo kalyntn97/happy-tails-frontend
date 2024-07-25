@@ -7,7 +7,7 @@ import { AlertForm, getStatIconSource, statIconSource } from '@utils/ui'
 import { STATS } from '../statHelpers'
 import { Pet } from '@pet/PetInterface'
 //components
-import { CheckboxButton, MainButton, TransparentButton } from '../../../components/ButtonComponent'
+import { CheckboxButton, MainButton, TransparentButton } from '../../../components/ButtonComponents'
 import IconStatForm from '../components/IconStatForm'
 //styles
 import { Colors, UI, Spacing, Typography } from '@styles/index'

@@ -16,7 +16,7 @@ export const HEALTH_NAMES = Object.keys(HEALTHS).map(key => HEALTHS[key])
 
 export const HEALTH_FREQ = ['day(s)', 'week(s)', 'month(s)', 'year(s)']
 
-export const HEALTH_TYPES = ['Routine', 'Sick', 'Emergency']
+export const HEALTH_TYPES = ['Routine', 'Illness', 'Emergency']
 
 const DOG_VACCINES: Record<string, { name: string, info: string }> = {
   da2pp: {

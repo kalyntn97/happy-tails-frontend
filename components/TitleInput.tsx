@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, Keyboard, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
 import Fuse, { FuseResult, IFuseOptions } from 'fuse.js'
 //utils & helpers
@@ -8,45 +8,50 @@ import { HEALTHS } from '@health/healthHelpers'
 import { STATS } from '@stat/statHelpers'
 //styles
 import { Spacing, Typography, Colors, UI } from '@styles/index'
-import { FormInput } from './UIComponents'
+import { ErrorMessage, FormInput } from './UIComponents'
 
 type Props = {
   type: 'care' | 'health' | 'log'
-  initial: string
+  initial?: string
   placeholder?: string
   onChange: (title: string) => void
   error?: string
 }
 
-const TitleInput = ({ type, initial, onChange, placeholder, error }: Props) => {
-  const titleMap = {
-    care: { iconSource: getCareIconSource, titles: CARES },
-    health: { iconSource: getHealthIconSource, titles: HEALTHS },
-    log: { iconSource: getStatIconSource, titles: STATS },
-  }
-  const titles: { title: string, icon: string }[] = titleMap[type].titles
+const TITLE_LENGTH = 50
 
-  const fuse = new Fuse(titles, { keys: ['title', 'icon'] })
+const titleMap = {
+  care: { iconSource: getCareIconSource, titles: CARES },
+  health: { iconSource: getHealthIconSource, titles: HEALTHS },
+  log: { iconSource: getStatIconSource, titles: STATS },
+}
 
-  const [title, setTitle] = useState<string>(initial)
+const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props) => {
+  const titleBtn = useRef(null)
+  const fuse = useMemo(() => {
+    const titles: { title: string, icon: string }[] = titleMap[type].titles
+    return new Fuse(titles, { keys: ['title', 'icon'] })
+  }, [type])
+
+  const [title, setTitle] = useState(initial ?? null)
   const [titleSearch, setTitleSearch] = useState<FuseResult<any>[]>([])
   const [icon, setIcon] = useState<string>(initial ? fuse.search(initial)[0]?.item.icon : 'others')
   const [visible, setVisible] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
   const [dropdownTop, setDropdownTop] = useState(0)
   const [dropdownLeft, setDropDownLeft] = useState(0)
 
-  const iconSource = titleMap[type].iconSource(icon)
-
-  const handleChange = (input: string) => {
+  const iconSource = useMemo(() => titleMap[type].iconSource(icon), [type, icon])
+  const validatedStyles = useMemo(() => error ? UI.inputError : isFocused ? UI.inputFocused : UI.inputUnfocused, [error, isFocused])
+  
+  const openDropDown = (input: string) => {
     const search = fuse.search(input)
-    setTitle(input)
-    setTitleSearch(search)
-    openDropDown()
     setIcon(search[0]?.item.icon ?? 'others')
-    onChange(input)
-  }
-
-  const openDropDown = (): void => {
+    if (input === search[0]?.item.title) {
+      setVisible(false)
+      return
+    }
+    setTitleSearch(search)
     setVisible(_ => {
       titleBtn.current.measure((fx, fy, _w, h, px, _py) => {
         setDropdownTop(fy + h + 10)
@@ -56,32 +61,46 @@ const TitleInput = ({ type, initial, onChange, placeholder, error }: Props) => {
     })
   }
 
-  const handlePress = (item: string) => {
-    Keyboard.dismiss()
-    setVisible(false)
-    setTitle(item)
+  const handleChange = (input: string) => {
+    setTitle(input)
+    openDropDown(input)
   }
 
-  const titleBtn = useRef(null)
-  const TITLE_LENGTH = 50
-
-  useEffect(() => {
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setVisible(false)
-    })
-    return () => {
-      hideSubscription.remove()
-    }
-  }, [])
+  const handlePress = (item: string) => {
+    handleChange(item)
+    onChange(item)
+    setIsFocused(false)
+    Keyboard.dismiss()
+  }
 
   return (
     <View style={styles.container}>
       { iconSource ? <Image source={iconSource} style={UI.largeIcon}/> : <ActivityIndicator /> }
       <View style={[Spacing.flexColumn, { width: '100%', alignItems: 'flex-start' }]}>
-        <FormInput value={title} placeholder={placeholder} onChange={handleChange} props={{ autoCapitalize: 'words', multiline: true }} ref={titleBtn} styles={styles.input} maxLength={TITLE_LENGTH} error={error} />
-        <Text style={styles.subTitle}>{title?.length > 0 ? TITLE_LENGTH - title.length : TITLE_LENGTH}/{TITLE_LENGTH}</Text>
+        <TextInput
+          ref={titleBtn}
+          style={[styles.input, validatedStyles]}
+          placeholder={placeholder}
+          placeholderTextColor={UI.lightPalette.unfocused}
+          value={title}
+          onChangeText={handleChange}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => handlePress(title)}
+          maxLength={TITLE_LENGTH}
+          selectTextOnFocus={true}
+          autoCapitalize='words'
+          multiline={true}
+        />
+        <View style={[Spacing.flexRow, { marginTop: 10, marginLeft: 10 }]}>
+          { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: 30 }}/> }
+          { isFocused && 
+            <Text style={{ color: UI.lightPalette.unfocused, fontSize: 12 }}>
+              {TITLE_LENGTH - (title ? title.length : 0)} / {TITLE_LENGTH}
+            </Text> 
+          }
+        </View>
       </View>
-      { visible && titleSearch.length > 0 &&
+      { visible && titleSearch.length > 1 &&
         <View style={[styles.content, { top: dropdownTop, left: dropdownLeft }]}>
           { titleSearch.map(t =>
             <TouchableOpacity key={`search-${t.item.title}`} onPress={() => handlePress(t.item.title)}>
@@ -92,7 +111,7 @@ const TitleInput = ({ type, initial, onChange, placeholder, error }: Props) => {
       }
     </View>
   )
-}
+})
 
 export default TitleInput
 

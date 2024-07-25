@@ -1,5 +1,4 @@
 
-//npm modules
 import { useEffect } from "react"
 import { View } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
@@ -7,7 +6,7 @@ import { useIsFocused } from "@react-navigation/native"
 import PetForm from "../components/PetForm"
 import { Pet, PetFormData, PhotoFormData } from "@pet/PetInterface"
 import Loader from "@components/Loader"
-//store & queries
+//hooks & queries
 import { useUpdatePet } from "@pet/petQueries"
 import useCustomNavigation from "@hooks/useNavigation"
 

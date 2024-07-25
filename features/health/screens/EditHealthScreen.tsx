@@ -47,17 +47,10 @@ const EditHealthScreen: FC<EditHealthProps> = ({ navigation, route }) => {
   }, [navigation, isFocused])
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1 }}>
       <HealthForm navigation={navigation} onSubmit={handleSubmit} status={updateHealthMutation.status} initialValues={initialValues}/>
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-    ...Spacing.centered
-  }
-})
- 
 export default EditHealthScreen

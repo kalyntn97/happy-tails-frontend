@@ -1,13 +1,14 @@
-import { ActivityIndicator, DimensionValue, Image, Modal, Pressable, StyleSheetProperties, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { ActivityIndicator, DimensionValue, Image, ImageStyle, Keyboard, KeyboardAvoidingView, KeyboardEventListener, Modal, Platform, Pressable, StyleSheetProperties, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Spacing, Colors, Typography, UI } from "@styles/index"
-import { ComponentProps, FC, MutableRefObject, ReactElement, ReactNode, forwardRef, useEffect, useState } from "react"
+import { ComponentProps, FC, MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
 import { getActionIconSource } from "@utils/ui"
 import { ImageSourcePropType } from "react-native"
 import { ToastConfig, ToastConfigParams, ToastOptions, ToastProps } from "react-native-toast-message"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
-import { GoBackButton, SubButton } from "./ButtonComponent"
+import { GoBackButton, SubButton } from "./ButtonComponents"
 import Animated, { FadeInDown, FadeOutDown, LayoutAnimationConfig, SlideInDown, SlideOutDown, ZoomInUp } from "react-native-reanimated"
-import { lightPalette } from "@styles/ui"
+
+type Size = 'small' | 'medium' | 'large' | 'xSmall' | 'xLarge'
 
 type BoxHeaderProps = {
   title: string
@@ -59,20 +60,37 @@ export const BoxWithHeader: FC<BoxProps> = ({ title, titleIconSource, onPress, c
   </View>
 )
 
-type CircleIconProps = {
+interface IconProps {
   iconSource: ImageSourcePropType
-  size?: string
+  size?: Size
+  styles?: ImageStyle
+}
+interface CircleIconProps extends IconProps {
   bgColor?: string
 }
 
-export const CircleIcon = ({ iconSource, size, bgColor }: CircleIconProps) => (
+export const Icon = ({ iconSource, size = 'small', styles }: IconProps) => {
+  const iconSize = {
+    xSmall: UI.xSmallIcon,
+    small: UI.smallIcon,
+    medium: UI.icon,
+    large: UI.largeIcon,
+    xLarge: UI.xLargeIcon,
+  }
+
+  return (
+    <Image source={iconSource} style={[iconSize[size], styles]} />
+  )
+}
+
+export const CircleIcon = ({ iconSource, size = 'large', bgColor }: CircleIconProps) => (
   <View style={{ backgroundColor: bgColor ?? Colors.shadow.light, ...UI.roundedIconCon }}>
-    <Image source={iconSource} style={{ ...UI.largeIcon }} />
+    <Icon iconSource={iconSource} size={size} />
   </View>
 )
- 
-export const ErrorMessage = ({ error, top = 0 }: { error: string, top?: number }) => (
-  <Text style={{ ...Typography.errorMsg, marginTop: top }}>{error}</Text>
+
+export const ErrorMessage = ({ error, styles }: { error: string, styles?: TextStyle }) => (
+  <Text style={[Typography.errorMsg, styles]}>{error}</Text>
 )
 
 export const ErrorImage = ({ top }: { top?: number }) => (
@@ -103,21 +121,70 @@ export const EmptyList = ({ type }: { type: string }) => (
   <Text style={type === 'task' ? { ...Typography.smallSubHeader } : { ...Typography.xSmallSubHeader }}>No {type}s added.</Text>
 ) 
 
-export const TopRightHeader = ({ onPress }) => (
+export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { label: string, icon?: string, onPress: () => void, top?: number, right?: number }) => (
   <Pressable onPress={onPress} style={{
-    ...Spacing.flexRow, position: 'absolute', right: -5, top: 0,
+    ...Spacing.flexRow, position: 'absolute', right: right, top: top,
   }}>
-    <Text style={{ ...Typography.xSmallHeader, marginRight: 10 }}>Add</Text>
-    <Image source={getActionIconSource('add')} style={{ ... UI.xSmallIcon }} />
+    <Text style={{ ...Typography.xSmallHeader, marginRight: icon ? 10 : 0 }}>{label}</Text>
+    { icon && <Icon iconSource={getActionIconSource(icon)} size='xSmall' /> }
   </Pressable>
 )
 
-export const FormLabel = ({ label, icon, width, top = 20, bottom = 10 }: { label: string, icon: string, width?: string | number, top?: number, bottom?:number }) => (
+export const FormLabel = ({ label, icon, width, top = 30, bottom = 10 }: { label: string, icon: string, width?: string | number, top?: number, bottom?:number }) => (
   <View style={{...Spacing.flexRow, width: width as DimensionValue, alignSelf: 'flex-start', marginTop: top, marginBottom: bottom }}>
     <Image source={getActionIconSource(icon)} style={{ ...UI.xSmallIcon, marginRight: 10 }} />
     <Text style={{ ...Typography.xSmallHeader, margin: 0 }}>{label}</Text>
   </View>
 )
+
+export const Header = ({ title, size = 'medium', color = Colors.black, styles }: { title: string, size?: Size, color?: string, styles?: TextStyle }) => {
+  const headerSize = {
+    small: Typography.smallHeader,
+    medium: Typography.mediumHeader,
+    xSmall: Typography.xSmallHeader,
+    large: Typography.subHeader,
+    xLarge: Typography.mainHeader,
+  }
+  return (
+    <Text style={[headerSize[size], styles, { color: color }]}>{title}</Text>
+  )
+}
+
+export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styles, props, maxLength = 100, error }: { initial: string, placeholder: string, onChange: (input: string) => void, styles?: TextStyle, props?: TextInputProps, maxLength?: number, error?: string }, ref: MutableRefObject<any>) => {
+  const [isFocused, setIsFocused] = useState(false)
+  const [value, setValue] = useState(initial ?? null)
+
+  const validatedStyles = useMemo(() => error ? UI.inputError : isFocused ? UI.inputFocused : UI.inputUnfocused, [error, isFocused])
+
+  return (
+    <>
+      <TextInput
+        ref={ref}
+        style={[styles ?? UI.input, validatedStyles]}
+        placeholder={placeholder ?? 'Title'}
+        placeholderTextColor={UI.lightPalette.unfocused}
+        value={value}
+        onChangeText={setValue}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => {
+          onChange(value)
+          setIsFocused(false)
+        }}
+        maxLength={maxLength}
+        selectTextOnFocus={true}
+        { ...props }
+      />
+      <View style={[Spacing.flexRow, { marginTop: 10, marginLeft: 10 }]}>
+        { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: 30 }}/> }
+        { isFocused && 
+          <Text style={{ color: UI.lightPalette.unfocused, fontSize: 12 }}>
+            {maxLength - (value ? value.length : 0)}/{maxLength}
+          </Text> 
+        }
+      </View>
+    </>
+  )
+}))
 
 export const BottomModal = ({ children, modalVisible, height, maxHeight, onDismiss, background = Colors.shadow.lightest, overlay = Colors.white }: { children: ReactNode, modalVisible: boolean, height: string | number, maxHeight?: string | number, onDismiss: () => void, background?: string, overlay?: string }) => {
   const [childrenVisible, setChildrenVisible] = useState(modalVisible)
@@ -155,55 +222,65 @@ export const BottomModal = ({ children, modalVisible, height, maxHeight, onDismi
   )
 }
 
-export const FormInput = forwardRef(({ value, placeholder, onChange, styles, props, maxLength = 50, error }: { value: string, placeholder: string, onChange: (input: string) => void, styles: TextStyle, props: TextInputProps, maxLength?: number, error?: string }, ref: MutableRefObject<any>) => {
-  const [isFocused, setIsFocused] = useState(false)
-  const validatedStyles = error ? UI.inputError : isFocused ? UI.inputFocused : UI.inputUnfocused
-  
-  return (
-    <>
-      <TextInput
-        ref={ref}
-        style={[styles ?? UI.input, validatedStyles]}
-        placeholder={placeholder ?? 'Title'}
-        placeholderTextColor={UI.lightPalette.unfocused}
-        value={value}
-        onChangeText={onChange}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        maxLength={maxLength}
-        selectTextOnFocus={true}
-        { ...props }
-      />
-      { error && <ErrorMessage error={error} top={5} /> }
-    </>
-  )
-})
-
-export const ModalInput = ({ children, label, onReset, height = 'fit-content', maxHeight, color, overlay, background }: { children: ReactNode, label: string | ReactElement, onReset: () => void, height?: number | string, maxHeight?: number | string, color?: number, overlay?: string, background?: string }) => {
+export const ModalInput = ({ children, label, onReset, onClose, height = 'fit-content', maxHeight, overlay, background, buttonStyles, buttonTextStyles, buttonTextProps }: { children: ReactNode, label: string | ReactElement, onReset?: () => void, onClose?: () => void, height?: number | string, maxHeight?: number | string, overlay?: string, background?: string, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle, buttonTextProps?: any}) => {
   const [modalVisible, setModalVisible] = useState(false)
-  const focusedColor = Colors.multi.dark[color] ?? UI.lightPalette.focused
-  const focusedStyles = { borderColor: focusedColor, color: focusedColor }
-  const unfocusedStyles = { borderColor: UI.lightPalette.border, color: UI.lightPalette.text }
-
   const dismissModal = () => setModalVisible(false)
 
   return (
     <>
-      <Pressable onPress={() => setModalVisible(!modalVisible)}>
-        <Text style={[UI.input, modalVisible ? focusedStyles : unfocusedStyles]}>{label}</Text>
+      <Pressable onPress={() => setModalVisible(!modalVisible)} style={buttonStyles}>
+        <Text {...buttonTextProps} style={buttonTextStyles}>{label}</Text>
       </Pressable>
 
-      <BottomModal modalVisible={modalVisible} onDismiss={dismissModal} height={height} maxHeight={maxHeight} overlay={overlay} background={background}>
+      <BottomModal modalVisible={modalVisible} onDismiss={() => {
+        onClose && onClose()
+        dismissModal()
+      }} height={height} maxHeight={maxHeight} overlay={overlay} background={background}>
         { children }
-        <SubButton title='Reset' onPress={onReset} color={UI.lightPalette.unfocused} bottom={20} />
+        { onReset && <SubButton title='Reset' onPress={onReset} color={UI.lightPalette.unfocused} bottom={20} /> }
       </BottomModal>
     </>
   )
 }
 
-export const DateInput = ({ date, onChangeDate, color }: { date: Date, onChangeDate: (selected: Date) => void, color?: number }) => (
-  <ModalInput label={date.toDateString()} onReset={() => onChangeDate(new Date())} color={color}>
-    <RNDateTimePicker display="inline" themeVariant="light" value={new Date(date)} minimumDate={new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate)} accentColor={Colors.multi.dark[color]} />
+export const DateInput = ({ date, onChangeDate, color, buttonStyles, buttonTextStyles }: { date: Date, onChangeDate: (selected: Date) => void, color?: number, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle }) => (
+  <ModalInput label={date.toDateString()} onReset={() => onChangeDate(new Date())} buttonStyles={buttonStyles} buttonTextStyles={buttonTextStyles}>
+    <RNDateTimePicker display="inline" themeVariant="light" value={new Date(date)} onChange={(_, selectedDate) => onChangeDate(selectedDate)} accentColor={Colors.multi.dark[color]} />
   </ModalInput>
+)
+
+export const NoteInput = ({ notes, onChange, buttonStyles, buttonTextStyles }: { notes: string, onChange: (text: string) => void, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle }) => {
+  const DEFAULT_HEIGHT = '30%'
+  const [height, setHeight] = useState(DEFAULT_HEIGHT)
+  
+  useEffect(() => {
+    const onShow = Keyboard.addListener('keyboardDidShow', () => {
+      setHeight('70%')
+    })
+    const onHide = Keyboard.addListener('keyboardDidHide', () => {
+      setHeight('30%')
+    })
+    return () => {
+      onShow.remove()
+      onHide.remove()
+    }
+  }, [])
+
+  return (
+    <ModalInput label={notes ?? 'No notes added.'} onReset={() => onChange(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} height={height}>
+      <FormInput value={notes} placeholder="Enter notes" onChange={onChange} props={{ multiline: true, numberOfLines: 6,  }} styles={{ ...UI.input, width: '90%', minHeight: 100, maxHeight: '30%',marginTop: 20 }} />
+    </ModalInput>
+  )
+}
+
+export const TableForm = ({ table }: { table: { key: string, icon: string, value: any }[] }) => (
+  <View style={{ ...UI.roundedCon, backgroundColor: Colors.white }}>
+    {table.map(row =>
+      <View key={row.key} style={{ ...Spacing.flexRow, width: '100%', justifyContent: 'space-between', height: 50 }}>
+        <Icon iconSource={getActionIconSource(row.icon)} size='xSmall' />
+        { row.value }
+      </View>
+    )}
+  </View>
 )
 

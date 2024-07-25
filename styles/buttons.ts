@@ -1,14 +1,19 @@
 import { ViewStyle, TextStyle } from "react-native"
 import Colors from "./colors"
-import { boxShadow } from "./ui"
+import { boxShadow, lightPalette } from "./ui"
 import { centered } from "./spacing"
 
+//corners
+export const rounded: ViewStyle = { borderRadius: 30 }
+export const lessRounded: ViewStyle= { borderRadius: 15 }
+export const square: ViewStyle = { borderRadius: 8 }
 //base
 export const base: ViewStyle = {
   ...centered,
   margin: 10,
   cursor: 'pointer',
 }
+
 export const main: ViewStyle = {
   ...base,
   paddingHorizontal: 20,
@@ -31,6 +36,13 @@ export const circleBase = {
   ...circle,
   ...boxShadow,
   marginHorizontal: 10,
+}
+
+export const squareBase = {   
+  ...centered,
+  ...square,
+  borderWidth: 1,
+  borderColor: lightPalette.border,
 }
 
 export const solid: ViewStyle = {
@@ -71,12 +83,6 @@ export const xxSmall = { minWidth: 80, height: 35 }
 export const small = { minWidth: 120, height: 50 }
 
 export const long = { minWidth: 250, height: 50 }
-
-export const rounded: ViewStyle = { borderRadius: 30 }
-
-export const lessRounded: ViewStyle= { borderRadius: 15 }
-
-export const square: ViewStyle = { borderRadius: 8 }
 //buttons
 export const smallRoundedSolid: ViewStyle = { ...small, ...solid, ...rounded }
 export const longSquareSolid: ViewStyle = { ...long, ...solid, ...square }
@@ -90,6 +96,7 @@ export const subButton: ViewStyle = { ...sub }
 
 export const xSmallSquareButton: ViewStyle = { ...xSmall, ...square, ...solid }
 export const xSmallRoundButton: ViewStyle = { ...xSmall, ...rounded, ...solid }
+export const largeSquareButton: ViewStyle = { ...squareBase, paddingHorizontal: 15, paddingVertical: 10 }
 
 export const roundButton = { ...circleBase, width: 60, height: 60 }
 

@@ -14,26 +14,26 @@ type Props = {
 
 const PetPicker = ({ mode, onSelect, initials }: Props) => {
   const { PET_BASICS } = useShallowPets()
-  const initialSelections = initials.length > 0 ? initials : [PET_BASICS[0]._id]
-  const [selected, setSelected] = useState<string[]>(initialSelections)
+  const [selected, setSelected] = useState<string[]>(initials)
 
   const handleSelect = (petId: string) => {
     if (mode === 'multi') {
+      let petArray = []
       setSelected(prev => {
-        const selected = prev.includes(petId) ? prev.filter(s => s !== petId) : [...prev, petId]
-        onSelect(selected)
-        return selected
+        if (prev.length > 1) {
+          petArray = prev.includes(petId) ? prev.filter(s => s !== petId) : [...prev, petId]
+        } else petArray = prev
+        return petArray
       })
+      onSelect(petArray)
     } else {
-      setSelected(() => {
-        onSelect([petId])
-        return [petId]
-      })
+      setSelected([petId])
+      onSelect([petId])
     }
   }
   
   useEffect(() => {
-    setSelected(initialSelections)
+    setSelected(initials)
   }, [initials])
 
   return (
@@ -57,12 +57,8 @@ const styles = StyleSheet.create({
     ...Spacing.centered,
   },
   petBtn: {
-    width: 100,
-    height: 110,
-    borderWidth: 1,
-    borderRadius: 8,
-    ...Spacing.centered,
-    borderColor: Colors.shadow.dark,
+    maxWidth: '30%',
+    ...Buttons.largeSquareButton,
   },
   selected: {
     opacity: 1

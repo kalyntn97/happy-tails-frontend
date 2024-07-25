@@ -1,7 +1,8 @@
 import { StyleSheet, View, Text } from "react-native"
 import LottieView from "lottie-react-native"
 import { Typography, Colors, Spacing } from "@styles/index"
-import { TransparentButton } from "./ButtonComponent"
+import { TransparentButton } from "./ButtonComponents"
+import { useNavigation } from "@react-navigation/native"
 
 type Props = {
   type: 'task' | 'vet' | 'ids' | 'services'
@@ -25,7 +26,7 @@ const PlaceHolder = ({ type, petId, navigation }: Props) => {
           : type === 'vet' ? navigation.navigate('HealthCreate')
           // : type === 'id' ? navigation.navigate('EditDetails', { form: type, petId })
           // : type === 'service' ? navigation.navigate('EditDetails', { form: type, petId })
-          : navigation.navigate('EditDetails', { type, petId })
+          : navigation.navigate('PetEditDetails', { type, petId })
         }} color={Colors.pink.dark} bdColor={Colors.pink.dark} top={-40}
       />
       <Text style={styles.msg}>No {map[type].text}s found. {map[type].subText}</Text>

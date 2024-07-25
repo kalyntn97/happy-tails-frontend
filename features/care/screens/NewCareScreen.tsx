@@ -27,7 +27,7 @@ const NewCareScreen = ({ navigation }) => {
   }, [navigation, isFocused, color])
 
   return (
-    <View style={{ ...Spacing.fullScreenDown, backgroundColor: Colors.multi.lightest[color] }}>
+    <View style={{ flex: 1, backgroundColor: Colors.multi.lightest[color] }}>
       <CareForm onSubmit={handleSubmit} navigation={navigation} status={addCareMutation.status} setColor={setColor} />
     </View>  
   )

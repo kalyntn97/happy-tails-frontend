@@ -1,11 +1,11 @@
 //npm
-import { View, Text, TextInput, Pressable } from 'react-native'
+import { View, Text, TextInput, Pressable, ScrollView } from 'react-native'
 import React, { FC, useState } from 'react'
 //helpers && types
 import { Service, ServiceFormData } from '@pet/PetInterface'
 import { getPetIconSource } from '@utils/ui'
 //components
-import { CircleIcon, ErrorMessage } from '@components/UIComponents'
+import { CircleIcon, ErrorMessage, Header, TopRightHeader } from '@components/UIComponents'
 import { ActionButton, MainButton, TransparentButton } from '@components/ButtonComponent'
 import Dropdown from '@components/Dropdown/Dropdown'
 //styles
@@ -32,8 +32,8 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
   }
   
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Add a Service</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Header title='Add a Service' styles={{ paddingTop: 10 }} />
       <CircleIcon iconSource={getPetIconSource('services')} />
       <View style={styles.labelCon}>
         <Text>Name</Text>
@@ -84,7 +84,7 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
         <MainButton title='Submit' size='small' onPress={() => onValidate(name, type)} />
         <TransparentButton title='Cancel' size='small' onPress={() => { onReset(); setReset(!reset) }} />
       </View>
-    </View>
+    </ScrollView>
   )
 }
 

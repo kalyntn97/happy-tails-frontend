@@ -1,5 +1,5 @@
 //npm
-import { useRef, useState } from "react"
+import { useLayoutEffect, useRef, useState } from "react"
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWindowDimensions, Pressable, Dimensions } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 //components
@@ -18,7 +18,9 @@ import type { Care, CareFormData } from "@care/CareInterface"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
-import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
+import { Header, TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
+import { windowHeight } from "@utils/constants"
+import { useShallowPets } from "@hooks/sharedHooks"
 
 
 interface InitialState extends Care {
@@ -35,9 +37,10 @@ interface CareFormProps {
 }
 
 const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation, status, setColor }) => {
+  const { PET_BASICS } = useShallowPets()
   const initialState: InitialState = {
     name: initialValues?.name ?? null, 
-    pets: initialValues?.pets ?? [],
+    pets: initialValues?.pets ?? [PET_BASICS[0]._id],
     repeat: initialValues?.repeat ?? false,
     startDate: initialValues?.startDate ?? new Date(),
     ending: !!initialValues?.endDate,
@@ -50,32 +53,37 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   }
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
   const { name, pets, repeat, startDate, ending, endDate, frequency, color, _id, errors } = values
-  const height = useWindowDimensions().height
 
   function handleSubmit() {
-    if (!repeat) ['frequency', 'endDate'].map(value => onChange(value, null))
+    if (!repeat) ['frequency', 'endDate'].map(key => onChange(key, null))
     
     if (!ending) onChange('endDate', null)
     onSubmit({ name, pets, repeat, startDate, endDate, frequency, color, _id })
   }
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => <Header showGoBackButton={true} rightAction={() => onValidate({ name, pets })} navigation={navigation} mode='modal' />
+    });
+  }, [])
+  
   return (
     <ScrollView
-      style={{ width: '90%' }}
       keyboardShouldPersistTaps='handled'
-      contentContainerStyle={[styles.container, { minHeight: height * 0.75}]}
+      contentContainerStyle={[styles.containerWithPadding, { minHeight: windowHeight * 0.75}]}
       showsVerticalScrollIndicator={false}
       alwaysBounceVertical={false}
     >
-      <View style={{ position: 'absolute', right: 0, top: 20, zIndex: 999 }}>
-        <ColorPicker mode='modal' onPress={(selected) => {
-          onChange('color', selected)
-          setColor(selected)
-      }} initial={color} />
-      </View>
       <TitleInput initial={name} placeholder='New Task' onChange={(input) => onChange('name', input)} type='care' error={errors ? errors['name'] : null} />
+
+      <FormLabel label='Color' icon="color" />
+      <ColorPicker onPress={(selected) => {
+        onChange('color', selected)
+        setColor(selected)
+      }} initial={color} />
+
       <FormLabel label='Select Pets' icon="pets" width='100%' top={30} />
-      
-      <PetPicker mode="multi" onSelect={(selections) => onChange('pets', selections)} initials={pets?.map((pet: PetBasic) => pet._id ?? pet)} />
+      <PetPicker mode="multi" onSelect={(selections: string[]) => onChange('pets', selections)} initials={pets.map((pet: PetBasic) => pet._id ?? pet)} />
 
       <FormLabel label='Start Date' icon="schedule" width='100%' top={30} />
       <DateInput date={startDate} onChangeDate={selectedDate => onChange('startDate', selectedDate)} color={color} />
@@ -94,7 +102,6 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
             onChange('frequency', initialState.frequency)
             onChange('ending', initialState.ending)
             onChange('endDate', initialState.endDate)
-            onChange('showFrequencyPicker', false)
           }}
         >
           <FrequencyPicker color={color} initial={{ ...frequency, ending, endDate }}
@@ -106,7 +113,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       
       <View style={styles.bottomCon}>
         <View style={Spacing.flexRow}>
-          <MainButton onPress={() => onValidate({ name })} title={status === 'pending' ? 'Submitting...' : !!name ? 'Save' : 'Create'} />
+          <MainButton onPress={() => onValidate({ name, pets })} title={status === 'pending' ? 'Submitting...' : !!name ? 'Save' : 'Create'} />
           <TransparentButton onPress={onReset} title='Clear' />
         </View>
       </View>

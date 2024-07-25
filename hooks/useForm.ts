@@ -12,22 +12,20 @@ const useForm = (callback: any, initialState: any) => {
   }
 
   const onValidate = ({ ...requiredFields }) => {
-    if (Object.values(requiredFields).every(value => !!value)) {
+    const errors = Object.keys(requiredFields).reduce((acc, key) => {
+      const value = requiredFields[key]
+      if (Array.isArray(value) ? value.length === 0 : !value) {
+        acc[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required`
+      }
+      return acc
+    }, {})
+    if (Object.keys(errors).length === 0) {
       setValues(prev => ({ ...prev, errors: null }))
       callback()
     } else {
-      setValues(prev => ({ ...prev, errors: 
-        Object.keys(requiredFields)
-        .filter(key => !requiredFields[key])
-        .reduce((acc, key) => {
-          acc[key] = `${key} is required`
-          return acc
-        }, {}) 
-      }))
-      return
+      setValues(prev => ({ ...prev, errors: errors }))
     }
   }
-
   return {
     onChange, onReset, values, onValidate
   }

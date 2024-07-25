@@ -17,7 +17,7 @@ import { petKeyFactory, useDeletePetDetail } from '@pet/petQueries'
 import { Colors, UI, Spacing, Typography } from '@styles/index'
 
 
-interface EditPetDetailsScreenProps {
+interface MorePetDetailsScreenProps {
   route: { params: { petId: string, show?: string } }
   navigation: any
 }
@@ -33,7 +33,7 @@ const ListHeader = ({ name, onPress }: ListHeaderProps) => (
       <Image source={getActionIconSource(name)} style={{ ...UI.icon }} />
       <Text style={styles.listHeaderText}>{PET_DETAILS[name]}</Text>
     </View>
-    <TopRightHeader onPress={onPress} />
+    <TopRightHeader label='Add' icon='add' onPress={onPress} />
   </>
 )
 
@@ -55,16 +55,17 @@ const ServiceDetails = ({ service }: { service: Service }) => (
   </View>
 )
 
-const MorePetDetailsScreen: FC<EditPetDetailsScreenProps> = ({ navigation, route }) => {
+const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) => {
   const { petId, show } = route.params
   const queryClient = useQueryClient()
+  
   const pet: Pet | undefined = queryClient.getQueryData(petKeyFactory.petById(petId))
 
   const deleteDetailMutation = useDeletePetDetail(petId, navigation)
 
   const detailData = {
-    ids: pet.ids,
-    services: pet.services,
+    ids: pet?.ids ?? [],
+    services: pet?.services ?? [],
   }
 
   const openForm = (type: DetailType) => {

@@ -1,25 +1,25 @@
 //npm
 import { FC, useEffect, useState } from 'react'
-import { InputModeOptions, Text, TextInput, View } from 'react-native'
+import { InputModeOptions, Pressable, Text, TextInput, View } from 'react-native'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 //components
-import { ActionButton } from '@components/ButtonComponent'
+import { ActionButton } from '@components/ButtonComponents'
 //styles
-import { Spacing, Colors } from '@styles/index'
-import { styles } from '@styles/stylesheets/FormStyles'
+import { Spacing, Colors, UI } from '@styles/index'
+import { windowWidth } from '@utils/constants'
+import { FormInput } from './UIComponents'
 
 type MultipleInputsProps = {
   initials?: any[]
   inputName: string,
   inputMode?: InputModeOptions,
-  type?: string
+  type: 'date' | 'text'
   onEdit: React.Dispatch<React.SetStateAction<any[]>>
   width?: number
 }
 
-const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMode, type, onEdit, width }) => {
+const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMode = 'text', type, onEdit, width = windowWidth * 0.8 }) => {
   const [inputs, setInputs] = useState<any[]>(initials ?? [])
-
   const handleAddInput = () => {
     setInputs(prev => {
       let updatedInputs = type === 'date' ? [...prev, new Date()] : [...prev, '']
@@ -36,37 +36,33 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMod
     })
   }
 
-  useEffect(() => {
-    if (!initials.length) setInputs(initials)
-  }, [initials])
+  const handleUpdateInput = (value: any, index: number) => {
+    setInputs(prev => {
+      const updatedInputs = prev.map((val, idx) => index === idx ? value : val)
+      onEdit(updatedInputs)
+        return updatedInputs
+    })}
+  // useEffect(() => {
+  //   if (!initials.length) setInputs(initials)
+  // }, [initials])
 
   return (
-    <View style={{ width: width ?? 300 }}>
+    <View style={{ width: width }}>
       {inputs.length > 0 &&
         inputs.map((input, index) =>
           <View style={Spacing.flexRow} key={`${inputName}-${index}`}>
             <ActionButton title='decrease' size='small' onPress={() => handleRemoveInput(input)} />
             <View style={type === 'date' && { marginVertical: 5 }}>
-              {type === 'date' ?
-                <RNDateTimePicker themeVariant='light' value={new Date(input) ?? new Date()} maximumDate={new Date()} accentColor={Colors.pink.dark} onChange={(event, selectedDate) => setInputs(prev => {
-                  const updatedInputs = prev.map((val, idx) => index === idx ? selectedDate : val)
-                  onEdit(updatedInputs)
-                    return updatedInputs
-                })} />
-              : 
-                <TextInput 
-                  style={[styles.input, { width: 260 }]}
-                  placeholder={`Enter ${inputName}`}
-                  placeholderTextColor={Colors.shadow.reg}
+              { type === 'date' ?
+                <RNDateTimePicker themeVariant='light' value={new Date(input) ?? new Date()} maximumDate={new Date()} accentColor={Colors.pink.dark} onChange={(_, selectedDate) => handleUpdateInput(selectedDate, index)} />
+              : type === 'text' ?
+                <FormInput 
                   value={input}
-                  onChangeText={(text: string) => setInputs(prev => {
-                    const updatedInputs = prev.map((val, idx) => index === idx ? text : val)
-                    onEdit(updatedInputs)
-                    return updatedInputs
-                  })}
-                  inputMode={inputMode ?? 'text'}
+                  placeholder={`Enter ${inputName}`}
+                  onChange={(text: string) => handleUpdateInput(text, index)}
+                  props={{ inputMode: inputMode }}
                 />
-              }
+              : null }
             </View>
           </View>
         )

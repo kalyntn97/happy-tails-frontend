@@ -1,5 +1,5 @@
 //npm
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useIsFocused } from "@react-navigation/native"
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native"
 //components
@@ -20,6 +20,8 @@ interface EditCareProps {
 }
 
 const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
+  const [color, setColor] = useState<number>(null)
+
   const { care } = route.params
   const isFocused = useIsFocused()
  
@@ -37,12 +39,13 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
     if (!isFocused) {
       navigation.goBack()
     }
-  }, [navigation, isFocused])
+    navigation.setOptions({ headerStyle: { backgroundColor: Colors.multi.lightest[color] } })
+  }, [navigation, isFocused, color])
 
   return (  
-    <View style={{ ...Spacing.fullScreenDown }}>
+    <View style={{ flex : 1, backgroundColor: Colors.multi.lightest[color] }}>
       {care ? 
-        <CareForm onSubmit={handleSubmit} initialValues={initialValues} navigation={navigation} status={updateCareMutation.status} />
+        <CareForm onSubmit={handleSubmit} initialValues={initialValues} navigation={navigation} status={updateCareMutation.status} setColor={setColor} />
         : <Loader />
       }
     </View>

@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { ReactNode, useRef } from 'react'
 import { Swipeable } from 'react-native-gesture-handler'
-import { IconButton } from './ButtonComponent'
+import { IconButton } from './ButtonComponents'
 import { Spacing } from '@styles/index'
 import { getActionIconSource } from '@utils/ui'
 

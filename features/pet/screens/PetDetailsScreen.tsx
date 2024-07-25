@@ -48,7 +48,7 @@ const ItemHeaderList= ({ type, logs, info, navigation, onReset, petId }: { type:
     getName: (log: string) => type === 'logs' ? STATS[log].name : PET_DETAILS[log],
     onNavigate: (log: string) => {
       switch(type) {
-        case 'info': return navigation.navigate('MoreDetails', { petId, show: log })
+        case 'info': return navigation.navigate('PetMoreDetails', { petId, show: log })
         case 'logs': return navigation.navigate('LogDetails', { stat: log })
         default: return null
       }
@@ -119,13 +119,13 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
 
   const bottomActions = [
     { key: 'log', title: 'Log pet stats', icon: 'log', onPress: () => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
-    { key: 'edit', title: 'Update pet info', icon: 'editSquare', onPress: () => navigation.navigate('Edit', { pet: pet }) },
+    { key: 'edit', title: 'Update pet info', icon: 'editSquare', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
     { key: 'delete', title: deletePetMutation.isPending ? 'Deleting...' : 'Delete pet profile', icon: 'deleteSquare', onPress: () => showDeleteConfirmDialog(pet, handleDeletePet) },
   ]
 
   const topActions = [
     { key: 'search' },
-    { key: 'edit', onPress: () => navigation.navigate('Edit', { pet: pet }) },
+    { key: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
     { key: 'add', onPress:() => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
   ] 
 

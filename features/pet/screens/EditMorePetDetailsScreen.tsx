@@ -7,6 +7,7 @@ import IllnessForm from '@pet/components/IllnessForm'
 import { useAddPetDetail } from '@pet/petQueries'
 import { AlertForm } from '@utils/ui'
 import { DetailType } from '@pet/PetInterface'
+import { TopRightHeader } from '@components/UIComponents'
 
 interface EditMorePetDetailsScreenProps {
   route: { params: { type: string, petId: string } }
@@ -15,7 +16,6 @@ interface EditMorePetDetailsScreenProps {
 
 const EditMorePetDetailsScreen: FC<EditMorePetDetailsScreenProps> = ({ route, navigation }) => {
   const { type, petId } = route.params
-
   const addDetailMutation = useAddPetDetail(petId, navigation)
 
   const handleSubmit = (type: DetailType, formData: any) => {
@@ -23,12 +23,12 @@ const EditMorePetDetailsScreen: FC<EditMorePetDetailsScreenProps> = ({ route, na
   }
 
   return (
-    <ScrollView>
+    <View style={{ flex: 1 }}>
       {type === 'ids' && <IdForm onSubmit={handleSubmit} />} 
       {type === 'meds' && <MedicationForm onSubmit={handleSubmit} />}
       {type === 'services' && <ServiceForm onSubmit={handleSubmit} />}
       {type === 'illnesses' && <IllnessForm onSubmit={handleSubmit} />}
-    </ScrollView>
+    </View>
   )
 }
 

@@ -1,8 +1,7 @@
-import { Image, ImageSourcePropType, Pressable, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Image, ImageSourcePropType, Pressable, StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Buttons, Colors, Spacing, UI, Typography } from "@styles/index"
 import { FC, useEffect, useState } from "react"
-import { transparent } from "@styles/buttons"
-import { getActionIconSource } from "@utils/ui"
+import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 
 const smallIconButtonStyles: ViewStyle = {
   marginHorizontal: 5,
@@ -29,9 +28,9 @@ const roundButtonTypes = {
   'remove': '−',
 }
 
-export const RoundButton = ({ onPress, size, bgColor, color, type, position }: RoundButtonProps) => (
+export const RoundButton = ({ onPress, size, bgColor = Colors.pink.darkest, color, type, position }: RoundButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
-    { backgroundColor: bgColor ?? Colors.pink.darkest },
+    { backgroundColor: bgColor },
     size === 'small' ? { ...Buttons.smallRoundButton as ViewStyle, margin: 0 } : size === 'medium' ? { ...Buttons.mediumRoundButton as ViewStyle } : { ...Buttons.roundButton as ViewStyle },
     position === 'bottomRight' && { position: 'absolute', bottom: 10, right: 10, zIndex: 2, }
   ]}>
@@ -60,6 +59,7 @@ interface IconButtonProps extends BaseButtonProps {
   type: string
   size: string
   height?: number
+  styles?: ViewStyle
 }
 
 const iconButtonStyles = {
@@ -68,21 +68,24 @@ const iconButtonStyles = {
   'details': { icon: 'details', bgColor: Colors.green.light },
 }
 
-export const IconButton = ({ onPress, type, size, height }: IconButtonProps) => (
-  <TouchableOpacity onPress={onPress} style={[
-    size === 'small' && {...smallIconButtonStyles as ViewStyle},
-    size === 'medium' && { 
-      width: 50, height: height ?? 60, borderRadius: 10, marginHorizontal: 2, paddingVertical: 10,
-      backgroundColor: iconButtonStyles[type].bgColor, alignItems: 'center', justifyContent: 'space-around',
-    }
-  ]}>
-    <Image source={getActionIconSource(iconButtonStyles[type].icon)} style={[
-      size === 'medium' && {...UI.xSmallIcon},
-      size === 'small' && {...UI.xSmallIcon},
-    ]} />
-    { size === 'medium' && <Text style={{ fontSize: 10, textTransform: 'capitalize' }}>{type}</Text> }
-  </TouchableOpacity>
-)
+export const IconButton = ({ onPress, type, size, height, styles }: IconButtonProps) => {
+
+  return (
+    <TouchableOpacity onPress={onPress} style={[styles,
+      size === 'small' ? smallIconButtonStyles
+      : size === 'medium' ? { 
+        width: 50, height: height ?? 60, borderRadius: 10, marginHorizontal: 2, paddingVertical: 10,
+        backgroundColor: iconButtonStyles[type].bgColor, alignItems: 'center', justifyContent: 'space-around' 
+      } as ViewStyle
+      : {
+        flex: 1, height: 90, ...Buttons.squareBase, margin: 10,
+      } as ViewStyle
+    ]}>
+      <Image source={size === 'large' ? getHealthIconSource(type) : getActionIconSource(iconButtonStyles[type].icon)} style={size === 'large' ? UI.icon : UI.xSmallIcon} />
+      { (size === 'medium' || size === 'large') && <Text style={{ fontSize: size === 'medium' ? 10 : 13, textTransform: 'capitalize' }}>{type}</Text> }
+    </TouchableOpacity>
+  )
+}
 
 interface PhotoButtonProps extends BaseButtonProps {
   photo: string
@@ -92,7 +95,7 @@ interface PhotoButtonProps extends BaseButtonProps {
 export const PhotoButton = ({ photo, onPress, size, placeholder }: PhotoButtonProps) => (
   <TouchableOpacity onPress={onPress} style={{ margin: 5 }}>
     <View style={[size === 'small' ? { ...UI.xxSmallPhoto } : { ...UI.xSmallPhoto }, { backgroundColor: Colors.pink.light, ...Spacing.centered }]}>
-      <Image source={photo ? { uri: photo } : placeholder} style={size === 'small' ? { ...UI.xxSmallPhoto } : { ...UI.xSmallPhoto }} />
+      <Image source={photo ? { uri: photo } : placeholder as ImageSourcePropType} style={size === 'small' ? { ...UI.xxSmallPhoto } : { ...UI.xSmallPhoto }} />
     </View>
   </TouchableOpacity>
 )
@@ -118,9 +121,9 @@ interface BaseWithIconButtonProps extends BaseButtonProps {
   icon?: string
 }
 
-export const MainButton= ({ onPress, title, top, bottom, bgColor, color, size, icon }: BaseWithIconButtonProps) => (
+export const MainButton= ({ onPress, title, top, bottom, bgColor = Colors.pink.reg, color = UI.lightPalette.button, size, icon }: BaseWithIconButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
-    { backgroundColor: bgColor ?? Colors.pink.reg },
+    { backgroundColor: bgColor },
     size === 'small' ? { ...Buttons.xSmallRoundButton } 
     : size === 'smallSquare' ? { ...Buttons.xSmallSquareButton } 
     : size === 'large' ? { ...Buttons.longSquareSolid } 
@@ -130,7 +133,7 @@ export const MainButton= ({ onPress, title, top, bottom, bgColor, color, size, i
   ]}>
     {icon && <Image source={getActionIconSource(icon)} style={{ ...UI.smallIcon, marginRight: 5 }} /> }
     <Text style={[
-      { ...Buttons.buttonText, color: color ?? UI.lightPalette.button }, 
+      { ...Buttons.buttonText, color: color }, 
       icon ? { fontSize: size === 'large' ? 15 : 12 } : { fontSize: size === 'large' ? 20 : 15 },
     ]}>
       {title}
@@ -138,9 +141,9 @@ export const MainButton= ({ onPress, title, top, bottom, bgColor, color, size, i
   </TouchableOpacity>
 )
 
-export const TransparentButton= ({ title, onPress, size, top, bottom, color, bgColor, bdColor, icon }: BaseWithIconButtonProps) => (
+export const TransparentButton= ({ title, onPress, size = 'medium', top, bottom, color = UI.lightPalette.button, bdColor = UI.lightPalette.button, bgColor = 'transparent', icon }: BaseWithIconButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
-    { ...Spacing.flexRow, borderColor: bdColor ?? UI.lightPalette.button, backgroundColor: bgColor ?? 'transparent', },
+    { ...Spacing.flexRow, borderColor: bdColor, backgroundColor: bgColor, },
     size === 'small' ? { ...Buttons.xSmallRoundedTransparent } 
       : size === 'large' ? { ...Buttons.longRoundedTransparent }
       : { ...Buttons.smallRoundedTransparent },
@@ -151,8 +154,7 @@ export const TransparentButton= ({ title, onPress, size, top, bottom, color, bgC
       { marginRight: 5 }, size === 'small' ? UI.xSmallIcon : UI.smallIcon
     ]} />}
     <Text style={[
-      { ...Buttons.buttonText, color: color ?? UI.lightPalette.button, fontSize: icon ? 12 : 15 },
-      // size === 'small' && { fontSize: icon ? 12 : 15 },
+      { ...Buttons.buttonText, color: color, fontSize: icon ? 12 : 15 },
       size === 'large' && { fontSize: icon ? 15 : 20 },
     ]}>
       {title}
@@ -160,15 +162,15 @@ export const TransparentButton= ({ title, onPress, size, top, bottom, color, bgC
   </TouchableOpacity>
 )
 
-export const SubButton = ({ onPress, title, color, top, bottom, size }: BaseButtonProps) => (
+export const SubButton = ({ onPress, title, color = UI.lightPalette.button, top, bottom, size }: BaseButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
-    { ...Buttons.subButton, borderColor: color ?? UI.lightPalette.button },
+    { ...Buttons.subButton, borderColor: color },
     top && { marginTop: top },
     bottom && { marginBottom: bottom },
     size === 'small' && { marginTop: 5 },
   ]}>
     <Text style={[
-      { ...Buttons.buttonText, color: color ?? UI.lightPalette.button,},
+      { ...Buttons.buttonText, color: color },
       size === 'small' && { fontSize: 13 },
     ]}>
       {title}
@@ -176,9 +178,9 @@ export const SubButton = ({ onPress, title, color, top, bottom, size }: BaseButt
   </TouchableOpacity>
 )
 
-export const GoBackButton = ({ onPress, top, left, position }: CornerButtonProps) => (
+export const GoBackButton = ({ onPress, top = 5, left = 5, position }: CornerButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
-    position === 'topLeft' && { position: 'absolute', top: top ?? 5, left: left ?? 5,
+    position === 'topLeft' && { position: 'absolute', top: top, left: left,
   }]}>     
     <Image source={getActionIconSource('back')} style={{
       ...UI.smallIcon,
@@ -195,14 +197,14 @@ interface StatButtonProps extends BaseButtonProps {
   disabled?: boolean
 }
 
-export const StatButton = ({ header, stat, iconUri, body, bgColor, color, size, onPress, disabled }: StatButtonProps) => (
+export const StatButton = ({ header, stat, iconUri, body, bgColor, color = Colors.black, size, onPress, disabled }: StatButtonProps) => (
   <TouchableOpacity disabled={disabled} onPress={onPress} style={[
     { ...Spacing.flexColumn, justifyContent: 'space-evenly', borderRadius: 15, backgroundColor: bgColor ?? Colors.white, padding: 10 },
     size === 'large' ? { width: 90, height: 110 } : { width: 80 , height: 95 }
   ]}>
     <Text style={{ fontSize: size === 'large' ? 15 : 12, marginBottom: 2, }}>{header}</Text>
     { !iconUri && 
-      <Text style={{ fontSize: size === 'large' ? 22 : 18, fontWeight: 'bold', marginVertical: 2, color: stat === 0 ? Colors.red.dark : color ? color : 'black' }}>
+      <Text style={{ fontSize: size === 'large' ? 22 : 18, fontWeight: 'bold', marginVertical: 2, color: stat === 0 ? Colors.red.dark : color }}>
         {stat >= 0 && stat !== Infinity ? stat : '?'}
       </Text> 
     }
@@ -241,7 +243,7 @@ export const CheckboxButton = ({ onPress, size, initial, bgColor, color }: Check
   )
 }
 
-export const ToggleButton = ({ onPress, size, initial, bgColor }: CheckboxButtonProps) => {
+export const ToggleButton = ({ onPress, size, initial, bgColor = Colors.shadow.light }: CheckboxButtonProps) => {
   const [on, setOn] = useState<boolean>(initial)
 
   const handlePress = () => {
@@ -259,7 +261,7 @@ export const ToggleButton = ({ onPress, size, initial, bgColor }: CheckboxButton
 
   return (
     <Pressable onPress={handlePress} style={{
-      ...Spacing.flexRow, borderRadius: 30, backgroundColor: bgColor ?? Colors.shadow.light, padding: 2
+      ...Spacing.flexRow, borderRadius: 30, backgroundColor: bgColor, padding: 2
     }}>
       <View style={[circleStyles, !on && { backgroundColor: Colors.shadow.lightest }]} />
       <View style={[circleStyles, on && { backgroundColor: Colors.green.reg }]} />            

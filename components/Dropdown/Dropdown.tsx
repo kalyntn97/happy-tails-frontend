@@ -1,29 +1,30 @@
 //npm modules
 import { ReactElement, useEffect, useRef, useState } from "react"
-import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, FlatList } from "react-native"
+import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, FlatList, Pressable, DimensionValue, ViewStyle } from "react-native"
 //helpers 
 import * as petHelpers from '@pet/petHelpers'
 import * as careHelpers from '@care/careHelpers'
 import * as healthHelpers from '@health/healthHelpers'
-import * as statHelpers from '@stat/statHelpers'
 import { getActionIconSource } from "@utils/ui"
 import { useShallowPets } from "@hooks/sharedHooks"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { lightPalette } from "@styles/ui"
 
 interface DropdownProps {
   label?: string
-  dataType: string
-  onSelect: (item: string ) => void
-  width?: number
+  dataType?: string
+  dataArray?: { _id: string, name: string, [key: string]: any }[]
+  onSelect: (item: string | any ) => void
+  width?: number | string
   initial?: string
+  extraStyles?: ViewStyle
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, initial }) => {
+const Dropdown: React.FC<DropdownProps> = ({ label, dataType, dataArray, onSelect, width = '90%', initial, extraStyles }) => {
   const [visible, setVisible] = useState(false)
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
-  const { PET_NAMES } = useShallowPets()
 
   const toggleDropdown = (): void => {
     visible ? setVisible(false) : openDropDown()
@@ -31,19 +32,19 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
   //measure the btn pos and set the dropdown pos
   const DropdownBtn = useRef(null)
   const [dropdownTop, setDropdownTop] = useState(0)
-  const [dropdownLeft, setDropdownLeft] = useState(0)
  
   const openDropDown = (): void => {
-    DropdownBtn.current.measure((_fx, _fy, _w, h, px, py) => {
+    DropdownBtn.current.measure((_fx, _fy, _w, h, _px, py) => {
       setDropdownTop(py + h)
-      setDropdownLeft(px)
     })
     setVisible(true)
   }
   
   const onItemPress = (item: string ): void => {
-    onSelect(item)
     setSelected(item)
+    if (dataArray) {
+      onSelect(dataArray.find(i => i.name === item))
+    } else onSelect(item)
     setVisible(false)
   }
 
@@ -51,27 +52,25 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
   useEffect(() => {
     const fetchData = async (dataType: string) => {
       const typeToSource = {
-        'petNames': PET_NAMES,
-        'species': petHelpers.SPECIES_OPTIONS,
-        'Dog': await petHelpers.getDogBreedData(),
-        'Cat': await petHelpers.getCatBreedData(),
-        'Bird': petHelpers.BIRD_SPECIES,
-        'Fish': petHelpers.FISH_SPECIES,
-        'frequency': careHelpers.CARE_FREQ,
-        'care': Object.values(careHelpers.CARE_NAMES),
-        'health': Object.values(healthHelpers.HEALTH_NAMES),
-        'healthFrequency': healthHelpers.HEALTH_FREQ,
-        'healthTypes': healthHelpers.HEALTH_TYPES,
-        'dogVaccines': healthHelpers.DOG_VACCINE_NAMES,
-        'catVaccines': healthHelpers.CAT_VACCINE_NAMES,
-        'petStatus': petHelpers.STATUS,
-        'petIds': petHelpers.IDS,
-        'medStatus': petHelpers.MED_STATUS,
-        'illnessTypes': petHelpers.DISEASE_TYPES,
-        'illnessStatus': petHelpers.DISEASE_STATUS,
-        'serviceTypes': petHelpers.SERVICE_TYPES,
+        'species': () => petHelpers.SPECIES_OPTIONS,
+        'Dog': async () => await petHelpers.getDogBreedData(),
+        'Cat': async () => await petHelpers.getCatBreedData(),
+        'Bird': () => petHelpers.BIRD_SPECIES,
+        'Fish': () => petHelpers.FISH_SPECIES,
+        'frequency': () => careHelpers.CARE_FREQ,
+        'care': () => Object.values(careHelpers.CARE_NAMES),
+        'health': () => Object.values(healthHelpers.HEALTH_NAMES),
+        'healthFrequency': () => healthHelpers.HEALTH_FREQ,
+        'dogVaccines': () => healthHelpers.DOG_VACCINE_NAMES,
+        'catVaccines': () => healthHelpers.CAT_VACCINE_NAMES,
+        'petStatus': () => petHelpers.STATUS,
+        'petIds': () => petHelpers.IDS,
+        'medStatus': () => petHelpers.MED_STATUS,
+        'illnessTypes': () => petHelpers.DISEASE_TYPES,
+        'illnessStatus': () => petHelpers.DISEASE_STATUS,
+        'serviceTypes': () => petHelpers.SERVICE_TYPES,
       }
-      const result = typeToSource[dataType] || []
+      const result = dataArray ? dataArray.map(item => item.name) : typeToSource[dataType]()
       setData(result)
     }
     fetchData(dataType)
@@ -79,28 +78,28 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
   }, [dataType, initial])
 
   return (
-    <TouchableOpacity style={[styles.dropDownBtn, width && { width: width }]} onPress={toggleDropdown} ref={DropdownBtn}>
+    <TouchableOpacity style={[styles.dropDownBtn, { width: width as DimensionValue }, visible && UI.inputFocused]} onPress={toggleDropdown} ref={DropdownBtn}>
       {visible && (
         <Modal visible={visible} transparent animationType="none">
-          <TouchableOpacity style={UI.overlay} onPress={() => setVisible(false)}>
-            <View style={[styles.content, data.length > 4 && { height: 200 }, width && { width: width }, { top: dropdownTop, left: dropdownLeft }]}>
+          <Pressable style={UI.overlay} onPress={() => setVisible(false)}>
+            <View style={[styles.content, extraStyles, { top: dropdownTop, width: width as DimensionValue, maxHeight: '50%' }]}>
               <FlatList 
                 data={data} 
                 keyExtractor={(item, idx) => idx.toString()}
                 renderItem={({ item }) => (
-                  <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
-                    <Text style={item === (selected) && styles.selected}>
+                  <TouchableOpacity style={[styles.itemCon, item === selected && styles.itemConSelected]} onPress={() => onItemPress(item)}>
+                    <Text style={item === selected ? Typography.focused : { color: lightPalette.text }}>
                       { item }
                     </Text>
                   </TouchableOpacity>
                 )} 
               />
             </View>
-          </TouchableOpacity>
+          </Pressable>
         </Modal>
       )}
-      <Text style={styles.label}>{selected ?? label}</Text>
-      <Image source={getActionIconSource('down')} style={styles.icon} />
+      <Text style={{ maxWidth: '80%' }}>{selected ?? label}</Text>
+      <Image source={getActionIconSource(visible ? 'up' : 'down')} style={styles.icon} />
     </TouchableOpacity>
   )
 }
@@ -108,11 +107,10 @@ const Dropdown: React.FC<DropdownProps> = ({ label, dataType, onSelect, width, i
 const styles = StyleSheet.create({
   dropDownBtn: {
     ...Spacing.flexRow,
-    ...UI.input,
-    borderColor: Colors.pink.reg,
     justifyContent: 'space-between',
     marginVertical: 5,
     zIndex: 1,
+    ...UI.input,
   },
   icon: {
     width: 20,
@@ -120,23 +118,18 @@ const styles = StyleSheet.create({
   },
   content: {
     position: 'absolute',
-    backgroundColor: Colors.white,
-    padding: 10,
-    ...UI.boxShadow,
-    borderRadius: 8,
-    width: 300,
+    ...UI.cardWithShadow,
   },
-  label: {
-    maxWidth: 180,
+  itemCon: {
+    paddingVertical: 10,
+    borderColor: lightPalette.border,
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
   },
-  item: {
-    padding: 10,
-    borderBottomWidth: 1
+  itemConSelected: {
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
   },
-  selected: {
-    color: Colors.pink.dark,
-    fontWeight: 'bold'
-  }
 })
 
 export default Dropdown

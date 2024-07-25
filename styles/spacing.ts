@@ -46,6 +46,7 @@ export const fullScreenCentered: ViewStyle = {
 export const scrollScreenDown: ViewStyle = {
   ...flexColumn,
   width: '100%',
+  paddingHorizontal: 10,
   paddingBottom: 60,
 }
 

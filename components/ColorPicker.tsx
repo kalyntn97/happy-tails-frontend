@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     flexWrap: 'wrap',
     width: 260,
-    marginVertical: 20,
   },
   circle: {
     borderRadius: 99,

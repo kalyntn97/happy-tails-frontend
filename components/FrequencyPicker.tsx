@@ -1,35 +1,33 @@
 import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { ReactElement, forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import RNDateTimePicker from '@react-native-community/datetimepicker'
 //utils
 import { daysOfWeek, getOrdinalSuffix, months } from '@utils/datetime'
 import { getActionIconSource } from '@utils/ui'
+import { Frequency } from '@utils/types'
 //components
 import ScrollSelector from './ScrollSelector'
+import { ToggleButton } from './ButtonComponents'
 //styles
 import { Buttons, Colors, Spacing, UI, Typography } from '@styles/index'
-import { ToggleButton } from './ButtonComponent'
-import RNDateTimePicker from '@react-native-community/datetimepicker'
-import useForm from '@hooks/useForm'
+import { windowWidth } from '@utils/constants'
 
 
-export type Frequency = {
-  type: 'days' | 'weeks' | 'months' | 'years' | string
-  interval: number
-  timesPerInterval: any[]
+export interface FrequencyPicker extends Frequency {
   ending: boolean
   endDate: Date
 }
 
 type Props = {
-  initial?: Frequency
-  color: number
+  initial?: FrequencyPicker
+  color?: number
   onSelectFrequency: (key: string, selected: any) => void
-  onSelectEndDate: (key: 'ending' | 'endDate', value: boolean | Date) => void
+  onSelectEndDate?: (key: 'ending' | 'endDate', value: boolean | Date) => void
 }
 
 const ROUNDED: number = 30
-const CIRCLE_BUTTON_WIDTH: number = 30
 const CIRCLE_BUTTON_MARGIN: number = 5
+const CIRCLE_BUTTON_WIDTH: number = (windowWidth * 0.9 - CIRCLE_BUTTON_MARGIN * 2 * 7) / 7
 
 const numArray = (length: number) => {
   return Array.from({ length: length }, (_, index) => index + 1)
@@ -101,7 +99,7 @@ const DropHeader = ({ title, rightLabel, onPress, icon }: { title: string, right
   </View>
 )
 
-const FrequencyPicker = ({ initial, color, onSelectFrequency, onSelectEndDate }: Props) => {
+const FrequencyPicker = ({ initial, color = 0, onSelectFrequency, onSelectEndDate }: Props) => {
   const initialState = {
     type: initial?.type ?? 'days',
     interval: initial?.interval ?? 1,
@@ -111,12 +109,12 @@ const FrequencyPicker = ({ initial, color, onSelectFrequency, onSelectEndDate }:
     intervalOpen: false,
   }
 
-  const [type, setType] = useState<Frequency['type']>(initialState.type)
-  const [interval, setInterval] = useState<Frequency['interval']>(initialState.interval)
-  const [timesPerInterval, setTimesPerInterval] = useState<Frequency['timesPerInterval']>(initialState.timesPerInterval)
-  const [ending, setEnding] = useState(initialState.ending)
-  const [endDate, setEndDate] = useState(initialState.endDate)
-  const [intervalOpen, setIntervalOpen] = useState(initialState.intervalOpen)
+  const [type, setType] = useState<FrequencyPicker['type']>(initialState.type)
+  const [interval, setInterval] = useState<FrequencyPicker['interval']>(initialState.interval)
+  const [timesPerInterval, setTimesPerInterval] = useState<FrequencyPicker['timesPerInterval']>(initialState.timesPerInterval)
+  const [ending, setEnding] = useState<FrequencyPicker['ending']>(initialState.ending)
+  const [endDate, setEndDate] = useState<FrequencyPicker['endDate']>(initialState.endDate)
+  const [intervalOpen, setIntervalOpen] = useState<boolean>(initialState.intervalOpen)
   
   const monthNames = months.map(m => m.slice(0, 3))
 
@@ -186,7 +184,7 @@ const FrequencyPicker = ({ initial, color, onSelectFrequency, onSelectEndDate }:
               <Pressable key={f} onPress={() => onChangeType(f)} style={[styles.btn,
                 index === 0 && { ...UI.leftRounded(ROUNDED) },
                 index === frequencyKeys.length - 1 && { ...UI.rightRounded(ROUNDED) },
-                { backgroundColor: f === type ? Colors.multi.light[color ?? 0] : Colors.shadow.light, borderRadius: type === f && ROUNDED },
+                { backgroundColor: f === type ? Colors.multi.light[color] : Colors.shadow.light, borderRadius: type === f && ROUNDED },
               ]}>
                 <Text>{frequencyMap[f].label}</Text>
               </Pressable>
@@ -242,22 +240,24 @@ const FrequencyPicker = ({ initial, color, onSelectFrequency, onSelectEndDate }:
           }
         </View>
 
-        <View style={styles.rowCon}>
-          <View style={styles.dropBtnCon}>
-            <Text style={styles.dropBtnLabel}>End Date</Text>
-            <ToggleButton onPress={() => {
-              setEnding(!ending)
-              onSelectEndDate('ending', !ending)
-              ending && onSelectEndDate('endDate', endDate)
-            }} initial={ending} size='small' />
+        { onSelectEndDate &&
+          <View style={styles.rowCon}>
+            <View style={styles.dropBtnCon}>
+              <Text style={styles.dropBtnLabel}>End Date</Text>
+              <ToggleButton onPress={() => {
+                setEnding(!ending)
+                onSelectEndDate('ending', !ending)
+                ending && onSelectEndDate('endDate', endDate)
+              }} initial={ending} size='small' />
+            </View>
+            { ending && 
+              <RNDateTimePicker display='inline' themeVariant='light' value={new Date(endDate)} minimumDate={new Date()} onChange={(_, selectedDate) => {
+                setEndDate(selectedDate)
+                onSelectEndDate('endDate', selectedDate) 
+              }} accentColor={Colors.multi.dark[color]} />
+            }
           </View>
-          { ending && 
-            <RNDateTimePicker display='inline' themeVariant='light' value={new Date(endDate)} minimumDate={new Date()} onChange={(_, selectedDate) => {
-              setEndDate(selectedDate)
-              onSelectEndDate('endDate', selectedDate) 
-            }} accentColor={Colors.multi.dark[color]} />
-          }
-        </View>
+        }
       </ScrollView>
     </>
   )

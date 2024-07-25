@@ -40,12 +40,11 @@ export const input: ViewStyle = {
 }
 
 export const card: ViewStyle = {
-  alignItems: 'center',
-  justifyContent: 'center',
+  ...centered,
   margin: 10,
-  paddingHorizontal: 12,
-  paddingVertical: 10,
-  borderRadius: 15
+  padding: 15,
+  borderRadius: 15,
+  backgroundColor: lightPalette.background,
 }
 
 export const cardWithShadow = {
@@ -151,7 +150,7 @@ export const rightRounded = (rounded: number): ViewStyle => {
 }
 
 export const topRounded = (rounded: number): ViewStyle => {
-  return { borderTopLeftRadius: 30, borderTopRightRadius: 30 }
+  return { borderTopLeftRadius: rounded, borderTopRightRadius: rounded }
 }
 
 export const modalOverlay: ViewStyle = {

@@ -20,7 +20,7 @@ interface PetCardProps {
   navigation: any
 }
 
-const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) => {
+const PetCard = ({ pet, index, scrollX, navigation }: PetCardProps) => {
   const petAge = pet.dob ? countYearsBetween(pet.dob, 'today') : 'Unknown'
 
   const { width } = useWindowDimensions()
@@ -74,7 +74,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, index, scrollX, navigation }) =>
         <View style={styles.btnCon}>
           <TransparentButton title='Log' icon="logPet" onPress={() => navigation.navigate('CreateLog', { pet })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
 
-          <TransparentButton title='Details' icon='detailsPet' onPress={() => navigation.navigate('Details', { petId: pet._id })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
+          <TransparentButton title='Details' icon='detailsPet' onPress={() => navigation.navigate('PetDetails', { petId: pet._id })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
         </View>  
 
       </View>

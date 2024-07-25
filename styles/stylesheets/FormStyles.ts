@@ -4,6 +4,9 @@ import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 export const styles = StyleSheet.create({
   container: {
+    ...Spacing.scrollContent,
+  },
+  containerWithPadding: {
     ...Spacing.scrollScreenDown,
     paddingTop: 50,
   },
@@ -11,15 +14,6 @@ export const styles = StyleSheet.create({
     ...Typography.mediumHeader,
     marginTop: 30,
     color: Colors.pink.darkest
-  },
-  rowCon: {
-    ...Spacing.flexRow,
-    justifyContent: 'space-between',
-    width: 300,
-    marginTop: 10,
-  },
-  rowText: {
-    fontSize: 15
   },
   bottomCon: {
     ...Spacing.flexColumn,
