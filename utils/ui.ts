@@ -30,6 +30,7 @@ export const AlertForm = ({ body, button }) =>
   )
 
 const actionIconSource = {
+  camera: require('@assets/icons/action-camera.png'),
   actionSquare: require('@assets/icons/action-action_square.png'),
   close: require('@assets/icons/action-close.png'),
   check: require('@assets/icons/action-check.png'),
@@ -79,7 +80,8 @@ const actionIconSource = {
   home: require('@assets/icons/action-home.png'),
   settings: require('@assets/icons/action-settings.png'),
   pets: require('@assets/icons/action-pets.png'),
-  healthType: require('@assets/icons/health-type.png'),
+  petType: require('@assets/icons/action-pet_type.png'),
+  healthType: require('@assets/icons/action-health_type.png'),
   healthRecord: require('@assets/icons/action-health_record.png'),
   schedule: require('@assets/icons/action-schedule.png'),
   due: require('@assets/icons/action-due.png'),
@@ -223,10 +225,11 @@ const petIconSource = {
   Cat: require('@assets/icons/pet-cat.png'),
   Bird: require('@assets/icons/pet-bird.png'),
   Fish: require('@assets/icons/pet-fish.png'),
-  Others: require('@assets/icons/pet-animal.png'),
+  Rodent: require('@assets/icons/pet-rodent.png'),
+  Others: require('@assets/icons/pet-others.png'),
   DogProfile: require('@assets/icons/pet-dog_profile.png'),
   CatProfile: require('@assets/icons/pet-cat_profile.png'),
-  AnimalProfile: require('@assets/icons/pets.png'),
+  OtherProfile: require('@assets/icons/pets.png'),
   meds: require('@assets/icons/care-med.png'),
   allergies: require('@assets/icons/pet-allergy.png'),
   illnesses: require('@assets/icons/illness.png'),

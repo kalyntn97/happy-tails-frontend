@@ -5,14 +5,13 @@ import { scale, verticalScale, moderateScale } from 'react-native-size-matters'
 //types & utils
 import { Pet } from "@pet/PetInterface"
 import { getActionIconSource, getPetIconSource } from "@utils/ui"
+import { SPECIES_OPTIONS } from "@pet/petHelpers"
+import { countYearsBetween } from "@utils/datetime"
 //components
-import { IconButton, MainButton, StatButton, TransparentButton } from "@components/ButtonComponent"
+import { TransparentButton } from "@components/ButtonComponents"
+import StatButtonList from "./StatButtonList"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { countYearsBetween } from "@utils/datetime"
-import { useCaresByPet, useHealthDueByPet } from "@hooks/sharedHooks"
-import { SPECIES_OPTIONS } from "@pet/petHelpers"
-import StatButtonList from "./StatButtonList"
 interface PetCardProps {
   pet: Pet
   index: number

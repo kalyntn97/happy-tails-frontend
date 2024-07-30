@@ -5,7 +5,9 @@ import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 //components
 import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
-import { ActionButton, IconButton, RoundButton } from "@components/ButtonComponent"
+import { RoundButton } from "@components/ButtonComponents"
+import PetList from "@components/PetInfo/PetList"
+import { EmptyList, ErrorImage } from "@components/UIComponents"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import { CARES, getCareIcon } from "@care/careHelpers"
@@ -14,10 +16,7 @@ import { getActionIconSource, getCareIconSource } from "@utils/ui"
 import { profileKeyFactory, useGetProfile } from "@profile/profileQueries"
 //styles
 import { Buttons, Spacing, Colors, UI } from '@styles/index'
-import { EmptyList, ErrorImage } from "@components/UIComponents"
-import { useQueryClient } from "@tanstack/react-query"
-import { ProfileData } from "@profile/ProfileInterface"
-import PetList from "@components/PetInfo/PetList"
+
 
 type CareIndexProps = {
   navigation: any

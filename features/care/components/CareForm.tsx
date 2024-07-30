@@ -1,26 +1,23 @@
-//npm
-import { useLayoutEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWindowDimensions, Pressable, Dimensions } from "react-native"
-import RNDateTimePicker from "@react-native-community/datetimepicker"
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
-import { CheckboxButton, MainButton, SubButton, ToggleButton, TransparentButton } from "@components/ButtonComponent"
+import { CheckboxButton, MainButton, SubButton, ToggleButton, TransparentButton } from "@components/ButtonComponents"
 import { DateInput, ErrorMessage, FormInput, FormLabel, BottomModal, ModalInput } from "@components/UIComponents"
 import ColorPicker from "@components/ColorPicker"
 import PetPicker from "@components/PetPicker"
 import TitleInput from "@components/TitleInput"
 import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/FrequencyPicker"
+import { Header } from "@navigation/NavigationStyles"
 //types && hooks
 import useForm from "@hooks/useForm"
+import { useShallowPets } from "@hooks/sharedHooks"
 import { PetBasic } from "@pet/PetInterface"
 import type { Care, CareFormData } from "@care/CareInterface"
-
+import { windowHeight } from "@utils/constants"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
-import { Header, TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
-import { windowHeight } from "@utils/constants"
-import { useShallowPets } from "@hooks/sharedHooks"
 
 
 interface InitialState extends Care {
@@ -56,25 +53,30 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
 
   function handleSubmit() {
     if (!repeat) ['frequency', 'endDate'].map(key => onChange(key, null))
-    
     if (!ending) onChange('endDate', null)
+
     onSubmit({ name, pets, repeat, startDate, endDate, frequency, color, _id })
   }
 
-  useLayoutEffect(() => {
+  const handleValidate = useCallback(() => {
+    console.log('recreated')
+    return onValidate({ name })
+  }, [name])
+
+  useEffect(() => {
     navigation.setOptions({
-      header: () => <Header showGoBackButton={true} rightAction={() => onValidate({ name, pets })} navigation={navigation} mode='modal' />
-    });
-  }, [])
+      header: () => <Header showGoBackButton={true} rightAction={handleValidate} rightLabel={status === 'pending' ? 'Submitting...' : 'Submit'} navigation={navigation} mode='modal' />
+    })
+  }, [handleValidate, status])
   
   return (
     <ScrollView
       keyboardShouldPersistTaps='handled'
       contentContainerStyle={[styles.containerWithPadding, { minHeight: windowHeight * 0.75}]}
       showsVerticalScrollIndicator={false}
-      alwaysBounceVertical={false}
+      alwaysBounceVertical={false} 
     >
-      <TitleInput initial={name} placeholder='New Task' onChange={(input) => onChange('name', input)} type='care' error={errors ? errors['name'] : null} />
+      <TitleInput initial={initialState.name} placeholder='New Task' onChange={(input: string) => onChange('name', input)} type='care' error={errors?.name} />
 
       <FormLabel label='Color' icon="color" />
       <ColorPicker onPress={(selected) => {
@@ -110,14 +112,8 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
           />
         </ModalInput>
       }
-      
-      <View style={styles.bottomCon}>
-        <View style={Spacing.flexRow}>
-          <MainButton onPress={() => onValidate({ name, pets })} title={status === 'pending' ? 'Submitting...' : !!name ? 'Save' : 'Create'} />
-          <TransparentButton onPress={onReset} title='Clear' />
-        </View>
-      </View>
 
+      <SubButton onPress={onReset} title='Reset' top={10} bottom={10} />
     </ScrollView>
   )
 }

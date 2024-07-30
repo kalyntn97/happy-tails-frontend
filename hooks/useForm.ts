@@ -20,7 +20,7 @@ const useForm = (callback: any, initialState: any) => {
       return acc
     }, {})
     if (Object.keys(errors).length === 0) {
-      setValues(prev => ({ ...prev, errors: null }))
+      setValues(prev => ({ ...prev, errors: {} }))
       callback()
     } else {
       setValues(prev => ({ ...prev, errors: errors }))

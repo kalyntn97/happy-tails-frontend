@@ -3,3 +3,5 @@ export type Frequency = {
   interval: number
   timesPerInterval: any[]
 }
+
+export type FormErrors= { [key: string]: string }

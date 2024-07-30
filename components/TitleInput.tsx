@@ -46,11 +46,9 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
   
   const openDropDown = (input: string) => {
     const search = fuse.search(input)
-    setIcon(search[0]?.item.icon ?? 'others')
-    if (input === search[0]?.item.title) {
-      setVisible(false)
-      return
-    }
+    if (!search.length) return setVisible(false)
+    setIcon(search[0].item.icon ?? 'others')
+    if (input === search[0].item.title) return setVisible(false)
     setTitleSearch(search)
     setVisible(_ => {
       titleBtn.current.measure((fx, fy, _w, h, px, _py) => {
@@ -67,16 +65,17 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
   }
 
   const handlePress = (item: string) => {
-    handleChange(item)
+    setTitle(item)
     onChange(item)
     setIsFocused(false)
+    setVisible(false)
     Keyboard.dismiss()
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { zIndex: isFocused ? 10 : 2 }]}>
       { iconSource ? <Image source={iconSource} style={UI.largeIcon}/> : <ActivityIndicator /> }
-      <View style={[Spacing.flexColumn, { width: '100%', alignItems: 'flex-start' }]}>
+      <View style={styles.inputCon}>
         <TextInput
           ref={titleBtn}
           style={[styles.input, validatedStyles]}
@@ -91,10 +90,10 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
           autoCapitalize='words'
           multiline={true}
         />
-        <View style={[Spacing.flexRow, { marginTop: 10, marginLeft: 10 }]}>
+        <View style={styles.inputBottom}>
           { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: 30 }}/> }
           { isFocused && 
-            <Text style={{ color: UI.lightPalette.unfocused, fontSize: 12 }}>
+            <Text style={styles.textLength}>
               {TITLE_LENGTH - (title ? title.length : 0)} / {TITLE_LENGTH}
             </Text> 
           }
@@ -119,8 +118,12 @@ const styles = StyleSheet.create({
   container: {
     ...Spacing.flexRow,
     width: '100%',
-    zIndex: 1,
     alignSelf: 'flex-start'
+  },
+  inputCon: {
+    ...Spacing.flexColumn,
+    width: '100%', 
+    alignItems: 'flex-start'
   },
   input: {
     ...Typography.smallHeader,
@@ -129,6 +132,11 @@ const styles = StyleSheet.create({
     maxWidth: '60%',
     textAlign: 'left',
   },
+  inputBottom: {
+    ...Spacing.flexRow,
+    marginTop: 10, 
+    marginLeft: 10
+  },
   content: {
     ...UI.boxShadow,
     position: 'absolute',
@@ -136,11 +144,9 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 8,
     width: '60%',
-    zIndex: 2,
   },
-  subTitle: {
-    ...Typography.xSmallBody,
-    color: UI.lightPalette.unfocused,
-    marginLeft: 10,
+  textLength: {
+    color: UI.lightPalette.unfocused, 
+    fontSize: 12
   },
 }) 

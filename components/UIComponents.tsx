@@ -1,12 +1,14 @@
 import { ActivityIndicator, DimensionValue, Image, ImageStyle, Keyboard, KeyboardAvoidingView, KeyboardEventListener, Modal, Platform, Pressable, StyleSheetProperties, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Spacing, Colors, Typography, UI } from "@styles/index"
-import { ComponentProps, FC, MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
+import { ComponentProps, FC, MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useRef, useState } from "react"
 import { getActionIconSource } from "@utils/ui"
 import { ImageSourcePropType } from "react-native"
 import { ToastConfig, ToastConfigParams, ToastOptions, ToastProps } from "react-native-toast-message"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
-import { GoBackButton, SubButton } from "./ButtonComponents"
+import { GoBackButton, IconButton, SubButton } from "./ButtonComponents"
 import Animated, { FadeInDown, FadeOutDown, LayoutAnimationConfig, SlideInDown, SlideOutDown, ZoomInUp } from "react-native-reanimated"
+import { useSelectPhoto } from "@hooks/sharedHooks"
+import Fuse from "fuse.js"
 
 type Size = 'small' | 'medium' | 'large' | 'xSmall' | 'xLarge'
 
@@ -69,19 +71,18 @@ interface CircleIconProps extends IconProps {
   bgColor?: string
 }
 
-export const Icon = ({ iconSource, size = 'small', styles }: IconProps) => {
-  const iconSize = {
-    xSmall: UI.xSmallIcon,
-    small: UI.smallIcon,
-    medium: UI.icon,
-    large: UI.largeIcon,
-    xLarge: UI.xLargeIcon,
-  }
-
-  return (
-    <Image source={iconSource} style={[iconSize[size], styles]} />
-  )
+const iconSize = {
+  xSmall: UI.xSmallIcon,
+  small: UI.smallIcon,
+  medium: UI.icon,
+  large: UI.largeIcon,
+  xLarge: UI.xLargeIcon,
 }
+
+export const Icon = ({ iconSource, size = 'small', styles }: IconProps) =>  (
+  <Image source={iconSource} style={[iconSize[size], styles]} />
+)
+
 
 export const CircleIcon = ({ iconSource, size = 'large', bgColor }: CircleIconProps) => (
   <View style={{ backgroundColor: bgColor ?? Colors.shadow.light, ...UI.roundedIconCon }}>
@@ -89,8 +90,42 @@ export const CircleIcon = ({ iconSource, size = 'large', bgColor }: CircleIconPr
   </View>
 )
 
+const photoSize = {
+  medium: { width: 110, height: 130 },
+  small: { width: 80, height: 100 },
+  xSmall: { width: 50, height: 70 },
+}
+
+export const PhotoUpload = memo(({ initial, size = 'medium', placeholder, onSelect, styles }: { initial?: string, size?: Size, placeholder?: ImageSourcePropType, onSelect: (uri: string) => void, styles?: ViewStyle }) => {
+  const [photo, setPhoto] = useState<string>(initial ?? null)
+
+  const photoSource: ImageSourcePropType = photo ? { uri: photo } : (placeholder ?? require('assets/icons/ui-image.png'))
+
+  const addPhoto = async () => {
+    const selected = await useSelectPhoto()
+    setPhoto(selected)
+    onSelect(selected)
+  }
+
+  return (
+    <View style={[styles, photoSize[size], { borderRadius: 15, position: 'relative', overflow: 'hidden', backgroundColor: Colors.shadow.light, elevation: 2 }]}>
+      <Image source={photoSource} style={Spacing.fullWH as ImageStyle} />
+      <TouchableOpacity onPress={addPhoto} style={[Spacing.centered, { position: 'absolute', width: '100%', height: '40%', bottom: 0 }]}>
+        <View style={[Spacing.centered, { width: '90%', padding: 5, marginBottom: 5, borderRadius: 30, backgroundColor: Colors.transparent.light }]}>
+          <Text style={{ fontSize: size === 'medium' ? 12 : 10 }}>{photo ? 'Edit' : 'Upload'} Photo</Text>
+          <Icon iconSource={getActionIconSource('camera')} size="xSmall" />
+        </View>
+      </TouchableOpacity>
+    </View>
+  )
+})
+
 export const ErrorMessage = ({ error, styles }: { error: string, styles?: TextStyle }) => (
   <Text style={[Typography.errorMsg, styles]}>{error}</Text>
+)
+
+export const FormError = ({ errors, errorKey }: { errors: { [key: string]: string }, errorKey: string }) => (
+  errorKey in errors && <ErrorMessage error={errors[errorKey]} />
 )
 
 export const ErrorImage = ({ top }: { top?: number }) => (
@@ -121,6 +156,19 @@ export const EmptyList = ({ type }: { type: string }) => (
   <Text style={type === 'task' ? { ...Typography.smallSubHeader } : { ...Typography.xSmallSubHeader }}>No {type}s added.</Text>
 ) 
 
+export const Header = ({ title, size = 'medium', color = Colors.black, styles }: { title: string, size?: Size, color?: string, styles?: TextStyle }) => {
+  const headerSize = {
+    small: Typography.smallHeader,
+    medium: Typography.mediumHeader,
+    xSmall: Typography.xSmallHeader,
+    large: Typography.subHeader,
+    xLarge: Typography.mainHeader,
+  }
+  return (
+    <Text style={[headerSize[size], styles, { color: color }]}>{title}</Text>
+  )
+}
+
 export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { label: string, icon?: string, onPress: () => void, top?: number, right?: number }) => (
   <Pressable onPress={onPress} style={{
     ...Spacing.flexRow, position: 'absolute', right: right, top: top,
@@ -137,30 +185,17 @@ export const FormLabel = ({ label, icon, width, top = 30, bottom = 10 }: { label
   </View>
 )
 
-export const Header = ({ title, size = 'medium', color = Colors.black, styles }: { title: string, size?: Size, color?: string, styles?: TextStyle }) => {
-  const headerSize = {
-    small: Typography.smallHeader,
-    medium: Typography.mediumHeader,
-    xSmall: Typography.xSmallHeader,
-    large: Typography.subHeader,
-    xLarge: Typography.mainHeader,
-  }
-  return (
-    <Text style={[headerSize[size], styles, { color: color }]}>{title}</Text>
-  )
-}
-
-export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styles, props, maxLength = 100, error }: { initial: string, placeholder: string, onChange: (input: string) => void, styles?: TextStyle, props?: TextInputProps, maxLength?: number, error?: string }, ref: MutableRefObject<any>) => {
+export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styles, props, maxLength = 100, width = '90%', error }: { initial: string, placeholder: string, onChange: (input: string) => void, styles?: TextStyle, props?: TextInputProps, maxLength?: number, error?: string, width?: DimensionValue }, ref: MutableRefObject<any>) => {
   const [isFocused, setIsFocused] = useState(false)
   const [value, setValue] = useState(initial ?? null)
 
   const validatedStyles = useMemo(() => error ? UI.inputError : isFocused ? UI.inputFocused : UI.inputUnfocused, [error, isFocused])
 
   return (
-    <>
+    <View style={{ zIndex: isFocused ? 10 : 2 }}>
       <TextInput
         ref={ref}
-        style={[styles ?? UI.input, validatedStyles]}
+        style={[styles ?? UI.input, validatedStyles, { width: width }]}
         placeholder={placeholder ?? 'Title'}
         placeholderTextColor={UI.lightPalette.unfocused}
         value={value}
@@ -174,7 +209,7 @@ export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styl
         selectTextOnFocus={true}
         { ...props }
       />
-      <View style={[Spacing.flexRow, { marginTop: 10, marginLeft: 10 }]}>
+      <View style={[Spacing.flexRow, { marginTop: 5, marginLeft: 10 }]}>
         { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: 30 }}/> }
         { isFocused && 
           <Text style={{ color: UI.lightPalette.unfocused, fontSize: 12 }}>
@@ -182,7 +217,7 @@ export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styl
           </Text> 
         }
       </View>
-    </>
+    </View>
   )
 }))
 
@@ -284,3 +319,28 @@ export const TableForm = ({ table }: { table: { key: string, icon: string, value
   </View>
 )
 
+export const IconPicker = ({ options, defaultOption, withCustom = false, initial, onSelect, pickerStyles, buttonStyles, customLabel = 'value', customIcon }: { options: { title: string, icon?: string, type: string }[], defaultOption?: string, withCustom?: boolean, initial?: string, onSelect: (selected: string) => void , pickerStyles?: ViewStyle, buttonStyles?: ViewStyle, customLabel?: string, customIcon?: { name: string, type: string } }) => {
+  const [selected, setSelected] = useState(initial ?? (defaultOption ?? options[0].title))
+
+  const handleSelect = (selected: string) => {
+    setSelected(selected)
+    onSelect(selected)
+  }
+
+  const hasCustomInput = initial && !options.some(option => option.title === initial)
+
+  return (
+    <View style={[Spacing.flexRow, { flexWrap: 'wrap' }, pickerStyles]}>
+      { options.map(option => 
+        <IconButton key={option.title} title={option.title} type={option.type} icon={option.icon ?? option.title} size='large' onPress={() => handleSelect(option.title)} styles={{ ...buttonStyles, opacity: selected === option.title ? 1 : 0.3 }} />
+      ) }
+      { (withCustom || hasCustomInput) &&
+        <>
+          { customIcon && <IconButton title='Others' type={customIcon.type} icon={customIcon.name ?? 'Others'} size='large' onPress={() => handleSelect('Others')} styles={{ ...buttonStyles, opacity: hasCustomInput ? 1 : 0.3 }} /> }
+
+          <FormInput initial={selected} placeholder={`enter ${customLabel}`} onChange={(input: string) => handleSelect(input)} />
+        </>
+      }
+    </View>
+  )
+}

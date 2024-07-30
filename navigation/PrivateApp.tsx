@@ -3,27 +3,27 @@ import { BottomTabScreenProps, createBottomTabNavigator } from "@react-navigatio
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { Image, Text } from "react-native"
 //screens
+import HomeScreen from "@home/HomeScreen"
 import CareDetailsScreen from "@care/screens/CareDetailsScreen"
 import CareIndexScreen from "@care/screens/CareIndexScreen"
 import EditCareScreen from "@care/screens/EditCareScreen"
 import NewCareScreen from "@care/screens/NewCareScreen"
 import HealthIndexScreen from "@health/screens/HealthIndexScreen"
 import NewHealthScreen from "@health/screens/NewHealthScreen"
-import HomeScreen from "@home/HomeScreen"
-import EditPetScreen from "@pet/screens/EditPetScreen"
-import NewPetScreen from "@pet/screens/NewPetScreen"
-import PetDetailsScreen from "@pet/screens/PetDetailsScreen"
+import EditHealthScreen from "@health/screens/EditHealthScreen"
+import HealthDetailsScreen from "@health/screens/HealthDetails"
 import PetIndexScreen from "@pet/screens/PetIndexScreen"
+import NewPetScreen from "@pet/screens/NewPetScreen"
+import EditPetScreen from "@pet/screens/EditPetScreen"
+import PetDetailsScreen from "@pet/screens/PetDetailsScreen"
 import EditProfileScreen from "@profile/screens/EditProfileScreen"
+import MorePetDetailsScreen from "@pet/screens/MorePetDetailsScreen"
+import EditMorePetDetailsScreen from "@pet/screens/EditMorePetDetailsScreen"
+import NewStatScreen from "@stat/screens/NewStatScreen"
+import StatDetails from "@stat/screens/StatDetails"
 import ProfileScreen from "@profile/screens/ProfileScreen"
 import EditAccountScreen from "@profile/screens/EditAccountScreen"
 import SettingsScreen from "@profile/screens/SettingsScreen"
-import EditHealthScreen from "@health/screens/EditHealthScreen"
-import HealthDetailsScreen from "@health/screens/HealthDetails"
-import NewStatScreen from "@stat/screens/NewStatScreen"
-import StatDetails from "@stat/screens/StatDetails"
-import MorePetDetailsScreen from "@pet/screens/MorePetDetailsScreen"
-import EditMorePetDetailsScreen from "@pet/screens/EditMorePetDetailsScreen"
 //helpers
 import { getNavigationIconSource } from "@utils/ui"
 //styles
@@ -64,29 +64,29 @@ const PrivateApp = () => {
   }
   
   return (
-    <Stack.Navigator screenOptions={() => (dynamicStackOptions())}>
-      <Stack.Screen name='Home' component={HomeTabs} />
+    <Stack.Navigator screenOptions={{ ...dynamicStackOptions('modal', true, false) }}>
+      <Stack.Screen name='Home' component={HomeTabs} options={{ headerShown: false }} />
 
       <Stack.Group>
         <Stack.Screen name='CareIndex' component={CareIndexScreen} options={{ title: 'All Pet Care', ...dynamicStackOptions('card') }}/>
-        <Stack.Screen name='CareCreate' component={NewCareScreen} options={{ ...dynamicStackOptions('modal', true, false) }}/>
+        <Stack.Screen name='CareCreate' component={NewCareScreen} />
         <Stack.Screen name='CareEdit' component={EditCareScreen} options={{ title: 'Edit Task' }}/>
         <Stack.Screen name='CareDetails' component={CareDetailsScreen} options={dynamicStackOptions('card', true, false)} />
       </Stack.Group>
 
       <Stack.Group>
         <Stack.Screen name='HealthIndex' component={HealthIndexScreen} options={{ title: 'All Pet Health', ...dynamicStackOptions('card') }} />
-        <Stack.Screen name='HealthCreate' component={NewHealthScreen} options={{ ...dynamicStackOptions('modal', true, false)}} />
-        <Stack.Screen name='HealthDetails' component={HealthDetailsScreen} options={dynamicStackOptions('card', true, false)} />
-        <Stack.Screen name='HealthEdit' component={EditHealthScreen} options={{ title: 'Update Vet Visit'}}/>
+        <Stack.Screen name='HealthCreate' component={NewHealthScreen} />
+        <Stack.Screen name='HealthDetails' component={HealthDetailsScreen} />
+        <Stack.Screen name='HealthEdit' component={EditHealthScreen} />
       </Stack.Group>
 
       <Stack.Group>
-        <Stack.Screen name='PetCreate' component={NewPetScreen} options={{ title: 'Add a Pet' }} />
-        <Stack.Screen name='PetEdit' component={EditPetScreen} options={({ route }) => ({ title: 'Edit Pet' })} />
+        <Stack.Screen name='PetCreate' component={NewPetScreen} />
+        <Stack.Screen name='PetEdit' component={EditPetScreen} />
         <Stack.Screen name='PetDetails' component={PetDetailsScreen} options={dynamicStackOptions('card', true, false)} />
-        <Stack.Screen name='PetMoreDetails' component={MorePetDetailsScreen} options={dynamicStackOptions('modal', true, false)} />
-        <Stack.Screen name='PetEditDetails' component={EditMorePetDetailsScreen} options={dynamicStackOptions('modal', true, false)} />
+        <Stack.Screen name='PetMoreDetails' component={MorePetDetailsScreen} />
+        <Stack.Screen name='PetEditDetails' component={EditMorePetDetailsScreen} />
         <Stack.Screen name='CreateLog' component={NewStatScreen} options={{ title: 'New Log' }} />
         <Stack.Screen name='LogDetails' component={StatDetails} options={{ title: 'Details' }} />
       </Stack.Group>

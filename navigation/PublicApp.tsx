@@ -12,10 +12,10 @@ const PublicApp = () => {
   const Stack = createNativeStackNavigator()
 
   return (
-    <Stack.Navigator screenOptions={{ contentStyle: { backgroundColor: Colors.white} }}>
+    <Stack.Navigator screenOptions={{ ...dynamicStackOptions('modal', true, false), contentStyle: { backgroundColor: Colors.white} }}>
       <Stack.Screen name='Home' component={HomeScreen} options={{ headerShown: false }} />
-      <Stack.Screen name='Login' component={LoginScreen} options={dynamicStackOptions('modal', true, false)} />
-      <Stack.Screen name='Register' component={RegisterScreen} options={dynamicStackOptions('modal', true, false)} />
+      <Stack.Screen name='Login' component={LoginScreen} />
+      <Stack.Screen name='Register' component={RegisterScreen} />
     </Stack.Navigator>
   )
 }

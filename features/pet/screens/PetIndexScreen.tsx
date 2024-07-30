@@ -91,7 +91,7 @@ const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
       { isSuccess && pets.length > 0 ? <>
         <View style={styles.petNav}>
           <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 10, justifyContent: 'flex-start', alignItems: 'center' }} showsHorizontalScrollIndicator={false}>
-            <RoundButton type='add' size='medium' onPress={() => navigation.navigate('Create')} />
+            <RoundButton type='add' size='medium' onPress={() => navigation.navigate('PetCreate')} />
             {pets.map((pet, index) => 
               <PhotoButton key={`photo-${pet._id}`} photo={pet.photo} placeholder={getPetIconSource('AnimalProfile')} size='small' onPress={() => handleClickPhoto(index)} />
             )}

@@ -1,7 +1,8 @@
 import { Image, ImageSourcePropType, Pressable, StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Buttons, Colors, Spacing, UI, Typography } from "@styles/index"
-import { FC, useEffect, useState } from "react"
-import { getActionIconSource, getHealthIconSource } from "@utils/ui"
+import { FC, memo, useCallback, useEffect, useMemo, useState } from "react"
+import { getActionIconSource, getHealthIconSource, getPetIconSource } from "@utils/ui"
+import { lightPalette } from "@styles/ui"
 
 const smallIconButtonStyles: ViewStyle = {
   marginHorizontal: 5,
@@ -56,36 +57,46 @@ export const ActionButton= ({ title, onPress, size, top, left }: BaseButtonProps
 )
 
 interface IconButtonProps extends BaseButtonProps {
+  title?: string
+  icon?: string
   type: string
   size: string
-  height?: number
   styles?: ViewStyle
 }
 
-const iconButtonStyles = {
-  'edit': { icon: 'edit', bgColor: Colors.yellow.light },
-  'delete': { icon: 'deleteColor', bgColor: Colors.red.light },
-  'details': { icon: 'details', bgColor: Colors.green.light },
-}
+export const IconButton = memo(({ title, icon, onPress, type, size, styles }: IconButtonProps) => {
+  const buttonSize: ViewStyle = useMemo(() => {
+    const sizeMap = {
+      small: { width: 40, height: 60 },
+      medium: { width: 50, height: 70 },
+      large: { width: 60, height: 90 },
+    }
+    return sizeMap[size]
+  }, [size])
 
-export const IconButton = ({ onPress, type, size, height, styles }: IconButtonProps) => {
+  const getIconSource = useCallback((name: string) => {
+    const map = {
+      action: () => getActionIconSource(name),
+      health: () => getHealthIconSource(name),
+      pet: () => getPetIconSource(name),
+    }
+    return map[type]()
+  }, [type])
 
+  const iconName = icon ?? title
+  const iconSource = getIconSource(iconName)
+  
   return (
-    <TouchableOpacity onPress={onPress} style={[styles,
-      size === 'small' ? smallIconButtonStyles
-      : size === 'medium' ? { 
-        width: 50, height: height ?? 60, borderRadius: 10, marginHorizontal: 2, paddingVertical: 10,
-        backgroundColor: iconButtonStyles[type].bgColor, alignItems: 'center', justifyContent: 'space-around' 
-      } as ViewStyle
-      : {
-        flex: 1, height: 90, ...Buttons.squareBase, margin: 10,
-      } as ViewStyle
+    <TouchableOpacity onPress={onPress} style={[
+      { padding: 10, marginHorizontal: 5, borderRadius: size === 'small' ? 8 : 10, justifyContent: title ? 'space-around' : 'center', alignItems: 'center', flex: 1, borderWidth: 1, borderColor: lightPalette.border, },
+      buttonSize,
+      styles
     ]}>
-      <Image source={size === 'large' ? getHealthIconSource(type) : getActionIconSource(iconButtonStyles[type].icon)} style={size === 'large' ? UI.icon : UI.xSmallIcon} />
-      { (size === 'medium' || size === 'large') && <Text style={{ fontSize: size === 'medium' ? 10 : 13, textTransform: 'capitalize' }}>{type}</Text> }
+      <Image source={iconSource} style={size === 'large' ? UI.icon : UI.xSmallIcon} />
+      { title && <Text style={{ fontSize: size === 'medium' ? 10 : 13, textTransform: 'capitalize' }}>{title}</Text> }
     </TouchableOpacity>
   )
-}
+})
 
 interface PhotoButtonProps extends BaseButtonProps {
   photo: string

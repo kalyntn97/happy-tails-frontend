@@ -10,15 +10,6 @@ export const styles = StyleSheet.create({
     ...Spacing.scrollScreenDown,
     paddingTop: 50,
   },
-  header: {
-    ...Typography.mediumHeader,
-    marginTop: 30,
-    color: Colors.pink.darkest
-  },
-  bottomCon: {
-    ...Spacing.flexColumn,
-    marginTop: 30,
-  },
   labelCon: {
     ...Spacing.flexRow,
     justifyContent: 'space-between',
@@ -32,33 +23,20 @@ export const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 5,
   },
-  photoUpload: {
-    ...UI.photo,
-    position: 'relative',
-    overflow: 'hidden',
-    margin: 20,
-    backgroundColor: Colors.pink.light,
-    elevation: 2,
-  },
-  image: {
-    ...Spacing.fullWH,
-  },
-  uploadBtnContainer: {
-    opacity: 0.7,
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    backgroundColor: Colors.pink.reg,
+  titleCon: {
+    ...Spacing.flexRow,
     width: '100%',
-    height: '25%',
+    zIndex: 1,
+    alignSelf: 'flex-start',
+    marginVertical: 10,
   },
-  uploadBtn: {
-    display: 'flex',
-    ...Spacing.centered
-  },
-  cameraIcon: {
-    width: 20,
-    height: 20,
+  title: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    marginLeft: 15, 
+    textAlign: 'left',
+    maxWidth: '80%',
+    minWidth: '60%',
   },
   leftInput: {
     width: 140,

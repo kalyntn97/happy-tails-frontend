@@ -9,6 +9,7 @@ export const basePadding: ViewStyle = {
 }
 
 export const centered: ViewStyle = {
+  display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
 }

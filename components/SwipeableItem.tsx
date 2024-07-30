@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { ReactNode, useRef } from 'react'
 import { Swipeable } from 'react-native-gesture-handler'
 import { IconButton } from './ButtonComponents'
-import { Spacing } from '@styles/index'
+import { Colors, Spacing } from '@styles/index'
 import { getActionIconSource } from '@utils/ui'
 
 type Props = {
@@ -28,10 +28,16 @@ const SwipeableItem = ({ color, title, content, swipeRightActions, swipeLeftActi
     swipeableRef.current.close()
   }
 
+  const iconButtonStyles = {
+    'edit': { icon: 'edit', bgColor: Colors.yellow.light },
+    'delete': { icon: 'deleteColor', bgColor: Colors.red.light },
+    'details': { icon: 'details', bgColor: Colors.green.light },
+  }
+
   const rightSwipeActions = () => (
     <View style={[styles.squareBtnContainer, { height: TASK_HEIGHT }]}>
       { Object.keys(swipeRightActions).map(action => 
-        <IconButton key={action} type={action} size='medium' height={TASK_HEIGHT} onPress={() => {
+        <IconButton key={action} title={action} icon={iconButtonStyles[action].icon} type='action' size='medium' styles={{ backgroundColor: iconButtonStyles[action].bgColor, height: TASK_HEIGHT }} onPress={() => {
           swipeRightActions[action]()
           closeSwipeable()
         } } />

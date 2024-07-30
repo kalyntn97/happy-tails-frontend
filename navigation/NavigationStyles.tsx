@@ -41,7 +41,7 @@ export const Header = ({ title, navigation, showGoBackButton, mode, rightLabel =
     </>
 )
 
-export const dynamicStackOptions = (mode: string = 'modal', showGoBackButton: boolean = true, showTitle: boolean = true): NativeStackNavigationOptions => {
+export const dynamicStackOptions = (mode: 'modal' | 'card' = 'modal', showGoBackButton = true, showTitle = true): NativeStackNavigationOptions => {
   return {
     ...headerOptions,
     presentation: mode,
