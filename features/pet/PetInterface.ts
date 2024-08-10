@@ -10,8 +10,11 @@ export interface PetBasic {
   photo: string | null
   color: number
 }
+
+export type Gender = 'Boy' | 'Girl' | 'Unknown'
 export interface PetFormData {
   name: string
+  gender: Gender
   species: string 
   breed: string
   dob: string | null

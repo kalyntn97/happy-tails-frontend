@@ -31,6 +31,12 @@ export const AlertForm = ({ body, button }) =>
 
 const actionIconSource = {
   camera: require('@assets/icons/action-camera.png'),
+  birthday: require('@assets/icons/action-birthday.png'),
+  adopt: require('@assets/icons/action-adopt_date.png'),
+  gender: require('@assets/icons/action-gender.png'),
+  altered: require('@assets/icons/action-altered.png'),
+  status: require('@assets/icons/action-status.png'),
+  archive: require('@assets/icons/action-archive.png'),
   actionSquare: require('@assets/icons/action-action_square.png'),
   close: require('@assets/icons/action-close.png'),
   check: require('@assets/icons/action-check.png'),
@@ -57,8 +63,10 @@ const actionIconSource = {
   undo: require('@assets/icons/action-undo.png'),
   search: require('@assets/icons/action-search.png'),
   back: require('@assets/icons/action-back.png'),
+  upSquare: require('@assets/icons/action-up_square.png'),
   up: require('@assets/icons/action-up.png'),
   down: require('@assets/icons/action-down.png'),
+  downSquare: require('@assets/icons/action-down_square.png'),
   next: require('@assets/icons/action-next.png'),
   nextRound: require('@assets/icons/action-next_round.png'),
   prev: require('@assets/icons/action-prev.png'),

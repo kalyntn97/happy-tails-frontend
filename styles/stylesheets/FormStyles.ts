@@ -23,20 +23,34 @@ export const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 5,
   },
-  titleCon: {
+  headerCon: {
     ...Spacing.flexRow,
     width: '100%',
     zIndex: 1,
     alignSelf: 'flex-start',
     marginVertical: 10,
   },
+  titleCon: {
+    ...Spacing.flexColumn,
+    marginLeft: 15, 
+    alignItems: 'flex-start',
+    width: '65%',
+  },
+  subtitleCon: {
+    ...Spacing.flexRow,
+    width: '90%',
+    marginLeft: 'auto',
+    marginRight: 10,
+  },
   title: {
     fontSize: 20, 
     fontWeight: 'bold', 
-    marginLeft: 15, 
     textAlign: 'left',
-    maxWidth: '80%',
+    maxWidth: '100%',
     minWidth: '60%',
+  },
+  subtitle: {
+    ...Typography.xSmallSubHeader,
   },
   leftInput: {
     width: 140,

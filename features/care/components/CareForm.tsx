@@ -4,8 +4,8 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWin
 import Dropdown from "@components/Dropdown/Dropdown"
 import { CheckboxButton, MainButton, SubButton, ToggleButton, TransparentButton } from "@components/ButtonComponents"
 import { DateInput, ErrorMessage, FormInput, FormLabel, BottomModal, ModalInput } from "@components/UIComponents"
-import ColorPicker from "@components/ColorPicker"
-import PetPicker from "@components/PetPicker"
+import ColorPicker from "@components/Pickers/ColorPicker"
+import PetPicker from "@components/Pickers/PetPicker"
 import TitleInput from "@components/TitleInput"
 import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/FrequencyPicker"
 import { Header } from "@navigation/NavigationStyles"
@@ -59,7 +59,6 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   }
 
   const handleValidate = useCallback(() => {
-    console.log('recreated')
     return onValidate({ name })
   }, [name])
 
@@ -82,7 +81,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       <ColorPicker onPress={(selected) => {
         onChange('color', selected)
         setColor(selected)
-      }} initial={color} />
+      }} selected={color} />
 
       <FormLabel label='Select Pets' icon="pets" width='100%' top={30} />
       <PetPicker mode="multi" onSelect={(selections: string[]) => onChange('pets', selections)} initials={pets.map((pet: PetBasic) => pet._id ?? pet)} />

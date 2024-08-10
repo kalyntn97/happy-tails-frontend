@@ -88,7 +88,7 @@ export const IconButton = memo(({ title, icon, onPress, type, size, styles }: Ic
   
   return (
     <TouchableOpacity onPress={onPress} style={[
-      { padding: 10, marginHorizontal: 5, borderRadius: size === 'small' ? 8 : 10, justifyContent: title ? 'space-around' : 'center', alignItems: 'center', flex: 1, borderWidth: 1, borderColor: lightPalette.border, },
+      { padding: 10, margin: 5, borderRadius: size === 'small' ? 8 : 10, justifyContent: title ? 'space-around' : 'center', alignItems: 'center', borderWidth: 1, borderColor: lightPalette.border, },
       buttonSize,
       styles
     ]}>

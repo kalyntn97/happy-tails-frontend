@@ -1,5 +1,5 @@
 //npm modules
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Alert, StyleSheet, View } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 //queries & store
@@ -9,9 +9,10 @@ import PetForm from "../components/PetForm"
 //utils
 import { PetFormData,  PhotoFormData } from "@pet/PetInterface"
 //styles
-import { Spacing } from "@styles/index"
+import { Colors, Spacing } from "@styles/index"
 
 const NewPetScreen = ({ navigation }) => {
+  const [color, setColor] = useState<number>(0)
   const isFocused = useIsFocused()
   
   const addPetMutation = useAddPet(navigation)
@@ -25,17 +26,10 @@ const NewPetScreen = ({ navigation }) => {
   }, [navigation, isFocused])
 
   return ( 
-    <View style={styles.container}>
-      <PetForm onSubmit={handleAddPet} navigation={navigation} formStatus={addPetMutation.status} />
+    <View style={[Spacing.fullScreenDown, { backgroundColor: Colors.multi.lightest[color] }]}>
+      <PetForm onSubmit={handleAddPet} navigation={navigation} formStatus={addPetMutation.status} setColor={setColor} />
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-    ...Spacing.centered
-  }
-})
 
 export default NewPetScreen

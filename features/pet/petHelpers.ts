@@ -48,7 +48,8 @@ export const SPECIES = [ 'Dog', 'Cat', 'Bird', 'Fish', 'Rodent' ]
 export const SPECIES_OPTIONS = SPECIES.map(name => {
   return { title: name, icon: null, type: 'pet' }
 })
-// export const SPECIES_OPTIONS = [...SPECIES, 'Others']
+
+export const GENDER = ['Boy', 'Girl', 'Unknown']
 
 export const STATUS = [ 'Healthy', 'Passed away' ]
 

@@ -25,20 +25,20 @@ const RightButton = ({ title, onPress, buttonStyles }: { title: string, onPress:
 
 export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
 
-export const Header = ({ title, navigation, showGoBackButton, mode, rightLabel = 'Submit', rightAction }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string, rightLabel?: string, rightAction?: () => void }) => (
-  title ? 
-    <View style={[styles.headerCon, { marginTop: mode === 'card' ? 25 : 15 }]}>
-      { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={mode === 'card' ? 15 : 10} left={10} /> }
-      { title && <Text style={styles.headerText}>{title}</Text> }
-      { rightAction && <RightButton title={rightLabel} onPress={rightAction} buttonStyles={{ top: mode === 'card' ? 25 : 20 }} />      
-      }
-    </View> 
-  : showGoBackButton && 
-    <>
-      <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={mode === 'card' ? 45 : 15} left={10} />
-      { rightAction && <RightButton title={rightLabel} onPress={rightAction} buttonStyles={{ top: mode === 'card' ? 55 : 25 }} />
-      }
-    </>
+export const Header = ({ title, navigation, showGoBackButton, mode, rightLabel = 'Submit', rightAction, bgColor = Colors.shadow.lightest }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string, rightLabel?: string, rightAction?: () => void, bgColor?: string }) => (
+  // title ? 
+  <View style={[styles.headerCon, { height: title ? 70 : 50, marginTop: mode === 'card' ? 25 : 15, backgroundColor: bgColor }]}>
+    { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={mode === 'card' ? 15 : 10} left={10} /> }
+    { title && <Text style={styles.headerText}>{title}</Text> }
+    { rightAction && <RightButton title={rightLabel} onPress={rightAction} buttonStyles={{ top: mode === 'card' ? 25 : 20 }} />      
+    }
+  </View> 
+  // : showGoBackButton && 
+  //   <View style={{ height: 50, backgroundColor: Colors.transparent.semiLight }}>
+  //     <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={ mode === 'card' ? 45 : 15} left={10} />
+  //     { rightAction && <RightButton title={rightLabel} onPress={rightAction} buttonStyles={{ top: mode === 'card' ? 55 : 25 }} />
+  //     }
+  //   </View>
 )
 
 export const dynamicStackOptions = (mode: 'modal' | 'card' = 'modal', showGoBackButton = true, showTitle = true): NativeStackNavigationOptions => {
@@ -65,9 +65,7 @@ export const styles = StyleSheet.create({
     margin: 0,
   },
   headerCon: { 
-    height: 70,
     paddingTop: 25,
-    backgroundColor: Colors.shadow.lightest,
   },
   buttonText: {
     fontSize: 15,

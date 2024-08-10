@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import PetInfo from './PetInfo/PetInfo'
+import PetInfo from '@components/PetInfo/PetInfo'
 import { Colors, Spacing } from '@styles/index'
 import { PetBasic } from '@pet/PetInterface'
 import { useShallowPets } from '@hooks/sharedHooks'

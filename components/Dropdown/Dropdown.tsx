@@ -20,10 +20,11 @@ interface DropdownProps {
   onSelect: (item: string | any ) => void
   width?: number | string
   initial?: string
-  extraStyles?: ViewStyle
   withSearch?: boolean
   searchLabel?: string
   error?: string
+  buttonStyles?: ViewStyle
+  contentStyles?: ViewStyle
 }
 
 const typeToSource = {
@@ -46,12 +47,12 @@ const typeToSource = {
   'serviceTypes': () => petHelpers.SERVICE_TYPES,
 }
 
-const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-content', initial, extraStyles, withSearch = false, searchLabel, error }: DropdownProps) => {
+const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-content', initial, buttonStyles, contentStyles, withSearch = false, searchLabel, error }: DropdownProps) => {
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
   const [visible, setVisible] = useState(false)
   const [focused, setFocused] = useState(false)
-  const [searchInput, setSearchInput] = useState<string>(null)
+  const [searchInput, setSearchInput] = useState<string>(initial ?? null)
   const [searchResults, setSearchResults] = useState([])
   
   //measure the btn pos and set the dropdown pos
@@ -109,7 +110,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
   return (
     <View style={{ width: width as DimensionValue, zIndex: focused ? 10 : 2 }}>
       { withSearch ?
-        <View style={[styles.dropDownBtn, focused && UI.inputFocused]} ref={DropdownBtn}>
+        <View style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue }, focused && UI.inputFocused]} ref={DropdownBtn}>
           <TextInput
             style={{ maxWidth: '80%' }}
             placeholder='enter search'
@@ -123,7 +124,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
           />
           <Icon iconSource={getActionIconSource('search')} size='xSmall' />
         </View>
-        : <TouchableOpacity style={[styles.dropDownBtn, { width: width as DimensionValue }, visible && UI.inputFocused]} onPress={toggleDropdown} ref={DropdownBtn}>
+        : <TouchableOpacity style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue }, visible && UI.inputFocused]} onPress={toggleDropdown} ref={DropdownBtn}>
           <Text style={{ maxWidth: '80%' }}>{selected ?? label}</Text>
           <Icon iconSource={getActionIconSource(visible ? 'up' : 'down')} size='xSmall' />
         </TouchableOpacity>
@@ -131,7 +132,9 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
       { error && <ErrorMessage error={error} /> }
 
       { withSearch ?
-        visible && <View style={[styles.content, extraStyles, { top: dropdownTop, left: dropdownLeft, width: width as DimensionValue, maxHeight: 200 }]}>
+        visible && <View style={[contentStyles ?? styles.content, { left: dropdownLeft, width: width as DimensionValue, maxHeight: 200 },
+          withSearch ? { bottom: dropdownTop } : { top: dropdownTop }
+        ]}>
           <ScrollView style={Spacing.fullWH}>
             { searchResults.length > 1 ? searchResults.map((result, idx) =>
               <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
@@ -146,7 +149,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
       : 
         <Modal visible={visible} transparent animationType="none">
           <Pressable style={UI.overlay} onPress={() => setVisible(false)}>
-            <View style={[styles.content, extraStyles, { top: dropdownTop, left: dropdownLeft, width: width as DimensionValue, maxHeight: '50%' }]}>
+            <View style={[contentStyles ?? styles.content, { top: dropdownTop, left: dropdownLeft, width: width as DimensionValue, maxHeight: '50%' }]}>
                 <FlatList 
                   data={data} 
                   keyExtractor={(item, idx) => idx.toString()}
@@ -169,17 +172,17 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
 const styles = StyleSheet.create({
   dropDownBtn: {
     ...Spacing.flexRow,
-    ...UI.input,
     position: 'relative',
     justifyContent: 'space-between',
     marginVertical: 5,
-    width: '100%',
+  },
+  buttonCon: {
+    ...UI.input,
   },
   content: {
     position: 'absolute',
     ...UI.cardWithShadow,
     backgroundColor: Colors.white,
-    width: '100%',
   },
   itemCon: {
     paddingVertical: 10,

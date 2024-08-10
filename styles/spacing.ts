@@ -54,5 +54,6 @@ export const scrollScreenDown: ViewStyle = {
 export const scrollContent: ViewStyle = {
   ...flexColumn,
   width: '100%',
+  paddingHorizontal: 10,
   paddingBottom: 20,
 }

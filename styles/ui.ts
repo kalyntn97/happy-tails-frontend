@@ -164,11 +164,11 @@ export const bottomModal: ViewStyle = {
   ...flexColumn,
     width: '100%',
     marginTop: 'auto',
-    paddingTop: 30,
-    paddingBottom: 20,
+    paddingTop: 35,
+    paddingBottom: 60,
     paddingHorizontal: 10,
     backgroundColor: Colors.shadow.lightest,
-    ...topRounded(30),
+    ...topRounded(15),
     ...boxShadow,
 }
 
