@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWindowDimensions, Pressable, Dimensions } from "react-native"
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWindowDimensions, Pressable, Dimensions, TouchableWithoutFeedback, Keyboard } from "react-native"
 //components
 import Dropdown from "@components/Dropdown/Dropdown"
 import { CheckboxButton, MainButton, SubButton, ToggleButton, TransparentButton } from "@components/ButtonComponents"
-import { DateInput, ErrorMessage, FormInput, FormLabel, BottomModal, ModalInput } from "@components/UIComponents"
+import { DateInput, ErrorMessage, FormInput, FormLabel, BottomModal, ModalInput, TableForm } from "@components/UIComponents"
 import ColorPicker from "@components/Pickers/ColorPicker"
 import PetPicker from "@components/Pickers/PetPicker"
 import TitleInput from "@components/TitleInput"
@@ -18,6 +18,8 @@ import { windowHeight } from "@utils/constants"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
+import PetList from "@components/PetInfo/PetList"
+import PetInfo from "@components/PetInfo/PetInfo"
 
 
 interface InitialState extends Care {
@@ -34,7 +36,7 @@ interface CareFormProps {
 }
 
 const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation, status, setColor }) => {
-  const { PET_BASICS } = useShallowPets()
+  const { PET_BASICS, petIdToPet } = useShallowPets()
   const initialState: InitialState = {
     name: initialValues?.name ?? null, 
     pets: initialValues?.pets ?? [PET_BASICS[0]._id],
@@ -62,58 +64,73 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
     return onValidate({ name })
   }, [name])
 
+  const renderPets = (
+    <ModalInput customLabel={
+      pets.map((pet, index) =>
+        <View key={pet} style={{ zIndex: index, marginLeft: -10 }}>
+          <PetInfo pet={petIdToPet(pet)} size="mini" />
+        </View>
+      )
+    }>
+      <PetPicker mode="multi" onSelect={(selections: string[]) => onChange('pets', selections)} initials={pets.map((pet: PetBasic) => pet._id ?? pet)} />
+    </ModalInput>
+  )
+
+  const renderStartDate = (
+    <DateInput date={startDate} onChangeDate={(selected) => onChange('startDate', selected )} color={color} />
+  )
+
+  const renderRepeat = (
+    <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
+  )
+
+  const renderFrequency = (
+    <ModalInput maxHeight='90%'
+      label={
+        <Text style={{ maxWidth: '60%' }}>Repeats {frequency && frequencyMap[frequency.type].timesPerIntervalLabel(frequency.timesPerInterval)} {intervalLabel(frequency.interval, frequency.type)} {ending && `until ${endDate && endDate.toLocaleDateString()}`}</Text>
+      }
+      onReset={() => {
+        onChange('frequency', initialState.frequency)
+        onChange('ending', initialState.ending)
+        onChange('endDate', initialState.endDate)
+      }}
+    > 
+      <FrequencyPicker color={color} initial={{ ...frequency, ending, endDate }}
+        onSelectFrequency={(key: string, selected: any) => onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)}
+        onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | Date) => onChange(key, value)}
+      />
+    </ModalInput>
+  )
+
+  const mainTable = [
+    { key: 'pets', label: 'Pets', icon: 'pets', value: renderPets },
+    { key: 'startDate', label: 'Start Date', icon: 'schedule', value: renderStartDate },
+    { key: 'repeat', label: 'Repeat', icon: 'repeat', value: renderRepeat },
+    { key: 'frequency', label: 'Frequency', icon: 'due', value: renderFrequency },
+
+  ]
+
   useEffect(() => {
     navigation.setOptions({
-      header: () => <Header showGoBackButton={true} rightAction={handleValidate} rightLabel={status === 'pending' ? 'Submitting...' : 'Submit'} navigation={navigation} mode='modal' />
+      header: () => <Header showGoBackButton={true} rightAction={handleValidate} rightLabel={status === 'pending' ? 'Submitting...' : 'Submit'} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[color]} />
     })
-  }, [handleValidate, status])
+  }, [handleValidate, status, color])
   
   return (
-    <ScrollView
-      keyboardShouldPersistTaps='handled'
-      contentContainerStyle={[styles.containerWithPadding, { minHeight: windowHeight * 0.75}]}
-      showsVerticalScrollIndicator={false}
-      alwaysBounceVertical={false} 
-    >
-      <TitleInput initial={initialState.name} placeholder='New Task' onChange={(input: string) => onChange('name', input)} type='care' error={errors?.name} />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <TitleInput initial={initialState.name} placeholder='New Task' onChange={(input: string) => onChange('name', input)} type='care' error={errors?.name} />
 
-      <FormLabel label='Color' icon="color" />
-      <ColorPicker onPress={(selected) => {
-        onChange('color', selected)
-        setColor(selected)
-      }} selected={color} />
+        <TableForm table={mainTable} withLabel={true} dependentRows={{ frequency: repeat }}/>
 
-      <FormLabel label='Select Pets' icon="pets" width='100%' top={30} />
-      <PetPicker mode="multi" onSelect={(selections: string[]) => onChange('pets', selections)} initials={pets.map((pet: PetBasic) => pet._id ?? pet)} />
+        <ColorPicker selected={color} buttonWidth={30} pickerStyles={{ marginTop: 10 }} onPress={(selected) => {
+          onChange('color', selected)
+          setColor(selected)
+        }} />
 
-      <FormLabel label='Start Date' icon="schedule" width='100%' top={30} />
-      <DateInput date={startDate} onChangeDate={selectedDate => onChange('startDate', selectedDate)} color={color} />
-
-      <View style={styles.labelCon}>
-        <FormLabel label='Repeat' icon="repeat" top={0} bottom={0} />
-        <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
+        <SubButton onPress={onReset} title='Reset' top={40} />
       </View>
-
-      { repeat &&
-        <ModalInput maxHeight='90%'
-          label={
-            <Text>Repeats {frequency && frequencyMap[frequency.type].timesPerIntervalLabel(frequency.timesPerInterval)} {intervalLabel(frequency.interval, frequency.type)} {ending && `until ${endDate && endDate.toLocaleDateString()}`}</Text>
-          }
-          onReset={() => {
-            onChange('frequency', initialState.frequency)
-            onChange('ending', initialState.ending)
-            onChange('endDate', initialState.endDate)
-          }}
-        >
-          <FrequencyPicker color={color} initial={{ ...frequency, ending, endDate }}
-            onSelectFrequency={(key: string, selected: any) => onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)}
-            onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | Date) => onChange(key, value)}
-          />
-        </ModalInput>
-      }
-
-      <SubButton onPress={onReset} title='Reset' top={10} bottom={10} />
-    </ScrollView>
+    </TouchableWithoutFeedback>
   )
 }
 

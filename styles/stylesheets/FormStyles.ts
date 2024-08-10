@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     ...Spacing.flexColumn,
     marginLeft: 15, 
     alignItems: 'flex-start',
-    width: '65%',
+    width: '100%',
   },
   subtitleCon: {
     ...Spacing.flexRow,

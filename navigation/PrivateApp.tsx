@@ -84,7 +84,7 @@ const PrivateApp = () => {
       <Stack.Group>
         <Stack.Screen name='PetCreate' component={NewPetScreen} />
         <Stack.Screen name='PetEdit' component={EditPetScreen} />
-        <Stack.Screen name='PetDetails' component={PetDetailsScreen} options={dynamicStackOptions('card', true, false)} />
+        <Stack.Screen name='PetDetails' component={PetDetailsScreen} options={{ headerShown: false }} />
         <Stack.Screen name='PetMoreDetails' component={MorePetDetailsScreen} />
         <Stack.Screen name='PetEditDetails' component={EditMorePetDetailsScreen} />
         <Stack.Screen name='CreateLog' component={NewStatScreen} options={{ title: 'New Log' }} />

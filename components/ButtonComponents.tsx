@@ -189,7 +189,7 @@ export const SubButton = ({ onPress, title, color = UI.lightPalette.button, top,
   </TouchableOpacity>
 )
 
-export const GoBackButton = ({ onPress, top = 5, left = 5, position }: CornerButtonProps) => (
+export const GoBackButton = ({ onPress, top = 10, left = 10, position }: CornerButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[
     position === 'topLeft' && { position: 'absolute', top: top, left: left,
   }]}>     

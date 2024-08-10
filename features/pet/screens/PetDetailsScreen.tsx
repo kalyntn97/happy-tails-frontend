@@ -19,6 +19,7 @@ import { useGetPetSettings, useSetActions } from "@store/store"
 //styles
 import { Buttons, Spacing, UI, Colors, Typography } from '@styles/index'
 import StatButtonList from "@pet/components/StatButtonList"
+import { GoBackButton } from "@components/ButtonComponents"
 
 interface PetDetailsProps {
   navigation: any
@@ -139,12 +140,13 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   }, [modalVisible, info, logs]);
 
   return (    
-    <View style={{ ...Spacing.scrollScreenDown, backgroundColor: Colors.multi.lightest[pet?.color] }}>
+    <View style={{ ...Spacing.fullWH, backgroundColor: Colors.multi.lightest[pet?.color] }}>
+      <GoBackButton onPress={navigation.goBack} position="topLeft" />
       <View style={styles.conHeader}>
         { topActions.map(action => <ActionButton key={action.key} title={action.key} onPress={action.onPress} size='small' />) }
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false} contentContainerStyle={{ ...Spacing.scrollContent, width: '100%' }}>  
+      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false} contentContainerStyle={{ ...Spacing.scrollScreenDown, width: '100%' }}>  
         { isError && <ErrorImage /> }
         { isFetching && <Loader /> }
         
@@ -206,8 +208,8 @@ const styles = StyleSheet.create({
   conHeader: {
     ...Spacing.flexRow, 
     marginLeft: 'auto', 
-    paddingTop: 50, 
-    paddingBottom: 10,
+    paddingTop: 20, 
+    paddingBottom: 15,
     marginRight: 10,
     width: '40%', 
     justifyContent: 'space-between', 

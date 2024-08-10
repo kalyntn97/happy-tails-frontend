@@ -243,7 +243,7 @@ export const BottomModal = ({ children, modalVisible, height = 'fit-content', ma
         if (e.target === e.currentTarget) dismissModal()
       }} style={{ ...UI.modalOverlay, backgroundColor: overlay}}>
         { childrenVisible && 
-          <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{ ...UI.bottomModal, height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, alignItems: 'center', backgroundColor: background }}>
+          <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{ ...UI.bottomModal, height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, backgroundColor: background }}>
             <GoBackButton position="topLeft" onPress={dismissModal} left={10} top={10} />
             { children }
           </Animated.View> 
@@ -306,19 +306,20 @@ export const NoteInput = ({ notes, onChange, buttonStyles, buttonTextStyles }: {
   )
 }
 
-export const TableForm = memo(({ table, withLabel = false, dependentRows }: { table: { key: string, icon: string, value: any, label?: string }[], withLabel?: boolean, dependentRows?: { [key: number]: boolean }}) => (
+export const TableForm = memo(({ table, withLabel = false, dependentRows }: { table: { key: string, icon: string, value: any, label?: string }[], withLabel?: boolean, dependentRows?: { [key: string]: boolean }}) => (
   <View style={{ ...UI.roundedCon, backgroundColor: Colors.white }}>
-    {table.map((row, index) => {
+    {table.map(row => {
       let rowIsVisible = true
-      if (dependentRows && dependentRows.hasOwnProperty(index)) rowIsVisible = dependentRows[index]
+      if (dependentRows && dependentRows.hasOwnProperty(row.key)) rowIsVisible = dependentRows[row.key]
       
       return (
-        rowIsVisible && <View key={row.key} style={{ ...Spacing.flexRow, width: '100%', justifyContent: 'space-between', height: 50 }}>
-        <View style={Spacing.flexRow}>
-          <Icon iconSource={getActionIconSource(row.icon)} size='xSmall' />
-          { withLabel && <Text style={{ marginLeft: 5 }}>{row.label}</Text> }
-        </View>
-        { row.value }
+        rowIsVisible && 
+        <View key={row.key} style={{ ...Spacing.flexRow, width: '100%', justifyContent: 'space-between', minHeight: 50 }}>
+          <View style={Spacing.flexRow}>
+            <Icon iconSource={getActionIconSource(row.icon)} size='xSmall' />
+            { withLabel && <Text style={{ marginLeft: 5 }}>{row.label}</Text> }
+          </View>
+          <View style={{ maxWidth: '60%' }}>{row.value}</View>
         </View>
       )
     })}

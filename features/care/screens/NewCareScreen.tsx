@@ -10,7 +10,7 @@ import { AlertForm } from "@utils/ui"
 import { Buttons, Spacing, Typography, Colors } from '@styles/index'
 
 const NewCareScreen = ({ navigation }) => {
-  const [color, setColor] = useState<number>(null)
+  const [color, setColor] = useState<number>(0)
 
   const isFocused = useIsFocused()
   const addCareMutation = useAddCare(navigation)
@@ -23,8 +23,7 @@ const NewCareScreen = ({ navigation }) => {
     if (!isFocused) {
       navigation.goBack()
     }
-    navigation.setOptions({ headerStyle: { backgroundColor: Colors.multi.lightest[color] } })
-  }, [navigation, isFocused, color])
+  }, [navigation, isFocused])
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.multi.lightest[color] }}>

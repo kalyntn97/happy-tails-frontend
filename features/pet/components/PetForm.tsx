@@ -138,7 +138,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
         <Icon iconSource={getActionIconSource(status.archive ? 'hide' : 'show')} size="xSmall" />
       </View>
     }>
-      <TableForm table={statusTable} dependentRows={{ 1: status.value === STATUS[1] }} />
+      <TableForm table={statusTable} dependentRows={{ statusDate: status.value === STATUS[1] }} />
     </ModalInput>
   )
     
@@ -154,15 +154,15 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
   useEffect(() => {
     navigation.setOptions({
       header: () => <Header showGoBackButton={true} rightAction={() => onValidate({ name, 'type': species })} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[color]} />
-    });
-  }, [])
+    })
+  }, [color])
 
   return ( 
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View style={styles.headerCon}>
           <PhotoUpload photo={photo} placeholder={placeholderPhoto} onSelect={(uri: string) => onChange('photo', uri)} />
-          <View style={styles.titleCon}>
+          <View style={[styles.titleCon, { width: '65%' }]}>
             <FormInput initial={initialState.name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} />
           </View>
         </View>

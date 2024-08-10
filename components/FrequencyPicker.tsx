@@ -27,7 +27,7 @@ type Props = {
 
 const ROUNDED: number = 30
 const CIRCLE_BUTTON_MARGIN: number = 5
-const CIRCLE_BUTTON_WIDTH: number = (windowWidth * 0.9 - CIRCLE_BUTTON_MARGIN * 2 * 7) / 7
+const CIRCLE_BUTTON_WIDTH: number = (windowWidth * 0.9 - CIRCLE_BUTTON_MARGIN * 2 * 7) / 8
 
 const numArray = (length: number) => {
   return Array.from({ length: length }, (_, index) => index + 1)
@@ -175,7 +175,8 @@ const FrequencyPicker = ({ initial, color = 0, onSelectFrequency, onSelectEndDat
   return (
     <>
       <Header />
-      <ScrollView style={{ width: '100%' }} contentContainerStyle={Spacing.scrollContent}
+      <ScrollView
+        contentContainerStyle={Spacing.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.rowCon}>
