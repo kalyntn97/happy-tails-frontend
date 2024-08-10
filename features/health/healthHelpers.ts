@@ -18,6 +18,10 @@ export const HEALTH_FREQ = ['day(s)', 'week(s)', 'month(s)', 'year(s)']
 
 export const HEALTH_TYPES = ['Routine', 'Illness', 'Emergency']
 
+export const HEALTH_TYPES_OPTIONS = HEALTH_TYPES.map(name => {
+  return { title: name, icon: null, type: 'health' }
+})
+
 const DOG_VACCINES: Record<string, { name: string, info: string }> = {
   da2pp: {
     name: 'Canine distemper, adenovirus type 1 and type 2, parainfluenza, and parvovirus (DA2PP) vaccine',

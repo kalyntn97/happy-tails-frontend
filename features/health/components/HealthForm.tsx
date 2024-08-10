@@ -17,11 +17,13 @@ import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/Freque
 import Dropdown from "@components/Dropdown/Dropdown" 
 import { SubButton } from "@components/ButtonComponents"
 import { ActionButton, IconButton, ToggleButton } from "@components/ButtonComponents"
-import { FormError, FormLabel, ModalInput } from "@components/UIComponents"
+import { FormError, FormLabel, ModalInput, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 //styles
 import { styles } from "@styles/stylesheets/FormStyles"
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import PetInfo from "@components/PetInfo/PetInfo"
+import IconPicker from "@components/Pickers/IconPicker"
 
 interface HealthFormProps {
   onSubmit: (formData: Health) => void
@@ -36,7 +38,7 @@ interface InitialState extends Health {
 const vaccineFuse = new Fuse(['vaccination', 'vaccine'])
 
 const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
-  const { petIdToColor, PET_BASICS } = useShallowPets()
+  const { petIdToColor, PET_BASICS, petIdToPet } = useShallowPets()
 
   const initialState: InitialState = {
     name: initialValues?.name ?? null,
@@ -55,7 +57,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
 
   const { name, details, pet, type, repeat, frequency, icon, lastDone, nextDue, _id, errors } = values
-
+  
   const isVaccine = useMemo(() => {
     const search = name ? vaccineFuse.search(name) : null
     return !!search?.length && (pet.species === 'Cat' || pet.species === 'Dog')
@@ -70,6 +72,42 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     return repeat ? onValidate({ name, type }) : onValidate({ name, type, 'last visit': lastDone })
   }, [repeat, name, type, lastDone])
 
+  const renderPet = (
+    <ModalInput customLabel={<PetInfo pet={petIdToPet(pet._id)} size="mini" />}>
+      <PetPicker onSelect={(selected: string[]) => onChange('pet', selected[0])} initials={[pet?._id ?? pet]} />
+    </ModalInput>
+  )
+
+  const renderRepeat = (
+    <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
+  )
+
+  const renderFrequency = (
+    <ModalInput maxHeight='90%'
+      label={
+        <Text style={{ maxWidth: '60%' }}>Repeats {frequency && frequencyMap[frequency.type].timesPerIntervalLabel(frequency.timesPerInterval)} {intervalLabel(frequency.interval, frequency.type)}</Text>
+      }
+      onReset={() => onChange('frequency', initialState.frequency)}
+    >
+      <FrequencyPicker initial={frequency} color={petIdToColor(pet._id)}
+        onSelectFrequency={(key: string, selected: any) => onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)}
+      />
+    </ModalInput>
+  )
+
+  const renderType = (
+    <ModalInput label={type}>
+      <IconPicker selected={type} options={healthHelpers.HEALTH_TYPES_OPTIONS} initial={initialState.type} onSelect={(selected: string) =>  onChange('type', selected)} pickerStyles={{ marginTop: 15 }}/>
+    </ModalInput>
+  )
+
+  const mainTable = [
+    { key: 'pet', label: 'Pet', icon: 'pets', value: renderPet },
+    { key: 'type', label: 'Type', icon: 'healthType', value: renderType },
+    { key: 'repeat', label: 'Repeat', icon: 'repeat', value: renderRepeat },
+    { key: 'frequency', label: 'Frequency', icon: 'due', value: renderFrequency },
+  ]
+
   useEffect(() => {
     navigation.setOptions({
       header: () => <Header showGoBackButton={true} rightAction={handleValidate} rightLabel={status === 'pending' ? 'Submitting...' : 'Submit'} navigation={navigation} mode='modal' />
@@ -79,24 +117,16 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   return (
     <ScrollView
       keyboardShouldPersistTaps='handled'
-      contentContainerStyle={[styles.containerWithPadding, { minHeight: windowHeight * 0.75}]}
+      contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
       alwaysBounceVertical={false}
     >
       <TitleInput initial={initialState.name} placeholder='New Vet Visit' onChange={(input: string) => onChange('name', input)} type='health' error={errors?.name} />
       { isVaccine &&
-        <Dropdown label={'Select Vaccine Name'} dataType={pet.species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={(selected: string) => onChange('details', [...details, selected])} initial={details[0]} />
+        <Dropdown label='Search Vaccine' withSearch={true} searchLabel='vaccine' dataType={pet.species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={(selected: string) => onChange('details', [...details, selected])} initial={details[0]} width='80%' buttonStyles={{ ...UI.input, alignSelf: 'center' }} />
       }
 
-      <FormLabel label='Select Pets' icon="pets" width='100%' />
-      <PetPicker onSelect={(selected: string[]) => onChange('pet', selected[0])} initials={[pet?._id ?? pet]} />
-
-      <FormLabel label='Select Type' icon="healthType" width='100%' />
-      <View style={UI.rowCon}>
-        {healthHelpers.HEALTH_TYPES.map(t =>
-          <IconButton key={t} size='large' type='health' title={t} onPress={() => onChange('type', t)} styles={type === t ? UI.active : UI.inactive} />
-        )}
-      </View>
+      <TableForm table={mainTable} withLabel={true} dependentRows={{ frequency: repeat }}/>
 
       <FormLabel label='Previous Visits' icon="schedule" width='100%' />
         <FormError errors={errors} errorKey="last visit" />
@@ -112,22 +142,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         <VisitForm onSubmit={(formData: Visit) => onChange('lastDone', formData)} pet={pet} />
       </ModalInput>
 
-      <View style={styles.labelCon}>
-        <FormLabel label='Repeat' icon="repeat" top={0} bottom={0} />
-        <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
-      </View>
-      { repeat &&
-        <ModalInput maxHeight='90%'
-          label={
-            <Text>Repeats {frequency && frequencyMap[frequency.type].timesPerIntervalLabel(frequency.timesPerInterval)} {intervalLabel(frequency.interval, frequency.type)}</Text>
-          }
-          onReset={() => onChange('frequency', initialState.frequency)}
-        >
-          <FrequencyPicker initial={frequency} color={petIdToColor(pet._id)}
-            onSelectFrequency={(key: string, selected: any) => onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)}
-          />
-        </ModalInput>
-      }
+      
 
 {/*    
       {((name === 'vax' && (species === 'Cat' || species === 'Dog')) || vaccine) &&
@@ -164,7 +179,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         <RNDateTimePicker themeVariant='light' value={new Date(nextDue?.date ?? new Date())} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue({ date: selectedDate.toISOString(), notes: '' }) }} />
       </View>
     } */}
-      <SubButton onPress={onReset} title='Reset' top={10} bottom={10} />
+      <SubButton onPress={onReset} title='Reset' top={40} />
 
     </ScrollView>
   )

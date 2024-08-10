@@ -25,6 +25,7 @@ interface DropdownProps {
   error?: string
   buttonStyles?: ViewStyle
   contentStyles?: ViewStyle
+  contentPosition?: 'top' | 'bottom'
 }
 
 const typeToSource = {
@@ -47,7 +48,7 @@ const typeToSource = {
   'serviceTypes': () => petHelpers.SERVICE_TYPES,
 }
 
-const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-content', initial, buttonStyles, contentStyles, withSearch = false, searchLabel, error }: DropdownProps) => {
+const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-content', initial, buttonStyles, contentStyles, withSearch = false, searchLabel, contentPosition = 'bottom', error }: DropdownProps) => {
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
   const [visible, setVisible] = useState(false)
@@ -61,9 +62,9 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
   const [dropdownLeft, setDropDownLeft] = useState(0)
 
   const openDropDown = (): void => {
-    DropdownBtn.current.measure((fx, fy, _w, h, px, py) => {
+    DropdownBtn.current.measure((fx, fy, w, h, px, py) => {
       setDropdownTop(withSearch? fy + h : py + h)
-      setDropDownLeft(withSearch ? fx - 10 : px - fx - 10) 
+      setDropDownLeft(withSearch ? fx - 10 : buttonStyles ? px - 20 : fx) 
     })
     setVisible(true)
   }
@@ -111,9 +112,10 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
     <View style={{ width: width as DimensionValue, zIndex: focused ? 10 : 2 }}>
       { withSearch ?
         <View style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue }, focused && UI.inputFocused]} ref={DropdownBtn}>
+          <Icon iconSource={getActionIconSource('search')} size='xSmall' styles={{ marginRight: 15 }} />
           <TextInput
             style={{ maxWidth: '80%' }}
-            placeholder='enter search'
+            placeholder={label ?? 'enter search'}
             placeholderTextColor={UI.lightPalette.unfocused}
             value={searchInput}
             onChangeText={onSearch}
@@ -122,9 +124,8 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
             maxLength={50}
             selectTextOnFocus={true}
           />
-          <Icon iconSource={getActionIconSource('search')} size='xSmall' />
         </View>
-        : <TouchableOpacity style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue }, visible && UI.inputFocused]} onPress={toggleDropdown} ref={DropdownBtn}>
+        : <TouchableOpacity style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue, justifyContent: 'space-between' }, visible && UI.inputFocused]} onPress={toggleDropdown} ref={DropdownBtn}>
           <Text style={{ maxWidth: '80%' }}>{selected ?? label}</Text>
           <Icon iconSource={getActionIconSource(visible ? 'up' : 'down')} size='xSmall' />
         </TouchableOpacity>
@@ -133,7 +134,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
 
       { withSearch ?
         visible && <View style={[contentStyles ?? styles.content, { left: dropdownLeft, width: width as DimensionValue, maxHeight: 200 },
-          withSearch ? { bottom: dropdownTop } : { top: dropdownTop }
+          contentPosition === 'bottom' ? { top: dropdownTop } : { bottom: dropdownTop }
         ]}>
           <ScrollView style={Spacing.fullWH}>
             { searchResults.length > 1 ? searchResults.map((result, idx) =>
@@ -149,7 +150,9 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
       : 
         <Modal visible={visible} transparent animationType="none">
           <Pressable style={UI.overlay} onPress={() => setVisible(false)}>
-            <View style={[contentStyles ?? styles.content, { top: dropdownTop, left: dropdownLeft, width: width as DimensionValue, maxHeight: '50%' }]}>
+            <View style={[contentStyles ?? styles.content, { left: dropdownLeft, width: width as DimensionValue, maxHeight: '50%' },
+              contentPosition === 'bottom' ? { top: dropdownTop } : { bottom: dropdownTop }
+            ]}>
                 <FlatList 
                   data={data} 
                   keyExtractor={(item, idx) => idx.toString()}
@@ -173,7 +176,6 @@ const styles = StyleSheet.create({
   dropDownBtn: {
     ...Spacing.flexRow,
     position: 'relative',
-    justifyContent: 'space-between',
     marginVertical: 5,
   },
   buttonCon: {

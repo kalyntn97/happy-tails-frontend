@@ -107,7 +107,6 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
     { key: 'startDate', label: 'Start Date', icon: 'schedule', value: renderStartDate },
     { key: 'repeat', label: 'Repeat', icon: 'repeat', value: renderRepeat },
     { key: 'frequency', label: 'Frequency', icon: 'due', value: renderFrequency },
-
   ]
 
   useEffect(() => {
@@ -117,20 +116,23 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   }, [handleValidate, status, color])
   
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <TitleInput initial={initialState.name} placeholder='New Task' onChange={(input: string) => onChange('name', input)} type='care' error={errors?.name} />
+    <ScrollView
+      keyboardShouldPersistTaps='handled'
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+      alwaysBounceVertical={false}
+    >
+      <TitleInput initial={initialState.name} placeholder='New Task' onChange={(input: string) => onChange('name', input)} type='care' error={errors?.name} />
 
-        <TableForm table={mainTable} withLabel={true} dependentRows={{ frequency: repeat }}/>
+      <TableForm table={mainTable} withLabel={true} dependentRows={{ frequency: repeat }}/>
 
-        <ColorPicker selected={color} buttonWidth={30} pickerStyles={{ marginTop: 10 }} onPress={(selected) => {
-          onChange('color', selected)
-          setColor(selected)
-        }} />
+      <ColorPicker selected={color} buttonWidth={30} pickerStyles={{ marginTop: 10 }} onPress={(selected) => {
+        onChange('color', selected)
+        setColor(selected)
+      }} />
 
-        <SubButton onPress={onReset} title='Reset' top={40} />
-      </View>
-    </TouchableWithoutFeedback>
+      <SubButton onPress={onReset} title='Reset' top={40} />
+    </ScrollView>
   )
 }
 

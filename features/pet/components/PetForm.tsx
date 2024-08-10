@@ -70,7 +70,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
 
         { ['Dog', 'Cat', 'Bird', 'Fish'].includes(species) && <>
           <FormLabel label='Pet Breed' icon='pets' />
-          <Dropdown withSearch={true} label='Select Breed' dataType={species} onSelect={selected => onChange('breed', selected)} initial={breed} width='80%' />
+          <Dropdown withSearch={true} label='Search Breed' dataType={species} onSelect={selected => onChange('breed', selected)} initial={breed} width='80%' contentPosition="top" />
         </> }
       </View>
     </ModalInput>
@@ -158,27 +158,28 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
   }, [color])
 
   return ( 
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <View style={styles.headerCon}>
-          <PhotoUpload photo={photo} placeholder={placeholderPhoto} onSelect={(uri: string) => onChange('photo', uri)} />
-          <View style={[styles.titleCon, { width: '65%' }]}>
-            <FormInput initial={initialState.name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} />
-          </View>
+    <ScrollView
+      keyboardShouldPersistTaps='handled'
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+      alwaysBounceVertical={false}
+    >
+      <View style={styles.headerCon}>
+        <PhotoUpload photo={photo} placeholder={placeholderPhoto} onSelect={(uri: string) => onChange('photo', uri)} />
+        <View style={[styles.titleCon, { width: '65%' }]}>
+          <FormInput initial={initialState.name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} />
         </View>
-        
-        <TableForm table={mainTable} withLabel={true} />
-
-        <ColorPicker selected={color} buttonWidth={30} pickerStyles={{ marginTop: 10 }} onPress={selected => {
-          onChange('color', selected)
-          setColor(selected)
-        }} />
-
-        <SubButton onPress={onReset} title='Reset' top={40} bottom={10} />
       </View>
+      
+      <TableForm table={mainTable} withLabel={true} />
 
-    </TouchableWithoutFeedback>
+      <ColorPicker selected={color} buttonWidth={30} pickerStyles={{ marginTop: 10 }} onPress={selected => {
+        onChange('color', selected)
+        setColor(selected)
+      }} />
 
+      <SubButton onPress={onReset} title='Reset' top={40} bottom={10} />
+    </ScrollView>
   )
 }
 
