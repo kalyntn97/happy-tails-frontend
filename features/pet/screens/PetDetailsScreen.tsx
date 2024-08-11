@@ -12,7 +12,7 @@ import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
 import {  BoxHeader, EmptyList, ErrorImage } from "@components/UIComponents"
 import { getActionIconSource, getPetIconSource, getStatIconSource } from "@utils/ui"
-import { ActionButton, TransparentButton } from "@components/ButtonComponent"
+import { ActionButton, TransparentButton } from "@components/ButtonComponents"
 //store & queries
 import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
 import { useGetPetSettings, useSetActions } from "@store/store"
@@ -36,7 +36,7 @@ const SectionHeader = ({ type, onPress }: { type: SectionType, onPress?: () => v
     <View style={styles.sectionHeaderCon}>
       <Image source={getActionIconSource(icon)} style={{ ...UI.smallIcon }} />
       <Text style={styles.sectionHeader}>{title}</Text>
-      { onPress && <ActionButton title={'filter'} onPress={onPress} left='auto' /> }
+      { onPress && <ActionButton icon={'filter'} onPress={onPress} left='auto' /> }
     </View>
   )
 }
@@ -141,9 +141,9 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
 
   return (    
     <View style={{ ...Spacing.fullWH, backgroundColor: Colors.multi.lightest[pet?.color] }}>
-      <GoBackButton onPress={navigation.goBack} position="topLeft" />
+      <GoBackButton onPress={navigation.goBack} />
       <View style={styles.conHeader}>
-        { topActions.map(action => <ActionButton key={action.key} title={action.key} onPress={action.onPress} size='small' />) }
+        { topActions.map(action => <ActionButton key={action.key} icon={action.key} onPress={action.onPress} />) }
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false} contentContainerStyle={{ ...Spacing.scrollScreenDown, width: '100%' }}>  

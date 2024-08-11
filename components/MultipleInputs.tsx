@@ -51,7 +51,7 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMod
       {inputs.length > 0 &&
         inputs.map((input, index) =>
           <View style={Spacing.flexRow} key={`${inputName}-${index}`}>
-            <ActionButton title='decrease' size='small' onPress={() => handleRemoveInput(input)} />
+            <ActionButton icon='decrease' size='small' onPress={() => handleRemoveInput(input)} />
             <View style={type === 'date' && { marginVertical: 5 }}>
               { type === 'date' ?
                 <RNDateTimePicker themeVariant='light' value={new Date(input) ?? new Date()} maximumDate={new Date()} accentColor={Colors.pink.dark} onChange={(_, selectedDate) => handleUpdateInput(selectedDate, index)} />
@@ -68,7 +68,7 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMod
         )
       }
       <View style={{ ...Spacing.flexRow, marginVertical: 10 }}>
-        <ActionButton title={'increase'} size='small' onPress={handleAddInput} />
+        <ActionButton icon={'increase'} size='small' onPress={handleAddInput} />
         <Text>add {inputName}</Text>
       </View>
     </View>

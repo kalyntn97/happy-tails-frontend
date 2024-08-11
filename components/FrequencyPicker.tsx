@@ -245,11 +245,11 @@ const FrequencyPicker = ({ initial, color = 0, onSelectFrequency, onSelectEndDat
           <View style={styles.rowCon}>
             <View style={styles.dropBtnCon}>
               <Text style={styles.dropBtnLabel}>End Date</Text>
-              <ToggleButton onPress={() => {
+              <ToggleButton isChecked={ending} onPress={() => {
                 setEnding(!ending)
                 onSelectEndDate('ending', !ending)
                 ending && onSelectEndDate('endDate', endDate)
-              }} initial={ending} size='small' />
+              }} />
             </View>
             { ending && 
               <RNDateTimePicker display='inline' themeVariant='light' value={new Date(endDate)} minimumDate={new Date()} onChange={(_, selectedDate) => {

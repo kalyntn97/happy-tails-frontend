@@ -94,12 +94,12 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => 
         
         <View style={styles.labelCon}>
           <Text>Medication reminder</Text>
-          <ToggleButton initial={medReminder} onPress={() =>  onChange('medReminder', !medReminder)} size='small' />
+          <ToggleButton isChecked={medReminder} onPress={() =>  onChange('medReminder', !medReminder)} />
         </View>
 
         <View style={styles.labelCon}>
           <Text>Refill reminder</Text>
-          <ToggleButton initial={refillReminder} onPress={() => onChange('refillReminder', !refillReminder)} size='small' />
+          <ToggleButton isChecked={refillReminder} onPress={() => onChange('refillReminder', !refillReminder)} />
         </View>
         {refillReminder && <>
           <Text style={styles.label}>Refill frequency</Text>

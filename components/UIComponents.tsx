@@ -193,7 +193,7 @@ export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styl
         ref={ref}
         style={[styles ?? UI.input, validatedStyles, { width: width }]}
         placeholder={placeholder ?? 'Title'}
-        placeholderTextColor={UI.lightPalette.unfocused}
+        placeholderTextColor={UI.lightPalette().unfocused}
         value={value}
         onChangeText={setValue}
         onFocus={() => setIsFocused(true)}
@@ -208,7 +208,7 @@ export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styl
       <View style={[Spacing.flexRow, { marginTop: 5 }]}>
         { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: 30 }}/> }
         { isFocused && 
-          <Text style={{ color: UI.lightPalette.unfocused, fontSize: 12 }}>
+          <Text style={{ color: UI.lightPalette().unfocused, fontSize: 12 }}>
             {maxLength - (value ? value.length : 0)}/{maxLength}
           </Text> 
         }
@@ -244,7 +244,7 @@ export const BottomModal = ({ children, modalVisible, height = 'fit-content', ma
       }} style={{ ...UI.modalOverlay, backgroundColor: overlay}}>
         { childrenVisible && 
           <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{ ...UI.bottomModal, height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, backgroundColor: background }}>
-            <GoBackButton position="topLeft" onPress={dismissModal} left={10} top={10} />
+            <GoBackButton onPress={dismissModal} />
             { children }
           </Animated.View> 
         }
@@ -270,7 +270,7 @@ export const ModalInput = ({ children, label, onReset, onClose, height = 'fit-co
         dismissModal()
       }} height={height} maxHeight={maxHeight} overlay={overlay} background={background}>
         { children }
-        { onReset && <SubButton title='Reset' onPress={onReset} color={UI.lightPalette.unfocused} bottom={20} /> }
+        { onReset && <SubButton title='Reset' onPress={onReset} color={UI.lightPalette().unfocused} bottom={20} /> }
       </BottomModal>
     </>
   )

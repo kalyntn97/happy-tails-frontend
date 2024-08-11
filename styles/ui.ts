@@ -4,15 +4,18 @@ import { fullWH, centered, flexRow, flexColumn, basePadding } from "./spacing"
 import { View } from "react-native-reanimated/lib/typescript/Animated"
 import { TextStyle } from "react-native"
 
-export const lightPalette = {
+type accentColor = 'shadow' | 'pink' | 'yellow' | 'purple' | 'green' | 'blue' | 'red'
+
+export const lightPalette = (accent: accentColor = 'pink') => ({
   text: Colors.black,
   button: Colors.black,
-  focused: Colors.pink.darkest,
+  focused: Colors[accent].darkest,
   unfocused: Colors.shadow.dark,
   border: Colors.shadow.dark,
+  accent: Colors[accent].light,
   background: Colors.shadow.lightest,
   error: Colors.red.dark,
-}
+})
 
 export const boxShadow: ViewStyle = {
   elevation: 3,
@@ -36,7 +39,7 @@ export const input: ViewStyle = {
   ...inputBase,
   borderRadius: 8,
   borderWidth: 1,
-  borderColor: lightPalette.border,
+  borderColor: lightPalette().border,
 }
 
 export const card: ViewStyle = {
@@ -44,7 +47,7 @@ export const card: ViewStyle = {
   margin: 10,
   padding: 15,
   borderRadius: 15,
-  backgroundColor: lightPalette.background,
+  backgroundColor: lightPalette().background,
 }
 
 export const cardWithShadow = {
@@ -224,17 +227,17 @@ export const rowWithSeparator: ViewStyle = {
 }
 
 export const inputFocused: TextStyle = {
-  borderColor: lightPalette.focused,
-  color: lightPalette.focused,
+  borderColor: lightPalette().focused,
+  color: lightPalette().focused,
 }
 
 export const inputUnfocused: TextStyle = {
-  borderColor: lightPalette.unfocused,
-  color: lightPalette.text,
+  borderColor: lightPalette().unfocused,
+  color: lightPalette().text,
 }
 
 export const inputError: TextStyle = {
-  color: lightPalette.error,
-  borderColor: lightPalette.error,
+  color: lightPalette().error,
+  borderColor: lightPalette().error,
 }
 

@@ -48,7 +48,7 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
   return (
     <View style={{ ...Spacing.scrollScreenDown, backgroundColor: Colors.multi.lightest[care.color] }}>
       <View style={styles.topBtnCon}>
-        { actions.map(action => <ActionButton key={action.key} title={action.key} onPress={action.onPress} size='small' />) }
+        { actions.map(action => <ActionButton key={action.key} icon={action.key} onPress={action.onPress} size='small' />) }
       </View>
 
       { isError && <ErrorImage /> }                                                              

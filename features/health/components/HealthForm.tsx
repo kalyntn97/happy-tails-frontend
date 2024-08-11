@@ -79,7 +79,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   )
 
   const renderRepeat = (
-    <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
+    <ToggleButton onPress={() => onChange('repeat', !repeat)} isChecked={repeat} />
   )
 
   const renderFrequency = (
@@ -101,11 +101,18 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     </ModalInput>
   )
 
+  const renderPrevious = (
+    <View>
+      <ActionButton icon='increase' onPress={() => onChange('lastDone', { ...lastDone, dueDate: new Date(), appointment: null, notes: null, overDue: false })} size='small' />
+    </View>
+  )
+
   const mainTable = [
     { key: 'pet', label: 'Pet', icon: 'pets', value: renderPet },
     { key: 'type', label: 'Type', icon: 'healthType', value: renderType },
     { key: 'repeat', label: 'Repeat', icon: 'repeat', value: renderRepeat },
     { key: 'frequency', label: 'Frequency', icon: 'due', value: renderFrequency },
+    { key: 'previous', label: 'Previous Visits', icon: 'schedule', value: renderPrevious },
   ]
 
   useEffect(() => {
@@ -134,7 +141,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       <ModalInput 
         label={
           <View style={{ ...Spacing.flexRow }}>
-            <ActionButton title='increase' onPress={() => onChange('lastDone', { ...lastDone, dueDate: new Date(), appointment: null, notes: null, overDue: false })} />
+            <ActionButton icon='increase' onPress={() => onChange('lastDone', { ...lastDone, dueDate: new Date(), appointment: null, notes: null, overDue: false })} />
             <Text>add visit</Text>
           </View>
         }
@@ -142,43 +149,6 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         <VisitForm onSubmit={(formData: Visit) => onChange('lastDone', formData)} pet={pet} />
       </ModalInput>
 
-      
-
-{/*    
-      {((name === 'vax' && (species === 'Cat' || species === 'Dog')) || vaccine) &&
-        <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={handleSaveVaccine} initial={vaccine} width={300} />
-      }
-      <Text style={styles.label}>Previous visits</Text>
-      <MultipleInputs inputName='visit' type='date' initials={initialVisits} onEdit={editPastVisits} />
-
-      <View style={styles.labelCon}>
-        <Text>Next visit due in</Text>
-        <View style={Spacing.flexRow}>
-          <Text>Enter manually</Text>
-          <CheckboxButton initial={allowManualDueDate} onPress={() => setAllowManualDueDate(!allowManualDueDate)} />
-        </View>
-      </View>
-
-      {!allowManualDueDate && 
-        <View style={styles.rowCon}>
-          <TextInput
-            style={[styles.input, { width: 110 }]}
-            placeholder='Enter times'
-            placeholderTextColor={Colors.shadow.reg}
-            onChangeText={(text: string) => setTimes(Number(text))} 
-            value={(times ?? '').toString()} 
-            keyboardType="numeric"
-          />
-          <Dropdown label='Select Frequency' dataType="healthFrequency" onSelect={setFrequency} width={185} initial={frequency} />
-        </View>
-      }
-      
-
-    {allowManualDueDate &&
-      <View style={{ marginTop: 15 }}>
-        <RNDateTimePicker themeVariant='light' value={new Date(nextDue?.date ?? new Date())} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue({ date: selectedDate.toISOString(), notes: '' }) }} />
-      </View>
-    } */}
       <SubButton onPress={onReset} title='Reset' top={40} />
 
     </ScrollView>

@@ -81,7 +81,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   )
 
   const renderRepeat = (
-    <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
+    <ToggleButton onPress={() => onChange('repeat', !repeat)} isChecked={repeat} />
   )
 
   const renderFrequency = (

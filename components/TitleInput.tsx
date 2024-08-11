@@ -80,7 +80,7 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
           ref={titleBtn}
           style={[styles.input, validatedStyles]}
           placeholder={placeholder}
-          placeholderTextColor={UI.lightPalette.unfocused}
+          placeholderTextColor={UI.lightPalette().unfocused}
           value={title}
           onChangeText={handleChange}
           onFocus={() => setIsFocused(true)}
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     width: '60%',
   },
   textLength: {
-    color: UI.lightPalette.unfocused, 
+    color: UI.lightPalette().unfocused, 
     fontSize: 12
   },
 }) 

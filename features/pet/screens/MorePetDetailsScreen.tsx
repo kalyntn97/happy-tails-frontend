@@ -4,7 +4,7 @@ import Toast from 'react-native-toast-message'
 import { useQueryClient } from '@tanstack/react-query'
 //components
 import IdForm from '@pet/components/IdForm'
-import { CloseButton, MainButton } from '@components/ButtonComponent'
+import { CloseButton, MainButton } from '@components/ButtonComponents'
 import Loader from '@components/Loader'
 import { EmptyList, ErrorImage, TopRightHeader, toastConfig } from '@components/UIComponents'
 import PlaceHolder from '@components/PlaceHolder'
@@ -85,7 +85,7 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
         : type === 'services' ? <ServiceDetails service={item} />
         : null
       }
-      <CloseButton size='small' position='topRight' onPress={() => deleteDetailMutation.mutate({ type, detailId: item._id })} />
+      <CloseButton onPress={() => deleteDetailMutation.mutate({ type, detailId: item._id })} />
     </View>
   )
 

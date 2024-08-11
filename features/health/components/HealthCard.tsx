@@ -8,10 +8,10 @@ import { useShallowPets } from '@hooks/sharedHooks'
 import { HEALTHS, VACCINES } from '@health/healthHelpers'
 //components
 import PetInfo from '@components/PetInfo/PetInfo'
-import { CloseButton, TransparentButton } from '@components/ButtonComponent'
+import { CloseButton, TransparentButton } from '@components/ButtonComponents'
 //styles
 import { styles } from '@styles/stylesheets/ModalCardStyles'
-import { Colors, Spacing, Typography, UI } from "@styles/index"
+import { Colors, Spacing, Typography, Forms } from "@styles/index"
 
 interface HealthCardProps {
   health: Health
@@ -39,7 +39,7 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
 
   return (
     <View style={[styles.container, { backgroundColor: petColor }]}>
-      <CloseButton onPress={() => onNavigate()} size='small' position="topRight" />
+      <CloseButton onPress={() => onNavigate()} />
       <View style={styles.header}>
         <Image source={iconSource} style={styles.icon } />
         <Text style={styles.title}>
@@ -58,7 +58,7 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
           <PetInfo pet={health.pet} size='small' />
         </View>
         <View style={Spacing.flexRow}>
-          <Image source={getActionIconSource('repeat')} style={{ ...UI.smallIcon }} />
+          <Image source={getActionIconSource('repeat')} style={{ ...Forms.smallIcon }} />
           <Text style={styles.freq}>Every {health.times} {health.frequency}</Text>
         </View>
       </View>

@@ -8,7 +8,7 @@ import { getActionIconSource } from "@utils/ui"
 //components
 import PetList from "@components/PetInfo/PetList"
 import TrackerPanel from "./TrackerPanel"
-import { CloseButton, TransparentButton } from "@components/ButtonComponent"
+import { CloseButton, TransparentButton } from "@components/ButtonComponents"
 //styles
 import { styles } from "@styles/stylesheets/ModalCardStyles"
 import { Colors, Spacing, UI, Typography } from "@styles/index"
@@ -28,7 +28,7 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
 
   return (
     <View style={[styles.container, { backgroundColor: Colors.multi.lightest[care.color] }]}>
-      <CloseButton onPress={() => onNavigate()} size='small' position="topRight" />
+      <CloseButton onPress={() => onNavigate()} />
       <View style={styles.header}>
         <Image source={iconSource} style={styles.icon } />
         <Text style={styles.title}>{CARES[care.name] ?? care.name}</Text>

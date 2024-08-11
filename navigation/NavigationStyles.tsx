@@ -28,7 +28,7 @@ export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
 export const Header = ({ title, navigation, showGoBackButton, mode, rightLabel = 'Submit', rightAction, bgColor = Colors.shadow.lightest }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string, rightLabel?: string, rightAction?: () => void, bgColor?: string }) => (
   // title ? 
   <View style={[styles.headerCon, { height: title ? 70 : 50, marginTop: mode === 'card' ? 25 : 15, backgroundColor: bgColor }]}>
-    { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={mode === 'card' ? 15 : 10} left={10} /> }
+    { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} top={mode === 'card' ? 15 : 10 } /> }
     { title && <Text style={styles.headerText}>{title}</Text> }
     { rightAction && <RightButton title={rightLabel} onPress={rightAction} buttonStyles={{ top: mode === 'card' ? 25 : 20 }} />      
     }

@@ -116,7 +116,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
           <TextInput
             style={{ maxWidth: '80%' }}
             placeholder={label ?? 'enter search'}
-            placeholderTextColor={UI.lightPalette.unfocused}
+            placeholderTextColor={UI.lightPalette().unfocused}
             value={searchInput}
             onChangeText={onSearch}
             onFocus={() => setFocused(true)}
@@ -139,7 +139,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
           <ScrollView style={Spacing.fullWH}>
             { searchResults.length > 1 ? searchResults.map((result, idx) =>
               <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
-                <Text style={{ color: lightPalette.text }}>
+                <Text style={{ color: lightPalette().text }}>
                   { result.item }
                 </Text>
               </TouchableOpacity>
@@ -158,7 +158,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
                   keyExtractor={(item, idx) => idx.toString()}
                   renderItem={({ item }) => (
                     <TouchableOpacity style={[styles.itemCon, item === selected && styles.itemConSelected]} onPress={() => onItemPress(item)}>
-                      <Text style={item === selected ? Typography.focused : { color: lightPalette.text }}>
+                      <Text style={item === selected ? Typography.focused : { color: lightPalette().text }}>
                         { item }
                       </Text>
                     </TouchableOpacity>
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   itemCon: {
     paddingVertical: 10,
-    borderColor: lightPalette.border,
+    borderColor: lightPalette().border,
     borderTopWidth: 0.5,
     borderBottomWidth: 0.5,
   },

@@ -95,7 +95,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
   )
 
   const renderAlteredValue = (
-    <ToggleButton initial={altered.value} onPress={() => onChange('altered', { value: !altered.value, date: null })} size="small" />
+    <ToggleButton isChecked={altered.value} onPress={() => onChange('altered', { value: !altered.value, date: null })} />
   )
   const renderAlteredDate = (
     <DateInput date={altered.date} placeholder='Unknown date' onChangeDate={(selected) => onChange('altered', { ...altered, date: selected })} color={color} />
@@ -122,7 +122,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
     <DateInput date={status.date} placeholder='Unknown date' onChangeDate={(selected) => onChange('status', { ...altered, date: selected })} color={color} />
   )
   const renderStatusArchive = (
-    <ToggleButton initial={status.archive} onPress={() => onChange('status', { ...status, archive: !status.archive })} size="small" />
+    <ToggleButton isChecked={status.archive} onPress={() => onChange('status', { ...status, archive: !status.archive })} />
   )
 
   const statusTable = [
