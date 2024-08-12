@@ -3,7 +3,7 @@ import { NativeStackNavigationOptions } from "@react-navigation/native-stack"
 import { moderateVerticalScale } from "react-native-size-matters"
 import { Pressable, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native"
 //components
-import { GoBackButton } from "@components/ButtonComponent"
+import { GoBackButton } from "@components/ButtonComponents"
 //styles
 import { Colors, UI, Typography } from "@styles/index"
 

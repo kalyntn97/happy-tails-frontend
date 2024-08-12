@@ -54,7 +54,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
   const renderType = (
     <ModalInput height='90%' customLabel={
       <View style={Spacing.flexRow}>
-        <Icon iconSource={getPetIconSource(species)} size='xSmall' styles={{ marginRight: 10 }}/>
+        <Icon type='pet' name={species} styles={{ marginRight: 10 }} />
         { ['Dog', 'Cat', 'Bird', 'Fish'].includes(species) ?
           <Text>{breed ?? 'Unknown breed'}</Text> 
           : <Text>{species}</Text>
@@ -135,7 +135,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
     <ModalInput customLabel={
       <View style={Spacing.flexRow}>
         <Text style={{ marginRight: 10 }}>{status.value}</Text>
-        <Icon iconSource={getActionIconSource(status.archive ? 'hide' : 'show')} size="xSmall" />
+        <Icon name={status.archive ? 'hide' : 'show'} />
       </View>
     }>
       <TableForm table={statusTable} dependentRows={{ statusDate: status.value === STATUS[1] }} />

@@ -14,8 +14,8 @@ import { windowWidth } from '@utils/constants'
 
 
 export interface FrequencyPicker extends Frequency {
-  ending: boolean
-  endDate: Date
+  ending?: boolean
+  endDate?: Date
 }
 
 type Props = {

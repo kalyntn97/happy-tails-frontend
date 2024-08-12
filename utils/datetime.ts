@@ -1,3 +1,11 @@
+export const months = [
+  'January', 'February', 'March', 'April',
+  'May', 'June', 'July', 'August',
+  'September', 'October', 'November', 'December'
+]
+
+export const daysOfWeek: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
 export const getDateInfo = (input: string) => {
   const inputDate = input === 'today' ? new Date() : new Date(input)
   const date = inputDate.getDate()
@@ -19,31 +27,23 @@ export const getDateInfo = (input: string) => {
   return { inputDate, date, month, monthName, year, day, week, firstDayOfMonth, lastDayOfMonth, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
 }
 
-export const getDateConstructor = (dateString: string): Date => {
-  const date = new Date(dateString)
-  date.setHours(0, 0, 0, 0)
+const getDateConstructor = (string: string, withTimes: boolean = false) => {
+  const date = string === 'today' ? new Date() : new Date(string)
+  if (!withTimes) date.setHours(0, 0, 0, 0)
   return date
 }
 
-export const compareDates = (string1: string, string2: string): number => {
-  const date1 = string1 === 'today' ? new Date() : new Date(string1)
-  const date2 = string2 === 'today' ? new Date() : new Date(string2)
+export const compareDates = (string1: string, string2: string, withTimes: boolean = false): number => {
+  const date1 = getDateConstructor(string1, withTimes)
+  const date2 = getDateConstructor(string2, withTimes)
   return date1.toISOString().localeCompare(date2.toISOString())
 }
-
-export const months = [
-  'January', 'February', 'March', 'April',
-  'May', 'June', 'July', 'August',
-  'September', 'October', 'November', 'December'
-]
 
 export const getYears = () => {
   const { year } = getDateInfo('today')
   let years = Array.from({length: year - 2012}, (_, index) => 2015 + index)
   return years
 }
-
-export const daysOfWeek: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 export const getMonth = (monthIdx: number) => months[monthIdx - 1] // 0-index
 
@@ -80,17 +80,54 @@ export const countYearsBetween = (start: string, end: string) => {
   return parseFloat(timeInYears.toFixed(1))
 }
 
-export const getDateFromRange = (input: string, unit: string, count: number, direction: number) => {
+export const getDateFromRange = (input: string, unit: string, count: number, direction: number, repeatCount) => {
   //* direction is forward (1) or backward (-) from date
   const { inputDate: output, date, month, year } = getDateInfo(input)
-  const outputMap: Record<string, () => void> = {
-    day: () => output.setDate(date + count * direction),
-    week: () => output.setDate(date + 7 * count * direction),
-    month: () => output.setMonth(month + count * direction - 1),
-    year: () => output.setFullYear(year + count * direction),
+  
+  if (!repeatCount) {
+    const outputMap: Record<string, () => void> = {
+      day: () => output.setDate(date + count * direction),
+      week: () => output.setDate(date + 7 * count * direction),
+      month: () => output.setMonth(month + count * direction),
+      year: () => output.setFullYear(year + count * direction),
+    }
+    outputMap[unit]?.()
+    return output
   }
-  const getOutputDate = outputMap[unit]
-  if (getOutputDate) getOutputDate()
+  //* Calculate adjustments based on repeat patterns
+  const outputMapWithAdjustments = {
+    day: () => output.setDate(date + count * direction),
+    week: () => {
+      const dayIndex = repeatCount.findIndex(d => d === output.getDay())
+      const weekAdjustment = repeatCount.length > 1 && dayIndex !== -1 && dayIndex < repeatCount.length - 1
+        ? repeatCount[dayIndex + 1] - repeatCount[dayIndex]
+        : 7 * direction
+      
+      output.setDate(date + weekAdjustment)
+    },
+    month: () => {
+      const dateIndex = repeatCount.findIndex(d => d === date)
+      if (repeatCount.length > 1 && dateIndex !== -1 && dateIndex < repeatCount.length - 1) {
+        output.setDate(date + (repeatCount[dateIndex + 1] - repeatCount[dateIndex]))
+      } else output.setMonth(month + count * direction)
+    },
+    year: () => {
+      const months = Object.keys(repeatCount)
+      const dateIndex = repeatCount[month]?.findIndex(d => d === date) ?? -1
+      const monthIndex = months.indexOf(String(month))
+      
+      if (repeatCount[month]?.length > 1 && dateIndex !== -1 && dateIndex < repeatCount[month]?.length - 1) {
+        output.setDate(repeatCount[month][dateIndex + 1])
+      } else if (months.length > 1 && monthIndex !== -1 && monthIndex < months.length - 1) {
+        const nextMonth = repeatCount[months[monthIndex + 1]]
+        output.setMonth(nextMonth - 1)
+        output.setDate(repeatCount[nextMonth][0])
+      } else output.setFullYear(year + count * direction)
+    },
+  }
+
+  outputMapWithAdjustments[unit]?.()
+
   return output
 }
 

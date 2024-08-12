@@ -15,7 +15,7 @@ import YearChart from "@components/Charts/YearChart"
 import FillChart from "@components/Charts/FillChart"
 import Loader from "@components/Loader"
 import { BoxHeader, BoxWithHeader, ErrorImage } from "@components/UIComponents"
-import { ActionButton, StatButton } from "@components/ButtonComponent"
+import { ActionButton, StatButton } from "@components/ButtonComponents"
 //styles
 import { styles } from "@styles/stylesheets/DetailsScreenStyles"
 import { Colors, UI, Spacing } from '@styles/index'
@@ -90,34 +90,32 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
             <PetList petArray={care.pets} size='small' />
 
             <View style={styles.btnContainer}>
-              {careStats.map(stat =>
+              { careStats.map(stat =>
                 <StatButton key={stat.header} header={stat.header} body={stat.body} stat={stat.stat} bgColor={Colors.multi.light[care.color]} size='medium' disabled={true} />
               )}
             </View>
           </View>
 
-          <BoxWithHeader 
-            title='History'
-            titleIconSource={getActionIconSource('chart')}
-            content={
-              trackers.map((tracker: Tracker, idx: number) =>
-                <React.Fragment key={`tracker-${idx}`}>
-                  {care.frequency === 'Daily' 
-                  ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={care.times} />
-                  : care.times === 1 && care.frequency !== 'Yearly'
-                  ? <FillChart key={`1X-${idx}`} tracker={tracker} frequency={care.frequency} times={care.times} />
-                  : ( care.frequency === 'Weekly' || care.frequency === 'Monthly' ) 
-                    ? <BarChart key={`${care.frequency}-${idx}`} tracker={tracker} frequency={care.frequency} times={care.times} />
-                    : <YearChart key={`Yearly-${idx}`} tracker={tracker} times={care.times} />
-                  }
-                </React.Fragment>
-              )
-            }
-          />
+          <BoxWithHeader title='History' iconName="chart">
+            { trackers.map((tracker: Tracker, idx: number) =>
+              <React.Fragment key={`tracker-${idx}`}>
+                {care.frequency === 'Daily' 
+                ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={care.times} />
+                : care.times === 1 && care.frequency !== 'Yearly'
+                ? <FillChart key={`1X-${idx}`} tracker={tracker} frequency={care.frequency} times={care.times} />
+                : ( care.frequency === 'Weekly' || care.frequency === 'Monthly' ) 
+                  ? <BarChart key={`${care.frequency}-${idx}`} tracker={tracker} frequency={care.frequency} times={care.times} />
+                  : <YearChart key={`Yearly-${idx}`} tracker={tracker} times={care.times} />
+                }
+              </React.Fragment>
+            )}
+          </BoxWithHeader>
+            
+          
 
           <View style={{ ...UI.roundedCon}}>
             {actions.map(action => 
-              <BoxHeader key={action.key} title={action.key} titleIconSource={getActionIconSource(action.icon)} onPress={action.onPress} titleColor={action.key === 'delete' && Colors.red.dark} />
+              <BoxHeader key={action.key} title={action.key} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} />
             )}
           </View>
         </ScrollView> 

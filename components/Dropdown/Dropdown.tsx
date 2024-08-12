@@ -112,7 +112,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
     <View style={{ width: width as DimensionValue, zIndex: focused ? 10 : 2 }}>
       { withSearch ?
         <View style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue }, focused && UI.inputFocused]} ref={DropdownBtn}>
-          <Icon iconSource={getActionIconSource('search')} size='xSmall' styles={{ marginRight: 15 }} />
+          <Icon name='search' styles={{ marginRight: 15 }} />
           <TextInput
             style={{ maxWidth: '80%' }}
             placeholder={label ?? 'enter search'}
@@ -127,7 +127,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
         </View>
         : <TouchableOpacity style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue, justifyContent: 'space-between' }, visible && UI.inputFocused]} onPress={toggleDropdown} ref={DropdownBtn}>
           <Text style={{ maxWidth: '80%' }}>{selected ?? label}</Text>
-          <Icon iconSource={getActionIconSource(visible ? 'up' : 'down')} size='xSmall' />
+          <Icon name={visible ? 'up' : 'down'} />
         </TouchableOpacity>
       }
       { error && <ErrorMessage error={error} /> }

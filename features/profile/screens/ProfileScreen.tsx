@@ -83,16 +83,15 @@ const ProfileScreen = ({ navigation, route }) => {
         </View>
 
         <View style={styles.bodyCon}>
-          <BoxWithHeader title='All Pets' titleIconSource={getActionIconSource('home')} onPress={() => navigation.navigate('Pets', { screen: 'Index' })} content={
-            <View style={{ width: '100%', paddingTop: 10 }}>
-              <PetList petArray={data.pets} size='compact' />
-            </View>
-          } />
+          <BoxWithHeader title='All Pets' iconName="home" onPress={() => navigation.navigate('Pets', { screen: 'Index' })}>
+            <PetList petArray={data.pets} size='compact' />
+          </BoxWithHeader>
+          
           <View style={{...UI.roundedCon}}>
-            <BoxHeader title="All pet care tasks" titleIconSource={getActionIconSource('care')} onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
-            <BoxHeader title="All vet visits" titleIconSource={getActionIconSource('health')} onPress={() => navigation.navigate('Home', { screen: 'HealthIndex' })} />
-            <BoxHeader title="Update profile" titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('Edit', { profile : profile })} />
-            <BoxHeader title="Settings" titleIconSource={getActionIconSource('settings')} onPress={() => navigation.navigate('Settings', { profile : profile })} />
+            <BoxHeader title="All pet care tasks" iconName="care" onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
+            <BoxHeader title="All vet visits" iconName="health" onPress={() => navigation.navigate('Home', { screen: 'HealthIndex' })} />
+            <BoxHeader title="Update profile" iconName="editSquare" onPress={() => navigation.navigate('Edit', { profile : profile })} />
+            <BoxHeader title="Settings" iconName="settings" onPress={() => navigation.navigate('Settings', { profile : profile })} />
           </View>
         </View>
       </View>

@@ -68,7 +68,7 @@ export const ActionButton= memo(({ title, icon, onPress, size = 'xSmall', button
       position && positionMap(h, v)[position] as ViewStyle,
     ]}>
       <Image source={getActionIconSource(icon)} style={iconSize} />
-      { title && <Text style={textStyles}>{title}</Text> }
+      { title && <Text style={[{ marginLeft: 10 }, textStyles]}>{title}</Text> }
     </TouchableOpacity>
   )
 })

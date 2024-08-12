@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { lightPalette } from "@styles/ui"
 
 export const styles = StyleSheet.create({
   container: {
@@ -64,5 +65,18 @@ export const styles = StyleSheet.create({
   catAnimation: {
     width: '60%',
     aspectRatio: 1,
+  },
+  contentCon: {
+    ...UI.roundedCon,
+    ...Spacing.flexColumn, 
+    alignItems: 'flex-start',
+  },
+  rowCon: {
+    ...Spacing.flexRow,
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: lightPalette().border,
   }
 })

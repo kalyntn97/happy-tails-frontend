@@ -1,5 +1,5 @@
 //npm modules
-import { useEffect, useState } from "react"
+import { memo, useEffect, useMemo, useState } from "react"
 import { StyleSheet, View, Text, ScrollView, Pressable, Image, Modal } from "react-native"
 import { useQueryClient } from "@tanstack/react-query"
 //types & context & hooks
@@ -11,7 +11,7 @@ import { showDeleteConfirmDialog } from "@hooks/sharedHooks"
 import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
 import {  BoxHeader, EmptyList, ErrorImage } from "@components/UIComponents"
-import { getActionIconSource, getPetIconSource, getStatIconSource } from "@utils/ui"
+import { IconType, getActionIconSource, getPetIconSource, getStatIconSource } from "@utils/ui"
 import { ActionButton, TransparentButton } from "@components/ButtonComponents"
 //store & queries
 import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
@@ -41,29 +41,29 @@ const SectionHeader = ({ type, onPress }: { type: SectionType, onPress?: () => v
   )
 }
 
-const ItemHeaderList= ({ type, logs, info, navigation, onReset, petId }: { type: SectionType, logs: string[], info: string[], navigation: any, onReset: () => void, petId: string }) => {
-  const getHeader = () => ({
-    key: (log: string) => log,
-    titles: () => type === 'logs' ? logs : info, 
-    getIcon: (log: string) => type === 'logs' ? getStatIconSource(log) : getActionIconSource(log), 
-    getName: (log: string) => type === 'logs' ? STATS[log].name : PET_DETAILS[log],
-    onNavigate: (log: string) => {
+const ItemHeaderList= memo(({ type, logs, info, navigation, onReset, petId }: { type: SectionType, logs: string[], info: string[], navigation: any, onReset: () => void, petId: string }) => {
+  const header = useMemo(() => {
+    const titles = type === 'logs' ? logs : info
+    const iconType: IconType = type === 'logs' ? 'stat' : 'action'
+    const getName =  (log: string) => type === 'logs' ? STATS[log].name : PET_DETAILS[log]
+    const onNavigate = (log: string) => {
       switch(type) {
         case 'info': return navigation.navigate('PetMoreDetails', { petId, show: log })
         case 'logs': return navigation.navigate('LogDetails', { stat: log })
         default: return null
       }
-    } 
-  })
-  const header = getHeader()
-  const titles = header.titles()
+    }
+    return { titles, iconType, getName, onNavigate }
+  }, [type, logs, info, petId, navigation])
+
+  if (header.titles.length === 0 ) return <TransparentButton title='Reset' onPress={onReset} />
 
   return (
-    titles.length > 0 ? titles.map(log =>
-      <BoxHeader key={header.key(log)} title={header.getName(log)} titleIconSource={header.getIcon(log)} mode='light' onPress={() => header.onNavigate(log)} />
-    ) : <TransparentButton title='Reset' onPress={onReset} />
+    header.titles.map(log =>
+      <BoxHeader key={log} title={header.getName(log)} iconType={header.iconType} iconName={log} mode='light' onPress={() => header.onNavigate(log)} />
+    )
   )
-}
+})
 
 const ModalItem = ({ type, option, logs, info, onPress }: { type: string, option: SectionType, logs: string[], info: string[], onPress: () => void }) => {
   const getItem = () => ({
@@ -171,7 +171,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
           <View>
             <SectionHeader type='actions' />
             <View style={{ ...UI.roundedCon }}>
-              { bottomActions.map(action => <BoxHeader key={action.key} title={action.title} titleIconSource={getActionIconSource(action.icon)} onPress={action.onPress} titleColor={action.key === 'delete' && Colors.red.dark} mode={action.key === 'delete' ? 'dark' : 'light'} />) }
+              { bottomActions.map(action => <BoxHeader key={action.key} title={action.title} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} mode={action.key === 'delete' ? 'dark' : 'light'} />) }
             </View>
           </View>
 

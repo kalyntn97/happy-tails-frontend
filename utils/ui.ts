@@ -63,8 +63,8 @@ const actionIconSource = {
   undo: require('@assets/icons/action-undo.png'),
   search: require('@assets/icons/action-search.png'),
   back: require('@assets/icons/action-back.png'),
-  upSquare: require('@assets/icons/action-up_square.png'),
   up: require('@assets/icons/action-up.png'),
+  upSquare: require('@assets/icons/action-up_square.png'),
   down: require('@assets/icons/action-down.png'),
   downSquare: require('@assets/icons/action-down_square.png'),
   next: require('@assets/icons/action-next.png'),
@@ -72,6 +72,7 @@ const actionIconSource = {
   prev: require('@assets/icons/action-prev.png'),
   prevRound: require('@assets/icons/action-prev_round.png'),
   freq: require('@assets/icons/action-calendar_freq.png'),
+  due: require('@assets/icons/action-due.png'),
   dueColor: require('@assets/icons/action-calendar_due.png'),
   done: require('@assets/icons/action-calendar_done.png'),
   overdue: require('@assets/icons/action-calendar_overdue.png'),
@@ -92,7 +93,6 @@ const actionIconSource = {
   healthType: require('@assets/icons/action-health_type.png'),
   healthRecord: require('@assets/icons/action-health_record.png'),
   schedule: require('@assets/icons/action-schedule.png'),
-  due: require('@assets/icons/action-due.png'),
   allergies: require('@assets/icons/action-pet_allergy.png'),
   ids: require('@assets/icons/action-pet_id.png'),
   illnesses: require('@assets/icons/action-pet_illness.png'),
@@ -284,4 +284,20 @@ export const getStatIconSource = (name: string) => {
 
 export const getStatQualIconSource = (name: string, value: number) => {
   return statQualIconSource[name][value]
+}
+
+export type IconType = 'action' | 'care' | 'health' | 'pet' | 'stat'
+
+const iconMap = {
+  action: (name: string) => getActionIconSource(name),
+  care: (name: string) => getCareIconSource(name),
+  health: (name: string) => getHealthIconSource(name),
+  pet: (name: string) => getPetIconSource(name),
+  stat: (name: string) => getStatIconSource(name),
+}
+
+export const getIconByType = (type: IconType, name: string) => {
+  const iconSource = iconMap[type]
+  if (!iconSource) console.error(`Icon type ${type} not found.`)
+  return iconSource(name) || null
 }

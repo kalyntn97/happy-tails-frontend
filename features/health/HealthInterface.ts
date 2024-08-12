@@ -17,11 +17,11 @@ export interface Health {
   _id: string | null
   name: string
   details: string[]
-  pet: PetBasic | string
+  pet: PetBasic
   type: 'Routine' | 'Emergency' | 'Illness'
   repeat: boolean
   frequency: Frequency | null
-  lastDone: Visit | null
+  lastDone: Visit[] | []
   nextDue: Visit | null
   icon?: number
 }

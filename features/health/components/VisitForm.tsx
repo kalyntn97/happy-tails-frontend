@@ -1,54 +1,41 @@
 import { KeyboardAvoidingView, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
+import { useNavigation } from '@react-navigation/native'
 //utils & hooks
+import { Pet, PetBasic, Service } from '@pet/PetInterface'
 import useForm from '@hooks/useForm'
+import { useShallowPets } from '@hooks/sharedHooks'
 //components
 import { DateInput, FormInput, FormLabel, Icon, ModalInput, NoteInput, TableForm } from '@components/UIComponents'
+import ServiceForm from '@pet/components/ServiceForm'
+import Dropdown from '@components/Dropdown/Dropdown'
 //styles
 import { Buttons, Colors, Spacing, UI } from '@styles/index'
-import { getActionIconSource } from '@utils/ui'
-import { Pet } from '@pet/PetInterface'
-import { VisitFormData } from '@health/HealthInterface'
-import MorePetDetailsScreen from '@pet/screens/MorePetDetailsScreen'
-import { useNavigation } from '@react-navigation/native'
-import { useShallowPets } from '@hooks/sharedHooks'
-import Dropdown from '@components/Dropdown/Dropdown'
-import PlaceHolder from '@components/PlaceHolder'
-import { TransparentButton } from '@components/ButtonComponents'
-import ToggleableForm from '@components/ToggleableForm'
-import ServiceForm from '@pet/components/ServiceForm'
-import { ScrollView } from 'react-native-gesture-handler'
+import { ToggleButton } from '@components/ButtonComponents'
+import { compareDates } from '@utils/datetime'
 
 type Props = {
   initialValues?: any
   pet: Pet
-  onSubmit: (formData: VisitFormData) => void
+  onSetVisit: (formData: Visit) => void
+  isDue?: boolean
 }
 
-const AppointmentForm = ({ appointment, pet, onSetAppointment }: { appointment: any, pet: Pet, onSetAppointment: (formData: any) => void }) => {
+const VetService = ({ vet, onSetVet, pet }: { vet: Service, onSetVet: (selected: Service) => void, pet: PetBasic }) => {
   const { petServices } = useShallowPets()
   const services = petServices(pet._id)
-  const navigation = useNavigation()
- 
-  const renderAptDate = (
-    <DateInput date={appointment?.date ?? new Date()} onChangeDate={(selected: Date) => {
-      onSetAppointment({ ...appointment, date: selected })
-    }} />
-  )
 
-  const PetService = () => (
+  return (
     <View>
-      { appointment?.vet ?
+      { vet ?
         <View style={Spacing.flexColumn}>
           {/* <Text>{appointment.vet.name}</Text>
           <Text>{appointment.vet.address}</Text>
           <Text>{appointment.vet.email}</Text>
           <Text>{appointment.vet.phone}</Text> */}
         </View>
-      : <ModalInput label={'No vet added.'} onReset={() => onSetAppointment({ ...appointment, vet: null })}>
-        { services.length > 0 ? <Dropdown width='70%' dataArray={services} onSelect={(selected) => {
-            onSetAppointment({ ...appointment, vet: selected })
-          }}/>
+      : <ModalInput label={'No vet added.'} onReset={() => onSetVet(null)}>
+        { services.length > 0 ? <Dropdown width='70%' dataArray={services} onSelect={(selected: Service) => onSetVet(selected)} />
           : <ModalInput label='Add Vet' height='93%'>
             <ServiceForm />
           </ModalInput>  
@@ -57,45 +44,68 @@ const AppointmentForm = ({ appointment, pet, onSetAppointment }: { appointment: 
       }
     </View>
   )
+}
+
+const AppointmentForm = ({ appointment, pet, onSetAppointment, isDue = true }: { appointment: any, pet: Pet, onSetAppointment: (formData: any) => void, isDue: boolean }) => {
+  const renderAptDate = (
+    <DateInput date={appointment?.date ?? new Date()} onChangeDate={(selected: Date) => {
+      onSetAppointment({ ...appointment, date: selected })
+    }} />
+  )
+
+  const renderVet = (
+    <VetService vet={appointment.vet} onSetVet={(selected: Service) => onSetAppointment({ ...appointment, vet: selected })} pet={pet} />
+  )
 
   const renderCompleted = (
-    <Text>Not completed</Text>
+    <ToggleButton isChecked={appointment.completed} onPress={() => onSetAppointment({ ...appointment, completed: !appointment.completed })} />
   )
 
   const formData = [
     { key: 'date', icon: 'schedule', value: renderAptDate },
-    { key: 'vet', icon: 'vet', value: <PetService /> },
+    { key: 'vet', icon: 'vet', value: renderVet },
     { key: 'completed', icon: 'check', value: renderCompleted },
   ]
 
   return (
-    <TableForm table={formData} />
+    <TableForm table={formData} dependentRows={{ completed: isDue }} />
   )
 }
 
-const VisitForm = ({ initialValues, pet, onSubmit }: Props) => {
+const VisitForm = ({ initialValues, pet, onSetVisit, isDue = false }: Props) => {
   const initialState = {
     dueDate: initialValues?.dueDate ?? new Date(),
-    overDue: initialValues?.overdue ?? false,
+    overdue: initialValues?.overdue ?? false,
     appointment: initialValues?.appointment ?? null,
     notes: initialValues?.notes ?? null,
     _id: initialValues?._id ?? null,
   }
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
-  const { dueDate, overDue, appointment, notes } = values
+  const { dueDate, overdue, appointment, notes } = values
 
   const renderDueDate = (
-    <DateInput date={dueDate} onChangeDate={(selected: Date) => onChange('dueDate', selected)} buttonTextStyles={dueDate < new Date() && { color: Colors.red.darkest }} />
+    <DateInput date={dueDate} onChangeDate={(selected: Date) => {
+      const overdue = compareDates(selected.toISOString(), 'today') < 0
+      onChange('dueDate', selected)
+      onChange('overdue', overdue)
+      onSetVisit({ dueDate: selected, overdue: overdue, appointment, notes })
+    }} buttonTextStyles={overdue && { color: Colors.red.darkest }} />
   )
 
   const renderAppointment = (
-    <ModalInput label={appointment?.vet?.name ?? 'No appointment scheduled.'} onReset={() => onChange('appointment', null)}>
-      <AppointmentForm appointment={appointment} pet={pet} onSetAppointment={(formData) => onChange('appointment', formData)} />
+    <ModalInput label={appointment.completed ? `${appointment.date.toDateString()} ${appointment.vet ? appointment.vet.name : 'Unknown Vet'}` : 'No appointment scheduled.'} onReset={() => onChange('appointment', null)}>
+      <AppointmentForm isDue={isDue} appointment={appointment} pet={pet} onSetAppointment={(formData) => {
+        onChange('appointment', formData)
+        onSetVisit({ dueDate, overdue, appointment: formData, notes })
+      }} />
     </ModalInput>
   )
 
   const renderNotes = (
-    <NoteInput notes={notes} onChange={(text: string) => onChange('notes', text)} buttonStyles={{ maxWidth: '80%' }} />
+    <NoteInput notes={notes} onChange={(text: string) => {
+      onChange('notes', text)
+      onSetVisit({ dueDate, overdue, appointment, notes: text })
+    }} />
   )
 
   const formData = [
@@ -105,15 +115,12 @@ const VisitForm = ({ initialValues, pet, onSubmit }: Props) => {
   ]
 
   function handleSubmit() {
-    onSubmit({ dueDate, overDue, appointment, notes })
+    onSetVisit({ dueDate, overdue, appointment, notes })
   }
+  
   return (
     <TableForm table={formData} />
   )
 }
-
-const styles = StyleSheet.create({
-  
-})
 
 export default VisitForm

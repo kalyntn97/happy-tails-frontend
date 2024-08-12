@@ -1,7 +1,7 @@
 import { ActivityIndicator, DimensionValue, Image, ImageStyle, Keyboard, KeyboardAvoidingView, KeyboardEventListener, Modal, Platform, Pressable, StyleSheetProperties, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native"
 import { Spacing, Colors, Typography, UI } from "@styles/index"
-import { ComponentProps, FC, MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { getActionIconSource } from "@utils/ui"
+import { ComponentProps, FC, MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
+import { IconType, getActionIconSource, getIconByType } from "@utils/ui"
 import { ImageSourcePropType } from "react-native"
 import { ToastConfig, ToastConfigParams, ToastOptions, ToastProps } from "react-native-toast-message"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
@@ -14,62 +14,50 @@ type Size = 'small' | 'medium' | 'large' | 'xSmall' | 'xLarge'
 
 type BoxHeaderProps = {
   title: string
-  titleIconSource?: ImageSourcePropType
+  iconType?: IconType
+  iconName?: string
+  rightAction?: ReactNode | any
+  withContent?: boolean
   onPress?: () => void
-  titleColor?: string
+  color?: string
   arrow?: string
   mode?: 'light' | 'dark'
-  rightContent?: any
 }
 
 interface BoxProps extends BoxHeaderProps {
-  content: any
+  children: ReactNode
+  contentStyles?: ViewStyle
 }
 
-export const BoxHeader = ({ title, onPress, titleColor, arrow, mode, titleIconSource, rightContent }: BoxHeaderProps) => (
-  <Pressable style={{
-    ...Spacing.flexRow,
-    borderBottomWidth: 1,
-    borderColor: 'lightgray',
-    width: '100%',
-    paddingVertical: 10,
-  }}
-    onPress={onPress}
-  >
-    { titleIconSource && <Image source={titleIconSource} style={{ ...UI.smallIcon }} /> }
-    <Text style={[
-      { ...Typography.xSmallHeader, margin: 0, marginLeft: titleIconSource ? 7 : 2, textAlign: 'left', textTransform: 'capitalize' }, 
-    titleColor && { color: titleColor },
-    mode === 'light' && { fontWeight: 'normal' },
+export const BoxHeader = ({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, mode, rightAction, withContent = false }: BoxHeaderProps) => (
+  <Pressable onPress={onPress} style={[Spacing.flexRow, { borderBottomWidth: 1, borderColor: 'lightgray', width: '100%', paddingVertical: 10 }]}>
+    { iconName && <Icon type={iconType} name={iconName} /> }
+    <Text style={[Typography.xSmallHeader, { color: color, margin: 0, marginLeft: iconName ? 7 : 2, textAlign: 'left', textTransform: 'capitalize' }, 
+      mode === 'light' && { fontWeight: 'normal' },
     ]}>
       { title }
     </Text>
-    <View style={{ ...Spacing.flexRow, marginLeft: 'auto' }}>
-      { rightContent && rightContent }
-      <Image source={arrow === 'down' ? getActionIconSource('down') : getActionIconSource('next')} style={{ ...UI.xSmallIcon, marginLeft: 10 }} />
+    <View style={[Spacing.flexRow, { marginLeft: 'auto' }]}>
+      { rightAction }
+      <Icon name={withContent ? 'down' : 'next'} styles={{ marginLeft: 10 }} />
     </View>
   </Pressable>
 )
 
-export const BoxWithHeader = ({ title, titleIconSource, onPress, content, titleColor, arrow }: BoxProps) => (
-  <View style={{ ...UI.roundedCon }}>
-    <BoxHeader title={title} onPress={onPress} titleColor={titleColor} arrow={arrow} titleIconSource={titleIconSource}/>
-    <View style={{
-      width: '100%'
-    }}>
-      { content }
-    </View>
+export const BoxWithHeader = ({ title, iconType = 'action', iconName, onPress, children, color, rightAction, mode, contentStyles }: BoxProps) => (
+  <View style={UI.roundedCon}>
+    <BoxHeader onPress={onPress} title={title} iconType={iconType} iconName={iconName} color={color} withContent={true} rightAction={rightAction} mode={mode} />
+    <View style={[{ flex: 1, paddingVertical: 10 }, contentStyles]}>{children}</View>
   </View>
 )
 
 interface IconProps {
-  iconSource: ImageSourcePropType
+  type?: IconType
+  name: string
   size?: Size
   styles?: ImageStyle
 }
-interface CircleIconProps extends IconProps {
-  bgColor?: string
-}
+interface CircleIconProps extends IconProps { bgColor?: string }
 
 const iconSize = {
   xSmall: UI.xSmallIcon,
@@ -79,13 +67,16 @@ const iconSize = {
   xLarge: UI.xLargeIcon,
 }
 
-export const Icon = ({ iconSource, size = 'small', styles }: IconProps) =>  (
-  <Image source={iconSource} style={[iconSize[size], styles]} />
-)
+export const Icon = ({ type = 'action', name, size = 'xSmall', styles }: IconProps) =>  {
+  const source = getIconByType(type, name)
+  return (
+    <Image source={source} style={[iconSize[size], styles]} />
+  )
+}
 
-export const CircleIcon = ({ iconSource, size = 'large', bgColor }: CircleIconProps) => (
+export const CircleIcon = ({ type, name, size = 'large', bgColor }: CircleIconProps) => (
   <View style={{ backgroundColor: bgColor ?? Colors.shadow.light, ...UI.roundedIconCon }}>
-    <Icon iconSource={iconSource} size={size} />
+    <Icon type={type} name={name} size={size} />
   </View>
 )
 
@@ -109,7 +100,7 @@ export const PhotoUpload = memo(({ photo, size = 'medium', placeholder, onSelect
       <TouchableOpacity onPress={addPhoto} style={[Spacing.centered, { position: 'absolute', width: '100%', height: '40%', bottom: 0 }]}>
         <View style={[Spacing.centered, { width: '90%', padding: 5, marginBottom: 5, borderRadius: 30, backgroundColor: Colors.transparent.light }]}>
           <Text style={{ fontSize: size === 'medium' ? 12 : 10 }}>{photo ? 'Edit' : 'Upload'} Photo</Text>
-          <Icon iconSource={getActionIconSource('camera')} size="xSmall" />
+          <Icon name='camera' />
         </View>
       </TouchableOpacity>
     </View>
@@ -124,22 +115,22 @@ export const FormError = ({ errors, errorKey }: { errors: { [key: string]: strin
   errorKey in errors && <ErrorMessage error={errors[errorKey]} />
 )
 
-export const ErrorImage = ({ top }: { top?: number }) => (
-  <View style={[top && { marginTop: top }, { ...Spacing.centered }]}>
+export const ErrorImage = ({ top = 0 }: { top?: number }) => (
+  <View style={[Spacing.centered, { marginTop: top }]}>
     <Image source={require('assets/images/error.png')} style={{ maxWidth: 300, resizeMode: 'contain' }} />
   </View>
 )
 
 export const CatToast = ({ text1, text2, props }: { text1: string, text2: string, props: any }) => (
-  <View style={{ ...Spacing.flexRow, backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', minHeight: 70, ...UI.boxShadow, shadowColor: props.style === 'success' ? Colors.green.dark : Colors.red.dark, ...UI.boxShadow }}>
+  <View style={[Spacing.flexRow, UI.boxShadow, { backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', minHeight: 70, shadowColor: props.style === 'success' ? Colors.green.dark : Colors.red.dark }]}>
     <Image source={props.style === 'success' ? require('assets/icons/ui-cat-happy.png') : require('assets/icons/ui-cat-sad.png')} style={{ ...UI.icon}} />
-    <View style={{ ...Spacing.flexColumn, marginLeft: 10, alignItems: 'flex-start' }}>  
+    <View style={[Spacing.flexColumn, { marginLeft: 10, alignItems: 'flex-start' }]}>  
       <Text style={{ textTransform: 'capitalize', fontWeight: 'bold', fontSize: 15, marginBottom: 5 }}>{props.style}!</Text>
       <Text>{text1}</Text>
       { text2 && <Text style={{ flex: 1 }}>{text2}</Text> }
     </View>
     <Pressable style={{ marginLeft: 'auto' }} onPress={props.onClose}>
-      <Image source={getActionIconSource('close')} style={{ ...UI.smallIcon}} />
+      <Icon name='close' size='small' />
     </Pressable>
   </View>
 )
@@ -152,30 +143,27 @@ export const EmptyList = ({ type }: { type: string }) => (
   <Text style={type === 'task' ? { ...Typography.smallSubHeader } : { ...Typography.xSmallSubHeader }}>No {type}s added.</Text>
 ) 
 
-export const Header = ({ title, size = 'medium', color = Colors.black, styles }: { title: string, size?: Size, color?: string, styles?: TextStyle }) => {
-  const headerSize = {
-    small: Typography.smallHeader,
-    medium: Typography.mediumHeader,
-    xSmall: Typography.xSmallHeader,
-    large: Typography.subHeader,
-    xLarge: Typography.mainHeader,
-  }
-  return (
-    <Text style={[headerSize[size], styles, { color: color }]}>{title}</Text>
-  )
+const headerSize = {
+  small: Typography.smallHeader,
+  medium: Typography.mediumHeader,
+  xSmall: Typography.xSmallHeader,
+  large: Typography.subHeader,
+  xLarge: Typography.mainHeader,
 }
 
+export const Header = ({ title, size = 'medium', color = Colors.black, styles }: { title: string, size?: Size, color?: string, styles?: TextStyle }) => (
+  <Text style={[headerSize[size], { color: color }, styles]}>{title}</Text>
+)
+
 export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { label: string, icon?: string, onPress: () => void, top?: number, right?: number }) => (
-  <Pressable onPress={onPress} style={{
-    ...Spacing.flexRow, position: 'absolute', right: right, top: top,
-  }}>
-    <Text style={{ ...Typography.xSmallHeader, marginRight: icon ? 10 : 0 }}>{label}</Text>
-    { icon && <Icon iconSource={getActionIconSource(icon)} size='xSmall' /> }
+  <Pressable onPress={onPress} style={[Spacing.flexRow, { position: 'absolute', right: right, top: top }]}>
+    <Text style={[Typography.xSmallHeader, { marginRight: icon ? 10 : 0 }]}>{label}</Text>
+    { icon && <Icon name={icon} /> }
   </Pressable>
 )
 
 export const FormLabel = ({ label, icon, width, top = 30, bottom = 10 }: { label: string, icon: string, width?: string | number, top?: number, bottom?:number }) => (
-  <View style={{...Spacing.flexRow, width: width as DimensionValue, alignSelf: 'flex-start', marginTop: top, marginBottom: bottom }}>
+  <View style={[Spacing.flexRow, { width: width as DimensionValue, alignSelf: 'flex-start', marginTop: top, marginBottom: bottom }]}>
     <Image source={getActionIconSource(icon)} style={{ ...UI.xSmallIcon, marginRight: 10 }} />
     <Text style={{ ...Typography.xSmallHeader, margin: 0 }}>{label}</Text>
   </View>
@@ -241,7 +229,7 @@ export const BottomModal = ({ children, modalVisible, height = 'fit-content', ma
     > 
       <Pressable onPress={e => {
         if (e.target === e.currentTarget) dismissModal()
-      }} style={{ ...UI.modalOverlay, backgroundColor: overlay}}>
+      }} style={[UI.modalOverlay, { backgroundColor: overlay}]}>
         { childrenVisible && 
           <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{ ...UI.bottomModal, height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, backgroundColor: background }}>
             <GoBackButton onPress={dismissModal} />
@@ -270,7 +258,7 @@ export const ModalInput = ({ children, label, onReset, onClose, height = 'fit-co
         dismissModal()
       }} height={height} maxHeight={maxHeight} overlay={overlay} background={background}>
         { children }
-        { onReset && <SubButton title='Reset' onPress={onReset} color={UI.lightPalette().unfocused} bottom={20} /> }
+        { onReset && <SubButton title='Reset' onPress={onReset} color={UI.lightPalette().unfocused} buttonStyles={{ marginBottom: 20 }} /> }
       </BottomModal>
     </>
   )
@@ -282,10 +270,10 @@ export const DateInput = ({ date, placeholder = 'No date selected', onChangeDate
   </ModalInput>
 )
 
-export const NoteInput = ({ notes, onChange, buttonStyles, buttonTextStyles }: { notes: string, onChange: (text: string) => void, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle }) => {
+export const NoteInput = ({ notes, maxLength = 100, onChange, buttonStyles, buttonTextStyles, inputStyles }: { notes: string, maxLength?: number, onChange: (text: string) => void, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle, inputStyles?: TextStyle }) => {
   const DEFAULT_HEIGHT = '30%'
   const [height, setHeight] = useState(DEFAULT_HEIGHT)
-  
+
   useEffect(() => {
     const onShow = Keyboard.addListener('keyboardDidShow', () => {
       setHeight('70%')
@@ -301,7 +289,17 @@ export const NoteInput = ({ notes, onChange, buttonStyles, buttonTextStyles }: {
 
   return (
     <ModalInput label={notes ?? 'No notes added.'} onReset={() => onChange(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} height={height}>
-      <FormInput initial={notes} placeholder="Enter notes" onChange={onChange} props={{ multiline: true, numberOfLines: 6,  }} styles={{ ...UI.input, width: '90%', minHeight: 100, maxHeight: '30%',marginTop: 20 }} />
+      <TextInput
+        style={[UI.input, { width: '90%', minHeight: 100, maxHeight: '30%' }, inputStyles]}
+        placeholder={'Enter notes'}
+        placeholderTextColor={UI.lightPalette().unfocused}
+        value={notes}
+        onChangeText={onChange}
+        maxLength={maxLength}
+        selectTextOnFocus={true}
+        multiline={true}
+        numberOfLines={6}
+      />
     </ModalInput>
   )
 }
@@ -314,9 +312,9 @@ export const TableForm = memo(({ table, withLabel = false, dependentRows }: { ta
       
       return (
         rowIsVisible && 
-        <View key={row.key} style={{ ...Spacing.flexRow, width: '100%', justifyContent: 'space-between', minHeight: 50 }}>
+        <View key={row.key} style={[Spacing.flexRow, { width: '100%', justifyContent: 'space-between', minHeight: 50 }]}>
           <View style={Spacing.flexRow}>
-            <Icon iconSource={getActionIconSource(row.icon)} size='xSmall' />
+            <Icon name={row.icon} />
             { withLabel && <Text style={{ marginLeft: 5 }}>{row.label}</Text> }
           </View>
           <View style={{ maxWidth: '60%' }}>{row.value}</View>

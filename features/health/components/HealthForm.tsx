@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import Fuse from "fuse.js"
 //store && types & helpers
 import { Health, Visit } from "@health/HealthInterface"
-import { FormErrors } from "@utils/types"
+import { FormErrors, Frequency } from "@utils/types"
 import * as healthHelpers from '@health/healthHelpers'
 import { windowHeight } from "@utils/constants"
 //hooks
@@ -17,13 +17,14 @@ import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/Freque
 import Dropdown from "@components/Dropdown/Dropdown" 
 import { SubButton } from "@components/ButtonComponents"
 import { ActionButton, IconButton, ToggleButton } from "@components/ButtonComponents"
-import { FormError, FormLabel, ModalInput, TableForm } from "@components/UIComponents"
+import { BoxWithHeader, DateInput, FormError, FormLabel, Icon, ModalInput, NoteInput, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 //styles
 import { styles } from "@styles/stylesheets/FormStyles"
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import PetInfo from "@components/PetInfo/PetInfo"
 import IconPicker from "@components/Pickers/IconPicker"
+import { compareDates, getDateFromRange } from "@utils/datetime"
 
 interface HealthFormProps {
   onSubmit: (formData: Health) => void
@@ -48,7 +49,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     repeat: initialValues?.repeat ?? false,
     frequency: initialValues?.frequency ?? { type: 'days', interval: 1, timesPerInterval: [1] },
     icon: initialValues?.icon ?? null,
-    lastDone: initialValues?.lastDone ?? null,
+    lastDone: initialValues?.lastDone ?? [],
     nextDue: initialValues?.nextDue ?? null,
     _id: initialValues?._id ?? null,
     errors: {},
@@ -56,7 +57,8 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
 
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
 
-  const { name, details, pet, type, repeat, frequency, icon, lastDone, nextDue, _id, errors } = values
+  const { name, details, pet, type, repeat, frequency, icon, lastDone, nextDue, _id, errors }: InitialState = values
+  const sortedVisits = [...lastDone].sort((a: Visit, b: Visit) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime())
   
   const isVaccine = useMemo(() => {
     const search = name ? vaccineFuse.search(name) : null
@@ -72,14 +74,58 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     return repeat ? onValidate({ name, type }) : onValidate({ name, type, 'last visit': lastDone })
   }, [repeat, name, type, lastDone])
 
+  const updateNextDue = (latestDueDate: string = sortedVisits[0].dueDate) => {
+    const nextDueDate = getDateFromRange(latestDueDate, frequency.type.slice(0, -1), frequency.interval, 1, frequency.timesPerInterval)
+
+    const overdue = compareDates('today', nextDueDate.toISOString())
+    onChange('nextDue', { dueDate: nextDueDate, overdue: overdue, appointment: { date: nextDueDate, vet: null, completed: false }, notes: null }) 
+  }
+
+  const handleAddVisit = () => {
+    let newDueDate = new Date()
+    let lastDueDate = sortedVisits.length ? sortedVisits[sortedVisits.length - 1].dueDate : 'today'
+
+    if (repeat && frequency) {
+      if(!nextDue) updateNextDue(lastDueDate)
+      newDueDate = getDateFromRange(lastDueDate, frequency.type.slice(0, -1), frequency.interval, -1)
+    } else newDueDate = getDateFromRange(lastDueDate, 'day', 1, -1)
+
+    const overdue = compareDates(newDueDate.toISOString(), 'today') < 0
+    onChange('lastDone', [...sortedVisits, { dueDate: newDueDate, overDue: overdue, appointment: { date: newDueDate, vet: null, completed: true }, notes: null } ])
+  }
+  
+  const handleDeleteVisit = (index: number) => {
+    if (sortedVisits.length === 1) onChange('nextDue', null)
+    else if (index === 0) updateNextDue()
+    
+    onChange('lastDone', sortedVisits.filter((_, idx) => idx !== index))
+  }
+
+  const handleUpdateVisit = (formData: Visit, index: number) => {
+    const shouldUpdateNextDue = compareDates(formData.dueDate, sortedVisits[0].dueDate)
+    if (shouldUpdateNextDue) updateNextDue(formData.dueDate)
+    onChange('lastDone', sortedVisits.map((v, idx) => idx === index ? formData : v))
+  }
+
+  const handleToggleRepeat = () => {
+    if (repeat === true) onChange('nextDue', null)
+    if (!nextDue && sortedVisits.length) updateNextDue()
+    onChange('repeat', !repeat)
+  }
+
+  const handleUpdateFrequency = (frequency: Frequency) => {
+    onChange('frequency', frequency)
+    if (sortedVisits.length) updateNextDue()
+  }
+
   const renderPet = (
     <ModalInput customLabel={<PetInfo pet={petIdToPet(pet._id)} size="mini" />}>
-      <PetPicker onSelect={(selected: string[]) => onChange('pet', selected[0])} initials={[pet?._id ?? pet]} />
+      <PetPicker onSelect={(selected: string[]) => onChange('pet', selected[0])} initials={[pet?._id]} />
     </ModalInput>
   )
 
   const renderRepeat = (
-    <ToggleButton onPress={() => onChange('repeat', !repeat)} isChecked={repeat} />
+    <ToggleButton onPress={handleToggleRepeat} isChecked={repeat} />
   )
 
   const renderFrequency = (
@@ -87,10 +133,13 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       label={
         <Text style={{ maxWidth: '60%' }}>Repeats {frequency && frequencyMap[frequency.type].timesPerIntervalLabel(frequency.timesPerInterval)} {intervalLabel(frequency.interval, frequency.type)}</Text>
       }
-      onReset={() => onChange('frequency', initialState.frequency)}
+      onReset={() => handleUpdateFrequency(initialState.frequency)}
     >
       <FrequencyPicker initial={frequency} color={petIdToColor(pet._id)}
-        onSelectFrequency={(key: string, selected: any) => onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)}
+        onSelectFrequency={(key: string, selected: any) => {
+          const freq = frequency[key] ? { ...frequency, [key]: selected } : selected
+          handleUpdateFrequency(freq)
+        }}
       />
     </ModalInput>
   )
@@ -101,18 +150,12 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     </ModalInput>
   )
 
-  const renderPrevious = (
-    <View>
-      <ActionButton icon='increase' onPress={() => onChange('lastDone', { ...lastDone, dueDate: new Date(), appointment: null, notes: null, overDue: false })} size='small' />
-    </View>
-  )
 
   const mainTable = [
     { key: 'pet', label: 'Pet', icon: 'pets', value: renderPet },
     { key: 'type', label: 'Type', icon: 'healthType', value: renderType },
     { key: 'repeat', label: 'Repeat', icon: 'repeat', value: renderRepeat },
     { key: 'frequency', label: 'Frequency', icon: 'due', value: renderFrequency },
-    { key: 'previous', label: 'Previous Visits', icon: 'schedule', value: renderPrevious },
   ]
 
   useEffect(() => {
@@ -135,19 +178,29 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
 
       <TableForm table={mainTable} withLabel={true} dependentRows={{ frequency: repeat }}/>
 
-      <FormLabel label='Previous Visits' icon="schedule" width='100%' />
-        <FormError errors={errors} errorKey="last visit" />
-        {lastDone && <Text>Due on {lastDone?.dueDate.toDateString()}. Appointment {lastDone?.appointment ? '' : 'not '}scheduled</Text>}
-      <ModalInput 
-        label={
-          <View style={{ ...Spacing.flexRow }}>
-            <ActionButton icon='increase' onPress={() => onChange('lastDone', { ...lastDone, dueDate: new Date(), appointment: null, notes: null, overDue: false })} />
-            <Text>add visit</Text>
-          </View>
-        }
-      >
-        <VisitForm onSubmit={(formData: Visit) => onChange('lastDone', formData)} pet={pet} />
-      </ModalInput>
+      <FormLabel label='Previous Visits' icon="schedule" />
+      <View style={styles.contentCon}>
+        { errors.hasOwnProperty('last visit') && <FormError errors={errors} errorKey="last visit" /> }
+        { sortedVisits.map((visit, index) =>
+          <ModalInput key={`visit-${index}`} customLabel={
+            <View style={styles.rowCon}>
+              <ActionButton icon='decrease' title={`Due ${new Date(visit.dueDate).toLocaleDateString()}`} onPress={() => handleDeleteVisit(index)} />
+              <Icon name={visit.appointment.completed ? 'done' : 'skipped'} />
+            </View>
+          }>
+            <VisitForm initialValues={visit} onSetVisit={(formData: Visit) => handleUpdateVisit(formData, index)} pet={pet} />
+          </ModalInput>
+          
+        )}
+        <ActionButton title='add visit' icon='increase' onPress={handleAddVisit} buttonStyles={{ alignSelf: 'flex-start', marginTop: 15 }} />
+      </View>
+
+      <FormLabel label='Next Visit' icon="schedule" />
+      {nextDue && 
+        <View style={styles.contentCon}>
+          <Text>{nextDue.dueDate.toString()}</Text>
+        </View>
+      }
 
       <SubButton onPress={onReset} title='Reset' top={40} />
 

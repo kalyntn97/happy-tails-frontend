@@ -66,14 +66,14 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
       <Text style={styles.sectionHeader}>Display settings</Text>
       <View style={{ ...UI.roundedCon }}>
         { displaySettings.map(setting =>
-          <BoxHeader key={setting.key} title={setting.title} rightContent={ <Text>{setting.currentValue}</Text>} onPress={setting.setValue} mode='light' />
+          <BoxHeader key={setting.key} title={setting.title} rightAction={<Text>{setting.currentValue}</Text>} onPress={setting.setValue} mode='light' />
         )}
       </View>
 
       <Text style={styles.sectionHeader}>Account settings</Text>
       <View style={{ ...UI.roundedCon }}>
         { accountSettings.map(setting =>
-          <BoxHeader key={setting.key} title={setting.title} onPress={setting.onPress} mode={ setting.key === 'delete' ? 'dark' : 'light'} titleColor={setting.key === 'delete' && Colors.red.darkest} />
+          <BoxHeader key={setting.key} title={setting.title} onPress={setting.onPress} mode={setting.key === 'delete' ? 'dark' : 'light'} color={setting.key === 'delete' && Colors.red.darkest} />
         )}
       </View>
 
