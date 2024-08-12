@@ -46,6 +46,10 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
       : onChange('status', { ...status, value: selected, date: new Date() })
   }
 
+  const handleValidate = () => {
+    onValidate({ name, 'type': species })
+  }
+
   function handleSubmit() {
     const photoData = photo && photo !== initialState.photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
     onSubmit({ name, gender, species, breed, dob, firstMet, altered, status, color, petId }, photoData)
@@ -151,11 +155,16 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
     { key: 'status', label: 'Status', icon: 'status', value: renderStatus },
   ]
 
+  const headerActions = [
+    { icon: 'reset', onPress: onReset },
+    { title: status === 'pending' ? 'Submitting...' : 'Submit', onPress: handleValidate },
+  ]
+
   useEffect(() => {
     navigation.setOptions({
-      header: () => <Header showGoBackButton={true} rightAction={() => onValidate({ name, 'type': species })} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[color]} />
+      header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[color]} />
     })
-  }, [color])
+  }, [handleValidate, status, color])
 
   return ( 
     <ScrollView
@@ -171,14 +180,13 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
         </View>
       </View>
       
-      <TableForm table={mainTable} withLabel={true} />
-
       <ColorPicker selected={color} buttonWidth={30} pickerStyles={{ marginTop: 10 }} onPress={selected => {
         onChange('color', selected)
         setColor(selected)
       }} />
 
-      <SubButton onPress={onReset} title='Reset' top={40} bottom={10} />
+      <TableForm table={mainTable} withLabel={true} />
+
     </ScrollView>
   )
 }

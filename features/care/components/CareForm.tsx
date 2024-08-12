@@ -109,9 +109,14 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
     { key: 'frequency', label: 'Frequency', icon: 'due', value: renderFrequency },
   ]
 
+  const headerActions = [
+    { icon: 'reset', onPress: onReset },
+    { title: status === 'pending' ? 'Submitting...' : 'Submit', onPress: handleValidate },
+  ]
+
   useEffect(() => {
     navigation.setOptions({
-      header: () => <Header showGoBackButton={true} rightAction={handleValidate} rightLabel={status === 'pending' ? 'Submitting...' : 'Submit'} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[color]} />
+      header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[color]} />
     })
   }, [handleValidate, status, color])
   
@@ -124,14 +129,13 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
     >
       <TitleInput initial={initialState.name} placeholder='New Task' onChange={(input: string) => onChange('name', input)} type='care' error={errors?.name} />
 
-      <TableForm table={mainTable} withLabel={true} dependentRows={{ frequency: repeat }}/>
-
       <ColorPicker selected={color} buttonWidth={30} pickerStyles={{ marginTop: 10 }} onPress={(selected) => {
         onChange('color', selected)
         setColor(selected)
       }} />
 
-      <SubButton onPress={onReset} title='Reset' top={40} />
+      <TableForm table={mainTable} withLabel={true} dependentRows={{ frequency: repeat }}/>
+
     </ScrollView>
   )
 }

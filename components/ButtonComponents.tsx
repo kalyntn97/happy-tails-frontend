@@ -64,12 +64,14 @@ export const ActionButton= memo(({ title, icon, onPress, size = 'xSmall', button
   const iconSize = useMemo(() => iconSizeMap[size], [size])
   
   return (
-    <TouchableOpacity onPress={onPress} style={[Spacing.flexRow, Spacing.centered, buttonStyles,
+    <View style={[Spacing.flexRow, Spacing.centered, buttonStyles,
       position && positionMap(h, v)[position] as ViewStyle,
     ]}>
-      <Image source={getActionIconSource(icon)} style={iconSize} />
-      { title && <Text style={[{ marginLeft: 10 }, textStyles]}>{title}</Text> }
-    </TouchableOpacity>
+      <TouchableOpacity onPress={onPress}>
+        <Image source={getActionIconSource(icon)} style={iconSize} />
+      </TouchableOpacity>
+        { title && <Text style={[{ marginLeft: 10 }, textStyles]}>{title}</Text> }
+    </View>
   )
 })
 

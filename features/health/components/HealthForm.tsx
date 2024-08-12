@@ -157,9 +157,14 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     { key: 'frequency', label: 'Frequency', icon: 'due', value: renderFrequency },
   ]
 
+  const headerActions = [
+    { icon: 'reset', onPress: onReset },
+    { title: status === 'pending' ? 'Submitting...' : 'Submit', onPress: handleValidate },
+  ]
+
   useEffect(() => {
     navigation.setOptions({
-      header: () => <Header showGoBackButton={true} rightAction={handleValidate} rightLabel={status === 'pending' ? 'Submitting...' : 'Submit'} navigation={navigation} mode='modal' />
+      header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' />
     })
   }, [handleValidate, status])
 
@@ -177,13 +182,34 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
 
       <TableForm table={mainTable} withLabel={true} dependentRows={{ frequency: repeat }}/>
 
+      <FormLabel label='Next Visit' icon="schedule" />
+      <View style={styles.contentCon}>
+        { nextDue ? 
+          <ModalInput customLabel={
+            <View style={styles.rowCon}>
+              <ActionButton icon='decrease' onPress={() => onChange('nextDue', null)} 
+                title={`Due ${new Date(nextDue.dueDate).toDateString()}`}  
+              />
+              <Icon name={nextDue.appointment.completed ? 'done' : 'skipped'} />
+            </View>
+          }>
+            <VisitForm initialValues={nextDue} onSetVisit={(formData: Visit) => onChange('nextDue', formData)} pet={pet} isDue={true} />
+          </ModalInput>
+          : <ActionButton title='add visit' icon='increase' buttonStyles={{ marginTop: 10 }}
+            onPress={() => onChange('nextDue', { dueDate: new Date(), overdue: false, appointment: { date: new Date(), vet: null, completed: false }, notes: null }) } 
+          />
+        }
+      </View>
+
       <FormLabel label='Previous Visits' icon="schedule" />
       <View style={styles.contentCon}>
         { errors.hasOwnProperty('last visit') && <FormError errors={errors} errorKey="last visit" /> }
         { sortedVisits.map((visit, index) =>
           <ModalInput key={`visit-${index}`} customLabel={
             <View style={styles.rowCon}>
-              <ActionButton icon='decrease' title={`Due ${new Date(visit.dueDate).toLocaleDateString()}`} onPress={() => handleDeleteVisit(index)} />
+              <ActionButton icon='decrease' onPress={() => handleDeleteVisit(index)}
+                title={`${new Date(visit.appointment.date).toDateString()} at ${visit.appointment.vet?.name ?? 'Unknown Vet'}`}  
+              />
               <Icon name={visit.appointment.completed ? 'done' : 'skipped'} />
             </View>
           }>
@@ -191,17 +217,8 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
           </ModalInput>
           
         )}
-        <ActionButton title='add visit' icon='increase' onPress={handleAddVisit} buttonStyles={{ alignSelf: 'flex-start', marginTop: 15 }} />
+        <ActionButton title='add visit' icon='increase' onPress={handleAddVisit} buttonStyles={{ marginTop: 10 }} />
       </View>
-
-      <FormLabel label='Next Visit' icon="schedule" />
-      {nextDue && 
-        <View style={styles.contentCon}>
-          <Text>{nextDue.dueDate.toString()}</Text>
-        </View>
-      }
-
-      <SubButton onPress={onReset} title='Reset' top={40} />
 
     </ScrollView>
   )
