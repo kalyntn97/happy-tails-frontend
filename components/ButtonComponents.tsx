@@ -82,7 +82,7 @@ export const CloseButton = ({ onPress, position = 'topRight', size = 'small', bu
 interface ButtonWithLayoutProps extends BaseButtonProps { top?: number }
 
 export const GoBackButton = ({ onPress, position = 'topLeft', size = 'small', buttonStyles, top }: ButtonWithLayoutProps) => (
-  <ActionButton icon='back' position={position} v={top} onPress={onPress} size={size} buttonStyles={buttonStyles} />
+  <ActionButton icon='back' position={position} onPress={onPress} size={size} buttonStyles={{ ...buttonStyles, marginTop: top }} />
 )
 
 export const IconButton = memo(({ title, icon, onPress, type, size, buttonStyles }: ButtonWithTypeProps) => {
