@@ -80,9 +80,10 @@ export const countYearsBetween = (start: string, end: string) => {
   return parseFloat(timeInYears.toFixed(1))
 }
 
-export const getDateFromRange = (input: string, unit: string, count: number, direction: number, repeatCount) => {
+export const getDateFromRange = (input: string, unit: string, count: number, direction: number, repeatCount?: any) => {
   //* direction is forward (1) or backward (-) from date
   const { inputDate: output, date, month, year } = getDateInfo(input)
+  const day = output.getDay()
   
   if (!repeatCount) {
     const outputMap: Record<string, () => void> = {
@@ -98,18 +99,31 @@ export const getDateFromRange = (input: string, unit: string, count: number, dir
   const outputMapWithAdjustments = {
     day: () => output.setDate(date + count * direction),
     week: () => {
-      const dayIndex = repeatCount.findIndex(d => d === output.getDay())
-      const weekAdjustment = repeatCount.length > 1 && dayIndex !== -1 && dayIndex < repeatCount.length - 1
-        ? repeatCount[dayIndex + 1] - repeatCount[dayIndex]
-        : 7 * direction
-      
+      const dayIndex = direction === 1 
+        ? repeatCount.findIndex(d => d > day)
+        : repeatCount.slice().reverse().findIndex(d => d < day)
+      let weekAdjustment: number
+      if (dayIndex !== -1) {
+        const adjustedIndex = direction === 1 ? dayIndex : repeatCount.length - 1 - dayIndex
+        weekAdjustment = repeatCount[adjustedIndex] - day
+      } else {
+        weekAdjustment = direction === 1  
+          ? 7 * count - day + repeatCount[0]
+          : - 7 * count - day + repeatCount[repeatCount.length - 1] 
+      }
       output.setDate(date + weekAdjustment)
     },
     month: () => {
-      const dateIndex = repeatCount.findIndex(d => d === date)
-      if (repeatCount.length > 1 && dateIndex !== -1 && dateIndex < repeatCount.length - 1) {
-        output.setDate(date + (repeatCount[dateIndex + 1] - repeatCount[dateIndex]))
-      } else output.setMonth(month + count * direction)
+      const dateIndex = direction === 1
+        ? repeatCount.findIndex(d => d > date)
+        : repeatCount.slice().reverse().findIndex(d => d < date)
+      if (dateIndex !== -1) {
+        const adjustedIndex = direction === 1 ? dateIndex : repeatCount.length - 1 - dateIndex
+        output.setDate(repeatCount[adjustedIndex])
+      } else {
+        output.setMonth(month - 1 + count * direction)
+        direction === 1 ? output.setDate(repeatCount[0]) : output.setDate(repeatCount[repeatCount.length - 1])
+      }
     },
     year: () => {
       const months = Object.keys(repeatCount)

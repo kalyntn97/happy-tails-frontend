@@ -87,14 +87,13 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
 
     if (repeat && frequency) {
       if(!nextDue) updateNextDue(lastDueDate)
-      newDueDate = getDateFromRange(lastDueDate, frequency.type.slice(0, -1), frequency.interval, -1)
+      newDueDate = getDateFromRange(lastDueDate, frequency.type.slice(0, -1), frequency.interval, -1, frequency.timesPerInterval)
     } else newDueDate = getDateFromRange(lastDueDate, 'day', 1, -1)
 
     const overdue = compareDates(newDueDate.toISOString(), 'today') < 0
     onChange('lastDone', [...sortedVisits, { dueDate: newDueDate, overDue: overdue, appointment: { date: newDueDate, vet: null, completed: true }, notes: null } ])
   }
-  
-  const handleDeleteVisit = (index: number) => {
+    const handleDeleteVisit = (index: number) => {
     if (sortedVisits.length === 1) onChange('nextDue', null)
     else if (index === 0) updateNextDue()
     
