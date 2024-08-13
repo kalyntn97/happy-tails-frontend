@@ -5,3 +5,4 @@ export type Frequency = {
 }
 
 export type FormErrors= { [key: string]: string }
+

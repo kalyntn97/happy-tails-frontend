@@ -6,8 +6,8 @@ import { daysOfWeek, getOrdinalSuffix, months } from '@utils/datetime'
 import { getActionIconSource } from '@utils/ui'
 import { Frequency } from '@utils/types'
 //components
-import ScrollSelector from './ScrollSelector'
-import { ToggleButton } from './ButtonComponents'
+import ScrollSelector from '../ScrollSelector'
+import { ToggleButton } from '../ButtonComponents'
 //styles
 import { Buttons, Colors, Spacing, UI, Typography } from '@styles/index'
 import { windowWidth } from '@utils/constants'
@@ -94,7 +94,7 @@ const DropHeader = ({ title, rightLabel, onPress, icon }: { title: string, right
       {/* <View > */}
         <Text style={styles.btnText}>{rightLabel()}</Text>
       {/* </View> */}
-      <Image source={getActionIconSource(icon)} style={[UI.xSmallIcon, { marginLeft: 'auto' }]} />
+      <Image source={getActionIconSource(icon)} style={[UI.icon('xSmall'), { marginLeft: 'auto' }]} />
     </Pressable>
   </View>
 )
@@ -183,8 +183,8 @@ const FrequencyPicker = ({ initial, color = 0, onSelectFrequency, onSelectEndDat
           <View style={styles.btnCon}>
             {frequencyKeys.map((f, index) =>
               <Pressable key={f} onPress={() => onChangeType(f)} style={[styles.btn,
-                index === 0 && { ...UI.leftRounded(ROUNDED) },
-                index === frequencyKeys.length - 1 && { ...UI.rightRounded(ROUNDED) },
+                index === 0 && { ...UI.rounded('left', 30)()(ROUNDED) },
+                index === frequencyKeys.length - 1 && { ...UI.rounded('right', 30)(ROUNDED) },
                 { backgroundColor: f === type ? Colors.multi.light[color] : Colors.shadow.light, borderRadius: type === f && ROUNDED },
               ]}>
                 <Text>{frequencyMap[f].label}</Text>
@@ -266,7 +266,7 @@ const FrequencyPicker = ({ initial, color = 0, onSelectFrequency, onSelectEndDat
 
 const styles = StyleSheet.create({
   rowCon: {
-    ...UI.rowWithSeparator,
+    ...UI.tableRow(true),
     alignItems: 'center',
   },
   btn: {

@@ -56,8 +56,7 @@ const IconStatForm: FC<LogFormProps> = ({ name, initialValues, onSelect }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
-    ...Spacing.centered,
+    ...Spacing.fullCon(null, true),
   },
   optionCon: {
     width: '100%',
@@ -67,7 +66,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   selected: {
-    ...UI.smallIcon,
+    ...UI.icon(),
     position: 'absolute',
     zIndex: 1,
     top: 5,
@@ -78,7 +77,7 @@ const styles = StyleSheet.create({
     bottom: -5,
   },
   input: {
-    ...UI.input,
+    ...UI.input(),
   }
 })
 

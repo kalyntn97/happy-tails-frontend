@@ -10,7 +10,7 @@ import { showDeleteConfirmDialog } from "@hooks/sharedHooks"
 //components
 import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
-import {  BoxHeader, EmptyList, ErrorImage } from "@components/UIComponents"
+import {  BoxHeader, EmptyList, ErrorImage, Icon, ModalInput } from "@components/UIComponents"
 import { IconType, getActionIconSource, getPetIconSource, getStatIconSource } from "@utils/ui"
 import { ActionButton, TransparentButton } from "@components/ButtonComponents"
 //store & queries
@@ -34,9 +34,9 @@ const SectionHeader = ({ type, onPress }: { type: SectionType, onPress?: () => v
 
   return (
     <View style={styles.sectionHeaderCon}>
-      <Image source={getActionIconSource(icon)} style={{ ...UI.smallIcon }} />
+      <Icon name={icon} />
       <Text style={styles.sectionHeader}>{title}</Text>
-      { onPress && <ActionButton icon={'filter'} onPress={onPress} left='auto' /> }
+      { onPress && <ActionButton icon={'filter'} onPress={onPress} buttonStyles={{ marginLeft: 'auto' }} /> }
     </View>
   )
 }
@@ -140,19 +140,19 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   }, [modalVisible, info, logs]);
 
   return (    
-    <View style={{ ...Spacing.fullWH, backgroundColor: Colors.multi.lightest[pet?.color] }}>
+    <View style={[Spacing.fullCon(), { backgroundColor: Colors.multi.lightest[pet?.color] }]}>
       <GoBackButton onPress={navigation.goBack} />
       <View style={styles.conHeader}>
         { topActions.map(action => <ActionButton key={action.key} icon={action.key} onPress={action.onPress} />) }
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false} contentContainerStyle={{ ...Spacing.scrollScreenDown, width: '100%' }}>  
+      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false} style={{ width: '100%' }} contentContainerStyle={UI.form(0, 60)}>  
         { isError && <ErrorImage /> }
         { isFetching && <Loader /> }
         
         { isSuccess && <>
           <View style={styles.infoCard}>
-            <PetInfo pet={pet} size='expanded' />
+            <PetInfo pet={pet} size='large' />
             <StatButtonList petId={pet._id} petColor={pet.color} size='large' navigation={navigation} />
           </View>
 
@@ -162,22 +162,20 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
                 setModalVisible(true)
                 setOption(type)
               }} />
-              <View style={{ ...UI.roundedCon }}>
+              <View style={UI.roundedCon}>
                 <ItemHeaderList type={type} logs={logs} info={info} onReset={() => handleReset(type)} navigation={navigation} petId={petId} />
               </View>
             </View>
           ) } 
           
-          <View>
-            <SectionHeader type='actions' />
-            <View style={{ ...UI.roundedCon }}>
-              { bottomActions.map(action => <BoxHeader key={action.key} title={action.title} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} mode={action.key === 'delete' ? 'dark' : 'light'} />) }
-            </View>
+          <SectionHeader type='actions' />
+          <View style={UI.roundedCon}>
+            { bottomActions.map(action => <BoxHeader key={action.key} title={action.title} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} mode={action.key === 'delete' ? 'dark' : 'light'} />) }
           </View>
 
         </> }
       </ScrollView>
-
+      
       <Modal 
         animationType='slide'
         visible={modalVisible}
@@ -192,7 +190,7 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
           <View style={styles.modalCon}>
             <View style={Spacing.flexRow}>
               <Text style={{ ...Typography.smallHeader }}>{option === 'info' ? 'Show Pet Details' : 'Show Pet Logs'}</Text>
-              <Image source={getActionIconSource('filter')} style={{ ...UI.smallIcon }} />
+              <Image source={getActionIconSource('filter')} style={{ ...UI.icon() }} />
             </View>
             <View style={styles.modalBody}>
               { items.map((type: string, index: number) => <ModalItem key={`${type}-${index}`} type={type} option={option} logs={logs} info={info} onPress={() => toggleItem(type)} />) }
@@ -216,9 +214,8 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     ...Spacing.flexColumn,
-    ...UI.card,
+    ...UI.card(),
     width: '90%',
-    height: 290,
     justifyContent: 'space-around',
     borderRadius: 20,
     backgroundColor: Colors.white,

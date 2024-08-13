@@ -58,7 +58,7 @@ const ProfileScreen = ({ navigation, route }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <Pressable style={styles.bannerCon} onPress={addBanner}>
         <View style={styles.cameraIcon}>
-          <Image source={require('@assets/icons/action-camera.png')} style={{...UI.smallIcon}} />
+          <Image source={require('@assets/icons/action-camera.png')} style={{...UI.icon()}} />
         </View>
         { banner && <Image source={{ uri: banner }} style={styles.banner as ImageStyle} /> }
       </Pressable>
@@ -75,7 +75,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <Text style={styles.bioText}>{profile.bio}</Text>
           </View>
             
-          {/* <View style={{...UI.rowCon}}>
+          {/* <View style={{...UI.rowContent}}>
             <StatButton item={ {header: 'streak', stat: 0, body: 'days'}} />
             <StatButton item={ {header: 'tasks', stat: careCounts(new Date()) , body: 'today'}} />
             <StatButton item={ {header: 'visit due', stat: Math.abs(healthCounter), body: `days ${healthCounter < 0 && 'ago'}`}} color={healthCounter < 0 && Colors.red.reg} />
@@ -162,9 +162,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   profilePhoto: {
-    ...UI.smallPhoto,
+    ...UI.photo('large', 99, 10),
     backgroundColor: Colors.pink.light,
-    margin: 10,
   },
   bioBox: {
     width: '90%',

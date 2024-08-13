@@ -5,9 +5,10 @@ export const ButtonStyles = {
   width: 60, 
   height: 60, 
   margin: 30, 
-  borderRadius: '50%', 
+  borderRadius: 99, 
   backgroundColor: Colors.pink.reg, 
-  textColor: Colors.white
+  textColor: Colors.white,
+  labelColor: UI.lightPalette().focused,
 }
 
 export const Button: ViewStyle = {
@@ -34,5 +35,4 @@ export const ChildrenAnimation = {
   plus_translate_y_close: -2,
 }
 
-export const subBtn_tap_event = 'subBtn_tap_event'
-
+export const snapThreshold = ButtonStyles.width + ButtonStyles.margin * 2

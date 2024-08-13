@@ -1,15 +1,16 @@
-import { Image, ImageSourcePropType, Pressable, StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
-import { Buttons, Colors, Spacing, UI, Typography } from "@styles/index"
-import { FC, memo, useCallback, useEffect, useMemo, useState } from "react"
 import { getActionIconSource, getHealthIconSource, getPetIconSource } from "@utils/ui"
-import { lightPalette } from "@styles/ui"
+import { memo, useCallback, useMemo } from "react"
+import { Image, ImageSourcePropType, Pressable, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+//components
 import { circleBase } from "@styles/buttons"
+import { Buttons, Colors, Spacing, Typography, UI } from "@styles/index"
+import { Size, lightPalette } from "@styles/ui"
 
 type BaseButtonProps = {
   title?: any
   icon?: string
   onPress?: () => void
-  size?: string
+  size?: Size,
   buttonStyles?: ViewStyle
   textStyles?: TextStyle
   bgColor?: string
@@ -53,36 +54,24 @@ export const RoundButton = memo(({ onPress, size = 'large', bgColor = Colors.pin
   )
 })
 
-const iconSizeMap = {
-  xSmall: UI.xSmallIcon,
-  small: UI.smallIcon,
-  medium: UI.icon,
-  large: UI.largeIcon,
-}
-
-export const ActionButton= memo(({ title, icon, onPress, size = 'xSmall', buttonStyles, textStyles, position, h, v }: BaseButtonProps) => {
-  const iconSize = useMemo(() => iconSizeMap[size], [size])
-  
-  return (
-    <View style={[Spacing.flexRow, Spacing.centered, buttonStyles,
-      position && positionMap(h, v)[position] as ViewStyle,
-    ]}>
-      <TouchableOpacity onPress={onPress}>
-        <Image source={getActionIconSource(icon)} style={iconSize} />
-      </TouchableOpacity>
-        { title && <Text style={[{ marginLeft: 10 }, textStyles]}>{title}</Text> }
-    </View>
-  )
-})
+export const ActionButton= memo(({ title, icon, onPress, size = 'small', buttonStyles, textStyles, position, h, v }: BaseButtonProps) => (
+  <View style={[Spacing.flexRow, Spacing.centered, buttonStyles,
+    position && positionMap(h, v)[position] as ViewStyle,
+  ]}>
+    <TouchableOpacity onPress={onPress}>
+      <Image source={getActionIconSource(icon)} style={UI.icon(size)} />
+    </TouchableOpacity>
+      { title && <Text style={[{ marginLeft: 10 }, textStyles]}>{title}</Text> }
+  </View>
+))
 
 export const CloseButton = ({ onPress, position = 'topRight', size = 'small', buttonStyles }: BaseButtonProps) => (
   <ActionButton icon='close' onPress={onPress} position={position} size={size} buttonStyles={buttonStyles} />
 )
 
-interface ButtonWithLayoutProps extends BaseButtonProps { top?: number }
 
-export const GoBackButton = ({ onPress, position = 'topLeft', size = 'small', buttonStyles, top }: ButtonWithLayoutProps) => (
-  <ActionButton icon='back' position={position} onPress={onPress} size={size} buttonStyles={{ ...buttonStyles, marginTop: top }} />
+export const GoBackButton = ({ onPress, position = 'topLeft', size = 'small', buttonStyles }: BaseButtonProps) => (
+  <ActionButton icon='back' position={position} onPress={onPress} size={size} buttonStyles={buttonStyles} />
 )
 
 export const IconButton = memo(({ title, icon, onPress, type, size, buttonStyles }: ButtonWithTypeProps) => {
@@ -112,8 +101,8 @@ export const IconButton = memo(({ title, icon, onPress, type, size, buttonStyles
       { padding: 10, margin: 5, borderRadius: size === 'small' ? 8 : 10, justifyContent: title ? 'space-around' : 'center', alignItems: 'center', borderWidth: 1, borderColor: lightPalette().border, },
       buttonSize, buttonStyles
     ]}>
-      <Image source={iconSource} style={size === 'large' ? UI.icon : UI.xSmallIcon} />
-      { title && <Text style={{ fontSize: size === 'medium' ? 10 : 13, textTransform: 'capitalize' }}>{title}</Text> }
+      <Image source={iconSource} style={size === 'large' ? UI.icon('med') : UI.icon('xSmall')} />
+      { title && <Text style={{ fontSize: size === 'med' ? 10 : 13, textTransform: 'capitalize' }}>{title}</Text> }
     </TouchableOpacity>
   )
 })
@@ -123,19 +112,13 @@ interface PhotoButtonProps extends BaseButtonProps {
   placeholder?: string
 }
 
-const photoSizeMap = {
-  small: UI.xxSmallPhoto,
-  medium: UI.xSmallPhoto,
-}
-
 export const PhotoButton = memo(({ photo, onPress, size = 'small', placeholder, bgColor = Colors.pink.light }: PhotoButtonProps) => {
-  const photoSize = useMemo(() => photoSizeMap[size], [size])
   const defaultPhoto = useMemo(() => placeholder ?? require('@assets/icons/ui-image.png'), [placeholder])
 
   return (
   <TouchableOpacity onPress={onPress} style={{ margin: 5 }}>
-    <View style={[photoSize, Spacing.centered, { backgroundColor: bgColor }]}>
-      <Image source={photo ? { uri: photo } : defaultPhoto as ImageSourcePropType} style={photoSize} />
+    <View style={[UI.photo(size), Spacing.centered, { backgroundColor: bgColor }]}>
+      <Image source={photo ? { uri: photo } : defaultPhoto as ImageSourcePropType} style={UI.photo(size)} />
     </View>
   </TouchableOpacity>
   ) 
@@ -163,7 +146,7 @@ export const MainButton= memo(({ onPress, title, bgColor = Colors.pink.reg, colo
       { backgroundColor: bgColor, borderColor: bdColor, marginHorizontal: h, marginVertical: v },
       buttonStyles
     ]}>
-      {icon && <Image source={getActionIconSource(icon)} style={[UI.smallIcon, { marginRight: 5 }]} /> }
+      {icon && <Image source={getActionIconSource(icon)} style={[UI.icon(), { marginRight: 5 }]} /> }
       <Text style={[Buttons.buttonText, textSize, {  color: color }, textStyles]}>
         {title}
       </Text>
@@ -205,7 +188,7 @@ export const StatButton = ({ header, stat, iconUri, body, bgColor, color = Color
         {stat >= 0 && stat !== Infinity ? stat : '?'}
       </Text> 
     }
-    { iconUri && <Image source={iconUri as ImageSourcePropType} style={{ ...UI.smallIcon, margin: 0 }}/> }
+    { iconUri && <Image source={iconUri as ImageSourcePropType} style={{ ...UI.icon(), margin: 0 }}/> }
     <Text style={{ ...Typography.xSmallBody }}>{body}</Text>
   </TouchableOpacity>
 )

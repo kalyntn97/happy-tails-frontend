@@ -3,7 +3,7 @@ import React from 'react'
 //hooks
 import { useCaresByPet, useHealthDueByPet } from '@hooks/sharedHooks'
 //components
-import { StatButton } from '@components/ButtonComponent'
+import { StatButton } from '@components/ButtonComponents'
 //styles
 import { Colors, Spacing } from '@styles/index'
 

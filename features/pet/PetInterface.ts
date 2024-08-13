@@ -1,32 +1,35 @@
-export interface Pet extends PetFormData {
-  _id: string
-  ids: Id[]
-  services: Service[]
-}
-export interface PetBasic {
-  _id: string
-  name: string
-  species: string
-  photo: string | null
-  color: number
-}
 
 export type Gender = 'Boy' | 'Girl' | 'Unknown'
 export interface PetFormData {
   name: string
   gender: Gender
   species: string 
-  breed: string
+  breed: string | null
   dob: string | null
-  firstMet: string | null
+  gotchaDate: string | null
   altered: { value: boolean, date: string | null}
   status: { value: string, date: string | null, show: boolean }
   color: number
   photo?: string | null
-  petId?: string
+  _id?: string
 }
 
 export type PhotoFormData = { uri: string, name: string, type: string }
+
+export interface Pet extends PetFormData {
+  _id: string
+  ids: Id[]
+  services: Service[]
+}
+
+export interface PetBasic {
+  _id: string
+  name: string
+  species: string
+  gender: Gender
+  photo: string | null
+  color: number
+}
 
 export interface PetMutationFormData {
   formData: PetFormData

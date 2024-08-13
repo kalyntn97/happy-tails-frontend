@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, ViewStyle } from 'react-native'
-import React, { memo, useCallback, useMemo, useState } from 'react'
+import React, { memo, useCallback, useState } from 'react'
+import { View, ViewStyle } from 'react-native'
 //components
 import { IconButton } from '@components/ButtonComponents'
 import { BottomModal, FormInput } from '@components/UIComponents'
@@ -42,7 +42,7 @@ const IconPicker = memo(({ selected, options, withCustom = false, initial, onSel
   return (
     <View style={[Spacing.flexRow, { width: '100%', flexWrap: 'wrap' }, pickerStyles]}>
       { options.map(option => 
-        <IconButton key={option.title} title={option.title} type={option.type} icon={option.icon ?? option.title} size='large' onPress={() => handleSelect(option.title)} styles={{ ...getButtonStyles(option.title) as ViewStyle }} />
+        <IconButton key={option.title} title={option.title} type={option.type} icon={option.icon ?? option.title} size='large' onPress={() => handleSelect(option.title)} buttonStyles={{ ...getButtonStyles(option.title) as ViewStyle }} />
       ) }
       { withCustom &&
         <>
@@ -50,7 +50,7 @@ const IconPicker = memo(({ selected, options, withCustom = false, initial, onSel
             setIsCustom(true)
             onSelect('Others')
             setModalVisible(!modalVisible)
-          }} styles={{ ...getButtonStyles(isCustom ? selected : 'Others') as ViewStyle }} 
+          }} buttonStyles={{ ...getButtonStyles(isCustom ? selected : 'Others') as ViewStyle }} 
           /> }
           <BottomModal modalVisible={modalVisible} onDismiss={dismissModal} height='70%'>
             <FormInput initial={selected !== 'Others' && selected} placeholder={`enter ${customLabel}`} onChange={(input: string) => onSelect(input)} props={{ onSubmitEditing: dismissModal }} />

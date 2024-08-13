@@ -32,6 +32,7 @@ export const AlertForm = ({ body, button }) =>
 const actionIconSource = {
   camera: require('@assets/icons/action-camera.png'),
   birthday: require('@assets/icons/action-birthday.png'),
+  birthdayColor: require('@assets/icons/action-birthday_color.png'),
   adopt: require('@assets/icons/action-adopt_date.png'),
   gender: require('@assets/icons/action-gender.png'),
   altered: require('@assets/icons/action-altered.png'),
@@ -101,7 +102,7 @@ const actionIconSource = {
   services: require('@assets/icons/action-pet_service.png'),
   'Add a Task': require('@assets/icons/care-filled.png'),
   'Add a Vet Visit': require('@assets/icons/health-filled.png'),
-  'Manage Pets': require('@assets/icons/pet-filled.png'),
+  'Add a Pet': require('@assets/icons/pet-filled.png'),
 }
 
 const careIconSource = {

@@ -118,10 +118,10 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.fullCon(),
   },
   photoUpload: {
-    ...UI.photo,
+    ...UI.photo(),
     position: 'relative',
     overflow: 'hidden',
     margin: 20,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     margin: 10
   },
   input: {
-    ...UI.input,
+    ...UI.input(),
     borderColor: Colors.pink.reg,
   },
   multiline: {

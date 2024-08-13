@@ -82,7 +82,7 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
 
       <View style={[styles.rowCon, styles.tableHeaderCon]}>
         <View style={[styles.columnCon, styles.leftColumn]}>
-          <Image source={getActionIconSource('date')} style={{ ...UI.smallIcon, marginRight: 10 }} />
+          <Image source={getActionIconSource('date')} style={{ ...UI.icon(), marginRight: 10 }} />
           <Text>Date</Text>
         </View>
         <View style={[styles.columnCon, styles.rightColumn]}>
@@ -96,7 +96,7 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
             <Text style={styles.column}>{new Date(record.createdAt).toLocaleDateString()}</Text>
           </View>
           <View style={[styles.columnCon, styles.rightColumn]}>
-            {stat.name === 'mood' ? <Image source={getStatQualIconSource(stat.name, record.value)} style={{ ...UI.icon }} /> 
+            {stat.name === 'mood' ? <Image source={getStatQualIconSource(stat.name, record.value)} style={{ ...UI.icon() }} /> 
             : <Text style={styles.column}>{(unit === defaultUnit || !unit) ? record.value : statConverter(stat.name, record.value.toString(), unit)}</Text>
             }
             

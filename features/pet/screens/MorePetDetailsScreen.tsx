@@ -30,7 +30,7 @@ type ListHeaderProps = {
 const ListHeader = ({ name, onPress }: ListHeaderProps) => (
   <>
     <View style={styles.listHeaderLeft}>
-      <Image source={getActionIconSource(name)} style={{ ...UI.icon }} />
+      <Image source={getActionIconSource(name)} style={{ ...UI.icon() }} />
       <Text style={styles.listHeaderText}>{PET_DETAILS[name]}</Text>
     </View>
     <TopRightHeader label='Add' icon='add' onPress={onPress} />
@@ -75,7 +75,7 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
   const Item = ({ item, type }: { item: any, type: DetailType }) => (
     <View style={styles.itemCon}>
       <View style={Spacing.flexRow}>
-        <Image source={getPetIconSource(item.type) || getPetIconSource(type)} style={{ ...UI.smallIcon }} />
+        <Image source={getPetIconSource(item.type) || getPetIconSource(type)} style={{ ...UI.icon() }} />
         <Text style={styles.itemHeader}>
           {item.name}
           <Text style={{ ...Typography.xSmallSubHeader }}> - {item.type}</Text>

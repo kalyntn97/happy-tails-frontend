@@ -60,7 +60,7 @@ const InputForm: FC<InputFormProps> = ({ name, initialValues, onSelect }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.fullCon(),
     ...Spacing.centered,
   },
   input: {

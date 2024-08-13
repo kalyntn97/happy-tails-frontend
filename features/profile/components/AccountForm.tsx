@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     height: '90%'
   },
   input: {
-    ...UI.input,
+    ...UI.input(),
     height: 40,
     margin: 5,
     borderColor: Colors.pink.reg,

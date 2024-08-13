@@ -125,7 +125,7 @@ const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
               style={[styles.prevBtn, currCard == 0 && styles.disabled, styles.baseNavBtn]}
               disabled={currCard == 0}
             >
-              <Image source={getActionIconSource('prev')} style={{...UI.xSmallIcon}}/> 
+              <Image source={getActionIconSource('prev')} style={{...UI.icon('xSmall')}}/> 
             </Pressable>
             
             <View style={styles.dotNav}>
@@ -139,7 +139,7 @@ const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
               style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled, styles.baseNavBtn]}
               disabled={currCard == petCount - 1}
             >
-              <Image source={getActionIconSource('next')} style={{ ...UI.xSmallIcon }}/> 
+              <Image source={getActionIconSource('next')} style={{ ...UI.icon('xSmall') }}/> 
             </Pressable>
           </View>
         }
@@ -154,7 +154,7 @@ const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.fullCon(),
     alignItems: 'center',
   },
   emptyMsg: {

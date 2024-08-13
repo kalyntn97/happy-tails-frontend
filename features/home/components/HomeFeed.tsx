@@ -65,11 +65,12 @@ const HomeFeed = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.headerCon}>  
         <TouchableOpacity onPress={() => setFeed('care')} style={[styles.iconHeaderCon, feed === 'care' && { borderColor: Colors.pink.dark }]}>
-          <Image source={getNavigationIconSource('care', feed === 'care' ? 'active' : 'inactive')} style={{...UI.smallIcon}} />
+
+          <Image source={getNavigationIconSource('care', feed === 'care' ? 'active' : 'inactive')} style={{...UI.icon()}} />
           <Text style={[styles.iconHeaderText, feed === 'care' && { color: Colors.pink.dark }]}>Pet care</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setFeed('health')} style={[styles.iconHeaderCon,feed === 'health' && { borderColor: Colors.pink.dark }]}>
-          <Image source={getNavigationIconSource('health', feed === 'health' ? 'active' : 'inactive')} style={{...UI.smallIcon}} />
+          <Image source={getNavigationIconSource('health', feed === 'health' ? 'active' : 'inactive')} style={{...UI.icon()}} />
           <Text style={[styles.iconHeaderText, feed === 'health' && { color: Colors.pink.dark }]}>Pet health</Text>
         </TouchableOpacity>
       </View>
@@ -83,7 +84,7 @@ const HomeFeed = ({ navigation }) => {
             <View style={styles.iconMenuContainer}>
               {['day', 'week', 'month', 'year'].map((selection: Selection) =>
                 <TouchableOpacity key={selection} style={styles.iconMenu} onPress={() => setSelected(selection)}>
-                  <Image source={getCalendarIconSource(selection, selected === selection ? 'active' : 'inactive')} style={{...UI.icon}} />
+                  <Image source={getCalendarIconSource(selection, selected === selection ? 'active' : 'inactive')} style={{...UI.icon()}} />
                   <Text style={[styles.iconText, selected === selection ? {...Typography.focused} : {...Typography.unFocused}]}>{getIconText(selection)}</Text>
                 </TouchableOpacity>
               )}

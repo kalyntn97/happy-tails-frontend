@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   icon: {
-    ...UI.smallIcon,
+    ...UI.icon(),
   },
   iconBtn: {
     marginHorizontal: 15,

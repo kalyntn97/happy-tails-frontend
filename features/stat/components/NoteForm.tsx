@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     ...Spacing.fullWH,
   },
   icon: {
-    ...UI.icon,
+    ...UI.icon(),
   },
   iconCon: {
     position: 'absolute',

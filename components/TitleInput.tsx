@@ -42,7 +42,7 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
   const [dropdownLeft, setDropDownLeft] = useState(0)
 
   const iconSource = useMemo(() => titleMap[type].iconSource(icon), [type, icon])
-  const validatedStyles = useMemo(() => error ? UI.inputError : isFocused ? UI.inputFocused : UI.inputUnfocused, [error, isFocused])
+  const validatedStyles = useMemo(() => error ? UI.error : isFocused ? UI.focused : UI.unfocused, [error, isFocused])
   
   const openDropDown = (input: string) => {
     const search = fuse.search(input)

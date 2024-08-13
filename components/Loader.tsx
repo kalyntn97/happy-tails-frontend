@@ -41,7 +41,7 @@ const Loader = () => {
           opacity: opacity[i]
         }
       ]}>
-        <Image source={require('@assets/icons/pet-paw.png')} style={{ ...UI.smallIcon, transform: [{ 'rotate': '90deg' }] }} />
+        <Image source={require('@assets/icons/pet-paw.png')} style={{ ...UI.icon(), transform: [{ 'rotate': '90deg' }] }} />
       </Animated.View>
     )
   }

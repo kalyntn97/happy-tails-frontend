@@ -1,23 +1,36 @@
 //npm
-import { FC, useRef, useState } from "react"
-import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View, FlatList, ViewStyle, TextStyle, useWindowDimensions } from "react-native"
-import Animated, { runOnJS, useAnimatedRef, useAnimatedScrollHandler, useDerivedValue, useSharedValue } from "react-native-reanimated"
+import { useRef, useState } from "react"
+import { Modal, Pressable, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import Animated, { runOnJS, useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated"
 //utils & store
-import { getDateInfo, getDayOfWeek, getDaysInMonth, getMonth, getWeekIndex, getYears, months } from "@utils/datetime"
 import { useActiveDate, useCurrentIsActive, useSetActions } from "@store/store"
+import { windowWidth } from "@utils/constants"
+import { getDateInfo, getDayOfWeek, getDaysInMonth, getMonth, getWeekIndex, getYears, months } from "@utils/datetime"
 //components
+import { SubButton } from "@components/ButtonComponents"
 import ScrollSelector from "@components/ScrollSelector"
-import { SubButton } from "@components/ButtonComponent"
 //styles
 import { Colors, Spacing, Typography, UI } from "@styles/index"
 
 type Style = ViewStyle | TextStyle
 
-const NavButtons = ({ condition, position, title, onPress }) => {
-  const color = condition ? Colors.white : Colors.pink.dark
+const NAV_TOP = 20
+const SCROLL_WIDTH = windowWidth
+const CHILD_WIDTH = 50
+const CHILD_MARGIN = 4
+const VISIBLE_CHILDREN = 6
+const VISIBLE_WIDTH = (CHILD_WIDTH + CHILD_MARGIN * 2) * VISIBLE_CHILDREN
 
+const ACCENT_COLOR = UI.lightPalette().accent
+const DARK_TEXT = { color: ACCENT_COLOR }
+const LIGHT_TEXT = { color: Colors.white }
+const ACTIVE_CON = { backgroundColor: ACCENT_COLOR, borderWidth: 0 }
+const CURRENT_CON = { backgroundColor: Colors.purple.lightest, borderWidth: 0 }
+
+const NavButtons = ({ condition, position, title, onPress }) => {
+  const color = condition ? Colors.white : ACCENT_COLOR
   return (
-  <TouchableOpacity style={[condition && styles.activeHeaderBtnCon, styles.headerBtnCon, position === 'left' ? { ...UI.rightRounded(15)} : { ...UI.leftRounded(15) }]} 
+  <TouchableOpacity style={[condition && styles.activeHeaderBtnCon, styles.headerBtnCon, position === 'left' ? { ...UI.rounded('right', 30)} : { ...UI.rounded('left', 30) }]} 
       onPress={onPress}>
       { position === 'right' && <Text style={[{ color: color }, styles.headerBtnText]}>◀︎</Text> }
       <Text style={[{ color: color }, styles.headerBtnText]}>{title}</Text>
@@ -38,18 +51,7 @@ const ScrollCalendar = () => {
   const { date: currDateIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
   const { setActiveDate } = useSetActions()
 
-  const NAV_TOP = 20
-  const SCROLL_WIDTH = useWindowDimensions().width
-  const CHILD_WIDTH = 50
-  const CHILD_MARGIN = 4
-  const VISIBLE_CHILDREN = 6
-  const VISIBLE_WIDTH = (CHILD_WIDTH + CHILD_MARGIN * 2) * VISIBLE_CHILDREN
-
-  const DARK_TEXT = { color: Colors.pink.dark }
-  const LIGHT_TEXT = { color: Colors.white }
   const DATE_CON = { ...styles.dateContainer, width: CHILD_WIDTH, marginHorizontal: CHILD_MARGIN }
-  const ACTIVE_CON = { backgroundColor: Colors.pink.dark, borderWidth: 0 }
-  const CURRENT_CON = { backgroundColor: Colors.purple.lightest, borderWidth: 0 }
 
   const todayIsActive = currDateIsActive && currMonthIsActive && currYearIsActive
   const pastIsActive = new Date(activeYear, activeMonth, activeDate + 1) < new Date() && new Date(activeYear, activeMonth, activeDate + 1).toDateString() !==  new Date().toDateString()
@@ -157,7 +159,7 @@ const ScrollCalendar = () => {
               )}
             </View>
             <View style={styles.modalBtnCon}>
-              <SubButton title='Confirm' color={Colors.pink.darkest} top={0} bottom={0}
+              <SubButton title='Confirm' color={ACCENT_COLOR}
                 onPress={() => {
                   setActiveDate({ 
                     date: selectedMonth === currMonth - 1 ? currDate - 1 : 0, 
@@ -169,7 +171,7 @@ const ScrollCalendar = () => {
                   setModalVisible(false)
                 }}
               />
-              <SubButton title='Reset' top={0} bottom={0}
+              <SubButton title='Reset'
                 onPress={() => {
                   setActiveDate({
                     date: currDate - 1, 
@@ -199,12 +201,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     ...Spacing.centered,
     borderWidth: 1,
-    borderColor: Colors.pink.dark
+    borderColor: ACCENT_COLOR,
   },
   date: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: Colors.pink.dark
+    color: ACCENT_COLOR,
   },
   navCon: {
     width: '100%',
@@ -215,11 +217,11 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     height: 30,
     width: 90,
-    borderColor: Colors.pink.dark,
+    borderColor: ACCENT_COLOR,
     borderWidth: 1.3,
   },
   activeHeaderBtnCon: {
-    backgroundColor: Colors.pink.dark,
+    backgroundColor: ACCENT_COLOR,
   },
   headerBtnText: {
     fontWeight: 'bold',
@@ -230,7 +232,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    color: Colors.pink.dark,
+    color: ACCENT_COLOR,
   },
   modalItemCon: {
     ...Spacing.centered,

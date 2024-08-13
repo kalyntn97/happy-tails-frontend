@@ -85,7 +85,7 @@ const EditAccountScreen: FC<EditAccountScreenProps> = ({ route, navigation }) =>
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.fullCon(),
   },
   updateForm: {
     width: '90%',
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   margin: 10
   },
   icon: {
-    ...UI.smallIcon
+    ...UI.icon()
   },
   deleteHeaderCon: {
     backgroundColor: Colors.white,

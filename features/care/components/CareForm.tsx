@@ -1,25 +1,22 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWindowDimensions, Pressable, Dimensions, TouchableWithoutFeedback, Keyboard } from "react-native"
+import { useCallback, useEffect } from "react"
+import { ScrollView, Text, View } from "react-native"
 //components
-import Dropdown from "@components/Dropdown/Dropdown"
-import { CheckboxButton, MainButton, SubButton, ToggleButton, TransparentButton } from "@components/ButtonComponents"
-import { DateInput, ErrorMessage, FormInput, FormLabel, BottomModal, ModalInput, TableForm } from "@components/UIComponents"
+import PetInfo from "@components/PetInfo/PetInfo"
 import ColorPicker from "@components/Pickers/ColorPicker"
+import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/Pickers/FrequencyPicker"
 import PetPicker from "@components/Pickers/PetPicker"
 import TitleInput from "@components/TitleInput"
-import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/FrequencyPicker"
+import { ToggleButton } from "@components/ButtonComponents"
+import { DateInput, ModalInput, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 //types && hooks
-import useForm from "@hooks/useForm"
-import { useShallowPets } from "@hooks/sharedHooks"
 import { PetBasic } from "@pet/PetInterface"
 import type { Care, CareFormData } from "@care/CareInterface"
-import { windowHeight } from "@utils/constants"
+import { useShallowPets } from "@hooks/sharedHooks"
+import useForm from "@hooks/useForm"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { Colors } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
-import PetList from "@components/PetInfo/PetList"
-import PetInfo from "@components/PetInfo/PetInfo"
 
 
 interface InitialState extends Care {
@@ -68,7 +65,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
     <ModalInput customLabel={
       pets.map((pet, index) =>
         <View key={pet} style={{ zIndex: index, marginLeft: -10 }}>
-          <PetInfo pet={petIdToPet(pet)} size="mini" />
+          <PetInfo pet={petIdToPet(pet)} size="small" />
         </View>
       )
     }>

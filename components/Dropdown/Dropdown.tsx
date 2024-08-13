@@ -111,7 +111,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
   return (
     <View style={{ width: width as DimensionValue, zIndex: focused ? 10 : 2 }}>
       { withSearch ?
-        <View style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue }, focused && UI.inputFocused]} ref={DropdownBtn}>
+        <View style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue }, focused && UI.focused]} ref={DropdownBtn}>
           <Icon name='search' styles={{ marginRight: 15 }} />
           <TextInput
             style={{ maxWidth: '80%' }}
@@ -125,7 +125,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
             selectTextOnFocus={true}
           />
         </View>
-        : <TouchableOpacity style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue, justifyContent: 'space-between' }, visible && UI.inputFocused]} onPress={toggleDropdown} ref={DropdownBtn}>
+        : <TouchableOpacity style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue, justifyContent: 'space-between' }, visible && UI.focused]} onPress={toggleDropdown} ref={DropdownBtn}>
           <Text style={{ maxWidth: '80%' }}>{selected ?? label}</Text>
           <Icon name={visible ? 'up' : 'down'} />
         </TouchableOpacity>
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   buttonCon: {
-    ...UI.input,
+    ...UI.input(),
   },
   content: {
     position: 'absolute',

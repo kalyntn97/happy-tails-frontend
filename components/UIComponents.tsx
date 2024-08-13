@@ -1,16 +1,16 @@
-import { ActivityIndicator, DimensionValue, Image, ImageStyle, Keyboard, KeyboardAvoidingView, KeyboardEventListener, Modal, Platform, Pressable, StyleSheetProperties, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native"
-import { Spacing, Colors, Typography, UI } from "@styles/index"
-import { ComponentProps, FC, MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
-import { IconType, getActionIconSource, getIconByType } from "@utils/ui"
-import { ImageSourcePropType } from "react-native"
-import { ToastConfig, ToastConfigParams, ToastOptions, ToastProps } from "react-native-toast-message"
+import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
+import { DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, Modal, Pressable, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
-import { GoBackButton, IconButton, SubButton } from "./ButtonComponents"
-import Animated, { FadeInDown, FadeOutDown, LayoutAnimationConfig, SlideInDown, SlideOutDown, ZoomInUp } from "react-native-reanimated"
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated"
+//utils & hooks
+import { ToastConfigParams } from "react-native-toast-message"
+import { IconType, getActionIconSource, getIconByType } from "@utils/ui"
 import { useSelectPhoto } from "@hooks/sharedHooks"
-import Fuse from "fuse.js"
-
-type Size = 'small' | 'medium' | 'large' | 'xSmall' | 'xLarge'
+//components 
+import { GoBackButton, SubButton } from "./ButtonComponents"
+//styles
+import { Colors, Spacing, Typography, UI } from "@styles/index"
+import { Size, icon, lightPalette } from "@styles/ui"
 
 type BoxHeaderProps = {
   title: string
@@ -59,18 +59,10 @@ interface IconProps {
 }
 interface CircleIconProps extends IconProps { bgColor?: string }
 
-const iconSize = {
-  xSmall: UI.xSmallIcon,
-  small: UI.smallIcon,
-  medium: UI.icon,
-  large: UI.largeIcon,
-  xLarge: UI.xLargeIcon,
-}
-
-export const Icon = ({ type = 'action', name, size = 'xSmall', styles }: IconProps) =>  {
+export const Icon = ({ type = 'action', name, size = 'small', styles }: IconProps) =>  {
   const source = getIconByType(type, name)
   return (
-    <Image source={source} style={[iconSize[size], styles]} />
+    <Image source={source} style={[icon(size), styles]} />
   )
 }
 
@@ -80,13 +72,7 @@ export const CircleIcon = ({ type, name, size = 'large', bgColor }: CircleIconPr
   </View>
 )
 
-const photoSize = {
-  medium: { width: 110, height: 130 },
-  small: { width: 80, height: 100 },
-  xSmall: { width: 50, height: 70 },
-}
-
-export const PhotoUpload = memo(({ photo, size = 'medium', placeholder, onSelect, styles }: { photo?: string, size?: Size, placeholder?: ImageSourcePropType, onSelect: (uri: string) => void, styles?: ViewStyle }) => {
+export const PhotoUpload = memo(({ photo, size = 'large', placeholder, onSelect, styles }: { photo?: string, size?: Size, placeholder?: ImageSourcePropType, onSelect: (uri: string) => void, styles?: ViewStyle }) => {
   const photoSource: ImageSourcePropType = photo ? { uri: photo } : (placeholder ?? require('assets/icons/ui-image.png'))
 
   const addPhoto = async () => {
@@ -95,12 +81,12 @@ export const PhotoUpload = memo(({ photo, size = 'medium', placeholder, onSelect
   }
 
   return (
-    <View style={[styles, photoSize[size], { borderRadius: 15, position: 'relative', overflow: 'hidden', backgroundColor: Colors.shadow.light, elevation: 2 }]}>
+    <View style={[styles, UI.photo(size, 15, 0), { position: 'relative', overflow: 'hidden', backgroundColor: Colors.shadow.light, elevation: 2 }]}>
       <Image source={photoSource} style={Spacing.fullWH as ImageStyle} />
-      <TouchableOpacity onPress={addPhoto} style={[Spacing.centered, { position: 'absolute', width: '100%', height: '40%', bottom: 0 }]}>
+      <TouchableOpacity onPress={addPhoto} style={[Spacing.centered, { position: 'absolute', width: '100%', height: '30%', bottom: 0 }]}>
         <View style={[Spacing.centered, { width: '90%', padding: 5, marginBottom: 5, borderRadius: 30, backgroundColor: Colors.transparent.light }]}>
-          <Text style={{ fontSize: size === 'medium' ? 12 : 10 }}>{photo ? 'Edit' : 'Upload'} Photo</Text>
-          <Icon name='camera' />
+          <Text style={{ fontSize: size === 'med' ? 12 : 10 }}>{photo ? 'Edit' : 'Upload'} Photo</Text>
+          <Icon name='camera' size='xSmall' />
         </View>
       </TouchableOpacity>
     </View>
@@ -123,7 +109,7 @@ export const ErrorImage = ({ top = 0 }: { top?: number }) => (
 
 export const CatToast = ({ text1, text2, props }: { text1: string, text2: string, props: any }) => (
   <View style={[Spacing.flexRow, UI.boxShadow, { backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', minHeight: 70, shadowColor: props.style === 'success' ? Colors.green.dark : Colors.red.dark }]}>
-    <Image source={props.style === 'success' ? require('assets/icons/ui-cat-happy.png') : require('assets/icons/ui-cat-sad.png')} style={{ ...UI.icon}} />
+    <Image source={props.style === 'success' ? require('assets/icons/ui-cat-happy.png') : require('assets/icons/ui-cat-sad.png')} style={{ ...UI.icon()}} />
     <View style={[Spacing.flexColumn, { marginLeft: 10, alignItems: 'flex-start' }]}>  
       <Text style={{ textTransform: 'capitalize', fontWeight: 'bold', fontSize: 15, marginBottom: 5 }}>{props.style}!</Text>
       <Text>{text1}</Text>
@@ -151,20 +137,20 @@ const headerSize = {
   xLarge: Typography.mainHeader,
 }
 
-export const Header = ({ title, size = 'medium', color = Colors.black, styles }: { title: string, size?: Size, color?: string, styles?: TextStyle }) => (
+export const Header = ({ title, size = 'med', color = lightPalette().text, styles }: { title: string, size?: Size, color?: string, styles?: TextStyle }) => (
   <Text style={[headerSize[size], { color: color }, styles]}>{title}</Text>
 )
 
 export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { label: string, icon?: string, onPress: () => void, top?: number, right?: number }) => (
   <Pressable onPress={onPress} style={[Spacing.flexRow, { position: 'absolute', right: right, top: top }]}>
-    <Text style={[Typography.xSmallHeader, { marginRight: icon ? 10 : 0 }]}>{label}</Text>
+    <Header title={label} size='xSmall' styles={{ marginRight: icon ? 10 : 0 }} />
     { icon && <Icon name={icon} /> }
   </Pressable>
 )
 
 export const FormLabel = ({ label, icon, width, top = 30, bottom = 10 }: { label: string, icon: string, width?: string | number, top?: number, bottom?:number }) => (
   <View style={[Spacing.flexRow, { width: width as DimensionValue, alignSelf: 'flex-start', marginTop: top, marginBottom: bottom }]}>
-    <Image source={getActionIconSource(icon)} style={{ ...UI.xSmallIcon, marginRight: 10 }} />
+    <Image source={getActionIconSource(icon)} style={{ ...UI.icon('xSmall'), marginRight: 10 }} />
     <Text style={{ ...Typography.xSmallHeader, margin: 0 }}>{label}</Text>
   </View>
 )
@@ -173,13 +159,13 @@ export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styl
   const [isFocused, setIsFocused] = useState(false)
   const [value, setValue] = useState(initial ?? null)
 
-  const validatedStyles = useMemo(() => error ? UI.inputError : isFocused ? UI.inputFocused : UI.inputUnfocused, [error, isFocused])
+  const validatedStyles = useMemo(() => error ? UI.error : isFocused ? UI.focused : UI.unfocused, [error, isFocused])
 
   return (
     <View style={{ zIndex: isFocused ? 10 : 2 }}>
       <TextInput
         ref={ref}
-        style={[styles ?? UI.input, validatedStyles, { width: width }]}
+        style={[styles ?? UI.input(), validatedStyles, { width: width }]}
         placeholder={placeholder ?? 'Title'}
         placeholderTextColor={UI.lightPalette().unfocused}
         value={value}
@@ -290,7 +276,7 @@ export const NoteInput = ({ notes, maxLength = 100, onChange, buttonStyles, butt
   return (
     <ModalInput label={notes ?? 'No notes added.'} onReset={() => onChange(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} height={height}>
       <TextInput
-        style={[UI.input, { width: '90%', minHeight: 100, maxHeight: '30%' }, inputStyles]}
+        style={[UI.input(), { width: '90%', minHeight: 100, maxHeight: '30%' }, inputStyles]}
         placeholder={'Enter notes'}
         placeholderTextColor={UI.lightPalette().unfocused}
         value={notes}
@@ -306,15 +292,15 @@ export const NoteInput = ({ notes, maxLength = 100, onChange, buttonStyles, butt
 
 export const TableForm = memo(({ table, withLabel = false, dependentRows }: { table: { key: string, icon: string, value: any, label?: string }[], withLabel?: boolean, dependentRows?: { [key: string]: boolean }}) => (
   <View style={{ ...UI.roundedCon, backgroundColor: Colors.white }}>
-    {table.map(row => {
+    {table.map((row, index) => {
       let rowIsVisible = true
       if (dependentRows && dependentRows.hasOwnProperty(row.key)) rowIsVisible = dependentRows[row.key]
       
       return (
         rowIsVisible && 
-        <View key={row.key} style={[Spacing.flexRow, { width: '100%', justifyContent: 'space-between', minHeight: 50 }]}>
+        <View key={row.key} style={[Spacing.flexRow, index < table.length - 1 && UI.tableRow(true), { justifyContent: 'space-between', minHeight: 50 }]}>
           <View style={Spacing.flexRow}>
-            <Icon name={row.icon} />
+            <Icon name={row.icon} size='xSmall' />
             { withLabel && <Text style={{ marginLeft: 5 }}>{row.label}</Text> }
           </View>
           <View style={{ maxWidth: '60%' }}>{row.value}</View>

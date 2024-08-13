@@ -39,10 +39,11 @@ export const circleBase = {
 }
 
 export const squareBase = {   
-  ...centered,
-  ...square,
+  ...base,
+  ...lessRounded,
   borderWidth: 1,
   borderColor: lightPalette().border,
+  padding: 10,
 }
 
 export const solid: ViewStyle = {
@@ -85,4 +86,5 @@ export const long = { minWidth: 250, height: 50 }
 export const roundButton = { ...circleBase, width: 60, height: 60 }
 export const smallRoundButton = { ...circleBase, width: 20, height: 20 }
 export const mediumRoundButton = { ...circleBase, width: 40, height: 40 }
+
 

@@ -174,7 +174,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.fullCon(),
   },
   subBtn: {
     ...Buttons.xxSmallRoundedSolid,
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     flex: 6,
   },
   itemIcon: {
-    ...UI.icon,
+    ...UI.icon(),
     marginHorizontal: 10,
   },
   itemBtn: {
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     width: '40%',
   },
   rightIcon: {
-    ...UI.xSmallIcon, 
+    ...UI.icon('xSmall'), 
     marginRight: 15,
   }
 })

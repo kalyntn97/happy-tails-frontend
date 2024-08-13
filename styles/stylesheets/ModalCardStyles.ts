@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
     marginTop: 10,
   },
   icon: {
-    ...UI.icon
+    ...UI.icon()
   },
   body: {
     width: '100%',

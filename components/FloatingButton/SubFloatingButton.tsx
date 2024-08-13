@@ -8,8 +8,15 @@ import { ButtonStyles, Button, subBtn_tap_event } from "./constants"
 import { Spacing, Colors, UI } from "@styles/index"
 import { getActionIconSource } from "@utils/ui"
 
+type Props = {
+  label: string
+  onPress: (navigation) => any
+  navigation: any
+  index: number
+  x: number
+}
 
-const SubFloatingButton = ({ onPress, label, index, x }) => {
+const SubFloatingButton = ({ onPress, label, index, x, navigation }: Props) => {
   const { width } = useWindowDimensions()
  
   const iconSource = getActionIconSource(label)
@@ -22,7 +29,7 @@ const SubFloatingButton = ({ onPress, label, index, x }) => {
       case State.END: {
         DeviceEventEmitter.emit(subBtn_tap_event)
         buttonOpacity.value = 1.0
-        onPress && onPress()
+        onPress && onPress(navigation)
         break
       }
       case State.CANCELLED: buttonOpacity.value = 1.0; break
@@ -76,11 +83,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: ButtonStyles.width + 10,
     fontWeight: 'bold',
-    color: Colors.pink.darkest,
+    color: ButtonStyles.labelColor,
     fontSize: 15,
   },
   icon: {
-   ...UI.smallIcon,
+   ...UI.icon(),
    position: 'absolute',
    bottom: 10,
    left: 10

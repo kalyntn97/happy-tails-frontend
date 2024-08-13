@@ -1,30 +1,27 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react"
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import Fuse from "fuse.js"
+import { useCallback, useEffect, useMemo } from "react"
+import { ScrollView, Text, View } from "react-native"
 //store && types & helpers
 import { Health, Visit } from "@health/HealthInterface"
-import { FormErrors, Frequency } from "@utils/types"
 import * as healthHelpers from '@health/healthHelpers'
-import { windowHeight } from "@utils/constants"
-//hooks
+import { FormErrors, Frequency } from "@utils/types"
+//hooks & utils
 import { useShallowPets } from "@hooks/sharedHooks"
 import useForm from "@hooks/useForm"
+import { compareDates, getDateFromRange } from "@utils/datetime"
 //components
-import VisitForm from "./VisitForm"
-import TitleInput from "@components/TitleInput"
+import { ActionButton, ToggleButton } from "@components/ButtonComponents"
+import Dropdown from "@components/Dropdown/Dropdown"
+import PetInfo from "@components/PetInfo/PetInfo"
+import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/Pickers/FrequencyPicker"
+import IconPicker from "@components/Pickers/IconPicker"
 import PetPicker from "@components/Pickers/PetPicker"
-import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/FrequencyPicker"
-import Dropdown from "@components/Dropdown/Dropdown" 
-import { SubButton } from "@components/ButtonComponents"
-import { ActionButton, IconButton, ToggleButton } from "@components/ButtonComponents"
-import { BoxWithHeader, DateInput, FormError, FormLabel, Icon, ModalInput, NoteInput, TableForm } from "@components/UIComponents"
+import TitleInput from "@components/TitleInput"
+import { FormError, FormLabel, Icon, ModalInput, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
+import VisitForm from "./VisitForm"
 //styles
 import { styles } from "@styles/stylesheets/FormStyles"
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import PetInfo from "@components/PetInfo/PetInfo"
-import IconPicker from "@components/Pickers/IconPicker"
-import { compareDates, getDateFromRange } from "@utils/datetime"
 
 interface HealthFormProps {
   onSubmit: (formData: Health) => void
@@ -118,7 +115,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   }
 
   const renderPet = (
-    <ModalInput customLabel={<PetInfo pet={petIdToPet(pet._id)} size="mini" />}>
+    <ModalInput customLabel={<PetInfo pet={petIdToPet(pet._id)} size="xSmall" />}>
       <PetPicker onSelect={(selected: string[]) => onChange('pet', selected[0])} initials={[pet?._id]} />
     </ModalInput>
   )
@@ -177,7 +174,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
     >
       <TitleInput initial={initialState.name} placeholder='New Vet Visit' onChange={(input: string) => onChange('name', input)} type='health' error={errors?.name} />
       { isVaccine &&
-        <Dropdown label='Search Vaccine' withSearch={true} searchLabel='vaccine' dataType={pet.species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={(selected: string) => onChange('details', [...details, selected])} initial={details[0]} width='80%' buttonStyles={{ ...UI.input, alignSelf: 'center' }} />
+        <Dropdown label='Search Vaccine' withSearch={true} searchLabel='vaccine' dataType={pet.species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={(selected: string) => onChange('details', [...details, selected])} initial={details[0]} width='80%' buttonStyles={{ ...UI.input(), alignSelf: 'center' }} />
       }
 
       <TableForm table={mainTable} withLabel={true} dependentRows={{ frequency: repeat }}/>

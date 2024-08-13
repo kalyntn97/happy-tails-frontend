@@ -1,35 +1,49 @@
 //npm modules
-import { useEffect, useLayoutEffect, useMemo, useState } from "react"
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ImageStyle, ScrollView, Button, Pressable, ImageSourcePropType, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from "react-native"
+import { useEffect, useMemo } from "react"
+import { ScrollView, Text, TouchableOpacity, View } from "react-native"
 //components
-import { CheckboxButton, MainButton, SubButton, ToggleButton, TransparentButton } from '@components/ButtonComponents'
-import { DateInput, ErrorMessage, FormInput, FormLabel, Icon, ModalInput, PhotoUpload, TableForm } from "@components/UIComponents"
+import { ToggleButton } from '@components/ButtonComponents'
 import Dropdown from "@components/Dropdown/Dropdown"
-import IconPicker from "@components/Pickers/IconPicker"
 import ColorPicker from "@components/Pickers/ColorPicker"
+import IconPicker from "@components/Pickers/IconPicker"
+import { DateInput, FormInput, FormLabel, Icon, ModalInput, PhotoUpload, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
-//helpers & utils
+//helpers & utils & hooks
 import useForm from "@hooks/useForm"
-import { getActionIconSource, getPetIconSource } from "@utils/ui"
-import { Pet, PetFormData, PhotoFormData } from "@pet/PetInterface"
-import { GENDER, SPECIES, SPECIES_OPTIONS, STATUS } from "@pet/petHelpers"
+import { PetFormData, PhotoFormData } from "@pet/PetInterface"
+import { GENDER, SPECIES_OPTIONS, STATUS } from "@pet/petHelpers"
+import { getPetIconSource } from "@utils/ui"
 //styles
-import { Buttons, Spacing, UI, Colors, Typography } from '@styles/index'
+import { Colors, Spacing } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
 
 interface PetFormProps {
   onSubmit: (formData: PetFormData, photoData: PhotoFormData | null) => Promise<any>
-  initialValues?: Pet
+  initialValues?: PetFormData
   formStatus: string
   navigation: any
   setColor: (color: number) => void
 }
 
 const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: PetFormProps) => {
-  const initialState = useMemo(() => ({ name: initialValues?.name ?? null, gender: initialValues?.gender ?? GENDER[0], species: initialValues?.species ?? SPECIES_OPTIONS[0].title, allowManualSpecies: initialValues ? !SPECIES.includes(initialValues.species) : false, breed: initialValues?.breed ?? null, dob: initialValues?.dob ?? null, firstMet: initialValues?.firstMet ?? null, altered: initialValues?.altered ?? { value: false, date: null }, status: initialValues?.status ?? { value: 'Healthy', date: null, archive: false }, color: initialValues?.color ?? 0, photo: initialValues?.photo ?? null, photoData: null, petId: initialValues?.petId ?? null, errors: {} }), [initialValues])
+  const initialState = useMemo(() => ({ 
+    name: initialValues?.name ?? null, 
+    species: initialValues?.species ?? SPECIES_OPTIONS[0].title, 
+    breed: initialValues?.breed ?? null, 
+    gender: initialValues?.gender ?? GENDER[2], 
+    dob: initialValues?.dob ?? null, 
+    gotchaDate: initialValues?.gotchaDate ?? null, 
+    altered: initialValues?.altered ?? { value: false, date: null }, 
+    status: initialValues?.status ?? { value: 'Healthy', date: null, archive: false }, 
+    color: initialValues?.color ?? 0, 
+    photo: initialValues?.photo ?? null, 
+    _id: initialValues?._id ?? null, 
+    photoData: null, 
+    errors: {} 
+  }), [initialValues])
 
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
-  const { name, gender, species, breed, dob, firstMet, altered, status, color, photo, petId, errors } = values
+  const { name, gender, species, breed, dob, gotchaDate, altered, status, color, photo, petId, errors } = values
 
   const placeholderPhoto = useMemo(() => {
     let icon: string
@@ -52,7 +66,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
 
   function handleSubmit() {
     const photoData = photo && photo !== initialState.photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
-    onSubmit({ name, gender, species, breed, dob, firstMet, altered, status, color, petId }, photoData)
+    onSubmit({ name, gender, species, breed, dob, gotchaDate, altered, status, color, petId }, photoData)
   }
 
   const renderType = (
@@ -85,7 +99,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
   )
 
   const renderFirstMet = (
-    <DateInput date={firstMet} placeholder='Unknown' onChangeDate={(selected) => onChange('firstMet', selected)} color={color} />
+    <DateInput date={gotchaDate} placeholder='Unknown' onChangeDate={(selected) => onChange('gotchaDate', selected)} color={color} />
   )
 
   const renderGender = (
@@ -175,7 +189,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
     >
       <View style={styles.headerCon}>
         <PhotoUpload photo={photo} placeholder={placeholderPhoto} onSelect={(uri: string) => onChange('photo', uri)} />
-        <View style={[styles.titleCon, { width: '65%' }]}>
+        <View style={[styles.titleCon, { width: '60%' }]}>
           <FormInput initial={initialState.name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} />
         </View>
       </View>

@@ -1,17 +1,17 @@
-//npm modules
-import { StyleSheet, Text, View, Image, TouchableOpacity, useWindowDimensions } from "react-native"
+import { Image, StyleSheet, Text, View, useWindowDimensions } from "react-native"
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated"
-import { scale, verticalScale, moderateScale } from 'react-native-size-matters'
+import { moderateScale } from 'react-native-size-matters'
 //types & utils
 import { Pet } from "@pet/PetInterface"
-import { getActionIconSource, getPetIconSource } from "@utils/ui"
 import { SPECIES_OPTIONS } from "@pet/petHelpers"
 import { countYearsBetween } from "@utils/datetime"
+import { getPetIconSource } from "@utils/ui"
 //components
 import { TransparentButton } from "@components/ButtonComponents"
 import StatButtonList from "./StatButtonList"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { Colors, Spacing, Typography, UI } from '@styles/index'
+import { Icon } from "@components/UIComponents"
 interface PetCardProps {
   pet: Pet
   index: number
@@ -51,12 +51,12 @@ const PetCard = ({ pet, index, scrollX, navigation }: PetCardProps) => {
           
           <View style={styles.detailsContainer}>
             <View style={styles.petInfo}>
-              <Image style={{ ...UI.smallIcon }} source={getPetIconSource(!SPECIES_OPTIONS.includes(pet.species) ? 'Others' : pet.species)} />
+              <Icon type='pet' name={!SPECIES_OPTIONS.includes(pet.species) ? 'Others' : pet.species} />
               <Text style={styles.body}>{pet.breed ? pet.breed : 'Unknown'}</Text>
             </View>
 
             <View style={styles.petInfo}>
-              <Image style={{ ...UI.smallIcon }} source={require('@assets/icons/info-birthday.png')} />
+              <Icon name='birthdayColor' />
               <Text style={styles.body}>
                 {petAge} {petAge !== 'Unknown' && (petAge <= 1 ? 'year' : 'years')}
               </Text>
@@ -64,7 +64,7 @@ const PetCard = ({ pet, index, scrollX, navigation }: PetCardProps) => {
           </View>
         </View>
 
-        <Image style={styles.petPhoto } 
+        <Image style={UI.photo('large')} 
           source={pet.photo ? {uri: pet.photo} : getPetIconSource(['Dog', 'Cat'].includes(pet.species) ? `${pet.species}Profile` : 'AnimalProfile')} 
         />
 
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     ...Spacing.centered,
   },
   base: {
-    ...UI.cardWithShadow,
+    ...UI.card(),
     justifyContent: 'flex-start',
     alignItems: 'center',
     transform: [{ scale: moderateScale(0.8, 1.5) }],
@@ -113,15 +113,10 @@ const styles = StyleSheet.create({
     ...Typography.smallBody,
     marginHorizontal: 5,
   },
-  petPhoto: {
-    ...UI.photo,
-    borderRadius: 100,
-    backgroundColor: Colors.pink.light
-  },
   btnCon: { 
     ...Spacing.flexRow, 
     marginTop: 10,
   }
 })
- 
+
 export default PetCard

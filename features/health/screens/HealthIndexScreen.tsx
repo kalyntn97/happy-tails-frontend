@@ -44,10 +44,10 @@ const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
         <Image source={iconSource} style={styles.itemIcon} />
         <Text>{HEALTHS[health.name] ?? health.name}</Text>
         <View style={{ flex: 1 }}>
-          <PetInfo pet={health.pet} size='mini' />
+          <PetInfo pet={health.pet} size='xSmall' />
         </View>
       </View>
-      <Image source={getActionIconSource('nextRound')} style={{...UI.smallIcon, marginRight: 10 }} />
+      <Image source={getActionIconSource('nextRound')} style={{...UI.icon(), marginRight: 10 }} />
     </TouchableOpacity>
   )
 }
@@ -151,7 +151,7 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.fullCon(),
     position: 'relative',
   },
   btnCon: {
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
   },
   itemIcon: {
-    ...UI.icon,
+    ...UI.icon(),
     marginHorizontal: 10,
   },
   itemBtn: {

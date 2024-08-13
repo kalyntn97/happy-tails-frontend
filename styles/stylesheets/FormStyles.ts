@@ -5,11 +5,10 @@ import { lightPalette } from "@styles/ui"
 
 export const styles = StyleSheet.create({
   container: {
-    ...Spacing.scrollContent,
+    ...UI.form(10, 20),
   },
   containerWithPadding: {
-    ...Spacing.scrollScreenDown,
-    paddingTop: 50,
+    ...UI.form(10, 60, 50),
   },
   labelCon: {
     ...Spacing.flexRow,

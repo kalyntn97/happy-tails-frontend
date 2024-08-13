@@ -47,18 +47,16 @@ const PetPicker = ({ mode, onSelect, initials }: Props) => {
   )
 }
 
-export default PetPicker
-
 const styles = StyleSheet.create({
   container: {
     ...Spacing.flexRow,
+    ...Spacing.centered,
     width: '100%',
     flexWrap: 'wrap',
-    ...Spacing.centered,
   },
   petBtn: {
     maxWidth: '30%',
-    ...Buttons.largeSquareButton,
+    ...Buttons.squareBase,
   },
   selected: {
     opacity: 1
@@ -67,3 +65,5 @@ const styles = StyleSheet.create({
     opacity: 0.3  
   },
 })
+
+export default PetPicker

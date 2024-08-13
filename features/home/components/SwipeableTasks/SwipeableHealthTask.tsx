@@ -56,7 +56,7 @@ const SwipeableHealthTask: FC<SwipeableHealthTaskProps> = ({ health, onPress, pa
       {pastVisit && <Text style={styles.taskStatus}>{new Date(pastVisit.date).toLocaleDateString()}</Text>}
       {!pastVisit && <Text style={styles.taskStatus}>{new Date(health.nextDue.date).toLocaleDateString()}</Text>}
       <View style={styles.taskPetList}>
-        <PetInfo pet={health.pet} size='mini' />
+        <PetInfo pet={health.pet} size='xSmall' />
       </View>
     </>
   )

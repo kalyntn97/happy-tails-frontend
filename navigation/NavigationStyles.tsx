@@ -8,6 +8,8 @@ import { GoBackButton } from "@components/ButtonComponents"
 import { Colors, UI, Typography, Spacing } from "@styles/index"
 import { getActionIconSource } from "@utils/ui"
 
+export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
+
 const headerOptions: any = {
   headerTitleStyle: { fontSize: 18, fontWeight: 'bold' },
   headerStyle: { backgroundColor: Colors.shadow.lightest },
@@ -18,14 +20,17 @@ const contentStyle: NativeStackNavigationOptions = {
   contentStyle: { backgroundColor: Colors.shadow.lightest },
 }
 
+export const tabBarOptions: BottomTabNavigationOptions = {
+  tabBarStyle: { padding : 10, height: TAB_BAR_HEIGHT, backgroundColor: Colors.white },
+  headerShown: false,
+}
+
 const RightButton = ({ title, icon, onPress, buttonStyles }: { title?: string, icon?: string, onPress: () => void, buttonStyles?: ViewStyle }) => (
   <TouchableOpacity onPress={onPress} style={buttonStyles}>
     { icon && <Image source={getActionIconSource(icon)} style={{ width: 25, height: 25 }} /> }
     { title && <Text style={styles.buttonText}>{title}</Text> }
   </TouchableOpacity>
 )
-
-export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
 
 export const Header = ({ title, navigation, showGoBackButton, mode, rightActions, bgColor = Colors.shadow.lightest }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string, rightActions?: { title?: string, icon?: string, onPress: () => void }[], bgColor?: string }) => (
   <View style={[styles.headerCon, { height: title ? 70 : 50, paddingTop: mode === 'card' ? 25 : 15, backgroundColor: bgColor }]}>
@@ -51,13 +56,8 @@ export const dynamicStackOptions = (mode: 'modal' | 'card' = 'modal', showGoBack
   }
 }
 
-export const tabBarOptions: BottomTabNavigationOptions = {
-  tabBarStyle: { padding : 10, height: TAB_BAR_HEIGHT, backgroundColor: Colors.white },
-  headerShown: false,
-}
-
 export const styles = StyleSheet.create({
-  icon: { ...UI.smallIcon },
+  icon: { ...UI.icon() },
   iconLabel: { fontWeight: 'bold', fontSize: 12 },
   headerCon: { 
     paddingTop: 25,

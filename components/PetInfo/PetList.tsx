@@ -5,16 +5,17 @@ import { Pet, PetBasic } from "@pet/PetInterface"
 import PetInfo from "./PetInfo"
 //styles
 import { Spacing } from '@styles/index'
+import { Size } from "@styles/ui"
 
 interface PetListProps {
   petArray: Pet[] | PetBasic[]
-  size: 'compact' | 'small' | 'mini' // small < compact
+  size: Size
 }
 
-const PetList: React.FC<PetListProps> = ({ petArray, size }) => {
+const PetList = ({ petArray, size }: PetListProps) => {
   return (  
     <View style={[styles.container, 
-      size === 'mini' ? { maxWidth: 225, height: 40 } 
+      size === 'xSmall' ? { maxWidth: 225, height: 40 } 
       : size === 'small' ? { maxWidth: 300 } 
       : { width: '100%' }
     ]}>
@@ -32,5 +33,5 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 })
- 
+
 export default PetList

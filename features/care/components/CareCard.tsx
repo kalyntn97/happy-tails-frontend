@@ -46,7 +46,7 @@ const CareCard: FC<CareCardProps> = ({ care, navigation, onNavigate }) => {
         <PetList petArray={care.pets} size='small' />
           {care.repeat &&
             <View style={Spacing.flexRow}>
-              <Image source={getActionIconSource('repeat')} style={{ ...UI.smallIcon }} />
+              <Image source={getActionIconSource('repeat')} style={{ ...UI.icon() }} />
               <Text style={styles.freq}>
                 {care.times} times / {care.frequency === 'Daily' ? 'day' : care.frequency === 'Weekly' ? 'week' : care.frequency === 'Monthly' ? 'month' : 'year'}
               </Text>

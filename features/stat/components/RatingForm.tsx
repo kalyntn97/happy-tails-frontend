@@ -52,7 +52,7 @@ const RatingForm: FC<RatingFormProps> = ({ name, initialValues, onSelect }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.fullCon(),
     ...Spacing.centered,
   },
   optionCon: {

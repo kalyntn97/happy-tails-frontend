@@ -1,18 +1,17 @@
-import { KeyboardAvoidingView, Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import React from 'react'
+import { View } from 'react-native'
 //utils & hooks
-import { Pet, PetBasic, Service } from '@pet/PetInterface'
-import useForm from '@hooks/useForm'
 import { useShallowPets } from '@hooks/sharedHooks'
-//components
-import { DateInput, FormInput, FormLabel, Icon, ModalInput, NoteInput, TableForm } from '@components/UIComponents'
-import ServiceForm from '@pet/components/ServiceForm'
-import Dropdown from '@components/Dropdown/Dropdown'
-//styles
-import { Buttons, Colors, Spacing, UI } from '@styles/index'
-import { ToggleButton } from '@components/ButtonComponents'
+import useForm from '@hooks/useForm'
+import { Pet, PetBasic, Service } from '@pet/PetInterface'
 import { compareDates } from '@utils/datetime'
+//components
+import Dropdown from '@components/Dropdown/Dropdown'
+import ServiceForm from '@pet/components/ServiceForm'
+import { DateInput, ModalInput, NoteInput, TableForm } from '@components/UIComponents'
+import { ToggleButton } from '@components/ButtonComponents'
+//styles
+import { Colors, Spacing } from '@styles/index'
 
 type Props = {
   initialValues?: any

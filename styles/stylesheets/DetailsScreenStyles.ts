@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   itemIcon: {
-    ...UI.smallIcon,
+    ...UI.icon(),
   },
   subHeader: {
     ...Typography.xSmallSubHeader,

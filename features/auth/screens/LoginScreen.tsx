@@ -56,7 +56,7 @@ const LoginScreen: FC = ({ navigation }) => {
 
 // const styles = StyleSheet.create({
 //   container: {
-//     ...Spacing.fullScreenDown,
+//     ...Spacing.fullCon(),
 //     ...Spacing.centered
 //   },
 //   catAnimation: {
@@ -71,7 +71,7 @@ const LoginScreen: FC = ({ navigation }) => {
 //     ...UI.form,
 //   },
 //   input: {
-//     ...UI.input,
+//     ...UI.input(),
 //     borderColor: Colors.pink.reg,
 //   },
 // })
