@@ -177,7 +177,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         <Dropdown label='Search Vaccine' withSearch={true} searchLabel='vaccine' dataType={pet.species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={(selected: string) => onChange('details', [...details, selected])} initial={details[0]} width='80%' buttonStyles={{ ...UI.input(), alignSelf: 'center' }} />
       }
 
-      <TableForm table={mainTable} withLabel={true} dependentRows={{ frequency: repeat }}/>
+      <TableForm table={mainTable} withTitle={true} dependentRows={{ frequency: repeat }}/>
 
       <FormLabel label='Next Visit' icon="schedule" />
       <View style={styles.contentCon}>

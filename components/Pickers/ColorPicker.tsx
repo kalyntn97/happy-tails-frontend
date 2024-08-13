@@ -28,7 +28,7 @@ const ColorPicker = ({ onPress, selected = 0, mode, buttonWidth = 45, pickerStyl
         style={[buttonStyles(i), { margin: buttonWidth <= 30 ? 7 : 10 }]}
         onPress={() => onPress(i)}
       >
-        { selected === i && <Text style={{ fontSize: buttonWidth <= 30 ? 15 : 20 }}>✔︎</Text> }
+        { selected === i && <Text style={{ fontSize: buttonWidth <= 30 ? 12 : 18 }}>✔︎</Text> }
       </TouchableOpacity>
     )
   }

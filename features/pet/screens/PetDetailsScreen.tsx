@@ -10,7 +10,7 @@ import { showDeleteConfirmDialog } from "@hooks/sharedHooks"
 //components
 import PetInfo from "@components/PetInfo/PetInfo"
 import Loader from "@components/Loader"
-import {  BoxHeader, EmptyList, ErrorImage, Icon, ModalInput } from "@components/UIComponents"
+import {  TitleLabel, EmptyList, ErrorImage, FormLabel, Icon, ModalInput } from "@components/UIComponents"
 import { IconType, getActionIconSource, getPetIconSource, getStatIconSource } from "@utils/ui"
 import { ActionButton, TransparentButton } from "@components/ButtonComponents"
 //store & queries
@@ -20,6 +20,7 @@ import { useGetPetSettings, useSetActions } from "@store/store"
 import { Buttons, Spacing, UI, Colors, Typography } from '@styles/index'
 import StatButtonList from "@pet/components/StatButtonList"
 import { GoBackButton } from "@components/ButtonComponents"
+import { Header } from "@navigation/NavigationStyles"
 
 interface PetDetailsProps {
   navigation: any
@@ -34,8 +35,7 @@ const SectionHeader = ({ type, onPress }: { type: SectionType, onPress?: () => v
 
   return (
     <View style={styles.sectionHeaderCon}>
-      <Icon name={icon} />
-      <Text style={styles.sectionHeader}>{title}</Text>
+      <FormLabel label={title} icon={icon} top={0} bottom={0} />
       { onPress && <ActionButton icon={'filter'} onPress={onPress} buttonStyles={{ marginLeft: 'auto' }} /> }
     </View>
   )
@@ -60,7 +60,7 @@ const ItemHeaderList= memo(({ type, logs, info, navigation, onReset, petId }: { 
 
   return (
     header.titles.map(log =>
-      <BoxHeader key={log} title={header.getName(log)} iconType={header.iconType} iconName={log} mode='light' onPress={() => header.onNavigate(log)} />
+      <TitleLabel key={log} title={header.getName(log)} iconType={header.iconType} iconName={log} mode='light' onPress={() => header.onNavigate(log)} />
     )
   )
 })
@@ -124,31 +124,30 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
     { key: 'delete', title: deletePetMutation.isPending ? 'Deleting...' : 'Delete pet profile', icon: 'deleteSquare', onPress: () => showDeleteConfirmDialog(pet, handleDeletePet) },
   ]
 
-  const topActions = [
-    { key: 'search' },
-    { key: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
-    { key: 'add', onPress:() => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
+  const headerActions = [
+    { icon: 'search', onPress: null },
+    { icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
+    { icon: 'add', onPress:() => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
   ] 
 
-  useEffect(() => {
-    if (!modalVisible) {
-      const timeout = setTimeout(() => {
-        setPetSettings(petId, option, option === 'info' ? info : logs)
-      }, 2000)
-      return () => clearTimeout(timeout)
-    }
-  }, [modalVisible, info, logs]);
+  useEffect(() => { 
+    // if (!modalVisible) {
+    //   const timeout = setTimeout(() => {
+    //     setPetSettings(petId, option, option === 'info' ? info : logs)
+    //   }, 2000)
+    //   return () => clearTimeout(timeout)
+    // }
+    navigation.setOptions({
+      header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[pet?.color]} />
+    })
+  }, [modalVisible, info, logs, pet, headerActions, navigation])
 
   return (    
     <View style={[Spacing.fullCon(), { backgroundColor: Colors.multi.lightest[pet?.color] }]}>
-      <GoBackButton onPress={navigation.goBack} />
-      <View style={styles.conHeader}>
-        { topActions.map(action => <ActionButton key={action.key} icon={action.key} onPress={action.onPress} />) }
-      </View>
 
       <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false} style={{ width: '100%' }} contentContainerStyle={UI.form(0, 60)}>  
-        { isError && <ErrorImage /> }
         { isFetching && <Loader /> }
+        { isError && <ErrorImage /> }
         
         { isSuccess && <>
           <View style={styles.infoCard}>
@@ -162,15 +161,15 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
                 setModalVisible(true)
                 setOption(type)
               }} />
-              <View style={UI.roundedCon}>
+              <View style={UI.roundedCon()}>
                 <ItemHeaderList type={type} logs={logs} info={info} onReset={() => handleReset(type)} navigation={navigation} petId={petId} />
               </View>
             </View>
           ) } 
           
           <SectionHeader type='actions' />
-          <View style={UI.roundedCon}>
-            { bottomActions.map(action => <BoxHeader key={action.key} title={action.title} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} mode={action.key === 'delete' ? 'dark' : 'light'} />) }
+          <View style={UI.roundedCon()}>
+            { bottomActions.map(action => <TitleLabel key={action.key} title={action.title} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} mode={action.key === 'delete' ? 'dark' : 'light'} />) }
           </View>
 
         </> }

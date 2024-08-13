@@ -10,7 +10,7 @@ import { Pet, PetBasic } from "@pet/PetInterface"
 //components
 import PetList from "@components/PetInfo/PetList"
 import Loader from "@components/Loader"
-import { BoxHeader, BoxWithHeader, ErrorImage } from "@components/UIComponents"
+import { TitleLabel, BoxWithHeader, ErrorImage } from "@components/UIComponents"
 //hooks & utils
 import { AlertForm, getActionIconSource } from "@utils/ui"
 import { useCaresByFrequency, useSelectPhoto, useTaskCounts } from "@hooks/sharedHooks"
@@ -75,7 +75,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <Text style={styles.bioText}>{profile.bio}</Text>
           </View>
             
-          {/* <View style={{...UI.rowContent}}>
+          {/* <View style={{...UI.rowContent()}}>
             <StatButton item={ {header: 'streak', stat: 0, body: 'days'}} />
             <StatButton item={ {header: 'tasks', stat: careCounts(new Date()) , body: 'today'}} />
             <StatButton item={ {header: 'visit due', stat: Math.abs(healthCounter), body: `days ${healthCounter < 0 && 'ago'}`}} color={healthCounter < 0 && Colors.red.reg} />
@@ -87,11 +87,11 @@ const ProfileScreen = ({ navigation, route }) => {
             <PetList petArray={data.pets} size='compact' />
           </BoxWithHeader>
           
-          <View style={{...UI.roundedCon}}>
-            <BoxHeader title="All pet care tasks" iconName="care" onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
-            <BoxHeader title="All vet visits" iconName="health" onPress={() => navigation.navigate('Home', { screen: 'HealthIndex' })} />
-            <BoxHeader title="Update profile" iconName="editSquare" onPress={() => navigation.navigate('Edit', { profile : profile })} />
-            <BoxHeader title="Settings" iconName="settings" onPress={() => navigation.navigate('Settings', { profile : profile })} />
+          <View style={{...UI.roundedCon()}}>
+            <TitleLabel title="All pet care tasks" iconName="care" onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
+            <TitleLabel title="All vet visits" iconName="health" onPress={() => navigation.navigate('Home', { screen: 'HealthIndex' })} />
+            <TitleLabel title="Update profile" iconName="editSquare" onPress={() => navigation.navigate('Edit', { profile : profile })} />
+            <TitleLabel title="Settings" iconName="settings" onPress={() => navigation.navigate('Settings', { profile : profile })} />
           </View>
         </View>
       </View>

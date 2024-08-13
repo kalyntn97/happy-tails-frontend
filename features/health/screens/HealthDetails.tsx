@@ -13,7 +13,7 @@ import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 import Loader from "@components/Loader"
 import PetInfo from "@components/PetInfo/PetInfo"
 import NoteInput from "@health/components/NoteInput"
-import { BoxHeader } from "@components/UIComponents"
+import { TitleLabel } from "@components/UIComponents"
 import { StatButton, TransparentButton } from "@components/ButtonComponent"
 //styles
 import { styles } from "@styles/stylesheets/DetailsScreenStyles"
@@ -101,18 +101,18 @@ const HealthDetailsScreen = ({ navigation, route }) => {
               </TouchableOpacity> */}
             </View>
           
-            <View style={{...UI.rowContent}}>
+            <View style={{...UI.rowContent()}}>
               <StatButton item={{ header: 'done', stat: daysFromDone, body: 'days ago' }} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
               <StatButton item={{ header: daysToDue >= 0 ? 'due in' : 'past due', stat: Math.abs(daysToDue), body: 'days' }} color={daysToDue < 0 && Colors.red.reg} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
               <StatButton item={{ header: 'total', stat: health.lastDone.length, body: 'visits' }} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
             </View>
-            <View style={{...UI.roundedCon}}>
-              <BoxHeader title='Update' iconName='editSquare' onPress={() => navigation.navigate('EditHealth', { health: health })} />
-              <BoxHeader title="Delete" iconName='deleteSquare' onPress={() => showDeleteConfirmDialog(health, handleDeleteHealthCard)} color={Colors.red.reg} />
+            <View style={{...UI.roundedCon()}}>
+              <TitleLabel title='Update' iconName='editSquare' onPress={() => navigation.navigate('EditHealth', { health: health })} />
+              <TitleLabel title="Delete" iconName='deleteSquare' onPress={() => showDeleteConfirmDialog(health, handleDeleteHealthCard)} color={Colors.red.reg} />
             </View>
           </View>
-          <View style={{...UI.roundedCon}}>
-            <BoxHeader title='All logs' iconName='noteSquare' />
+          <View style={{...UI.roundedCon()}}>
+            <TitleLabel title='All logs' iconName='noteSquare' />
             {health.lastDone.length > 1 && 
               <TouchableOpacity style={styles.showButton} onPress={() => setShowAllVisits(!showAllVisits)}>
                 <Text style={{...Typography.xSmallSubHeader}}>{showAllVisits ? 'Hide ': 'Show all'} ({health.lastDone.length + 1})</Text>

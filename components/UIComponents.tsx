@@ -1,55 +1,79 @@
+import RNDateTimePicker from "@react-native-community/datetimepicker"
 import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
 import { DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, Modal, Pressable, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
-import RNDateTimePicker from "@react-native-community/datetimepicker"
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated"
 //utils & hooks
-import { ToastConfigParams } from "react-native-toast-message"
-import { IconType, getActionIconSource, getIconByType } from "@utils/ui"
 import { useSelectPhoto } from "@hooks/sharedHooks"
+import { IconType, getIconByType } from "@utils/ui"
+import { ToastConfigParams } from "react-native-toast-message"
 //components 
 import { GoBackButton, SubButton } from "./ButtonComponents"
 //styles
 import { Colors, Spacing, Typography, UI } from "@styles/index"
 import { Size, icon, lightPalette } from "@styles/ui"
 
-type BoxHeaderProps = {
-  title: string
+type TitleLabelProps = {
+  onPress?: () => void
+  title?: string
   iconType?: IconType
   iconName?: string
   rightAction?: ReactNode | any
-  withContent?: boolean
-  onPress?: () => void
+  size?: 'small' | 'med'
+  rightLabel?: 'down' | 'next'
   color?: string
-  arrow?: string
-  mode?: 'light' | 'dark'
+  titleStyles?: TextStyle
 }
 
-interface BoxProps extends BoxHeaderProps {
-  children: ReactNode
-  contentStyles?: ViewStyle
-}
-
-export const BoxHeader = ({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, mode, rightAction, withContent = false }: BoxHeaderProps) => (
-  <Pressable onPress={onPress} style={[Spacing.flexRow, { borderBottomWidth: 1, borderColor: 'lightgray', width: '100%', paddingVertical: 10 }]}>
-    { iconName && <Icon type={iconType} name={iconName} /> }
-    <Text style={[Typography.xSmallHeader, { color: color, margin: 0, marginLeft: iconName ? 7 : 2, textAlign: 'left', textTransform: 'capitalize' }, 
-      mode === 'light' && { fontWeight: 'normal' },
-    ]}>
+export const TitleLabel = ({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size, titleStyles, rightLabel }: TitleLabelProps) => (
+  <Pressable onPress={onPress} style={UI.rowContent(true, 'space-between', 0)}>
+    { iconName && <Icon type={iconType} name={iconName} size={size === 'small' ? 'xSmall' : 'small'} /> }
+    { title && 
+      <Text style={[
+        { fontSize: size === 'small' ? 15 : 12, color: color, margin: 0, marginLeft: iconName ? 5 : 0, textAlign: 'left' }, 
+        titleStyles,
+      ]}>
       { title }
-    </Text>
+    </Text> }
     <View style={[Spacing.flexRow, { marginLeft: 'auto' }]}>
-      { rightAction }
-      <Icon name={withContent ? 'down' : 'next'} styles={{ marginLeft: 10 }} />
+      { rightAction ?? (rightLabel && <Icon name={rightLabel} size='xSmall' styles={{ marginLeft: 10 }} />) }
     </View>
   </Pressable>
 )
 
-export const BoxWithHeader = ({ title, iconType = 'action', iconName, onPress, children, color, rightAction, mode, contentStyles }: BoxProps) => (
-  <View style={UI.roundedCon}>
-    <BoxHeader onPress={onPress} title={title} iconType={iconType} iconName={iconName} color={color} withContent={true} rightAction={rightAction} mode={mode} />
+interface BoxProps extends TitleLabelProps {
+  children: ReactNode
+  contentStyles?: ViewStyle
+}
+
+export const BoxWithHeader = memo(({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, rightLabel = 'down', children, contentStyles }: BoxProps) => (
+  <View style={UI.roundedCon()}>
+    <TitleLabel size={size} onPress={onPress} title={title} iconType={iconType} iconName={iconName} color={color} rightAction={rightAction} titleStyles={titleStyles} rightLabel={rightLabel} />
     <View style={[{ flex: 1, paddingVertical: 10 }, contentStyles]}>{children}</View>
   </View>
-)
+))
+
+interface TableProps extends TitleLabelProps{
+  table: { key: string, icon: string, value: any, label?: string }[], 
+  withTitle?: boolean, 
+  dependentRows?: { [key: string]: boolean },
+  tableStyles?: ViewStyle 
+}
+
+export const TableForm = memo(({ table, withTitle = false, dependentRows, size, tableStyles, titleStyles }: TableProps) => (
+  <View style={[UI.roundedCon(), { backgroundColor: Colors.white }, tableStyles]}>
+    { table.map((row, index) => {
+      let rowIsVisible = true
+      if (dependentRows && dependentRows.hasOwnProperty(row.key)) rowIsVisible = dependentRows[row.key]
+
+      return (
+        rowIsVisible && 
+        <View key={row.key} style={[index < table.length - 1 && UI.tableRow(true), { minHeight: 50 }]}>
+          <TitleLabel title={withTitle ? row.label : null} iconName={row.icon} size={size} rightAction={row.value} titleStyles={titleStyles} />
+        </View>
+      )
+    })}
+  </View>
+))
 
 interface IconProps {
   type?: IconType
@@ -57,7 +81,6 @@ interface IconProps {
   size?: Size
   styles?: ImageStyle
 }
-interface CircleIconProps extends IconProps { bgColor?: string }
 
 export const Icon = ({ type = 'action', name, size = 'small', styles }: IconProps) =>  {
   const source = getIconByType(type, name)
@@ -66,7 +89,7 @@ export const Icon = ({ type = 'action', name, size = 'small', styles }: IconProp
   )
 }
 
-export const CircleIcon = ({ type, name, size = 'large', bgColor }: CircleIconProps) => (
+export const CircleIcon = ({ type, name, size = 'large', bgColor }: IconProps & { bgColor?: string }) => (
   <View style={{ backgroundColor: bgColor ?? Colors.shadow.light, ...UI.roundedIconCon }}>
     <Icon type={type} name={name} size={size} />
   </View>
@@ -150,8 +173,8 @@ export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { 
 
 export const FormLabel = ({ label, icon, width, top = 30, bottom = 10 }: { label: string, icon: string, width?: string | number, top?: number, bottom?:number }) => (
   <View style={[Spacing.flexRow, { width: width as DimensionValue, alignSelf: 'flex-start', marginTop: top, marginBottom: bottom }]}>
-    <Image source={getActionIconSource(icon)} style={{ ...UI.icon('xSmall'), marginRight: 10 }} />
-    <Text style={{ ...Typography.xSmallHeader, margin: 0 }}>{label}</Text>
+    <Icon name={icon} />
+    <Text style={[Typography.xSmallHeader, { margin: 0 }]}>{label}</Text>
   </View>
 )
 
@@ -289,23 +312,3 @@ export const NoteInput = ({ notes, maxLength = 100, onChange, buttonStyles, butt
     </ModalInput>
   )
 }
-
-export const TableForm = memo(({ table, withLabel = false, dependentRows }: { table: { key: string, icon: string, value: any, label?: string }[], withLabel?: boolean, dependentRows?: { [key: string]: boolean }}) => (
-  <View style={{ ...UI.roundedCon, backgroundColor: Colors.white }}>
-    {table.map((row, index) => {
-      let rowIsVisible = true
-      if (dependentRows && dependentRows.hasOwnProperty(row.key)) rowIsVisible = dependentRows[row.key]
-      
-      return (
-        rowIsVisible && 
-        <View key={row.key} style={[Spacing.flexRow, index < table.length - 1 && UI.tableRow(true), { justifyContent: 'space-between', minHeight: 50 }]}>
-          <View style={Spacing.flexRow}>
-            <Icon name={row.icon} size='xSmall' />
-            { withLabel && <Text style={{ marginLeft: 5 }}>{row.label}</Text> }
-          </View>
-          <View style={{ maxWidth: '60%' }}>{row.value}</View>
-        </View>
-      )
-    })}
-  </View>
-))

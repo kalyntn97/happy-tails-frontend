@@ -129,7 +129,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
       `${gender === 'Boy' ? 'Neutered' : gender === 'Girl' ? 'Spayed' : 'Altered'} on ${altered.date ? altered.date.toLocaleDateString() : 'unknown date'}`
       : `Not ${gender === 'Boy' ? 'Neutered' : gender === 'Girl' ? 'Spayed' : 'Altered'}`
     }>
-      <TableForm table={alteredTable} withLabel={true} />
+      <TableForm table={alteredTable} withTitle={true} />
     </ModalInput>
   )
 
@@ -178,7 +178,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
     navigation.setOptions({
       header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[color]} />
     })
-  }, [handleValidate, status, color])
+  }, [headerActions, status, color])
 
   return ( 
     <ScrollView
@@ -199,7 +199,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
         setColor(selected)
       }} />
 
-      <TableForm table={mainTable} withLabel={true} />
+      <TableForm table={mainTable} withTitle={true} />
 
     </ScrollView>
   )

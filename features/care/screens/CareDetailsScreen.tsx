@@ -14,7 +14,7 @@ import BarChart from "@components/Charts/BarChart"
 import YearChart from "@components/Charts/YearChart"
 import FillChart from "@components/Charts/FillChart"
 import Loader from "@components/Loader"
-import { BoxHeader, BoxWithHeader, ErrorImage } from "@components/UIComponents"
+import { TitleLabel, BoxWithHeader, ErrorImage } from "@components/UIComponents"
 import { ActionButton, StatButton } from "@components/ButtonComponents"
 //styles
 import { styles } from "@styles/stylesheets/DetailsScreenStyles"
@@ -113,9 +113,9 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
             
           
 
-          <View style={{ ...UI.roundedCon}}>
+          <View style={{ ...UI.roundedCon()}}>
             {actions.map(action => 
-              <BoxHeader key={action.key} title={action.key} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} />
+              <TitleLabel key={action.key} title={action.key} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} />
             )}
           </View>
         </ScrollView> 

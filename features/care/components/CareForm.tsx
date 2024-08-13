@@ -131,7 +131,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         setColor(selected)
       }} />
 
-      <TableForm table={mainTable} withLabel={true} dependentRows={{ frequency: repeat }}/>
+      <TableForm table={mainTable} withTitle={true} dependentRows={{ frequency: repeat }}/>
 
     </ScrollView>
   )

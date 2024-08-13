@@ -76,6 +76,20 @@ export const form = (h: number = 10, b: number = 60, t: number = 0): ViewStyle =
   width: '100%',
 })
 
+export const rowContent = (withColumn: boolean = false, justify: any = 'space-between', h?: number, v?: number, m?: number): ViewStyle => ({
+  ...flexRow,
+  ...basePadding(h, v),
+  width: '100%',
+  justifyContent: withColumn ? 'center' : justify,
+  margin: m,
+})
+
+export const tableRow = (withSeparator: boolean = false): ViewStyle => ({
+  width: '100%',
+  borderBottomWidth: withSeparator ? 1 : 0,
+  borderColor: lightPalette().border,
+})
+
 export const overlay: ViewStyle = {
   ...fullWH,
   alignItems: 'center',
@@ -96,29 +110,19 @@ export const bottomModal: ViewStyle = {
   backgroundColor: Colors.shadow.lightest,
 }
 
-export const roundedCon: ViewStyle = {
+export const roundedCon = (withPadding: boolean = true): ViewStyle => ({
   width: '90%',
   backgroundColor: Colors.white,
   borderRadius: 20,
-  paddingHorizontal: 15,
-  paddingTop: 10,
-  paddingBottom: 20,
   marginVertical: 10,
-}
+  ...(withPadding ? basePadding() : {}),
+})
 
 export const roundedIconCon: ViewStyle = {
   ...centered,
   padding: 10,
   borderRadius: 99,
   backgroundColor: Colors.shadow.light,
-}
-
-export const rowContent: ViewStyle = {
-  ...flexRow,
-  ...basePadding(),
-  width: '100%',
-  justifyContent: 'space-evenly',
-  marginVertical: 10,
 }
 
 export const inputBase: ViewStyle = {
@@ -130,13 +134,6 @@ export const input = (withBorder: boolean = true): ViewStyle => ({
   ...inputBase,
   borderRadius: 8,
   borderWidth: withBorder ? 1 : 0,
-  borderColor: lightPalette().border,
-})
-
-export const tableRow = (withSeparator: boolean = false): ViewStyle => ({
-  width: '100%',
-  paddingVertical: 15,
-  borderBottomWidth:withSeparator ? 1 : 0,
   borderColor: lightPalette().border,
 })
 
