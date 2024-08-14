@@ -3,15 +3,15 @@ import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated
 import { moderateScale } from 'react-native-size-matters'
 //types & utils
 import { Pet } from "@pet/PetInterface"
-import { SPECIES_OPTIONS } from "@pet/petHelpers"
+import { SPECIES, SPECIES_OPTIONS } from "@pet/petHelpers"
 import { countYearsBetween } from "@utils/datetime"
-import { getPetIconSource } from "@utils/ui"
+import { IconType, getPetIconSource } from "@utils/ui"
 //components
-import { TransparentButton } from "@components/ButtonComponents"
+import { MainButton } from "@components/ButtonComponents"
 import StatButtonList from "./StatButtonList"
 //styles
-import { Colors, Spacing, Typography, UI } from '@styles/index'
 import { Icon } from "@components/UIComponents"
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 interface PetCardProps {
   pet: Pet
   index: number
@@ -42,25 +42,25 @@ const PetCard = ({ pet, index, scrollX, navigation }: PetCardProps) => {
       ],
     }
   })
+
+  const infoMap = [
+    { type: 'pet', icon: !SPECIES.includes(pet.species) ? 'Others' : pet.species, text: pet.breed ? pet.breed : 'Unknown' },
+    { icon: 'birthdayColor', text: `${petAge} ${petAge !== 'Unknown' && (petAge <= 1 ? 'year' : 'years')}` },
+  ]
   
   return ( 
-    <Animated.View style={[styles.container, animatedStyles, { width: width }]} key={pet._id}>
+    <Animated.View style={[Spacing.centered, animatedStyles, { width: width }]} key={pet._id}>
       <View style={[styles.base, { backgroundColor: Colors.multi.lightest[pet.color] }]}>
         <View style={Spacing.flexColumnStretch}>
           <Text style={styles.petName}>{pet.name}</Text>
           
           <View style={styles.detailsContainer}>
-            <View style={styles.petInfo}>
-              <Icon type='pet' name={!SPECIES_OPTIONS.includes(pet.species) ? 'Others' : pet.species} />
-              <Text style={styles.body}>{pet.breed ? pet.breed : 'Unknown'}</Text>
-            </View>
-
-            <View style={styles.petInfo}>
-              <Icon name='birthdayColor' />
-              <Text style={styles.body}>
-                {petAge} {petAge !== 'Unknown' && (petAge <= 1 ? 'year' : 'years')}
-              </Text>
-            </View>
+            { infoMap.map(info =>
+              <View key={info.icon} style={Spacing.flexRow}>
+                <Icon type={info.type as IconType} name={info.icon} />
+                <Text style={styles.body}>{info.text}</Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -71,9 +71,8 @@ const PetCard = ({ pet, index, scrollX, navigation }: PetCardProps) => {
         <StatButtonList petId={pet._id} petColor={pet.color} navigation={navigation} size="small" />
 
         <View style={styles.btnCon}>
-          <TransparentButton title='Log' icon="logPet" onPress={() => navigation.navigate('CreateLog', { pet })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
-
-          <TransparentButton title='Details' icon='detailsPet' onPress={() => navigation.navigate('PetDetails', { petId: pet._id })} bgColor={Colors.multi.semiTransparent[pet.color]} bdColor={Colors.multi.transparent[pet.color]} />
+          <MainButton title='Log' icon="logPet" onPress={() => navigation.navigate('CreateLog', { pet })} bgColor={Colors.multi.semiTransparent[pet.color]} buttonStyles={styles.button} />
+          <MainButton title='Details' icon='detailsPet' onPress={() => navigation.navigate('PetDetails', { petId: pet._id })} bgColor={Colors.multi.semiTransparent[pet.color]} buttonStyles={styles.button} />
         </View>  
 
       </View>
@@ -83,9 +82,6 @@ const PetCard = ({ pet, index, scrollX, navigation }: PetCardProps) => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.centered,
-  },
   base: {
     ...UI.card(),
     justifyContent: 'flex-start',
@@ -93,7 +89,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: moderateScale(0.8, 1.5) }],
   },
   petName: {
-    ...Typography.smallHeader,
+    ...Typography.subHeader,
     margin: 0,
     padding: 10,
   },
@@ -101,16 +97,18 @@ const styles = StyleSheet.create({
     ...Spacing.flexRowStretch,
     justifyContent: 'space-between'
   },
-  petInfo: {
-    ...Spacing.flexRow,
-  },
   body: {
-    ...Typography.smallBody,
+    ...Typography.regBody,
     marginHorizontal: 5,
   },
   btnCon: { 
-    ...Spacing.flexRow, 
-    marginTop: 10,
+    ...Spacing.flexRowStretch,
+    justifyContent: 'space-around',
+    marginVertical: 20,
+  },
+  button: {
+    flex: 1,
+    marginHorizontal: 15,
   }
 })
 

@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native'
 import LottieView from 'lottie-react-native'
 //components
-import { MainButton, TransparentButton } from '@components/ButtonComponent'
+import { MainButton, TransparentButton } from '@components/ButtonComponents'
 import { Colors, Spacing, Typography } from '@styles/index'
 
 const EmptyPetList = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={{ ...Typography.mediumHeader, color: Colors.shadow.darkest }}>No pets added.</Text>
+      <Text style={{ ...Typography.subHeader, color: Colors.shadow.darkest }}>No pets added.</Text>
       <MainButton title='Create a Pet' onPress={() => navigation.navigate('Create')} color={Colors.white} bgColor={Colors.pink.dark} />
       <Text style={styles.subHeader}>Start from scratch. Unlimited number of pets.</Text>
       <LottieView source={require('@assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />

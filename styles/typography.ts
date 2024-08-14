@@ -63,7 +63,7 @@ export const smallHeader = {
 
 export const smallSubHeader: TextStyle = {
   ...sub,
-  ...textSizeMap.xSmall,
+  ...textSizeMap.small,
 }
 
 export const regBody = {

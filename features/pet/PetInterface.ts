@@ -1,9 +1,10 @@
 
 export type Gender = 'Boy' | 'Girl' | 'Unknown'
+export type Species = 'Dog' | 'Cat' | 'Bird' | 'Fish' | 'Rodent' | string
 export interface PetFormData {
   name: string
   gender: Gender
-  species: string 
+  species: Species
   breed: string | null
   dob: string | null
   gotchaDate: string | null

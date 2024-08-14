@@ -7,6 +7,7 @@ import { centered } from "./spacing"
 export const rounded: ViewStyle = { borderRadius: 30 }
 export const lessRounded: ViewStyle= { borderRadius: 15 }
 export const square: ViewStyle = { borderRadius: 8 }
+
 //base
 export const base: ViewStyle = {
   ...centered,
@@ -39,8 +40,8 @@ export const circleBase = {
 }
 
 export const squareBase = {   
-  ...base,
-  ...lessRounded,
+  ...main,
+  ...square,
   borderWidth: 1,
   borderColor: lightPalette().border,
   padding: 10,
@@ -56,6 +57,7 @@ export const transparent: ViewStyle = {
   borderWidth: 1.5,
   shadowColor: 'transparent',
 }
+
 //text
 export const baseButtonText: TextStyle = {
   fontWeight: 'bold',

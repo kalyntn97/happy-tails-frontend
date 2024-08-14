@@ -36,8 +36,8 @@ const roundButtonTypes = {
   remove: '−',
 }
 const roundButtonSizeMap = {
-  small: { button: Buttons.smallRoundButton, text: 9 },
-  medium: { button: Buttons.mediumRoundButton, text: 20 },
+  small: { button: Buttons.smallRoundButton, text: 15 },
+  med: { button: Buttons.mediumRoundButton, text: 20 },
   large: { button: Buttons.roundButton, text: 30 },
 }
 
@@ -50,7 +50,7 @@ export const RoundButton = memo(({ onPress, size = 'large', bgColor = Colors.pin
       position && positionMap()[position],
       buttonStyles
     ]}>
-      <Text style={[textSize, { color: color }, textStyles]}>{roundButtonTypes[type]}</Text>
+      <Text style={[{ fontSize: textSize, color: color }, textStyles]}>{roundButtonTypes[type]}</Text>
     </TouchableOpacity>
   )
 })
@@ -119,7 +119,7 @@ export const PhotoButton = memo(({ photo, onPress, size = 'small', placeholder, 
 const baseButtonSizeMap = {
   small: [Buttons.xSmall, Buttons.rounded],
   smallSquare: [Buttons.xSmall, Buttons.square],
-  medium: [Buttons.small, Buttons.rounded],
+  med: [Buttons.small, Buttons.rounded],
   large: [Buttons.long, Buttons.rounded],
   largeSquare: [Buttons.long, Buttons.square],
 }
@@ -129,9 +129,10 @@ const baseButtonTextSizeMap = (n: number = 0) => ({
   large: { fontSize: 20 - n },
 })
 
-export const MainButton= memo(({ onPress, title, bgColor = Colors.pink.reg, color = UI.lightPalette().button, bdColor = 'transparent', size, icon, h = 0, v = 0, buttonStyles, textStyles }: BaseButtonProps) => {
+export const MainButton= memo(({ onPress, title, bgColor = Colors.pink.reg, color = UI.lightPalette().button, bdColor = 'transparent', size = 'med', icon, h = 0, v = 0, buttonStyles, textStyles }: BaseButtonProps) => {
   const buttonSize = useMemo(() => baseButtonSizeMap[size], [size])
-  const textSize = useMemo(() => icon ? baseButtonTextSizeMap(5)[size] : baseButtonTextSizeMap()[size], [size])
+  const textSize = useMemo(() => size === 'large' || 'largeSquare' ? 'large' : 'small', [size])
+  const textSizeAdjusted = icon ? baseButtonTextSizeMap(5)[textSize] : baseButtonTextSizeMap()[textSize]
 
   return (
     <TouchableOpacity onPress={onPress} style={[buttonSize, Buttons.solid, Spacing.flexRow,
@@ -139,14 +140,14 @@ export const MainButton= memo(({ onPress, title, bgColor = Colors.pink.reg, colo
       buttonStyles
     ]}>
       {icon && <Image source={getActionIconSource(icon)} style={[UI.icon(), { marginRight: 5 }]} /> }
-      <Text style={[Buttons.buttonText, textSize, {  color: color }, textStyles]}>
+      <Text style={[Buttons.buttonText, textSizeAdjusted, {  color: color }, textStyles]}>
         {title}
       </Text>
     </TouchableOpacity>
   )
 })
 
-export const TransparentButton= ({ title, icon, onPress, size = 'medium', color = UI.lightPalette().button, bdColor = UI.lightPalette().button, bgColor = 'transparent', h, v }: BaseButtonProps) => (
+export const TransparentButton= ({ title, icon, onPress, size = 'med', color = UI.lightPalette().button, bdColor = UI.lightPalette().button, bgColor = 'transparent', h, v }: BaseButtonProps) => (
   <MainButton title={title} icon={icon} onPress={onPress} size={size} h={h} v={v} color={color} bdColor={bdColor} bgColor={bgColor} buttonStyles={Buttons.transparent} />
 )
 
@@ -169,19 +170,19 @@ interface StatButtonProps extends BaseButtonProps {
   disabled?: boolean
 }
 
-export const StatButton = ({ header, stat, iconUri, body, bgColor, color = Colors.black, size, onPress, disabled }: StatButtonProps) => (
-  <TouchableOpacity disabled={disabled} onPress={onPress} style={[
-    { ...Spacing.flexColumn, justifyContent: 'space-evenly', borderRadius: 15, backgroundColor: bgColor ?? Colors.white, padding: 10 },
-    size === 'large' ? { width: 90, height: 110 } : { width: 80 , height: 95 }
+export const StatButton = ({ header, stat, iconUri, body, bgColor, color = Colors.black, size, onPress, disabled, buttonStyles }: StatButtonProps) => (
+  <TouchableOpacity disabled={disabled} onPress={onPress} style={[Spacing.flexColumn, Buttons.main,
+    { width: size === 'large' ? 80 : 100, justifyContent: 'space-evenly', borderRadius: 15, backgroundColor: bgColor ?? Colors.white, padding: 10 },
+    buttonStyles,
   ]}>
-    <Text style={{ fontSize: size === 'large' ? 15 : 12, marginBottom: 2, }}>{header}</Text>
+    <Text style={{ fontSize: size === 'large' ? 15 : 12, marginBottom: 10 }}>{header}</Text>
     { !iconUri && 
       <Text style={{ fontSize: size === 'large' ? 22 : 18, fontWeight: 'bold', marginVertical: 2, color: stat === 0 ? Colors.red.dark : color }}>
         {stat >= 0 && stat !== Infinity ? stat : '?'}
       </Text> 
     }
-    { iconUri && <Image source={iconUri as ImageSourcePropType} style={{ ...UI.icon(), margin: 0 }}/> }
-    <Text style={{ ...Typography.xSmallBody }}>{body}</Text>
+    { iconUri && <Image source={iconUri as ImageSourcePropType} style={[UI.icon(), { margin: 0 }]} /> }
+    <Text style={Typography.smallBody}>{body}</Text>
   </TouchableOpacity>
 )
 

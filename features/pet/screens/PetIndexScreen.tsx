@@ -1,22 +1,21 @@
 //npm modules
-import { useState, useRef } from 'react'
-import { View, StyleSheet, Text, Pressable, useWindowDimensions, FlatList, Image, ScrollView } from "react-native"
+import { useRef, useState } from 'react'
+import { Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native"
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
-import { moderateVerticalScale } from 'react-native-size-matters'
 //components
-import PetCard from '../components/PetCard'
-import { PhotoButton, RoundButton } from '@components/ButtonComponent'
-import { ErrorImage } from '@components/UIComponents'
+import { PhotoButton, RoundButton } from '@components/ButtonComponents'
 import Loader from '@components/Loader'
+import { ErrorImage } from '@components/UIComponents'
 import EmptyPetList from '@pet/components/EmptyPetList'
+import PetCard from '../components/PetCard'
 //store & queries & types
 import type { PetTabScreenProps } from '@navigation/types'
-import type { Pet } from '../PetInterface'
 import { useGetProfile } from '@profile/profileQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'
+import type { Pet } from '../PetInterface'
 //styles
-import { Spacing, Typography, Colors, UI } from '@styles/index'
-import { moderateScale } from 'react-native-size-matters'
+import { Colors, Spacing, Typography, UI } from '@styles/index'
+import PlaceHolder from '@components/PlaceHolder'
 
 const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
   const [currCard, setCurrCard] = useState<number>(0)
@@ -91,9 +90,9 @@ const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
       { isSuccess && pets.length > 0 ? <>
         <View style={styles.petNav}>
           <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 10, justifyContent: 'flex-start', alignItems: 'center' }} showsHorizontalScrollIndicator={false}>
-            <RoundButton type='add' size='medium' onPress={() => navigation.navigate('PetCreate')} />
+            <RoundButton type='add' size='med' onPress={() => navigation.navigate('PetCreate')} />
             {pets.map((pet, index) => 
-              <PhotoButton key={`photo-${pet._id}`} photo={pet.photo} placeholder={getPetIconSource('AnimalProfile')} size='small' onPress={() => handleClickPhoto(index)} />
+              <PhotoButton key={`photo-${pet._id}`} photo={pet.photo} placeholder={getPetIconSource('AnimalProfile')} size='xSmall' onPress={() => handleClickPhoto(index)} />
             )}
           </ScrollView>
         </View>
@@ -111,9 +110,6 @@ const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
             renderItem={({ item, index }) => {
               return <PetCard pet={item} index={index} scrollX={scrollX} navigation={navigation} />
             }}
-            ListEmptyComponent={
-              <Text style={styles.emptyMsg}>Start managing your pet's health</Text>
-            }
           />
           
         </View>
