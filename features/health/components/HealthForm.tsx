@@ -17,7 +17,7 @@ import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/Picker
 import IconPicker from "@components/Pickers/IconPicker"
 import PetPicker from "@components/Pickers/PetPicker"
 import TitleInput from "@components/TitleInput"
-import { FormError, FormLabel, Icon, ModalInput, TableForm } from "@components/UIComponents"
+import { FormError, FormLabel, Icon, ModalInput, TableForm, TitleLabel } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 import VisitForm from "./VisitForm"
 //styles
@@ -179,7 +179,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
 
       <TableForm table={mainTable} withTitle={true} dependentRows={{ frequency: repeat }}/>
 
-      <FormLabel label='Next Visit' icon="schedule" />
+      <TitleLabel title='Next Visit' iconName='schedule' />
       <View style={styles.contentCon}>
         { nextDue ? 
           <ModalInput customLabel={
@@ -198,7 +198,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         }
       </View>
 
-      <FormLabel label='Previous Visits' icon="schedule" />
+      <TitleLabel title='Next Visit' iconName='schedule' />
       <View style={styles.contentCon}>
         { errors.hasOwnProperty('last visit') && <FormError errors={errors} errorKey="last visit" /> }
         { sortedVisits.map((visit, index) =>

@@ -1,5 +1,5 @@
-import React, { memo, useCallback, useState } from 'react'
-import { View, ViewStyle } from 'react-native'
+import React, { memo, useCallback, useRef, useState } from 'react'
+import { Keyboard, View, ViewStyle } from 'react-native'
 //components
 import { IconButton } from '@components/ButtonComponents'
 import { BottomModal, FormInput } from '@components/UIComponents'
@@ -24,6 +24,8 @@ const IconPicker = memo(({ selected, options, withCustom = false, initial, onSel
   const [isCustom, setIsCustom] = useState((initial && !options.some(option => option.title === initial)) ?? false)
   const [modalVisible, setModalVisible] = useState(false)
 
+  const inputRef = useRef(null)
+
   const getButtonStyles = useCallback(
     (title: string) => ({ 
       ...buttonStyles, width: '30%', 
@@ -36,11 +38,11 @@ const IconPicker = memo(({ selected, options, withCustom = false, initial, onSel
   }
 
   const dismissModal = () => {
-    onSelect(selected)
     setModalVisible(false)
-  }
+  } 
+
   return (
-    <View style={[Spacing.flexRow, { width: '100%', flexWrap: 'wrap' }, pickerStyles]}>
+    <View style={[Spacing.flexRowStretch, { flexWrap: 'wrap' }, pickerStyles]}>
       { options.map(option => 
         <IconButton key={option.title} title={option.title} type={option.type} icon={option.icon ?? option.title} size='large' onPress={() => handleSelect(option.title)} buttonStyles={{ ...getButtonStyles(option.title) as ViewStyle }} />
       ) }
@@ -53,7 +55,7 @@ const IconPicker = memo(({ selected, options, withCustom = false, initial, onSel
           }} buttonStyles={{ ...getButtonStyles(isCustom ? selected : 'Others') as ViewStyle }} 
           /> }
           <BottomModal modalVisible={modalVisible} onDismiss={dismissModal} height='70%'>
-            <FormInput initial={selected !== 'Others' && selected} placeholder={`enter ${customLabel}`} onChange={(input: string) => onSelect(input)} props={{ onSubmitEditing: dismissModal }} />
+            <FormInput ref={inputRef} initial={selected !== 'Others' && selected} placeholder={`enter ${customLabel}`} onChange={(input: string) => onSelect(input)} props={{ autoFocus: true, onSubmitEditing: dismissModal, onChange: (e) => onSelect(e.nativeEvent.text) }} width='60%' />
           </BottomModal>
         </>
       }

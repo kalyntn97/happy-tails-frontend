@@ -59,8 +59,7 @@ const styles = StyleSheet.create({
     ...Spacing.fullCon(null, true),
   },
   optionCon: {
-    width: '100%',
-    ...Spacing.flexRow,
+    ...Spacing.flexRowStretch,
     flexWrap: 'wrap',
     justifyContent: 'center',
     marginBottom: 40,

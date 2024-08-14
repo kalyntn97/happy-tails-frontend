@@ -74,7 +74,7 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
 
   return (
     <View style={[styles.container, { zIndex: isFocused ? 10 : 2 }]}>
-      { iconSource ? <Image source={iconSource} style={UI.largeIcon}/> : <ActivityIndicator /> }
+      { iconSource ? <Image source={iconSource} style={UI.icon('large')}/> : <ActivityIndicator /> }
       <View style={styles.inputCon}>
         <TextInput
           ref={titleBtn}
@@ -116,13 +116,11 @@ export default TitleInput
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     alignSelf: 'flex-start'
   },
   inputCon: {
-    ...Spacing.flexColumn,
-    width: '100%', 
+    ...Spacing.flexColumnStretch,
     alignItems: 'flex-start'
   },
   input: {

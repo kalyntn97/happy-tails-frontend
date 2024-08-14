@@ -82,7 +82,7 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => 
         <Text style={styles.label}>Medication frequency</Text>
         <View style={styles.rowCon}>
           <TextInput
-            style={[UI.inputBase, styles.leftInput, { marginRight: 5 }]}
+            style={[UI.inputBase(), styles.leftInput, { marginRight: 5 }]}
             placeholder='Enter times'
             placeholderTextColor={Colors.shadow.reg}
             onChangeText={(text: string) => onChange('times', Number(text))} 
@@ -105,7 +105,7 @@ const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => 
           <Text style={styles.label}>Refill frequency</Text>
           <View style={[styles.rowCon, { marginBottom: 70 }]}>
             <TextInput
-              style={[UI.inputBase, styles.leftInput, { marginRight: 5 }]}
+              style={[UI.inputBase(), styles.leftInput, { marginRight: 5 }]}
               placeholder='Enter times'
               placeholderTextColor={Colors.shadow.reg}
               onChangeText={(text: string) => onChange('refillTimes', Number(text))} 

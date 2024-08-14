@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   allBtnText: {
-    ...Typography.xSmallHeader,
+    ...Typography.smallHeader,
     margin: 0,
   },
   headerCon: {
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     width: '100%',    
   },
   headerIcon: {
-    ...UI.xxSmallPhoto,
+    ...UI.photo('xSmall'),
   },
   headerCount: {
     color: Colors.red.reg,

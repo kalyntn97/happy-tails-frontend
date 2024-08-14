@@ -11,9 +11,8 @@ export const styles = StyleSheet.create({
     ...UI.form(10, 60, 50),
   },
   labelCon: {
-    ...Spacing.flexRow,
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-between',
-    width: '100%',
     marginVertical: 20,
   },
   label: {
@@ -24,17 +23,16 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
   },
   headerCon: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
+    flexWrap: 'wrap',
     zIndex: 1,
     alignSelf: 'flex-start',
     marginVertical: 10,
   },
   titleCon: {
-    ...Spacing.flexColumn,
+    ...Spacing.flexColumnStretch,
     marginLeft: 15, 
     alignItems: 'flex-start',
-    width: '100%',
   },
   subtitleCon: {
     ...Spacing.flexRow,
@@ -50,7 +48,7 @@ export const styles = StyleSheet.create({
     minWidth: '60%',
   },
   subtitle: {
-    ...Typography.xSmallSubHeader,
+    ...Typography.smallSubHeader,
   },
   leftInput: {
     width: 140,
@@ -71,9 +69,8 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   rowCon: {
-    ...Spacing.flexRow,
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-between',
-    width: '100%',
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: lightPalette().border,

@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   btnText: {
-    ...Typography.xSmallHeader,
+    ...Typography.smallHeader,
     margin: 0,
     padding: 5,
     alignSelf: 'center',

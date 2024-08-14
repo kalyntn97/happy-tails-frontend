@@ -46,7 +46,7 @@ const PetCard = ({ pet, index, scrollX, navigation }: PetCardProps) => {
   return ( 
     <Animated.View style={[styles.container, animatedStyles, { width: width }]} key={pet._id}>
       <View style={[styles.base, { backgroundColor: Colors.multi.lightest[pet.color] }]}>
-        <View style={styles.headerContainer}>
+        <View style={Spacing.flexColumnStretch}>
           <Text style={styles.petName}>{pet.name}</Text>
           
           <View style={styles.detailsContainer}>
@@ -92,18 +92,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     transform: [{ scale: moderateScale(0.8, 1.5) }],
   },
-  headerContainer: {
-    ...Spacing.flexColumn,
-    width: '100%',
-  },
   petName: {
     ...Typography.smallHeader,
     margin: 0,
     padding: 10,
   },
   detailsContainer: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-between'
   },
   petInfo: {

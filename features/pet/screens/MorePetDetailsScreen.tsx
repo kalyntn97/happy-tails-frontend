@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   itemHeader: {
-    ...Typography.xSmallHeader, 
+    ...Typography.smallHeader, 
   },
   itemBody: {
     ...Typography.smallBody,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   itemFooter: {
-    ...Typography.xSmallSubBody,
+    ...Typography.smallSubBody,
     marginLeft: 20,
   },
   itemCon: {
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   empty: {
-    ...Typography.xSmallSubHeader,
+    ...Typography.smallSubHeader,
     margin: 0
   }
 })

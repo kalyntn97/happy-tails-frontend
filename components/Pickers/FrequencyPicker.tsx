@@ -280,12 +280,11 @@ const styles = StyleSheet.create({
     borderRadius: ROUNDED,
   },
   dropBtnCon: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-between', 
   },
   dropBtnLabel: {
-    ...Typography.xSmallHeader,
+    ...Typography.smallHeader,
     margin: 0,
     color: Colors.shadow.darkest,
   },

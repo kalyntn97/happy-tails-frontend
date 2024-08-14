@@ -64,7 +64,7 @@ const ProfileScreen = ({ navigation, route }) => {
       </Pressable>
 
       <View style={styles.profileCon}>
-        <View style={styles.headerContainer}>
+        <View style={Spacing.flexColumnStretch}>
           <View style={styles.profileHeader}>
             <Image source={{ uri: profile.photo ?? randomProfilePhotos[randomIdx] }} style={styles.profilePhoto }/>
             <Text style={styles.header}>{profile.name}</Text>
@@ -133,13 +133,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
   },
   profileCon: {
-    width: '100%',
+    ...Spacing.flexColumnStretch,
     marginTop: 120,
-    ...Spacing.flexColumn,
-  },
-  headerContainer: {
-    width: '100%',
-    ...Spacing.flexColumn,
   },
   profileHeader: {
     width: '90%',
@@ -150,7 +145,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   header: {
-    ...Typography.xSmallHeader,
+    ...Typography.smallHeader,
     marginTop: 10,
     marginBottom: 0,
     borderTopRightRadius: 15,
@@ -172,7 +167,7 @@ const styles = StyleSheet.create({
   },
   bioText: {
     textAlign: 'left',
-    ...Typography.xSmallBody,
+    ...Typography.smallBody,
     lineHeight: 20,
   },
   statsCon: {

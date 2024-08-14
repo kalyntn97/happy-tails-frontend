@@ -145,8 +145,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   filterBtnCon: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-evenly',
     padding: 10,
     marginBottom: 10,

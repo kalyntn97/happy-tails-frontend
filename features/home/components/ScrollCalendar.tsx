@@ -209,8 +209,7 @@ const styles = StyleSheet.create({
     color: ACCENT_COLOR,
   },
   navCon: {
-    width: '100%',
-    ...Spacing.flexRow,
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-between',
   },
   headerBtnCon: {

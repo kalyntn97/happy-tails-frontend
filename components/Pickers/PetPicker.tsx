@@ -49,9 +49,8 @@ const PetPicker = ({ mode, onSelect, initials }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.flexRow,
+    ...Spacing.flexRowStretch,
     ...Spacing.centered,
-    width: '100%',
     flexWrap: 'wrap',
   },
   petBtn: {

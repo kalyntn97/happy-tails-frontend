@@ -68,7 +68,7 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={Spacing.flexColumnStretch}>
       <Text style={styles.title}>
         { care.repeat 
         ? careHelpers.getTrackerDisplayName(frequency, activeDate, activeWeek, activeMonthName, activeYear)
@@ -104,16 +104,12 @@ const TrackerPanel: React.FC<CurrentTrackerProps> = ({ care }) => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.flexColumn,
-    width: '100%'
-  },
   countBox: {
     ...Spacing.flexRow,
     marginVertical: 10,
   },
   status: {
-    ...Typography.xSmallSubHeader,
+    ...Typography.smallSubHeader,
     margin: 0,
   },
   title: {

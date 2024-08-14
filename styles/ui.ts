@@ -1,6 +1,6 @@
 import { ImageStyle, TextStyle, ViewStyle } from "react-native"
 import Colors from "./colors"
-import { basePadding, centered, flexColumn, flexRow, fullWH } from "./spacing"
+import { basePadding, centered, flexColumnStretch, flexRowStretch, fullWH } from "./spacing"
 
 export type AccentColor = 'shadow' | 'pink' | 'yellow' | 'purple' | 'green' | 'blue' | 'red'
 export type Size = 'tiny' | 'xxSmall' | 'xSmall' | 'small' | 'med' | 'large' | 'xLarge'
@@ -71,20 +71,18 @@ export const rounded = (direction: 'left' | 'right' | 'top' = 'top', rounded: nu
 } )
 
 export const form = (h: number = 10, b: number = 60, t: number = 0): ViewStyle => ({
-  ...flexColumn,
+  ...flexColumnStretch,
   ...basePadding(h, 0, b, t),
-  width: '100%',
 })
 
 export const rowContent = (withColumn: boolean = false, justify: any = 'space-between', h?: number, v?: number, m?: number): ViewStyle => ({
-  ...flexRow,
+  ...flexRowStretch,
   ...basePadding(h, v),
-  width: '100%',
   justifyContent: withColumn ? 'center' : justify,
   margin: m,
 })
 
-export const tableRow = (withSeparator: boolean = false): ViewStyle => ({
+export const tableRow = (withSeparator: boolean = true): ViewStyle => ({
   width: '100%',
   borderBottomWidth: withSeparator ? 1 : 0,
   borderColor: lightPalette().border,
@@ -103,7 +101,7 @@ export const modalOverlay: ViewStyle = {
 }
 
 export const bottomModal: ViewStyle = {
-  ...form(15, 60, 40),
+  ...form(10, 60, 40),
   ...rounded(),
   ...boxShadow,
   marginTop: 'auto',
@@ -125,13 +123,13 @@ export const roundedIconCon: ViewStyle = {
   backgroundColor: Colors.shadow.light,
 }
 
-export const inputBase: ViewStyle = {
-  ...basePadding(),
-  marginVertical: 10,
-}
+export const inputBase = (h: number = 10, v: number = 15, m: number = 10): ViewStyle => ({
+  ...basePadding(h, v),
+  margin: m,
+})
 
-export const input = (withBorder: boolean = true): ViewStyle => ({
-  ...inputBase,
+export const input = (withBorder: boolean = true, h?: number, v?: number, m?: number): ViewStyle => ({
+  ...inputBase(h, v, m),
   borderRadius: 8,
   borderWidth: withBorder ? 1 : 0,
   borderColor: lightPalette().border,

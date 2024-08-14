@@ -1,25 +1,15 @@
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { Detail, DetailType, Id, IdFormData, Illness, IllnessFormData, Medication, Pet, PetFormData, PetMutationFormData, PhotoFormData, Service, ServiceFormData } from './PetInterface'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Detail, DetailType, Pet, PetMutationFormData } from './PetInterface'
 //utils
-import { profileKeyFactory } from '@profile/profileQueries'
 import { ProfileData } from '@profile/ProfileInterface'
-import { alertError, showToast } from '@utils/misc'
+import { profileKeyFactory } from '@profile/profileQueries'
+import { showToast } from '@utils/misc'
 import * as petService from './petService'
 
 export const petKeyFactory = {
   pets: ['all-pets'],
   petById: (id: string) => [...petKeyFactory.pets, id],
 }
-
-// export const useGetAllPets = () => {
-//   const pets = usePets()
-
-//   return useQuery({
-//     initialData: pets,
-//     queryKey: [...petKeyFactory.pets],
-//     queryFn: petService.getAllPets, 
-//   })
-// } 
 
 export const useGetPetById = (petId: string, isEnabled: boolean) => {
   const queryClient = useQueryClient()
@@ -41,7 +31,7 @@ export const useAddPet = (navigation: any) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
         return {...oldData, pets: [...oldData.pets, data]}
       })
-      navigation.navigate('Index')
+      navigation.navigate('Home', { screen: 'Pets' })
       showToast({ text1: 'Pet added.', style: 'success' })
     },
     onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
@@ -58,7 +48,7 @@ export const useUpdatePet = (navigation: any) => {
         return {...oldData, pets: oldData.pets.map(pet => pet._id === data._id ? data : pet) }
       })
       queryClient.prefetchQuery({ queryKey: petKeyFactory.petById(data._id) })
-      navigation.navigate('Details', { petId: data._id })
+      navigation.navigate('PetDetails', { petId: data._id })
       showToast({ text1: 'Pet updated.', style: 'success' })
     },
     onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
@@ -74,7 +64,7 @@ export const useDeletePet = (navigation: any) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
         return {...oldData, pets: oldData.pets.filter(pet => pet._id !== data) }
       })
-      navigation.navigate('Index')
+      navigation.navigate('Home', { screen: 'Pets' })
       showToast({ text1: 'Pet removed.', style: 'success' })
     }, 
     onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })

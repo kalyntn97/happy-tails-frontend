@@ -1,10 +1,11 @@
-import { getActionIconSource, getHealthIconSource, getPetIconSource } from "@utils/ui"
-import { memo, useCallback, useMemo } from "react"
+import { IconType, getActionIconSource, getIconByType } from "@utils/ui"
+import { memo, useMemo } from "react"
 import { Image, ImageSourcePropType, Pressable, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 //components
 import { circleBase } from "@styles/buttons"
+//styles
 import { Buttons, Colors, Spacing, Typography, UI } from "@styles/index"
-import { Size, lightPalette } from "@styles/ui"
+import { Size } from "@styles/ui"
 
 type BaseButtonProps = {
   title?: any
@@ -77,32 +78,23 @@ export const GoBackButton = ({ onPress, position = 'topLeft', size = 'small', bu
 export const IconButton = memo(({ title, icon, onPress, type, size, buttonStyles }: ButtonWithTypeProps) => {
   const buttonSize: ViewStyle = useMemo(() => {
     const sizeMap = {
-      small: { width: 40, height: 60 },
-      medium: { width: 50, height: 70 },
-      large: { width: 60, height: 90 },
+      small: { width: 40, minHeight: 60 },
+      medium: { width: 50, minHeight: 70 },
+      large: { width: 60, minHeight: 90 },
     }
     return sizeMap[size]
   }, [size])
-
-  const getIconSource = useCallback((name: string) => {
-    const map = {
-      action: () => getActionIconSource(name),
-      health: () => getHealthIconSource(name),
-      pet: () => getPetIconSource(name),
-    }
-    return map[type]()
-  }, [type])
-
   const iconName = icon ?? title
-  const iconSource = getIconSource(iconName)
+  const iconSource = useMemo(() => getIconByType(type as IconType, iconName), [type, iconName])
   
   return (
     <TouchableOpacity onPress={onPress} style={[
-      { padding: 10, margin: 5, borderRadius: size === 'small' ? 8 : 10, justifyContent: title ? 'space-around' : 'center', alignItems: 'center', borderWidth: 1, borderColor: lightPalette().border, },
-      buttonSize, buttonStyles
+      UI.input(true, 10, 10, 5), buttonSize,
+      { justifyContent: title ? 'space-around' : 'center', alignItems: 'center' },
+      buttonStyles
     ]}>
       <Image source={iconSource} style={size === 'large' ? UI.icon('med') : UI.icon('xSmall')} />
-      { title && <Text style={{ fontSize: size === 'med' ? 10 : 13, textTransform: 'capitalize' }}>{title}</Text> }
+      { title && <Text style={{ fontSize: size === 'med' ? 10 : 13, textTransform: 'capitalize', marginTop: 5 }}>{title}</Text> }
     </TouchableOpacity>
   )
 })

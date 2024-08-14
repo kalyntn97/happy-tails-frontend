@@ -118,9 +118,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   typeCon: {
-    ...Spacing.flexRow,
+    ...Spacing.flexRowStretch,
     flexWrap: 'wrap',
-    width: '100%',
     justifyContent: 'space-between',
     padding: 10,
   },

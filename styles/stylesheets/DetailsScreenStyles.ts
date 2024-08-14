@@ -13,12 +13,11 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between', 
   },
   headerContainer: {
-    ...Spacing.flexColumn,
-    width: '100%',
+    ...Spacing.flexColumnStretch,
     marginBottom: 20,
   },
   header: {
-    ...Typography.mediumHeader,
+    ...Typography.subHeader,
     marginVertical: 10,
     color: Colors.shadow.darkest,
   },
@@ -27,8 +26,7 @@ export const styles = StyleSheet.create({
     height: 100
   },
   itemInfo: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-between',
     paddingHorizontal: 10,
     marginBottom: 10,
@@ -37,25 +35,24 @@ export const styles = StyleSheet.create({
     ...UI.icon(),
   },
   subHeader: {
-    ...Typography.xSmallSubHeader,
+    ...Typography.smallSubHeader,
     letterSpacing: 0,
   },
   rowCon: {
     ...Spacing.flexRow,
   },
   btnContainer: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-evenly',
     marginVertical: 10,
   },
   smallBtnCon: {
     ...Spacing.flexRow,
+    width: '80%',
     // marginTop: 5,
     position: 'absolute',
     top: -40,
     left: 95,
-    width: '80%',
     justifyContent: 'space-evenly',
   },
   btnText: {
@@ -69,26 +66,24 @@ export const styles = StyleSheet.create({
     right: 5,
   },
   detailText: {
-    ...Typography.xSmallBody,
+    ...Typography.smallBody,
     marginHorizontal: 5,
   },
   notesInput: {
     width: '100%',
-    ...Typography.xSmallSubBody,
+    ...Typography.smallSubBody,
     margin: 5,
   },
   overlay: {
     ...UI.modalOverlay,
   },
   noteInputCon: {
-    ...Spacing.flexColumn,
-    width: '100%',
+    ...Spacing.flexColumnStretch,
     minHeight: 40,
     marginHorizontal: 5,
   },
   pastVisitCon: {
-    ...Spacing.flexColumn,
-    width: '100%',
+    ...Spacing.flexColumnStretch,
     marginTop: 10,
     marginBottom: -10,
   },
@@ -98,8 +93,7 @@ export const styles = StyleSheet.create({
     top: 10,
   },
   doneCon: {
-    ...Spacing.flexColumn,
-    width: '100%',
+    ...Spacing.flexColumnStretch,
     borderRadius: 15,
     padding: 10,
     marginVertical: 10,
@@ -114,13 +108,13 @@ export const styles = StyleSheet.create({
     opacity: 0.5
   },
   visitStatus: {
-    ...Typography.xSmallSubBody,
+    ...Typography.smallSubBody,
     fontSize: 10,
     marginHorizontal: 5,
     color: 'gray',
   },
   msg: {
-    ...Typography.xSmallSubHeader,
+    ...Typography.smallSubHeader,
   },
   pastDue: {
     color: Colors.red.reg, 

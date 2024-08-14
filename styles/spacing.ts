@@ -27,6 +27,16 @@ export const fullWH: ViewStyle = {
   height: '100%',
 }
 
+export const flexRowStretch: ViewStyle = {
+  ...flexRow,
+  width: '100%',
+}
+
+export const flexColumnStretch: ViewStyle = {
+  ...flexColumn,
+  width: '100%',
+}
+
 export const fullScreenDown: ViewStyle = {
   ...fullWH,
   ...flexColumn

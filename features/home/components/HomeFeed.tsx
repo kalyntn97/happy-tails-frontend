@@ -62,7 +62,7 @@ const HomeFeed = ({ navigation }) => {
   }
 
   return (  
-    <View style={styles.container}>
+    <View style={Spacing.fullScreenDown}>
       <View style={styles.headerCon}>  
         <TouchableOpacity onPress={() => setFeed('care')} style={[styles.iconHeaderCon, feed === 'care' && { borderColor: Colors.pink.dark }]}>
 
@@ -121,13 +121,8 @@ const HomeFeed = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullWH,
-    ...Spacing.flexColumn,
-  },
   headerCon: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     padding: 10,
   },
   iconHeaderCon: {
@@ -139,13 +134,12 @@ const styles = StyleSheet.create({
     borderColor: Colors.shadow.darkest,
   },
   iconHeaderText: {
-    ...Typography.xSmallHeader,
+    ...Typography.smallHeader,
     color: Colors.shadow.darkest,
     margin: 10,
   },
   iconMenuContainer: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     marginVertical: 10,
   },
   iconMenu: {
@@ -153,12 +147,12 @@ const styles = StyleSheet.create({
     flexBasis: '25%',
   },
   iconText: {
-    ...Typography.xSmallBody,
+    ...Typography.smallBody,
     marginTop: -5,
   },
   taskListContainer : {
     width: '90%',
-    ...UI.scrollContent,
+    ...UI.form(),
   },
   detailContainer: {
     width: '100%',

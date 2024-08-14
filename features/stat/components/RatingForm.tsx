@@ -56,8 +56,7 @@ const styles = StyleSheet.create({
     ...Spacing.centered,
   },
   optionCon: {
-    width: '100%',
-    ...Spacing.flexRow,
+    ...Spacing.flexRowStretch,
     flexWrap: 'wrap',
     justifyContent: 'center',
   },

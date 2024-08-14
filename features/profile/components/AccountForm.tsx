@@ -97,7 +97,6 @@ const styles = StyleSheet.create({
   },
   form: {
     ...UI.form,
-    width: '100%',
     height: '90%'
   },
   input: {

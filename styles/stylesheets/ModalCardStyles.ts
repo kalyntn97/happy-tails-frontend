@@ -4,20 +4,18 @@ import { Spacing, UI, Typography } from '@styles/index'
 
 export const styles = StyleSheet.create({
   container: {
-    ...UI.cardWithShadow,
+    ...UI.card(),
     width: '90%',
     justifyContent: 'flex-start',
     paddingBottom: 20,
     paddingHorizontal: 10,
   },
   header: {
-    ...Spacing.flexRow,
+    ...Spacing.flexRowStretch,
     justifyContent: 'flex-start',
-    width: '100%',
   },
   subHeader: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-between',
     height: 80,
   },
@@ -33,7 +31,7 @@ export const styles = StyleSheet.create({
     marginLeft: 5,
   },
   subTitle: {
-    ...Typography.xSmallHeader,
+    ...Typography.smallHeader,
     marginBottom: 0,
     marginTop: 10,
   },
@@ -63,7 +61,7 @@ export const styles = StyleSheet.create({
     paddingLeft: '20%',
   },
   des: {
-    ...Typography.xSmallSubHeader,
+    ...Typography.smallSubHeader,
     marginTop: -15,
     marginBottom: 0,
     textAlign: 'left',

@@ -9,6 +9,7 @@ export const getAllPets = async (): Promise<Pet[]> => {
 
 export const create = async (formData: PetFormData, photoData: PhotoFormData): Promise<Pet> => {
   const result = (await axios.post<Pet>(BASE_URL, formData)).data
+  console.log(result)
   if (photoData) {
     const url = await addPhoto(result._id, photoData)
     result.photo = url

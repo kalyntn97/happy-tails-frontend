@@ -1,45 +1,37 @@
-//npm
-import { BottomTabScreenProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { Image, Text } from "react-native"
 //screens
-import HomeScreen from "@home/HomeScreen"
 import CareDetailsScreen from "@care/screens/CareDetailsScreen"
 import CareIndexScreen from "@care/screens/CareIndexScreen"
 import EditCareScreen from "@care/screens/EditCareScreen"
 import NewCareScreen from "@care/screens/NewCareScreen"
-import HealthIndexScreen from "@health/screens/HealthIndexScreen"
-import NewHealthScreen from "@health/screens/NewHealthScreen"
 import EditHealthScreen from "@health/screens/EditHealthScreen"
 import HealthDetailsScreen from "@health/screens/HealthDetails"
-import PetIndexScreen from "@pet/screens/PetIndexScreen"
-import NewPetScreen from "@pet/screens/NewPetScreen"
-import EditPetScreen from "@pet/screens/EditPetScreen"
-import PetDetailsScreen from "@pet/screens/PetDetailsScreen"
-import EditProfileScreen from "@profile/screens/EditProfileScreen"
-import MorePetDetailsScreen from "@pet/screens/MorePetDetailsScreen"
+import HealthIndexScreen from "@health/screens/HealthIndexScreen"
+import NewHealthScreen from "@health/screens/NewHealthScreen"
+import HomeScreen from "@home/HomeScreen"
 import EditMorePetDetailsScreen from "@pet/screens/EditMorePetDetailsScreen"
+import EditPetScreen from "@pet/screens/EditPetScreen"
+import MorePetDetailsScreen from "@pet/screens/MorePetDetailsScreen"
+import NewPetScreen from "@pet/screens/NewPetScreen"
+import PetDetailsScreen from "@pet/screens/PetDetailsScreen"
+import PetIndexScreen from "@pet/screens/PetIndexScreen"
+import EditAccountScreen from "@profile/screens/EditAccountScreen"
+import EditProfileScreen from "@profile/screens/EditProfileScreen"
+import ProfileScreen from "@profile/screens/ProfileScreen"
+import SettingsScreen from "@profile/screens/SettingsScreen"
 import NewStatScreen from "@stat/screens/NewStatScreen"
 import StatDetails from "@stat/screens/StatDetails"
-import ProfileScreen from "@profile/screens/ProfileScreen"
-import EditAccountScreen from "@profile/screens/EditAccountScreen"
-import SettingsScreen from "@profile/screens/SettingsScreen"
 //helpers
 import { getNavigationIconSource } from "@utils/ui"
 //styles
 import { Typography } from "@styles/index"
-import { styles, tabBarOptions, dynamicStackOptions } from "./NavigationStyles"
+import { dynamicStackOptions, styles, tabBarOptions } from "./NavigationStyles"
 
 const PrivateApp = () => {
-  //HomeTab
   const Tab = createBottomTabNavigator()
-  // const HomeStack = createNativeStackNavigator()
   const Stack = createNativeStackNavigator()
-  const HealthStack = createNativeStackNavigator()
-  //PetTab
-  const PetStack = createNativeStackNavigator()
-  //AccountTab
-  const ProfileStack = createNativeStackNavigator()
 
   const HomeTabs = () => {
     return (

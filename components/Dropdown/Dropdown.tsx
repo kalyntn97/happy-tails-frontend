@@ -1,17 +1,16 @@
 //npm modules
-import { ReactElement, memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { View, Image, ImageStyle, Modal, StyleSheet, Text, TouchableOpacity, FlatList, Pressable, DimensionValue, ViewStyle, TextInput, ScrollView, Keyboard } from "react-native"
+import { memo, useEffect, useRef, useState } from "react"
+import { DimensionValue, FlatList, Keyboard, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ViewStyle } from "react-native"
+import Fuse from "fuse.js"
 //helpers 
-import * as petHelpers from '@pet/petHelpers'
 import * as careHelpers from '@care/careHelpers'
 import * as healthHelpers from '@health/healthHelpers'
-import { getActionIconSource } from "@utils/ui"
-import { useShallowPets } from "@hooks/sharedHooks"
-//styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { lightPalette } from "@styles/ui"
-import Fuse, { FuseResult } from "fuse.js"
+import * as petHelpers from '@pet/petHelpers'
+//components
 import { ErrorMessage, Icon } from "@components/UIComponents"
+//styles
+import { Colors, Spacing, Typography, UI } from '@styles/index'
+import { lightPalette } from "@styles/ui"
 
 interface DropdownProps {
   label?: string
@@ -48,7 +47,7 @@ const typeToSource = {
   'serviceTypes': () => petHelpers.SERVICE_TYPES,
 }
 
-const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-content', initial, buttonStyles, contentStyles, withSearch = false, searchLabel, contentPosition = 'bottom', error }: DropdownProps) => {
+const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = '80%', initial, buttonStyles, contentStyles, withSearch = false, searchLabel, contentPosition = 'bottom', error }: DropdownProps) => {
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
   const [visible, setVisible] = useState(false)
@@ -112,9 +111,9 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
     <View style={{ width: width as DimensionValue, zIndex: focused ? 10 : 2 }}>
       { withSearch ?
         <View style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue }, focused && UI.focused]} ref={DropdownBtn}>
-          <Icon name='search' styles={{ marginRight: 15 }} />
+          <Icon name='search' styles={{ marginRight: 15 }} size='xSmall' />
           <TextInput
-            style={{ maxWidth: '80%' }}
+            style={{ width: '80%' }}
             placeholder={label ?? 'enter search'}
             placeholderTextColor={UI.lightPalette().unfocused}
             value={searchInput}
@@ -126,7 +125,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
           />
         </View>
         : <TouchableOpacity style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue, justifyContent: 'space-between' }, visible && UI.focused]} onPress={toggleDropdown} ref={DropdownBtn}>
-          <Text style={{ maxWidth: '80%' }}>{selected ?? label}</Text>
+          <Text style={{ width: '80%' }}>{selected ?? label}</Text>
           <Icon name={visible ? 'up' : 'down'} />
         </TouchableOpacity>
       }
@@ -137,7 +136,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = 'fit-cont
           contentPosition === 'bottom' ? { top: dropdownTop } : { bottom: dropdownTop }
         ]}>
           <ScrollView style={Spacing.fullWH}>
-            { searchResults.length > 1 ? searchResults.map((result, idx) =>
+            { searchResults.length > 1 ? searchResults.map((result, index) =>
               <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
                 <Text style={{ color: lightPalette().text }}>
                   { result.item }
@@ -183,14 +182,12 @@ const styles = StyleSheet.create({
   },
   content: {
     position: 'absolute',
-    ...UI.cardWithShadow,
+    ...UI.card(),
     backgroundColor: Colors.white,
   },
   itemCon: {
-    paddingVertical: 10,
-    borderColor: lightPalette().border,
-    borderTopWidth: 0.5,
-    borderBottomWidth: 0.5,
+    ...UI.rowContent(false, 'flex-start', 0, 10),
+    ...UI.tableRow(true)
   },
   itemConSelected: {
     borderTopWidth: 1,

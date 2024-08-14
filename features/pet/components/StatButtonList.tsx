@@ -36,8 +36,7 @@ const StatButtonList = ({ petId, petColor, size, navigation }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-evenly',
     marginVertical: 15,
   }

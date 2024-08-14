@@ -10,7 +10,7 @@ import { DateInput, FormInput, FormLabel, Icon, ModalInput, PhotoUpload, TableFo
 import { Header } from "@navigation/NavigationStyles"
 //helpers & utils & hooks
 import useForm from "@hooks/useForm"
-import { PetFormData, PhotoFormData } from "@pet/PetInterface"
+import { Pet, PetFormData, PhotoFormData } from "@pet/PetInterface"
 import { GENDER, SPECIES_OPTIONS, STATUS } from "@pet/petHelpers"
 import { getPetIconSource } from "@utils/ui"
 //styles
@@ -19,7 +19,7 @@ import { styles } from "@styles/stylesheets/FormStyles"
 
 interface PetFormProps {
   onSubmit: (formData: PetFormData, photoData: PhotoFormData | null) => Promise<any>
-  initialValues?: PetFormData
+  initialValues?: Pet
   formStatus: string
   navigation: any
   setColor: (color: number) => void
@@ -37,7 +37,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
     status: initialValues?.status ?? { value: 'Healthy', date: null, archive: false }, 
     color: initialValues?.color ?? 0, 
     photo: initialValues?.photo ?? null, 
-    _id: initialValues?._id ?? null, 
+    petId: initialValues?._id ?? null, 
     photoData: null, 
     errors: {} 
   }), [initialValues])
@@ -71,7 +71,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
 
   const renderType = (
     <ModalInput height='90%' customLabel={
-      <View style={Spacing.flexRow}>
+      <View style={[Spacing.flexRow, { flexWrap: 'wrap' }]}>
         <Icon type='pet' name={species} styles={{ marginRight: 10 }} />
         { ['Dog', 'Cat', 'Bird', 'Fish'].includes(species) ?
           <Text>{breed ?? 'Unknown breed'}</Text> 
@@ -189,7 +189,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
     >
       <View style={styles.headerCon}>
         <PhotoUpload photo={photo} placeholder={placeholderPhoto} onSelect={(uri: string) => onChange('photo', uri)} />
-        <View style={[styles.titleCon, { width: '60%' }]}>
+        <View style={[styles.titleCon, { flex: 1 }]}>
           <FormInput initial={initialState.name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} />
         </View>
       </View>

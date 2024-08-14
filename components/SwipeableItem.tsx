@@ -74,8 +74,7 @@ const SwipeableItem = ({ color, title, content, swipeRightActions, swipeLeftActi
 
 const styles = StyleSheet.create({
   task: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     borderRadius: 15,
     marginVertical: 5,
     justifyContent: 'space-between'
