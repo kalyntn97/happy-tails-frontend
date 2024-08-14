@@ -83,7 +83,7 @@ const PetCard = ({ pet, index, scrollX, navigation }: PetCardProps) => {
 
 const styles = StyleSheet.create({
   base: {
-    ...UI.card(),
+    ...UI.card(true, true),
     justifyContent: 'flex-start',
     alignItems: 'center',
     transform: [{ scale: moderateScale(0.8, 1.5) }],

@@ -25,15 +25,6 @@ export const boxShadow: ViewStyle = {
   shadowRadius: 2,
 }
 
-export const card = (withShadow: boolean = true): ViewStyle => ({
-  ...centered,
-  ...(withShadow ? boxShadow : {}),
-  ...basePadding(),
-  margin: 10,
-  borderRadius: 15,
-  backgroundColor: lightPalette().background,
-})
-
 export const photoSizeMap: Record<Size, ImageStyle> = {
   tiny: { width: 20, height: 20},
   xxSmall: { width: 30, height: 30},
@@ -108,12 +99,13 @@ export const bottomModal: ViewStyle = {
   backgroundColor: Colors.shadow.lightest,
 }
 
-export const roundedCon = (withPadding: boolean = true): ViewStyle => ({
-  width: '90%',
-  backgroundColor: Colors.white,
-  borderRadius: 20,
-  marginVertical: 10,
-  ...(withPadding ? basePadding() : {}),
+export const card = (withPadding = true, withShadow = false, h?: number, v?: number, m: number = 10): ViewStyle => ({
+  ...centered,
+  ...(withShadow ? boxShadow : {}),
+  ...(withPadding ? basePadding(h, v) : {}),
+  margin: m,
+  borderRadius: 15,
+  backgroundColor: lightPalette().background,
 })
 
 export const roundedIconCon: ViewStyle = {

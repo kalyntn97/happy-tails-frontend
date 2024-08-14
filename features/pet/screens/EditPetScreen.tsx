@@ -22,7 +22,7 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
   const updatePetMutation = useUpdatePet(navigation)
 
   const initialValues: PetFormData = {
-    name: pet.name, species: pet.species, breed: pet.breed, gender: pet.gender, dob: pet.dob, gotchaDate: pet.gotchaDate, altered: pet.altered, status: pet.status, color: pet.color, photo: pet.photo, _id: pet._id
+    name: pet.name, species: pet.species, breed: pet.breed, gender: pet.gender, dob: pet.dob, gotchaDate: pet.gotchaDate, altered: pet.altered, status: pet.status, color: pet.color, photo: pet.photo, petId: pet._id
   }
 
   const handleEditPet = async (formData: PetFormData, photoData: PhotoFormData)  => {

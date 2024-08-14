@@ -64,7 +64,7 @@ export const styles = StyleSheet.create({
     aspectRatio: 1,
   },
   contentCon: {
-    ...UI.roundedCon,
+    ...UI.card,
     ...Spacing.flexColumn, 
     alignItems: 'flex-start',
   },

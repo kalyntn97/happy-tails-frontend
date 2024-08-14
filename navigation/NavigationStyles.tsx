@@ -27,7 +27,7 @@ export const tabBarOptions: BottomTabNavigationOptions = {
 
 const RightButton = ({ title, icon, onPress, buttonStyles }: { title?: string, icon?: string, onPress: () => void, buttonStyles?: ViewStyle }) => (
   <TouchableOpacity onPress={onPress} style={buttonStyles}>
-    { icon && <Image source={getActionIconSource(icon)} style={{ width: 25, height: 25 }} /> }
+    { icon && <Image source={getActionIconSource(icon)} style={{ width: 20, height: 20 }} /> }
     { title && <Text style={styles.buttonText}>{title}</Text> }
   </TouchableOpacity>
 )

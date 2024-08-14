@@ -19,7 +19,7 @@ import { styles } from "@styles/stylesheets/FormStyles"
 
 interface PetFormProps {
   onSubmit: (formData: PetFormData, photoData: PhotoFormData | null) => Promise<any>
-  initialValues?: Pet
+  initialValues?: PetFormData
   formStatus: string
   navigation: any
   setColor: (color: number) => void
@@ -37,7 +37,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
     status: initialValues?.status ?? { value: 'Healthy', date: null, archive: false }, 
     color: initialValues?.color ?? 0, 
     photo: initialValues?.photo ?? null, 
-    petId: initialValues?._id ?? null, 
+    petId: initialValues?.petId ?? null, 
     photoData: null, 
     errors: {} 
   }), [initialValues])

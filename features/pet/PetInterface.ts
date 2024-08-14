@@ -11,7 +11,7 @@ export interface PetFormData {
   altered: { value: boolean, date: string | null}
   status: { value: string, date: string | null, show: boolean }
   color: number
-  photo: string | null
+  photo?: string
   petId: string | null
 }
 
@@ -19,6 +19,7 @@ export type PhotoFormData = { uri: string, name: string, type: string }
 
 export interface Pet extends PetFormData {
   _id: string
+  photo: string | null
   ids: Id[]
   services: Service[]
 }

@@ -63,23 +63,32 @@ type TitleLabelProps = {
   rightLabel?: 'down' | 'next'
   color?: string
   titleStyles?: TextStyle
+  containerStyles?: ViewStyle
+  mode?: 'normal' | 'bold'
 }
 
-export const TitleLabel = ({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, rightLabel }: TitleLabelProps) => (
-  <Pressable onPress={onPress} style={UI.rowContent(true, 'space-between', 0)}>
-    { iconName && <Icon type={iconType} name={iconName} size={size === 'small' ? 'xSmall' : 'small'} /> }
-    { title && 
-      <Text style={[
-        { fontSize: size === 'small' ? 15 : 18, color: color, margin: 0, marginLeft: iconName ? 5 : 0, textAlign: 'left', marginRight: 20 },
-        titleStyles,
-      ]}>
-      { title }
-    </Text> }
-    <View style={[Spacing.flexRow, { marginLeft: 'auto', flex: 1, justifyContent: 'flex-end' }]}>
-      { rightAction ?? (rightLabel && <Icon name={rightLabel} size='xSmall' styles={{ marginLeft: 10 }} />) }
-    </View>
-  </Pressable>
-)
+export const TitleLabel = memo(({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, containerStyles, rightLabel, mode = 'normal' }: TitleLabelProps) => { 
+  const dynamicSize: { icon: Size, title: number } = useMemo(() => ({
+    icon: size === 'small' ? 'xSmall' : 'small',
+    title: size === 'small' ? 15 : 18,
+  }), [size])
+  
+  return (
+    <Pressable onPress={onPress} style={[UI.rowContent(true, 'space-between', 0), containerStyles]}>
+      { iconName && <Icon type={iconType} name={iconName} size={dynamicSize.icon} styles={{ marginVertical: 0, marginRight: 10 }}/> }
+      { title && 
+        <Text style={[
+          { fontWeight: mode, fontSize: dynamicSize.title, color: color, margin: 0, textAlign: 'left', marginRight: 20, textTransform: 'capitalize' },
+          titleStyles,
+        ]}>
+        { title }
+      </Text> }
+      <View style={[Spacing.flexRow, { marginLeft: 'auto', flex: 1, justifyContent: 'flex-end' }]}>
+        { rightAction ?? (rightLabel && <Icon name={rightLabel} size='xSmall' styles={{ marginLeft: 10 }} />) }
+      </View>
+    </Pressable>
+  )
+})
 
 const headerSize = {
   xSmall: Typography.smallSubHeader,
@@ -142,7 +151,7 @@ interface BoxProps extends TitleLabelProps {
 }
 
 export const BoxWithHeader = memo(({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, rightLabel = 'down', children, contentStyles }: BoxProps) => (
-  <View style={UI.roundedCon()}>
+  <View style={UI.card()}>
     <TitleLabel size={size} onPress={onPress} title={title} iconType={iconType} iconName={iconName} color={color} rightAction={rightAction} titleStyles={titleStyles} rightLabel={rightLabel} />
     <View style={[{ flex: 1, paddingVertical: 10 }, contentStyles]}>{children}</View>
   </View>
@@ -156,7 +165,7 @@ interface TableProps extends TitleLabelProps{
 }
 
 export const TableForm = memo(({ table, withTitle = false, dependentRows, size = 'small', tableStyles, titleStyles }: TableProps) => (
-  <View style={[UI.roundedCon(), { backgroundColor: Colors.white }, tableStyles]}>
+  <View style={[UI.card(), { backgroundColor: Colors.white }, tableStyles]}>
     { table.map((row, index) => {
       let rowIsVisible = true
       if (dependentRows && dependentRows.hasOwnProperty(row.key)) rowIsVisible = dependentRows[row.key]
@@ -164,7 +173,7 @@ export const TableForm = memo(({ table, withTitle = false, dependentRows, size =
       return (
         rowIsVisible && 
         <View key={row.key} style={[index < table.length - 1 && UI.tableRow(true), { minHeight: 50 }]}>
-          <TitleLabel title={withTitle ? row.label : null} iconName={row.icon} size={size} rightAction={row.value} titleStyles={titleStyles} />
+          <TitleLabel key={row.key} title={withTitle ? row.label : null} iconName={row.icon} size={size} rightAction={row.value} titleStyles={titleStyles} containerStyles={{ ...(index < table.length - 1 ? UI.tableRow(true) : {}), minHeight: 50 }} />
         </View>
       )
     })}

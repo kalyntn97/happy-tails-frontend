@@ -48,7 +48,7 @@ const PetInfo = ({ pet, size }: PetInfoProps) => {
  
 const styles = StyleSheet.create({
   shortName: {
-    ...Typography.xSmallHeader,
+    ...Typography.smallHeader,
     margin: 0,
   },
   containerExpanded: {
@@ -75,14 +75,14 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   name: {
-    ...Typography.mediumHeader,
+    ...Typography.subHeader,
     fontSize: 18,
     padding: 10,
     margin: 0,
     textAlign: 'left',
   },
   body: {
-    ...Typography.xSmallSubHeader,
+    ...Typography.smallSubHeader,
     marginTop: 0,
     color: 'gray',
     textAlign: 'left',

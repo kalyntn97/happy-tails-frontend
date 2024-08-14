@@ -34,7 +34,7 @@ export const useAddPet = (navigation: any) => {
       navigation.navigate('Home', { screen: 'Pets' })
       showToast({ text1: 'Pet added.', style: 'success' })
     },
-    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
@@ -51,7 +51,7 @@ export const useUpdatePet = (navigation: any) => {
       navigation.navigate('PetDetails', { petId: data._id })
       showToast({ text1: 'Pet updated.', style: 'success' })
     },
-    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
@@ -67,7 +67,7 @@ export const useDeletePet = (navigation: any) => {
       navigation.navigate('Home', { screen: 'Pets' })
       showToast({ text1: 'Pet removed.', style: 'success' })
     }, 
-    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 

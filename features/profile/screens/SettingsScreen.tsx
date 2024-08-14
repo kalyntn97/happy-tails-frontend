@@ -64,14 +64,14 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}> 
       <Text style={styles.sectionHeader}>Display settings</Text>
-      <View style={{ ...UI.roundedCon() }}>
+      <View style={{ ...UI.card() }}>
         { displaySettings.map(setting =>
           <TitleLabel key={setting.key} title={setting.title} rightAction={<Text>{setting.currentValue}</Text>} onPress={setting.setValue} mode='light' />
         )}
       </View>
 
       <Text style={styles.sectionHeader}>Account settings</Text>
-      <View style={{ ...UI.roundedCon() }}>
+      <View style={{ ...UI.card() }}>
         { accountSettings.map(setting =>
           <TitleLabel key={setting.key} title={setting.title} onPress={setting.onPress} mode={setting.key === 'delete' ? 'dark' : 'light'} color={setting.key === 'delete' && Colors.red.darkest} />
         )}

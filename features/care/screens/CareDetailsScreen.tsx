@@ -113,7 +113,7 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
             
           
 
-          <View style={{ ...UI.roundedCon()}}>
+          <View style={{ ...UI.card()}}>
             {actions.map(action => 
               <TitleLabel key={action.key} title={action.key} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} />
             )}
