@@ -1,13 +1,11 @@
-import { useState } from "react"
-import { View } from "react-native"
 //components
-import PetForm from "../components/PetForm"
 import Loader from "@components/Loader"
+import PetForm from "../components/PetForm"
 //hooks & queries & utils
-import { useUpdatePet } from "@pet/petQueries"
 import { Pet, PetFormData, PhotoFormData } from "@pet/PetInterface"
+import { useUpdatePet } from "@pet/petQueries"
 //styles
-import { Colors, Spacing } from "@styles/index"
+import { ScrollScreen } from "@components/UIComponents"
 
 
 interface EditPetProps {
@@ -16,8 +14,6 @@ interface EditPetProps {
 }
 
 const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
-  const [color, setColor] = useState<number>(0)
-
   const { pet } = route.params
   const updatePetMutation = useUpdatePet(navigation)
 
@@ -30,12 +26,12 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
   }
 
   return (
-    <View style={[Spacing.fullCon(), { backgroundColor: Colors.multi.lightest[color] }]}>
+    <>
       { pet ?
-        <PetForm onSubmit={handleEditPet} initialValues={initialValues} navigation={navigation} formStatus={updatePetMutation.status} setColor={setColor} />
+        <PetForm onSubmit={handleEditPet} initialValues={initialValues} navigation={navigation} formStatus={updatePetMutation.status} />
         : <Loader />
       }
-    </View>
+    </>
   )
 }
 

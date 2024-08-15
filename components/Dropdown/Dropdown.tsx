@@ -1,5 +1,5 @@
 //npm modules
-import { memo, useEffect, useRef, useState } from "react"
+import { memo, useEffect, useMemo, useRef, useState } from "react"
 import { DimensionValue, FlatList, Keyboard, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ViewStyle } from "react-native"
 import Fuse from "fuse.js"
 //helpers 
@@ -107,13 +107,27 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = '80%', in
     }
   }, [dataType])
 
+  const dropdownBtnStyles = useMemo(() => ([ 
+   buttonStyles ?? UI.input(), 
+    styles.dropDownBtn, 
+    { width: '100%' }, 
+    (focused || visible) && UI.focused,
+  ]) as ViewStyle, [buttonStyles, focused, visible])
+
+  const modalStyles = useMemo(() => ([ 
+    styles.modalCon, 
+    { width: '100%', left: dropdownLeft,  maxHeight: withSearch ? 200 : '50%' },
+    contentPosition === 'bottom' ? { top: dropdownTop } : { bottom: dropdownTop },
+    contentStyles,
+  ]) as ViewStyle, [dropdownLeft, dropdownTop, contentPosition, contentStyles])
+
   return (
     <View style={{ width: width as DimensionValue, zIndex: focused ? 10 : 2 }}>
       { withSearch ?
-        <View style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue }, focused && UI.focused]} ref={DropdownBtn}>
-          <Icon name='search' styles={{ marginRight: 15 }} size='xSmall' />
+        <View style={dropdownBtnStyles} ref={DropdownBtn}>
+          <Icon name='search' size='xSmall' styles={{ marginRight: 15 }}/>
           <TextInput
-            style={{ width: '80%' }}
+            style={{ flex: 1 }}
             placeholder={label ?? 'enter search'}
             placeholderTextColor={UI.lightPalette().unfocused}
             value={searchInput}
@@ -124,37 +138,35 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = '80%', in
             selectTextOnFocus={true}
           />
         </View>
-        : <TouchableOpacity style={[buttonStyles ?? styles.buttonCon, styles.dropDownBtn, { width: width as DimensionValue, justifyContent: 'space-between' }, visible && UI.focused]} onPress={toggleDropdown} ref={DropdownBtn}>
-          <Text style={{ width: '80%' }}>{selected ?? label}</Text>
-          <Icon name={visible ? 'up' : 'down'} />
+      : 
+        <TouchableOpacity style={dropdownBtnStyles} onPress={toggleDropdown} ref={DropdownBtn}>
+          <Text style={{ flex: 1  }}>{selected ?? label}</Text>
+          <Icon name={visible ? 'up' : 'down'} styles={{ marginLeft: 15 }} />
         </TouchableOpacity>
       }
       { error && <ErrorMessage error={error} /> }
 
       { withSearch ?
-        visible && <View style={[contentStyles ?? styles.content, { left: dropdownLeft, width: width as DimensionValue, maxHeight: 200 },
-          contentPosition === 'bottom' ? { top: dropdownTop } : { bottom: dropdownTop }
-        ]}>
-          <ScrollView style={Spacing.fullWH}>
-            { searchResults.length > 1 ? searchResults.map((result, index) =>
-              <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
-                <Text style={{ color: lightPalette().text }}>
-                  { result.item }
-                </Text>
-              </TouchableOpacity>
-            )
-            : <Text>No {searchLabel ?? 'item'} found.</Text> }
-          </ScrollView>
-        </View>
+        visible && 
+          <View style={modalStyles}>
+            <ScrollView style={Spacing.fullWH}>
+              { searchResults.length > 1 ? searchResults.map(result =>
+                <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
+                  <Text style={{ color: lightPalette().text }}>
+                    { result.item }
+                  </Text>
+                </TouchableOpacity>
+              )
+              : <Text>No {searchLabel ?? 'item'} found.</Text> }
+            </ScrollView>
+          </View>
       : 
         <Modal visible={visible} transparent animationType="none">
           <Pressable style={UI.overlay} onPress={() => setVisible(false)}>
-            <View style={[contentStyles ?? styles.content, { left: dropdownLeft, width: width as DimensionValue, maxHeight: '50%' },
-              contentPosition === 'bottom' ? { top: dropdownTop } : { bottom: dropdownTop }
-            ]}>
+            <View style={modalStyles}>
                 <FlatList 
                   data={data} 
-                  keyExtractor={(item, idx) => idx.toString()}
+                  keyExtractor={(_, idx) => idx.toString()}
                   renderItem={({ item }) => (
                     <TouchableOpacity style={[styles.itemCon, item === selected && styles.itemConSelected]} onPress={() => onItemPress(item)}>
                       <Text style={item === selected ? Typography.focused : { color: lightPalette().text }}>
@@ -177,12 +189,9 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginVertical: 5,
   },
-  buttonCon: {
-    ...UI.input(),
-  },
-  content: {
+  modalCon: {
+    ...UI.card(true, true),
     position: 'absolute',
-    ...UI.card(),
     backgroundColor: Colors.white,
   },
   itemCon: {

@@ -11,8 +11,6 @@ import { PetFormData, PhotoFormData } from "@pet/PetInterface"
 import { Colors } from "@styles/index"
 
 const NewPetScreen = ({ navigation }) => {
-  const [color, setColor] = useState<number>(0)
-  
   const addPetMutation = useAddPet(navigation)
 
   const handleAddPet = async (formData: PetFormData, photoData: PhotoFormData) => {
@@ -20,9 +18,7 @@ const NewPetScreen = ({ navigation }) => {
   }
 
   return ( 
-    <ScrollScreen bgColor={Colors.multi.lightest[color]}>
-      <PetForm onSubmit={handleAddPet} navigation={navigation} formStatus={addPetMutation.status} setColor={setColor} />
-    </ScrollScreen>
+    <PetForm onSubmit={handleAddPet} navigation={navigation} formStatus={addPetMutation.status} />
   )
 }
 

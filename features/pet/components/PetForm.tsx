@@ -1,12 +1,12 @@
 //npm modules
 import { useEffect, useMemo } from "react"
-import { ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { DimensionValue, ScrollView, Text, TouchableOpacity, View } from "react-native"
 //components
 import { ToggleButton } from '@components/ButtonComponents'
 import Dropdown from "@components/Dropdown/Dropdown"
 import ColorPicker from "@components/Pickers/ColorPicker"
 import IconPicker from "@components/Pickers/IconPicker"
-import { DateInput, FormInput, FormLabel, Icon, ModalInput, PhotoUpload, ScrollContainer, TableForm } from "@components/UIComponents"
+import { DateInput, FormInput, FormLabel, Icon, ModalInput, PhotoUpload, ScrollContainer, ScrollScreen, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 //helpers & utils & hooks
 import useForm from "@hooks/useForm"
@@ -14,7 +14,7 @@ import { Pet, PetFormData, PhotoFormData } from "@pet/PetInterface"
 import { GENDER, SPECIES_OPTIONS, STATUS } from "@pet/petHelpers"
 import { getPetIconSource } from "@utils/ui"
 //styles
-import { Colors, Spacing } from '@styles/index'
+import { Colors, Spacing, UI } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
 
 interface PetFormProps {
@@ -22,10 +22,9 @@ interface PetFormProps {
   initialValues?: PetFormData
   formStatus: string
   navigation: any
-  setColor: (color: number) => void
 }
 
-const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: PetFormProps) => {
+const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormProps) => {
   const initialState = useMemo(() => ({ 
     name: initialValues?.name ?? null, 
     species: initialValues?.species ?? SPECIES_OPTIONS[0].title, 
@@ -84,7 +83,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
         <IconPicker selected={species} options={SPECIES_OPTIONS} withCustom={true} initial={initialState.species} onSelect={(selected: string) => {
           onChange('species', selected)
           onChange('breed', null)
-        }} customIcon={{ type: 'pet', name: 'Others' }} />
+        }} customIcon={{ type: 'pet', name: 'Others' }} customLabel="breed" />
 
         { ['Dog', 'Cat', 'Bird', 'Fish'].includes(species) && <>
           <FormLabel label='Pet Breed' icon='pets' />
@@ -95,7 +94,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
   )
 
   const renderDob = (
-    <DateInput date={dob} placeholder='Unknown' onChangeDate={(selected) => onChange('dob', selected)} color={color} />
+    <DateInput date={dob} placeholder='Unknown' header='Date of Birth' onChangeDate={(selected) => onChange('dob', selected)} color={color} />
   )
 
   const renderFirstMet = (
@@ -116,17 +115,17 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
     <ToggleButton isChecked={altered.value} onPress={() => onChange('altered', { value: !altered.value, date: null })} />
   )
   const renderAlteredDate = (
-    <DateInput date={altered.date} placeholder='Unknown date' onChangeDate={(selected) => onChange('altered', { ...altered, date: selected })} color={color} />
+    <DateInput date={altered.date} placeholder='Unknown' onChangeDate={(selected) => onChange('altered', { ...altered, date: selected })} color={color} />
   )
 
   const alteredTable = [
     { key: 'alteredValue', label: 'Altered', icon: 'altered', value: renderAlteredValue },
-    { key: 'alteredDate', label: 'Surgery Date', icon: 'date', value: renderAlteredDate },
+    { key: 'alteredDate', label: 'Surgery Date', icon: 'schedule', value: renderAlteredDate },
   ]
 
   const renderAltered = (
     <ModalInput label={altered.value ? 
-      `${gender === 'Boy' ? 'Neutered' : gender === 'Girl' ? 'Spayed' : 'Altered'} on ${altered.date ? altered.date.toLocaleDateString() : 'unknown date'}`
+      `${gender === 'Boy' ? 'Neutered' : gender === 'Girl' ? 'Spayed' : 'Altered'} on ${altered.date ? new Date(altered.date).toLocaleDateString() : 'unknown date'}`
       : `Not ${gender === 'Boy' ? 'Neutered' : gender === 'Girl' ? 'Spayed' : 'Altered'}`
     }>
       <TableForm table={alteredTable} withTitle={true} />
@@ -134,13 +133,16 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
   )
 
   const renderStatusValue = (
-    <Dropdown label='Status' dataType="petStatus" initial={status.value} onSelect={handleSelectStatus} buttonStyles={{ paddingLeft: 20 }}/>
+    <Dropdown label='Status' dataType="petStatus" initial={status.value} onSelect={handleSelectStatus} width={100} buttonStyles={{ marginLeft: 'auto' }} contentStyles={{ width: 'fit-content' as DimensionValue }}/>
   )
   const renderStatusDate = (
     <DateInput date={status.date} placeholder='Unknown date' onChangeDate={(selected) => onChange('status', { ...altered, date: selected })} color={color} />
   )
   const renderStatusArchive = (
-    <ToggleButton isChecked={status.archive} onPress={() => onChange('status', { ...status, archive: !status.archive })} />
+    <View style={Spacing.flexRow}>
+      <Text style={{ marginRight: 15 }}>Archive</Text>
+      <ToggleButton isChecked={status.archive} onPress={() => onChange('status', { ...status, archive: !status.archive })} />
+    </View>
   )
 
   const statusTable = [
@@ -171,7 +173,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
 
   const headerActions = [
     { icon: 'reset', onPress: onReset },
-    { title: status === 'pending' ? 'Submitting...' : 'Submit', onPress: handleValidate },
+    { title: formStatus === 'pending' ? 'Submitting...' : 'Submit', onPress: handleValidate },
   ]
 
   useEffect(() => {
@@ -181,7 +183,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
   }, [headerActions, status, color])
 
   return ( 
-    <View style={styles.container}>
+    <ScrollScreen bgColor={Colors.multi.lightest[color]}>
       <View style={styles.headerCon}>
         <PhotoUpload photo={photo} placeholder={placeholderPhoto} onSelect={(uri: string) => onChange('photo', uri)} />
         <View style={[styles.titleCon, { flex: 1 }]}>
@@ -189,14 +191,10 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
         </View>
       </View>
       
-      <ColorPicker selected={color} onPress={selected => {
-        onChange('color', selected)
-        setColor(selected)
-      }} />
+      <ColorPicker selected={color} onPress={selected => onChange('color', selected)} />
 
       <TableForm table={mainTable} withTitle={true} />
-
-    </View>
+    </ScrollScreen>
   )
 }
 

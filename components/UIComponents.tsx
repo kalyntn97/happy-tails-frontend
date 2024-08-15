@@ -101,7 +101,7 @@ const headerSize = {
 export const FormHeader = ({ title, size = 'med', color = lightPalette().text, styles }: { title: string, size?: Size, color?: string, styles?: TextStyle }) => {
   // const defaultColor = size === 'small' || size === 'xSmall' ? lightPalette().unfocused : lightPalette().text
   return (
-    <Text style={[headerSize[size], { color: color }, styles]}>{title}</Text>
+    <Text style={[headerSize[size], { color: color, textTransform: 'capitalize' }, styles]}>{title}</Text>
   )
 }
 
@@ -167,7 +167,7 @@ interface TableProps extends TitleLabelProps{
   tableStyles?: ViewStyle 
 }
 
-export const TableForm = memo(({ table, withTitle = false, dependentRows, size = 'small', tableStyles, titleStyles }: TableProps) => (
+export const TableForm = memo(({ table, withTitle = false, dependentRows, size = 'small', tableStyles, titleStyles, containerStyles }: TableProps) => (
   <View style={[UI.card(), { backgroundColor: Colors.white }, tableStyles]}>
     { table.map((row, index) => {
       let rowIsVisible = true
@@ -175,9 +175,9 @@ export const TableForm = memo(({ table, withTitle = false, dependentRows, size =
 
       return (
         rowIsVisible && 
-        <View key={row.key} style={[index < table.length - 1 && UI.tableRow(true), { minHeight: 50 }]}>
-          <TitleLabel key={row.key} title={withTitle ? row.label : null} iconName={row.icon} size={size} rightAction={row.value} titleStyles={titleStyles} containerStyles={{ ...(index < table.length - 1 ? UI.tableRow(true) : {}), minHeight: 50 }} />
-        </View>
+          <TitleLabel key={row.key} title={withTitle ? row.label : null} iconName={row.icon} size={size} rightAction={row.value} titleStyles={titleStyles} 
+            containerStyles={{ ...(index < table.length - 1 ? UI.tableRow(true) : {}), minHeight: 50, ...containerStyles }} 
+          />
       )
     })}
   </View>
@@ -307,13 +307,14 @@ export const ModalInput = ({ children, label, onReset, onClose, height = 'fit-co
   )
 }
 
-export const DateInput = ({ date, placeholder = 'No date selected', onChangeDate, color, buttonStyles, buttonTextStyles }: { date: Date, placeholder?: string, onChangeDate: (selected: Date) => void, color?: number, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle }) => (
-  <ModalInput label={date?.toDateString() ?? placeholder} onReset={() => onChangeDate(new Date())} buttonStyles={buttonStyles} buttonTextStyles={buttonTextStyles}>
-    <RNDateTimePicker display="inline" themeVariant="light" value={date ? new Date(date) : new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate)} accentColor={Colors.multi.dark[color]} />
+export const DateInput = ({ date, placeholder = 'No date selected', onChangeDate, color, buttonStyles, buttonTextStyles, header }: { date: Date | string, placeholder?: string, onChangeDate: (selected: string) => void, color?: number, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle, header?: string }) => (
+  <ModalInput label={date ? new Date(date).toLocaleDateString() : placeholder} onReset={() => onChangeDate(new Date().toISOString())} buttonStyles={buttonStyles} buttonTextStyles={buttonTextStyles}>
+    { header && <FormHeader title={date ? `${header}: ${new Date(date).toLocaleDateString()}` : header} />}
+    <RNDateTimePicker display="inline" themeVariant="light" value={date ? new Date(date) : new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate.toISOString())} accentColor={Colors.multi.dark[color]} />
   </ModalInput>
 )
 
-export const NoteInput = ({ notes, maxLength = 100, onChange, buttonStyles, buttonTextStyles, inputStyles, placeholder }: { notes: string, maxLength?: number, onChange: (text: string) => void, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle, inputStyles?: TextStyle, placeholder?: string }) => {
+export const NoteInput = ({ notes, maxLength = 100, onChange, buttonStyles, buttonTextStyles, inputStyles, placeholder, header }: { notes: string, maxLength?: number, onChange: (text: string) => void, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle, inputStyles?: TextStyle, placeholder?: string, header?: string }) => {
   const DEFAULT_HEIGHT = '30%'
   const [height, setHeight] = useState(DEFAULT_HEIGHT)
 
@@ -332,6 +333,8 @@ export const NoteInput = ({ notes, maxLength = 100, onChange, buttonStyles, butt
 
   return (
     <ModalInput label={notes ?? 'No notes added.'} onReset={() => onChange(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} height={height}>
+      <FormHeader title={header ?? 'Add Note'} />
+
       <TextInput
         style={[UI.input(), { width: '90%', minHeight: 100, maxHeight: '30%' }, inputStyles]}
         placeholder={placeholder ?? 'Enter notes'}

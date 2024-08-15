@@ -2,7 +2,7 @@ import React, { memo, useCallback, useRef, useState } from 'react'
 import { Keyboard, View, ViewStyle } from 'react-native'
 //components
 import { IconButton } from '@components/ButtonComponents'
-import { BottomModal, FormInput } from '@components/UIComponents'
+import { BottomModal, FormHeader, FormInput } from '@components/UIComponents'
 //styles
 import { Spacing } from '@styles/index'
 
@@ -55,6 +55,7 @@ const IconPicker = memo(({ selected, options, withCustom = false, initial, onSel
           }} buttonStyles={{ ...getButtonStyles(isCustom ? selected : 'Others') as ViewStyle }} 
           /> }
           <BottomModal modalVisible={modalVisible} onDismiss={dismissModal} height='70%'>
+            <FormHeader title={`Enter ${customLabel}`} />
             <FormInput ref={inputRef} initial={selected !== 'Others' && selected} placeholder={`enter ${customLabel}`} onChange={(input: string) => onSelect(input)} props={{ autoFocus: true, onSubmitEditing: dismissModal, onChange: (e) => onSelect(e.nativeEvent.text) }} width='60%' />
           </BottomModal>
         </>

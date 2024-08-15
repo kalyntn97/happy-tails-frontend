@@ -27,7 +27,7 @@ export const tabBarOptions: BottomTabNavigationOptions = {
 
 const RightButton = ({ title, icon, onPress, buttonStyles }: { title?: string, icon?: string, onPress: () => void, buttonStyles?: ViewStyle }) => (
   <TouchableOpacity onPress={onPress} style={buttonStyles}>
-    { icon && <Image source={getActionIconSource(icon)} style={{ width: 20, height: 20 }} /> }
+    { icon && <Image source={getActionIconSource(icon)} style={{ width: 25, height: 25 }} /> }
     { title && <Text style={styles.buttonText}>{title}</Text> }
   </TouchableOpacity>
 )
@@ -37,9 +37,9 @@ export const Header = ({ title, navigation, showGoBackButton, mode, rightActions
     { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} /> }
     { title && <Text style={styles.headerText}>{title}</Text> }
     {rightActions && 
-      <View style={[styles.headerRight, { top: mode === 'card' ? 25 : 20 }]}>
+      <View style={[styles.headerRight, { top: mode === 'card' ? 25 : 15 }]}>
         { rightActions.map(action =>
-          <RightButton key={action.title || action.icon} title={action.title} icon={action.icon} onPress={action.onPress} buttonStyles={{ marginLeft: 30 }}/>      
+          <RightButton key={action.title || action.icon} title={action.title} icon={action.icon} onPress={action.onPress} buttonStyles={{ marginLeft: 50 }}/>      
         )}
       </View> 
     }
@@ -59,7 +59,7 @@ export const dynamicStackOptions = (mode: 'modal' | 'card' = 'modal', showGoBack
 export const styles = StyleSheet.create({
   icon: { ...UI.icon() },
   iconLabel: { fontWeight: 'bold', fontSize: 12 },
-  headerCon: { 
+  headerCon: {
     paddingTop: 25,
   },
   headerText: {

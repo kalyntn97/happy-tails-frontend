@@ -104,7 +104,7 @@ export const card = (withPadding = true, withShadow = false, h?: number, v?: num
   ...(withShadow ? boxShadow : {}),
   ...(withPadding ? basePadding(h, v) : {}),
   margin: m,
-  borderRadius: 15,
+  borderRadius: 8,
   backgroundColor: lightPalette().background,
 })
 

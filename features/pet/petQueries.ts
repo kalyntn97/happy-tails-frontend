@@ -31,8 +31,8 @@ export const useAddPet = (navigation: any) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
         return {...oldData, pets: [...oldData.pets, data]}
       })
-      navigation.navigate('Home', { screen: 'Pets' })
       showToast({ text1: 'Pet added.', style: 'success' })
+      navigation.navigate('Home', { screen: 'Pets' })
     },
     onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
@@ -48,8 +48,8 @@ export const useUpdatePet = (navigation: any) => {
         return {...oldData, pets: oldData.pets.map(pet => pet._id === data._id ? data : pet) }
       })
       queryClient.prefetchQuery({ queryKey: petKeyFactory.petById(data._id) })
-      navigation.navigate('PetDetails', { petId: data._id })
       showToast({ text1: 'Pet updated.', style: 'success' })
+      navigation.navigate('PetDetails', { petId: data._id })
     },
     onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
@@ -64,8 +64,8 @@ export const useDeletePet = (navigation: any) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
         return {...oldData, pets: oldData.pets.filter(pet => pet._id !== data) }
       })
-      navigation.navigate('Home', { screen: 'Pets' })
       showToast({ text1: 'Pet removed.', style: 'success' })
+      navigation.navigate('Home', { screen: 'Pets' })
     }, 
     onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
