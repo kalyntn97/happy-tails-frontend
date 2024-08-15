@@ -1,6 +1,6 @@
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
-import { DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, Modal, Pressable, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, Modal, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated"
 //utils & hooks
 import { useSelectPhoto } from "@hooks/sharedHooks"
@@ -93,14 +93,17 @@ export const TitleLabel = memo(({ title, iconType = 'action', iconName, onPress,
 const headerSize = {
   xSmall: Typography.smallSubHeader,
   small: Typography.smallHeader,
-  medium: Typography.subHeader,
+  med: Typography.subHeader,
   large: Typography.mainHeader,
   xLarge: Typography.largeHeader,
 }
 
-export const Header = ({ title, size = 'med', color = lightPalette().text, styles }: { title: string, size?: Size, color?: string, styles?: TextStyle }) => (
-  <Text style={[headerSize[size], { color: color }, styles]}>{title}</Text>
-)
+export const FormHeader = ({ title, size = 'med', color = lightPalette().text, styles }: { title: string, size?: Size, color?: string, styles?: TextStyle }) => {
+  // const defaultColor = size === 'small' || size === 'xSmall' ? lightPalette().unfocused : lightPalette().text
+  return (
+    <Text style={[headerSize[size], { color: color }, styles]}>{title}</Text>
+  )
+}
 
 export const FormLabel = ({ label, icon }: { label: string, icon: string }) => (
   <TitleLabel title={label} iconName={icon} titleStyles={{ ...Typography.smallHeader, margin: 0 }} />
@@ -108,13 +111,13 @@ export const FormLabel = ({ label, icon }: { label: string, icon: string }) => (
 
 export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { label: string, icon?: string, onPress: () => void, top?: number, right?: number }) => (
   <Pressable onPress={onPress} style={[Spacing.flexRow, { position: 'absolute', right: right, top: top }]}>
-    <Header title={label} size='xSmall' styles={{ marginRight: icon ? 10 : 0 }} />
+    <FormHeader title={label} size='xSmall' styles={{ marginRight: icon ? 10 : 0 }} />
     { icon && <Icon name={icon} /> }
   </Pressable>
 )
 
 export const ErrorMessage = ({ error, styles }: { error: string, styles?: TextStyle }) => (
-  <Text style={[Typography.errorMsg, styles]}>{error}</Text>
+  <Text style={[Typography.error, { margin: 5 }, styles]}>{error}</Text>
 )
 
 export const FormError = ({ errors, errorKey }: { errors: { [key: string]: string }, errorKey: string }) => (
@@ -182,7 +185,32 @@ export const TableForm = memo(({ table, withTitle = false, dependentRows, size =
 
 export const EmptyList = ({ type }: { type: string }) => (
   <Text style={type === 'task' ? { ...Typography.smallSubHeader } : { ...Typography.xSmallSubHeader }}>No {type}s added.</Text>
-) 
+)
+
+interface ScrollProps {
+  children: ReactNode
+  props?: ScrollViewProps
+  contentStyles?: ViewStyle
+}
+
+export const ScrollContainer = ({ children, props, contentStyles }: ScrollProps) => (
+  <ScrollView
+    keyboardShouldPersistTaps='handled'
+    alwaysBounceVertical={false} 
+    showsVerticalScrollIndicator={false} 
+    style={{ width: '100%' }} 
+    contentContainerStyle={contentStyles ?? UI.form(10, 60)}
+    { ...props }
+  >
+    { children }
+  </ScrollView>
+)
+
+export const ScrollScreen = ({ children, props, contentStyles, containerStyles, bgColor = UI.lightPalette().background }: ScrollProps & { containerStyles?: ViewStyle, bgColor?: string }) => (
+  <View style={[Spacing.fullCon(), { backgroundColor: bgColor }, containerStyles]}>
+    <ScrollContainer props={props} contentStyles={contentStyles}>{children}</ScrollContainer>
+  </View>
+)
 
 export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styles, props, maxLength = 100, width = '80%', error }: { initial: string, placeholder: string, onChange?: (input: string) => void, styles?: TextStyle, props?: TextInputProps, maxLength?: number, error?: string, width?: DimensionValue }, ref: MutableRefObject<any>) => {
   const [isFocused, setIsFocused] = useState(false)
@@ -239,6 +267,7 @@ export const BottomModal = ({ children, modalVisible, height = 'fit-content', ma
       animationType='none' 
       visible={modalVisible}
       onRequestClose={dismissModal}
+      onDismiss={onDismiss}
       transparent={true}
     > 
       <Pressable onPress={e => {

@@ -1,21 +1,18 @@
 //npm modules
-import { Suspense, useEffect, useState } from "react"
-import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
-import { useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
+import { Image, ImageStyle, Pressable, StyleSheet, Text, View } from "react-native"
 //store & queries
-import { profileKeyFactory, useAddBanner, useGetProfile } from "@profile/profileQueries"
+import { useAddBanner, useGetProfile } from "@profile/profileQueries"
 //types
-import { Profile, ProfileData } from "@profile/ProfileInterface"
-import { Pet, PetBasic } from "@pet/PetInterface"
 //components
-import PetList from "@components/PetInfo/PetList"
 import Loader from "@components/Loader"
-import { TitleLabel, BoxWithHeader, ErrorImage } from "@components/UIComponents"
+import PetList from "@components/PetInfo/PetList"
+import { BoxWithHeader, ErrorImage, ScrollScreen, TitleLabel } from "@components/UIComponents"
 //hooks & utils
-import { AlertForm, getActionIconSource } from "@utils/ui"
-import { useCaresByFrequency, useSelectPhoto, useTaskCounts } from "@hooks/sharedHooks"
+import { useSelectPhoto } from "@hooks/sharedHooks"
+import { AlertForm } from "@utils/ui"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 const ProfileScreen = ({ navigation, route }) => {
   const { data, isFetching, isError } = useGetProfile()
@@ -55,7 +52,7 @@ const ProfileScreen = ({ navigation, route }) => {
   if (isError) return <ErrorImage />
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollScreen contentStyles={{ position: 'relative' }}>
       <Pressable style={styles.bannerCon} onPress={addBanner}>
         <View style={styles.cameraIcon}>
           <Image source={require('@assets/icons/action-camera.png')} style={{...UI.icon()}} />
@@ -96,7 +93,7 @@ const ProfileScreen = ({ navigation, route }) => {
         </View>
       </View>
     
-    </ScrollView>
+    </ScrollScreen>
   )
 }
 

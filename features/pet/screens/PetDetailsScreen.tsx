@@ -1,19 +1,19 @@
 import { useQueryClient } from "@tanstack/react-query"
-import { memo, useEffect, useMemo, useState } from "react"
-import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
+import { useEffect, useMemo, useState } from "react"
+import { Pressable, StyleSheet, Text, View } from "react-native"
 //types & context & hooks
 import { showDeleteConfirmDialog } from "@hooks/sharedHooks"
 import { Pet } from "@pet/PetInterface"
 import { PET_DETAILS } from "@pet/petHelpers"
 import { STATS } from "@stat/statHelpers"
 //components
+import { ActionButton, TransparentButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
 import PetInfo from "@components/PetInfo/PetInfo"
-import StatButtonList from "@pet/components/StatButtonList"
-import { ActionButton, TransparentButton } from "@components/ButtonComponents"
-import { ErrorImage, FormLabel, Icon, TitleLabel } from "@components/UIComponents"
-import { IconType, getActionIconSource, getPetIconSource, getStatIconSource } from "@utils/ui"
+import { BottomModal, ErrorImage, FormHeader, Icon, ScrollScreen, TitleLabel } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
+import StatButtonList from "@pet/components/StatButtonList"
+import { IconType } from "@utils/ui"
 //store & queries
 import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
 import { useGetPetSettings, useSetActions } from "@store/store"
@@ -25,7 +25,9 @@ interface PetDetailsProps {
   route: { params: { petId: string } }
 }
 
-const Item = ({ label, type, logs, info, onPress }: { label: string, type: 'info' | 'logs', logs: string[], info: string[], onPress: () => void }) => {
+type SectionType = 'info' | 'logs' | 'actions'
+
+const Item = ({ label, type, logs, info, onPress }: { label: string, type: SectionType, logs: string[], info: string[], onPress: () => void }) => {
   const item = useMemo(() => {
     switch (type) {
       case 'info': return { isActive: info.includes(label), iconType: 'pet', name: PET_DETAILS[label] }
@@ -42,7 +44,10 @@ const Item = ({ label, type, logs, info, onPress }: { label: string, type: 'info
   ) 
 }
 
-const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
+const defaultInfo = ['ids', 'services']
+const defaultLogs = ['mood', 'weight', 'energy']
+
+const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
   const queryClient = useQueryClient()
   const { petId } = route.params
   const petCache: Pet | undefined = queryClient.getQueryData(petKeyFactory.petById(petId))
@@ -52,57 +57,68 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   const logsSetting = useGetPetSettings(petId, 'logs')
   const { setPetSettings } = useSetActions()
 
-  const defaultInfo = ['ids', 'services']
-  const defaultLogs = ['mood', 'weight', 'energy']
-
   const [modalVisible, setModalVisible] = useState(false)
-  const [option, setOption] = useState<'info' | 'logs'>(null)
+  const [option, setOption] = useState<SectionType>(null)
   const [info, setInfo] = useState<string[]>(infoSetting ?? defaultInfo)
   const [logs, setLogs] = useState<string[]>(logsSetting ?? defaultLogs)
 
   const deletePetMutation = useDeletePet(navigation)
 
-  const handleDeletePet = (petId: string) => {
-    deletePetMutation.mutate(petId)
-  }
+  const handleDeletePet = (petId: string) => deletePetMutation.mutate(petId)
+  
   //filter list
   const items = option === 'logs' ? Object.keys(STATS) : Object.keys(PET_DETAILS)
-
-  const toggleItem = (type: string) => {
-    if (option === 'logs') { 
-      setLogs(prev => logs.includes(type) ? prev.filter(p => p !== type) : [...prev, type])
-    } else {
-      setInfo(prev => info.includes(type) ? prev.filter(p => p !== type) : [...prev, type])
+  const filteredItems = option === 'logs' ? logs : info
+  
+  const resetItems = (type: SectionType) =>{
+    switch (type) {
+      case 'info': return setInfo(defaultInfo)
+      case 'logs': return setLogs(defaultLogs)
+      default: return
     }
   }
 
-  const handleReset = (type: SectionType) => type === 'info' ? setInfo(defaultInfo) : setLogs(defaultLogs)
+  const toggleItem = (type: string) => {
+    switch (option) {
+      case 'logs': return setLogs(prev => logs.includes(type) ? prev.filter(p => p !== type) : [...prev, type])
+      case 'info': return setInfo(prev => info.includes(type) ? prev.filter(p => p !== type) : [...prev, type])
+      default: return 
+    }
+  }
 
-  const headerActions = [
+  const headerActions = useMemo(() => ([
     { icon: 'search', onPress: null },
     { icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
     { icon: 'add', onPress:() => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
-  ]
-
-  const bottomActions = [
-    { key: 'log', title: 'Log pet stats', icon: 'log', onPress: () => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
-    { key: 'edit', title: 'Update pet info', icon: 'editSquare', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
-    { key: 'delete', title: deletePetMutation.isPending ? 'Deleting...' : 'Delete pet profile', icon: 'deleteSquare', onPress: () => showDeleteConfirmDialog(pet, handleDeletePet) },
-  ]
+  ]), [navigation, pet])
 
   const filteredList = useMemo(() => ({
     info: { titles: info, iconType: 'pet', getName: (info: string) => PET_DETAILS[info], onNavigate: (info: string) => navigation.navigate('PetMoreDetails', { petId, show: info }) },
     logs: { titles: logs, iconType: 'stat', getName: (log: string) => log, onNavigate: (log: string) => navigation.navigate('LogDetails', { stat: log }) },
   }), [info, logs, petId])
 
-  const renderActions = (
-    bottomActions.map(action => <TitleLabel key={action.key} title={action.title} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} titleStyles={{ fontWeight: action.key === 'delete' ? 'bold' : 'normal'}} />)
+  const actions = useMemo(() => ([
+    { key: 'log', title: 'Log pet stats', icon: 'add', onPress: () => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
+    { key: 'edit', title: 'Update pet info', icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
+    { key: 'delete', title: deletePetMutation.isPending ? 'Deleting...' : 'Delete pet profile', icon: 'delete', onPress: () => showDeleteConfirmDialog(pet, handleDeletePet) },
+  ]), [pet, navigation, handleDeletePet, deletePetMutation])
+
+  const renderActions = ( 
+    actions.map((action, index) =>{
+      const focusedStyles = action.key === 'delete' && Typography.error
+      return <TitleLabel key={action.key} title={action.title} iconName={action.icon} onPress={action.onPress} titleStyles={focusedStyles} containerStyles={index < actions.length - 1 && UI.tableRow()} size="small" />
+    })
   )
 
   const renderFilteredList = (type: 'info' | 'logs') => (
-    filteredList[type].titles.map((label, index) => 
-    <TitleLabel key={label} title={filteredList[type].getName(label)} iconType={filteredList[type].iconType} iconName={label} onPress={() => filteredList[type].onNavigate(label)} size='small' containerStyles={index < filteredList[type].titles.length - 1 && UI.tableRow()} />
-  ))
+    filteredList[type].titles.length > 0 ? filteredList[type].titles.map((label, index) => 
+    <TitleLabel key={label} title={filteredList[type].getName(label)} iconType={filteredList[type].iconType as IconType} iconName={label} onPress={() => filteredList[type].onNavigate(label)} size='small' containerStyles={index < filteredList[type].titles.length - 1 && UI.tableRow()} />
+    ) 
+    : <>
+      <TransparentButton title='Reset options' onPress={() => resetItems(type)} color={UI.lightPalette().accent} />
+      <FormHeader title="No option selected" size='xSmall' />
+    </>
+  )
 
   const sections = [
     { key: 'info', title: 'Important', iconName: 'info', renderList: renderFilteredList('info') },
@@ -123,57 +139,41 @@ const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
   }, [modalVisible, info, logs, pet, headerActions, navigation])
 
   return (    
-    <View style={[Spacing.fullCon(), { backgroundColor: Colors.multi.lightest[pet?.color] }]}>
-
-      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false} style={{ width: '100%' }} contentContainerStyle={UI.form(10, 60)}>  
-        { isFetching && <Loader /> }
-        { isError && <ErrorImage /> }
-        
-        { isSuccess && <>
-          <View style={styles.infoCard}>
-            <PetInfo pet={pet} size='large' />
-            <StatButtonList petId={pet._id} petColor={pet.color} size='small' navigation={navigation} />
-          </View>
-
-          { sections.map(section =>
-            <View key={section.key} style={Spacing.flexColumn}>
-              <TitleLabel size='small' title={section.title} iconName={section.iconName} mode='bold' rightAction={!section.rightAction &&
-                <ActionButton icon="filter" onPress={() => {
-                  setModalVisible(true)
-                  setOption(section.key)
-                }} /> 
-              } containerStyles={{ marginTop: 15, marginBottom: 0 }}/>
-              <View style={UI.card(true, false, undefined, undefined, 0)}>
-                { section.renderList }
-              </View>
-            </View>
-          )}
-        </> }
-      </ScrollView>
+    <ScrollScreen bgColor={Colors.multi.lightest[pet.color]}>  
+      { isFetching && <Loader /> }
+      { isError && <ErrorImage /> }
       
-      <Modal 
-        animationType='slide'
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}
-        onDismiss={() => {
-          setPetSettings(petId, option, option === 'info' ? info : logs)
-          setOption(null)
-        }}
-        transparent={true}
-      >
-        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...UI.modalOverlay }}>
-          <View style={styles.modalCon}>
-            <View style={Spacing.flexRow}>
-              <Text style={{ ...Typography.smallHeader }}>{option === 'info' ? 'Show Pet Details' : 'Show Pet Logs'}</Text>
-              <Image source={getActionIconSource('filter')} style={UI.icon()} />
-            </View>
-            <View style={styles.modalBody}>
-              { items.map((item: string, index: number) => <Item key={`${item}-${index}`} label={item} type={option} logs={logs} info={info} onPress={() => toggleItem(item)} />) }
+      { isSuccess && <>
+        <View style={styles.infoCard}>
+          <PetInfo pet={pet} size='large' />
+          <StatButtonList petId={pet._id} petColor={pet.color} size='small' navigation={navigation} />
+        </View>
+
+        { sections.map(section =>
+          <View key={section.key} style={Spacing.flexColumnStretch}>
+            <TitleLabel size='small' title={section.title} iconName={section.iconName} mode='bold' rightAction={section.rightAction !== false &&
+              <ActionButton icon="filter" onPress={() => {
+                setModalVisible(true)
+                setOption(section.key as SectionType)
+              }} /> 
+            } containerStyles={{ marginTop: 15, marginBottom: 0 }}/>
+            <View style={[UI.card(true, false, undefined, undefined, 0), Spacing.flexColumnStretch]}>
+              { section.renderList }
             </View>
           </View>
-        </Pressable>
-      </Modal>
-    </View> 
+        )}
+      </> }
+
+      <BottomModal modalVisible={modalVisible} onDismiss={() => setModalVisible(false)}>
+        <View style={Spacing.flexRow}>
+          <FormHeader title={option === 'info' ? 'Show Pet Details' : 'Show Pet Logs'} />
+          <Icon name="filter" />
+        </View>
+        <View style={styles.modalBody}>
+          { items.map((item: string, index: number) => <Item key={`${item}-${index}`} label={item} type={option} logs={logs} info={info} onPress={() => toggleItem(item)} />) }
+        </View>
+      </BottomModal>
+    </ScrollScreen>
   )
 }
  

@@ -1,17 +1,18 @@
 //npm
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { FC, useState } from 'react'
-import { DetailType, Id, IdFormData } from '@pet/PetInterface'
+import { IdFormData } from '@pet/PetInterface'
+import React, { FC } from 'react'
+import { Text, TextInput, View } from 'react-native'
 //components
+import { MainButton, TransparentButton } from '@components/ButtonComponents'
 import Dropdown from '@components/Dropdown/Dropdown'
-import { MainButton, TransparentButton } from '@components/ButtonComponent'
-//styles
-import { Colors, Typography, Spacing, UI } from '@styles/index'
-import { styles } from '@styles/stylesheets/FormStyles'
-import { getPetIconSource } from '@utils/ui'
 import { CircleIcon, ErrorMessage } from '@components/UIComponents'
-import { IDS } from '@pet/petHelpers'
+//uteils
+import { getPetIconSource } from '@utils/ui'
 import useForm from '@hooks/useForm'
+import { IDS } from '@pet/petHelpers'
+//styles
+import { Colors } from '@styles/index'
+import { styles } from '@styles/stylesheets/FormStyles'
 
 interface IdFormProps {
   initialValues?: IdFormData

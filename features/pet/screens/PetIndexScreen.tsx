@@ -1,6 +1,6 @@
 //npm modules
 import { useRef, useState } from 'react'
-import { Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native"
+import { Image, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native"
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 //components
 import { PhotoButton, RoundButton } from '@components/ButtonComponents'
@@ -15,7 +15,6 @@ import { getActionIconSource, getPetIconSource } from '@utils/ui'
 import type { Pet } from '../PetInterface'
 //styles
 import { Colors, Spacing, Typography, UI } from '@styles/index'
-import PlaceHolder from '@components/PlaceHolder'
 
 const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
   const [currCard, setCurrCard] = useState<number>(0)

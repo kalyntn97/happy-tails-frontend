@@ -1,18 +1,18 @@
 //npm
-import { View, Text, TextInput, Pressable, ScrollView } from 'react-native'
 import React, { FC, useState } from 'react'
+import { Text, TextInput, View } from 'react-native'
 //helpers && types
-import { Service, ServiceFormData } from '@pet/PetInterface'
+import { ServiceFormData } from '@pet/PetInterface'
 import { getPetIconSource } from '@utils/ui'
 //components
-import { CircleIcon, ErrorMessage, Header, TopRightHeader } from '@components/UIComponents'
-import { ActionButton, MainButton, TransparentButton } from '@components/ButtonComponent'
+import { MainButton, TransparentButton } from '@components/ButtonComponent'
 import Dropdown from '@components/Dropdown/Dropdown'
+import { CircleIcon, ErrorMessage, Header, ScrollContainer } from '@components/UIComponents'
 //styles
-import { styles } from '@styles/stylesheets/FormStyles'
-import { Colors, UI, Spacing, Typography } from '@styles/index'
 import MultipleInputs from '@components/MultipleInputs'
 import useForm from '@hooks/useForm'
+import { Colors } from '@styles/index'
+import { styles } from '@styles/stylesheets/FormStyles'
 
 interface ServiceFormProps {
   initialValues?: ServiceFormData
@@ -32,9 +32,9 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
   }
   
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       <Header title='Add a Service' styles={{ paddingTop: 10 }} />
-      <CircleIcon iconSource={getPetIconSource('services')} />
+      <CircleIcon type='pet' name='services' />
       <View style={styles.labelCon}>
         <Text>Name</Text>
         <Text>Type</Text>
@@ -84,7 +84,7 @@ const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
         <MainButton title='Submit' size='small' onPress={() => onValidate(name, type)} />
         <TransparentButton title='Cancel' size='small' onPress={() => { onReset(); setReset(!reset) }} />
       </View>
-    </ScrollView>
+    </View>
   )
 }
 

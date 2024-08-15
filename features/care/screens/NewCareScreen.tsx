@@ -1,13 +1,11 @@
-//npm
-import { useEffect, useRef, useState } from "react"
-import { useIsFocused, useNavigation } from "@react-navigation/native"
-import { StyleSheet, View, TouchableOpacity, Text } from "react-native"
+import { useIsFocused } from "@react-navigation/native"
+import { useEffect, useState } from "react"
 //components
-import CareForm from "../components/CareForm"
 import { useAddCare } from "@care/careQueries"
-import { AlertForm } from "@utils/ui"
+import CareForm from "../components/CareForm"
+import { ScrollScreen } from "@components/UIComponents"
 //styles
-import { Buttons, Spacing, Typography, Colors } from '@styles/index'
+import { Colors } from '@styles/index'
 
 const NewCareScreen = ({ navigation }) => {
   const [color, setColor] = useState<number>(0)
@@ -26,9 +24,9 @@ const NewCareScreen = ({ navigation }) => {
   }, [navigation, isFocused])
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.multi.lightest[color] }}>
+    <ScrollScreen bgColor={Colors.multi.lightest[color]}>
       <CareForm onSubmit={handleSubmit} navigation={navigation} status={addCareMutation.status} setColor={setColor} />
-    </View>  
+    </ScrollScreen>  
   )
 }
 

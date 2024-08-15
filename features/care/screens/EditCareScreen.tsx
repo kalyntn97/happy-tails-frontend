@@ -1,18 +1,15 @@
-//npm
-import { useEffect, useState } from "react"
 import { useIsFocused } from "@react-navigation/native"
-import { TouchableOpacity, Text, StyleSheet, View } from "react-native"
+import { useEffect, useState } from "react"
 //components
-import CareForm from "../components/CareForm"
 import Loader from "@components/Loader"
+import CareForm from "../components/CareForm"
+import { ScrollScreen } from "@components/UIComponents"
 //types
 import { Care, CareFormData, InitialCare } from "@care/CareInterface"
-import { Pet } from "@pet/PetInterface"
 //store
 import { useUpdateCare } from "@care/careQueries"
-import { AlertForm } from "@utils/ui"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { Colors } from '@styles/index'
 
 interface EditCareProps {
   navigation: any
@@ -43,12 +40,12 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   }, [navigation, isFocused, color])
 
   return (  
-    <View style={{ flex : 1, backgroundColor: Colors.multi.lightest[color] }}>
+    <ScrollScreen bgColor={Colors.multi.lightest[color]}>
       {care ? 
         <CareForm onSubmit={handleSubmit} initialValues={initialValues} navigation={navigation} status={updateCareMutation.status} setColor={setColor} />
         : <Loader />
       }
-    </View>
+    </ScrollScreen>
   )
 }
 

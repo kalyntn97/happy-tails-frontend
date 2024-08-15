@@ -5,10 +5,7 @@ import { lightPalette } from "@styles/ui"
 
 export const styles = StyleSheet.create({
   container: {
-    ...UI.form(10, 20),
-  },
-  containerWithPadding: {
-    ...UI.form(10, 60, 50),
+    width: '100%',
   },
   labelCon: {
     ...Spacing.flexRowStretch,
@@ -27,7 +24,7 @@ export const styles = StyleSheet.create({
     flexWrap: 'wrap',
     zIndex: 1,
     alignSelf: 'flex-start',
-    marginVertical: 10,
+    marginBottom: 15,
   },
   titleCon: {
     ...Spacing.flexColumnStretch,

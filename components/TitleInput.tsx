@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start'
   },
   input: {
-    ...Typography.smallHeader,
+    ...Typography.subHeader,
     margin: 0,
     marginLeft: 10,
     maxWidth: '60%',

@@ -1,16 +1,14 @@
 //npm
-import { useEffect } from "react"
 import { useIsFocused } from "@react-navigation/native"
-import { View, Text, StyleSheet } from "react-native"
+import { useEffect } from "react"
 //components
 import HealthForm from "@health/components/HealthForm"
-import { SubButton } from "@components/ButtonComponent"
+import { ScrollScreen } from "@components/UIComponents"
 import { AlertForm } from "@utils/ui"
 //queries & types
 import { Visit } from "@health/HealthInterface"
 import { useAddHealth } from "@health/healthQueries"
 //styles
-import { Spacing } from "@styles/index"
 
 
 const NewHealthScreen = ({ navigation }) => {
@@ -36,9 +34,9 @@ const NewHealthScreen = ({ navigation }) => {
   }, [navigation, isFocused])
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollScreen>
       <HealthForm navigation={navigation} onSubmit={handleSubmit} status={addHealthMutation.status} />
-    </View>
+    </ScrollScreen>
   )
 }
 

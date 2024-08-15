@@ -1,25 +1,24 @@
 //npm
 import React, { FC } from "react"
-import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView, Pressable } from "react-native"
+import { Image, Text, View } from "react-native"
 //types & helpers & queries
 import { Care, Tracker } from "@care/CareInterface"
-import { useDeleteCareCard } from "@hooks/sharedHooks"
 import { CARES, getCareIcon, getCurrentTrackerIndex } from "@care/careHelpers"
-import { careKeyFactory, useGetCareById } from "@care/careQueries"
+import { useGetCareById } from "@care/careQueries"
+import { useDeleteCareCard } from "@hooks/sharedHooks"
 //components
-import { getActionIconSource, getCareIconSource } from "@utils/ui"
-import PetList from "@components/PetInfo/PetList"
-import DailyChart from "@components/Charts/DailyChart"
-import BarChart from "@components/Charts/BarChart"
-import YearChart from "@components/Charts/YearChart"
-import FillChart from "@components/Charts/FillChart"
-import Loader from "@components/Loader"
-import { TitleLabel, BoxWithHeader, ErrorImage } from "@components/UIComponents"
 import { ActionButton, StatButton } from "@components/ButtonComponents"
+import BarChart from "@components/Charts/BarChart"
+import DailyChart from "@components/Charts/DailyChart"
+import FillChart from "@components/Charts/FillChart"
+import YearChart from "@components/Charts/YearChart"
+import Loader from "@components/Loader"
+import PetList from "@components/PetInfo/PetList"
+import { BoxWithHeader, ErrorImage, ScrollContainer, TitleLabel } from "@components/UIComponents"
+import { getActionIconSource } from "@utils/ui"
 //styles
+import { Colors, Spacing, UI } from '@styles/index'
 import { styles } from "@styles/stylesheets/DetailsScreenStyles"
-import { Colors, UI, Spacing } from '@styles/index'
-import { useQueryClient } from "@tanstack/react-query"
 
 interface CareDetailsProps {
   navigation: any
@@ -55,11 +54,7 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
       { isFetching && <Loader /> }
 
     { isSuccess &&
-        <ScrollView
-          contentContainerStyle={Spacing.scrollContent}
-          scrollEventThrottle={200}
-          decelerationRate="fast" 
-        >
+        <ScrollContainer>
           <View style={styles.headerContainer}>
             <Image source={getCareIcon(care.name)} style={{ ...UI.largeIcon }} />
             <Text style={styles.header}>{CARES[care.name] ?? care.name}</Text>
@@ -118,7 +113,7 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
               <TitleLabel key={action.key} title={action.key} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} />
             )}
           </View>
-        </ScrollView> 
+        </ScrollContainer> 
       } 
     </View>
   )

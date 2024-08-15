@@ -1,18 +1,18 @@
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { FC, useState } from 'react'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
+import React, { FC, useState } from 'react'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 //helpers & types
+import { CHART_PARAMS, STATS, filterByRange, getAverageValue, getUnitKey, statConverter } from '@stat/statHelpers'
 import { Stat } from '@stat/statInterface'
 import { getActionIconSource, getStatIconSource, getStatQualIconSource } from '@utils/ui'
-import { CHART_PARAMS, STATS, filterByRange, getAverageValue, getUnitKey, statConverter } from '@stat/statHelpers'
 //store & queries
 import { useDisplayUnits } from '@store/store'
 //components
-import { CircleIcon } from '@components/UIComponents'
-import ToggleableForm from '@components/ToggleableForm'
 import LineChart from '@components/Charts/LineChart'
+import ToggleableForm from '@components/ToggleableForm'
+import { CircleIcon, FormHeader, ScrollScreen } from '@components/UIComponents'
 //styles
-import { Typography, UI, Spacing, Colors } from '@styles/index'
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 interface StatDetailsProps {
   navigation: any
@@ -45,10 +45,9 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <CircleIcon iconSource={getStatIconSource(stat.name)} />
-      <Text style={{ ...Typography.mediumHeader }}>{name}</Text>
-
+    <ScrollScreen>
+      <CircleIcon type='stat' name={stat.name} />
+      <FormHeader title={name} />
       <ToggleableForm title='See graph' content={
         <LineChart />
       } />
@@ -104,7 +103,7 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
         </View>
       )}
 
-    </ScrollView>
+    </ScrollScreen>
   )
 }
 

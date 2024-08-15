@@ -7,7 +7,7 @@ import LottieView from "lottie-react-native"
 import { RoundButton } from "@components/ButtonComponent"
 import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
-import { ErrorImage, TopRightHeader } from "@components/UIComponents"
+import { ErrorImage, ScrollScreen, TopRightHeader } from "@components/UIComponents"
 //types & helpers
 import PetInfo from "@components/PetInfo/PetInfo"
 import { Health } from "@health/HealthInterface"
@@ -92,11 +92,7 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
   }
 
   const HealthListHeader = () => (
-    <ScrollView 
-      horizontal
-      contentContainerStyle={styles.listHeader}
-      showsHorizontalScrollIndicator={false}
-    > 
+    <ScrollView horizontal> 
       <TouchableOpacity style={[styles.btnCon, filtered.length < PET_BASICS.length && { opacity: 0.3 }]} onPress={() => setFiltered(prev => prev.length === PET_BASICS.length ? [] : PET_IDS)}>
         {/* <Text style={styles.headerCount}>{section.data.length}</Text> */}
         <Image source={require('@assets/icons/pets.png')} style={styles.allBtnIcon} />
@@ -174,8 +170,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 120,
     alignItems: 'center',
-  },
-  listHeader: {
   },
   list : {
     width: '100%',    

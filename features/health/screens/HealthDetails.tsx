@@ -1,23 +1,23 @@
 //npm
 import { useState } from "react"
-import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native"
+import { Image, Text, TouchableOpacity, View } from "react-native"
 //types & helpers
 import { Visit } from "@health/HealthInterface"
-import { countDaysBetween } from "@utils/datetime"
-import { useGetHealthById } from "@health/healthQueries"
 import { HEALTHS } from "@health/healthHelpers"
+import { useGetHealthById } from "@health/healthQueries"
+import { countDaysBetween } from "@utils/datetime"
 //queries & hooks
-import { useDeleteHealthCard, useShallowPetColor, useShallowPets } from "@hooks/sharedHooks"
+import { useDeleteHealthCard, useShallowPets } from "@hooks/sharedHooks"
 import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 //components
+import { StatButton, TransparentButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
 import PetInfo from "@components/PetInfo/PetInfo"
+import { ScrollScreen, TitleLabel } from "@components/UIComponents"
 import NoteInput from "@health/components/NoteInput"
-import { TitleLabel } from "@components/UIComponents"
-import { StatButton, TransparentButton } from "@components/ButtonComponent"
 //styles
+import { Colors, Typography, UI } from "@styles/index"
 import { styles } from "@styles/stylesheets/DetailsScreenStyles"
-import { Colors, UI, Typography } from "@styles/index"
 
 
 interface HealthDetailsProps {
@@ -66,14 +66,7 @@ const HealthDetailsScreen = ({ navigation, route }) => {
   )
 
   return (
-    <ScrollView
-      style={[
-        isSuccess && { backgroundColor: Colors.multi.lightest[petIdToColor(health.pet._id)] },
-      ]}
-      contentContainerStyle={styles.scrollContent}
-      scrollEventThrottle={200}
-      decelerationRate="fast" 
-    >
+    <ScrollScreen bgColor={isSuccess && Colors.multi.lightest[petIdToColor(health.pet._id)]}>
       { isLoading && <Loader /> }
       { isError && <Text>Error fetching data... </Text> }
       { isSuccess &&
@@ -142,7 +135,7 @@ const HealthDetailsScreen = ({ navigation, route }) => {
 
         </> 
       }
-    </ScrollView> 
+    </ScrollScreen> 
   )
 }
  

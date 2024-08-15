@@ -6,7 +6,7 @@ import { ToggleButton } from '@components/ButtonComponents'
 import Dropdown from "@components/Dropdown/Dropdown"
 import ColorPicker from "@components/Pickers/ColorPicker"
 import IconPicker from "@components/Pickers/IconPicker"
-import { DateInput, FormInput, FormLabel, Icon, ModalInput, PhotoUpload, TableForm } from "@components/UIComponents"
+import { DateInput, FormInput, FormLabel, Icon, ModalInput, PhotoUpload, ScrollContainer, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 //helpers & utils & hooks
 import useForm from "@hooks/useForm"
@@ -181,12 +181,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
   }, [headerActions, status, color])
 
   return ( 
-    <ScrollView
-      keyboardShouldPersistTaps='handled'
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-      alwaysBounceVertical={false}
-    >
+    <View style={styles.container}>
       <View style={styles.headerCon}>
         <PhotoUpload photo={photo} placeholder={placeholderPhoto} onSelect={(uri: string) => onChange('photo', uri)} />
         <View style={[styles.titleCon, { flex: 1 }]}>
@@ -194,14 +189,14 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus, setColor }: 
         </View>
       </View>
       
-      <ColorPicker selected={color} buttonWidth={30} pickerStyles={{ marginTop: 10 }} onPress={selected => {
+      <ColorPicker selected={color} onPress={selected => {
         onChange('color', selected)
         setColor(selected)
       }} />
 
       <TableForm table={mainTable} withTitle={true} />
 
-    </ScrollView>
+    </View>
   )
 }
 

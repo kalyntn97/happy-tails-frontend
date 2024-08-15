@@ -1,6 +1,6 @@
 //npm
-import { ScrollView, View, StyleSheet, Pressable } from "react-native"
 import { Pet, PetBasic } from "@pet/PetInterface"
+import { StyleSheet, View } from "react-native"
 //component
 import PetInfo from "./PetInfo"
 //styles

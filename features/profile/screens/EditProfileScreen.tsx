@@ -13,7 +13,7 @@ import Loader from "@components/Loader"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { AlertForm } from "@utils/ui"
-import { ErrorMessage } from "@components/UIComponents"
+import { ErrorMessage, ScrollScreen } from "@components/UIComponents"
 
 interface EditProfileProps {
   navigation: any
@@ -72,7 +72,7 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
   }, [navigation, isFocused])
   
   return ( 
-    <ScrollView contentContainerStyle={styles.container} alwaysBounceVertical={false} keyboardShouldPersistTaps='handled'>
+    <ScrollScreen>
       {profile ? 
         <>
           <View style={styles.photoUpload}>
@@ -112,7 +112,7 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
         </>
         : <Loader />
       }
-    </ScrollView>
+    </ScrollScreen>
   )
 }
 

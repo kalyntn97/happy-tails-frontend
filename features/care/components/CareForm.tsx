@@ -1,23 +1,22 @@
 import { useCallback, useEffect } from "react"
-import { ScrollView, Text, View } from "react-native"
+import { Text, View } from "react-native"
 //components
+import { ToggleButton } from "@components/ButtonComponents"
 import PetInfo from "@components/PetInfo/PetInfo"
 import ColorPicker from "@components/Pickers/ColorPicker"
 import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/Pickers/FrequencyPicker"
 import PetPicker from "@components/Pickers/PetPicker"
 import TitleInput from "@components/TitleInput"
-import { ToggleButton } from "@components/ButtonComponents"
-import { DateInput, ModalInput, TableForm } from "@components/UIComponents"
+import { DateInput, ModalInput, ScrollContainer, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 //types && hooks
-import { PetBasic } from "@pet/PetInterface"
 import type { Care, CareFormData } from "@care/CareInterface"
 import { useShallowPets } from "@hooks/sharedHooks"
 import useForm from "@hooks/useForm"
+import { PetBasic } from "@pet/PetInterface"
 //styles
 import { Colors } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
-
 
 interface InitialState extends Care {
   ending: boolean
@@ -118,22 +117,16 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   }, [handleValidate, status, color])
   
   return (
-    <ScrollView
-      keyboardShouldPersistTaps='handled'
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-      alwaysBounceVertical={false}
-    >
+    <View style={styles.container}>
       <TitleInput initial={initialState.name} placeholder='New Task' onChange={(input: string) => onChange('name', input)} type='care' error={errors?.name} />
 
-      <ColorPicker selected={color} buttonWidth={30} pickerStyles={{ marginTop: 10 }} onPress={(selected) => {
+      <ColorPicker selected={color} onPress={(selected) => {
         onChange('color', selected)
         setColor(selected)
       }} />
 
       <TableForm table={mainTable} withTitle={true} dependentRows={{ frequency: repeat }}/>
-
-    </ScrollView>
+    </View>
   )
 }
 

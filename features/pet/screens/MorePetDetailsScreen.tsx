@@ -1,20 +1,18 @@
-import { StyleSheet, Text, View, Image, Pressable, ScrollView, Modal } from 'react-native'
-import React, { Children, FC, Suspense, useState } from 'react'
-import Toast from 'react-native-toast-message'
 import { useQueryClient } from '@tanstack/react-query'
+import React from 'react'
+import { Image, StyleSheet, Text, View } from 'react-native'
+import Toast from 'react-native-toast-message'
 //components
-import IdForm from '@pet/components/IdForm'
-import { CloseButton, MainButton } from '@components/ButtonComponents'
-import Loader from '@components/Loader'
-import { EmptyList, ErrorImage, TopRightHeader, toastConfig } from '@components/UIComponents'
+import { CloseButton } from '@components/ButtonComponents'
 import PlaceHolder from '@components/PlaceHolder'
+import { ErrorImage, ScrollScreen, TopRightHeader, toastConfig } from '@components/UIComponents'
 //utils & types
+import { DetailType, Service } from '@pet/PetInterface'
 import { PET_DETAILS } from '@pet/petHelpers'
-import { Detail, DetailType, Service } from '@pet/PetInterface'
-import { AlertForm, getActionIconSource, getPetIconSource } from '@utils/ui'
 import { petKeyFactory, useDeletePetDetail } from '@pet/petQueries'
+import { getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
-import { Colors, UI, Spacing, Typography } from '@styles/index'
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 
 interface MorePetDetailsScreenProps {
@@ -90,7 +88,7 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
   )
 
   return (
-    <ScrollView contentContainerStyle={styles.container} alwaysBounceVertical={false}>
+    <ScrollScreen>
       {!pet && <ErrorImage />}
       { pet && Object.keys(detailData).map((type: DetailType) =>
         (type === show) && 
@@ -102,7 +100,7 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
           </View>
       )}
       <Toast config={toastConfig} />
-    </ScrollView>
+    </ScrollScreen>
   )
 }
 

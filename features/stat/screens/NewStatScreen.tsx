@@ -1,21 +1,19 @@
 //npm
-import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { FC, useEffect, useState } from 'react'
-import { TouchableOpacity } from 'react-native'
+import React, { FC, useState } from 'react'
+import { Image, StyleSheet, Text, View } from 'react-native'
 //helpers & types
-import { AlertForm, getStatIconSource, statIconSource } from '@utils/ui'
+import { getStatIconSource } from '@utils/ui'
 import { STATS } from '../statHelpers'
-import { Pet } from '@pet/PetInterface'
 //components
-import { CheckboxButton, MainButton, TransparentButton } from '../../../components/ButtonComponents'
+import { ToggleButton, MainButton, TransparentButton } from '../../../components/ButtonComponents'
 import IconStatForm from '../components/IconStatForm'
 //styles
-import { Colors, UI, Spacing, Typography } from '@styles/index'
-import RatingForm from '../components/RatingForm'
+import { ErrorMessage, FormHeader, ScrollScreen } from '@components/UIComponents'
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 import InputForm from '../components/InputForm'
+import RatingForm from '../components/RatingForm'
+import { LogData } from '../statInterface'
 import { useAddStats } from '../statQueries'
-import { LogData, StatFormData } from '../statInterface'
-import { ErrorMessage } from '@components/UIComponents'
 
 interface NewStatScreenProps {
   route:{ params: { pet: {_id: string, name: string } } }
@@ -47,12 +45,12 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps='handled' alwaysBounceVertical={false}>
-      <Text style={{ ...Typography.mediumHeader }}>{pet.name.split(' ')[0]}'s Today Log</Text>
+    <ScrollScreen>
+      <FormHeader title={`${pet.name.split(' ')[0]}'s Today Log`} />
       <View style={styles.typeCon}>
         {Object.keys(STATS).map((stat, index )=>
           <View key={index} style={styles.typeItem}>
-            <CheckboxButton bgColor={names.includes(stat) ? Colors.green.reg : Colors.shadow.light} initial={names.includes(stat)} onPress={() => {
+            <ToggleButton bgColor={names.includes(stat) ? Colors.green.reg : Colors.shadow.light} initial={names.includes(stat)} onPress={() => {
               names.includes(stat)
                 ? setNames(prev => prev.filter(n => n !== stat))
                 : setNames(prev => [...prev, stat])
@@ -95,7 +93,7 @@ const NewStatScreen: FC<NewStatScreenProps> = ({ navigation, route }) => {
         </View>
       </View>
 
-    </ScrollView>
+    </ScrollScreen>
   )
 }
 

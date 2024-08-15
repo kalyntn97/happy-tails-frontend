@@ -1,15 +1,16 @@
-import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { ReactElement, forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
+import React, { ReactElement, useEffect, useState } from 'react'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 //utils
 import { daysOfWeek, getOrdinalSuffix, months } from '@utils/datetime'
-import { getActionIconSource } from '@utils/ui'
 import { Frequency } from '@utils/types'
+import { getActionIconSource } from '@utils/ui'
 //components
-import ScrollSelector from '../ScrollSelector'
 import { ToggleButton } from '../ButtonComponents'
+import ScrollSelector from '../ScrollSelector'
 //styles
-import { Buttons, Colors, Spacing, UI, Typography } from '@styles/index'
+import { ScrollContainer } from '@components/UIComponents'
+import { Buttons, Colors, Spacing, Typography, UI } from '@styles/index'
 import { windowWidth } from '@utils/constants'
 
 
@@ -175,10 +176,7 @@ const FrequencyPicker = ({ initial, color = 0, onSelectFrequency, onSelectEndDat
   return (
     <>
       <Header />
-      <ScrollView
-        contentContainerStyle={Spacing.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollContainer>
         <View style={styles.rowCon}>
           <View style={styles.btnCon}>
             {frequencyKeys.map((f, index) =>
@@ -259,7 +257,7 @@ const FrequencyPicker = ({ initial, color = 0, onSelectFrequency, onSelectEndDat
             }
           </View>
         }
-      </ScrollView>
+      </ScrollContainer>
     </>
   )
 }

@@ -14,7 +14,7 @@ type Props = {
   pickerStyles?: ViewStyle
 }
 
-const ColorPicker = ({ onPress, selected = 0, mode, buttonWidth = 45, pickerStyles }: Props) => {
+const ColorPicker = ({ onPress, selected = 0, mode, buttonWidth = 30, pickerStyles }: Props) => {
   const [modalVisible, setModalVisible] = useState(false)
 
   const buttonStyles = useCallback((index: number) => ({ ...styles.circle, width: buttonWidth, height: buttonWidth, backgroundColor: Colors.multi.light[index] }), [buttonWidth])

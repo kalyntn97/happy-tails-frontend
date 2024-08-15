@@ -1,6 +1,6 @@
 import Fuse from "fuse.js"
 import { useCallback, useEffect, useMemo } from "react"
-import { ScrollView, Text, View } from "react-native"
+import { Text, View } from "react-native"
 //store && types & helpers
 import { Health, Visit } from "@health/HealthInterface"
 import * as healthHelpers from '@health/healthHelpers'
@@ -17,7 +17,7 @@ import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/Picker
 import IconPicker from "@components/Pickers/IconPicker"
 import PetPicker from "@components/Pickers/PetPicker"
 import TitleInput from "@components/TitleInput"
-import { FormError, FormLabel, Icon, ModalInput, TableForm, TitleLabel } from "@components/UIComponents"
+import { FormError, Icon, ModalInput, ScrollContainer, TableForm, TitleLabel } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 import VisitForm from "./VisitForm"
 //styles
@@ -166,12 +166,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   }, [handleValidate, status])
 
   return (
-    <ScrollView
-      keyboardShouldPersistTaps='handled'
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-      alwaysBounceVertical={false}
-    >
+    <View style={styles.container}>
       <TitleInput initial={initialState.name} placeholder='New Vet Visit' onChange={(input: string) => onChange('name', input)} type='health' error={errors?.name} />
       { isVaccine &&
         <Dropdown label='Search Vaccine' withSearch={true} searchLabel='vaccine' dataType={pet.species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={(selected: string) => onChange('details', [...details, selected])} initial={details[0]} width='80%' buttonStyles={{ ...UI.input(), alignSelf: 'center' }} />
@@ -216,8 +211,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         )}
         <ActionButton title='add visit' icon='increase' onPress={handleAddVisit} buttonStyles={{ marginTop: 10 }} />
       </View>
-
-    </ScrollView>
+    </View>
   )
 }
 

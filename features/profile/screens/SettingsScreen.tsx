@@ -1,16 +1,14 @@
 //npm modules
-import { useEffect, useState } from "react"
-import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert } from "react-native"
-import { useIsFocused } from "@react-navigation/native"
+import { Alert, StyleSheet, Text, View } from "react-native"
 //component
-import { TitleLabel } from "@components/UIComponents"
+import { ScrollScreen, TitleLabel } from "@components/UIComponents"
 //context
-import { useDisplayUnits, useSetActions } from "@store/store"
 import { useAuth } from "@auth/AuthContext"
+import { useDisplayUnits, useSetActions } from "@store/store"
 //helpers
 import { FOOD_UNITS, WEIGHT_UNITS } from "@stat/statHelpers"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 interface AccountProps {
   navigation: any
@@ -62,7 +60,7 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
   ]
   
   return (
-    <ScrollView contentContainerStyle={styles.scrollViewContent}> 
+    <ScrollScreen> 
       <Text style={styles.sectionHeader}>Display settings</Text>
       <View style={{ ...UI.card() }}>
         { displaySettings.map(setting =>
@@ -77,7 +75,7 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
         )}
       </View>
 
-    </ScrollView>
+    </ScrollScreen>
   )
 }
  

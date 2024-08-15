@@ -91,8 +91,7 @@ export const unFocused: TextStyle = {
   color: Colors.shadow.dark,
 }
 
-export const errorMsg: TextStyle = {
-  ...focused,
+export const error: TextStyle = {
+  fontWeight: 'bold',
   color: Colors.red.dark,
-  margin: 5,
 }

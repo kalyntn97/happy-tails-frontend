@@ -7,11 +7,13 @@ import { circleBase } from "@styles/buttons"
 import { Buttons, Colors, Spacing, Typography, UI } from "@styles/index"
 import { Size } from "@styles/ui"
 
+type ButtonSize = Size | 'largeSquare' | 'smallSquare'
+
 type BaseButtonProps = {
   title?: any
   icon?: string
   onPress?: () => void
-  size?: Size,
+  size?: ButtonSize,
   buttonStyles?: ViewStyle
   textStyles?: TextStyle
   bgColor?: string
@@ -125,30 +127,29 @@ const baseButtonSizeMap = {
 }
 
 const baseButtonTextSizeMap = (n: number = 0) => ({
-  small: { fontSize: 15 - n / 2 },
-  large: { fontSize: 20 - n },
+  small: 15 - n / 2,
+  large: 20 - n ,
 })
 
 export const MainButton= memo(({ onPress, title, bgColor = Colors.pink.reg, color = UI.lightPalette().button, bdColor = 'transparent', size = 'med', icon, h = 0, v = 0, buttonStyles, textStyles }: BaseButtonProps) => {
   const buttonSize = useMemo(() => baseButtonSizeMap[size], [size])
-  const textSize = useMemo(() => size === 'large' || 'largeSquare' ? 'large' : 'small', [size])
+  const textSize = useMemo(() => size === 'large' || size === 'largeSquare' ? 'large' : 'small', [size])
   const textSizeAdjusted = icon ? baseButtonTextSizeMap(5)[textSize] : baseButtonTextSizeMap()[textSize]
-
   return (
     <TouchableOpacity onPress={onPress} style={[buttonSize, Buttons.solid, Spacing.flexRow,
       { backgroundColor: bgColor, borderColor: bdColor, marginHorizontal: h, marginVertical: v },
       buttonStyles
     ]}>
       {icon && <Image source={getActionIconSource(icon)} style={[UI.icon(), { marginRight: 5 }]} /> }
-      <Text style={[Buttons.buttonText, textSizeAdjusted, {  color: color }, textStyles]}>
+      <Text style={[Buttons.buttonText, { fontSize: textSizeAdjusted, color: color }, textStyles]}>
         {title}
       </Text>
     </TouchableOpacity>
   )
 })
 
-export const TransparentButton= ({ title, icon, onPress, size = 'med', color = UI.lightPalette().button, bdColor = UI.lightPalette().button, bgColor = 'transparent', h, v }: BaseButtonProps) => (
-  <MainButton title={title} icon={icon} onPress={onPress} size={size} h={h} v={v} color={color} bdColor={bdColor} bgColor={bgColor} buttonStyles={Buttons.transparent} />
+export const TransparentButton= ({ title, icon, onPress, size = 'med', color = UI.lightPalette().button, bdColor, bgColor = 'transparent', h, v, textStyles }: BaseButtonProps) => (
+  <MainButton title={title} icon={icon} onPress={onPress} size={size} h={h} v={v} color={color} bdColor={bdColor ?? color} bgColor={bgColor} buttonStyles={Buttons.transparent} textStyles={textStyles} />
 )
 
 export const SubButton = memo(({ onPress, title, color = UI.lightPalette().button, h, v, size = 'small', textStyles }: BaseButtonProps) => {

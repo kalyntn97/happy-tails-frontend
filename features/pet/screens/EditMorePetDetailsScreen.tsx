@@ -1,13 +1,13 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { FC } from 'react'
+//components
 import IdForm from '@pet/components/IdForm'
+import IllnessForm from '@pet/components/IllnessForm'
 import MedicationForm from '@pet/components/MedicationForm'
 import ServiceForm from '@pet/components/ServiceForm'
-import IllnessForm from '@pet/components/IllnessForm'
-import { useAddPetDetail } from '@pet/petQueries'
-import { AlertForm } from '@utils/ui'
+import { ScrollScreen } from '@components/UIComponents'
+//utils
 import { DetailType } from '@pet/PetInterface'
-import { TopRightHeader } from '@components/UIComponents'
+import { useAddPetDetail } from '@pet/petQueries'
 
 interface EditMorePetDetailsScreenProps {
   route: { params: { type: string, petId: string } }
@@ -23,18 +23,13 @@ const EditMorePetDetailsScreen: FC<EditMorePetDetailsScreenProps> = ({ route, na
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollScreen>
       {type === 'ids' && <IdForm onSubmit={handleSubmit} />} 
       {type === 'meds' && <MedicationForm onSubmit={handleSubmit} />}
       {type === 'services' && <ServiceForm onSubmit={handleSubmit} />}
       {type === 'illnesses' && <IllnessForm onSubmit={handleSubmit} />}
-    </View>
+    </ScrollScreen>
   )
 }
-
-
-const styles = StyleSheet.create({
-  
-})
 
 export default EditMorePetDetailsScreen
