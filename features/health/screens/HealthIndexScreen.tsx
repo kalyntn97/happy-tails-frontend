@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView, Imag
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 //components
-import { RoundButton } from "@components/ButtonComponent"
+import { RoundButton } from "@components/ButtonComponents"
 import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
 import { ErrorImage, ScrollScreen, TopRightHeader } from "@components/UIComponents"

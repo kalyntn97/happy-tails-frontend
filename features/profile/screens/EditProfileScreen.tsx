@@ -8,7 +8,7 @@ import { Profile } from "@profile/ProfileInterface"
 import { useSetActions } from "@store/store"
 import { useUpdateProfile } from "@profile/profileQueries"
 //components
-import { MainButton, SubButton } from "@components/ButtonComponent"
+import { MainButton, SubButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'

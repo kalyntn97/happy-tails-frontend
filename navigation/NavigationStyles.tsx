@@ -7,6 +7,7 @@ import { GoBackButton } from "@components/ButtonComponents"
 //styles
 import { Colors, UI, Typography, Spacing } from "@styles/index"
 import { getActionIconSource } from "@utils/ui"
+import { CustomToast } from "@components/UIComponents"
 
 export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
 
@@ -43,6 +44,7 @@ export const Header = ({ title, navigation, showGoBackButton, mode, rightActions
         )}
       </View> 
     }
+    { mode === 'modal' && <CustomToast /> }
   </View> 
 )
 

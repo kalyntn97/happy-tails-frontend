@@ -1,270 +1,233 @@
 import RNDateTimePicker from '@react-native-community/datetimepicker'
-import React, { ReactElement, useEffect, useState } from 'react'
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useState } from 'react'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 //utils
 import { daysOfWeek, getOrdinalSuffix, months } from '@utils/datetime'
 import { Frequency } from '@utils/types'
-import { getActionIconSource } from '@utils/ui'
+import { showToast } from '@utils/misc'
 //components
-import { ToggleButton } from '../ButtonComponents'
+import { CustomToast, Icon, ScrollContainer, TitleLabel } from '@components/UIComponents'
+import { ActionButton, ToggleButton, TransparentButton } from '../ButtonComponents'
 import ScrollSelector from '../ScrollSelector'
 //styles
-import { ScrollContainer } from '@components/UIComponents'
 import { Buttons, Colors, Spacing, Typography, UI } from '@styles/index'
 import { windowWidth } from '@utils/constants'
 
-
 export interface FrequencyPicker extends Frequency {
-  ending?: boolean
-  endDate?: Date
+  ending?: boolean 
+  endDate?: string
 }
-
 type Props = {
-  initial?: FrequencyPicker
+  frequency?: FrequencyPicker
   color?: number
   onSelectFrequency: (key: string, selected: any) => void
-  onSelectEndDate?: (key: 'ending' | 'endDate', value: boolean | Date) => void
+  onSelectEndDate?: (key: 'ending' | 'endDate', value: boolean | string) => void
 }
+type MonthDay = { month: string, day: number }
 
 const ROUNDED: number = 30
 const CIRCLE_BUTTON_MARGIN: number = 5
 const CIRCLE_BUTTON_WIDTH: number = (windowWidth * 0.9 - CIRCLE_BUTTON_MARGIN * 2 * 7) / 8
+const monthNames = months.map(m => m.slice(0, 3))
 
 const numArray = (length: number) => {
   return Array.from({ length: length }, (_, index) => index + 1)
 }
+const isObjectInArray = (obj: any, array: any[]) => array.some(item => JSON.stringify(item) === JSON.stringify(obj))
 
-const DailyLabel = ({ timesPerInterval }: { timesPerInterval: any[]}) => {
-  let label: string
-  switch (timesPerInterval[0]) {
-    case 1: label = 'once'; break
-    case 2: label = 'twice'; break
-    default: label = `${timesPerInterval[0]} times`
-  }
-  return <Text>{label}</Text>
+const frequencyMap: Record<string, { label: string, intervalArray: number[], timesPerIntervalArray?: any[]}> = {
+  days: { label: 'Daily', intervalArray: numArray(60), timesPerIntervalArray: numArray(10) },
+  weeks: { label: 'Weekly', intervalArray: numArray(10), timesPerIntervalArray: daysOfWeek },
+  months: { label: 'Monthly', intervalArray: numArray(24), timesPerIntervalArray: numArray(31) },
+  years: { label: 'Yearly', intervalArray: numArray(3), timesPerIntervalArray: [] }
 }
 
-const WeeklyLabel = ({ timesPerInterval }: { timesPerInterval: any[]}) => (
-  <Text>on {timesPerInterval.map((i, index) => 
-    <Text key={i}>{daysOfWeek[i].slice(0, 3)}{index === timesPerInterval.length - 1 ? '' : ', '}</Text>
-  )}</Text>
-)
+const frequencyKeys = Object.keys(frequencyMap)
 
-const MonthlyLabel = ({ timesPerInterval }: { timesPerInterval: any[]}) => (
-  <Text>on { timesPerInterval.map((i, index) => 
-    <Text key={i}>{getOrdinalSuffix(i)}{index === timesPerInterval.length - 1 ? '' : ', '}</Text>
-  ) }</Text>
-)
+const getMonthDayLabel = (month: string, day: number) => `${month} ${getOrdinalSuffix(day)}`
 
-const YearlyLabel = ({ timesPerInterval }: { timesPerInterval: any[]}) => (
-  <Text>on { timesPerInterval.map((obj, index) => {
-    const month = Object.keys(obj)[0] ?? 'Jan'
-    const date = obj[month] ?? 1
-    return <Text key={index}>{month} {getOrdinalSuffix(date)}{index === timesPerInterval.length - 1 ? '' : ', '}</Text>
-  }) }</Text>
-)
-
-export const frequencyMap: Record<string, { label: string, intervalArray: number[], timesPerIntervalArray?: any[], timesPerIntervalLabel: (timesPerInterval: any[]) => string | ReactElement }> = {
-  days: { 
-    label: 'Daily', intervalArray: numArray(60), 
-    timesPerIntervalArray: numArray(10), timesPerIntervalLabel: (timesPerInterval: number[]) => <DailyLabel timesPerInterval={timesPerInterval}/>
-  },
-  weeks: { 
-    label: 'Weekly', intervalArray: numArray(10),  
-    timesPerIntervalArray: daysOfWeek, timesPerIntervalLabel: (timesPerInterval: number[]) => <WeeklyLabel timesPerInterval={timesPerInterval} />,
-  },
-  months: { 
-    label: 'Monthly', intervalArray: numArray(24),  
-    timesPerIntervalArray: numArray(31), timesPerIntervalLabel: (timesPerInterval: number[]) => <MonthlyLabel timesPerInterval={timesPerInterval} />,
-  },
-  years: { 
-    label: 'Yearly', intervalArray: numArray(3), 
-    // timesPerIntervalArray: initial?.timesPerInterval ?? [{ Jan: 1 }],
-    timesPerIntervalLabel: (timesPerInterval: any[]) => <YearlyLabel timesPerInterval={timesPerInterval} />, 
-  }
-}
-
-export function intervalLabel(interval: number, type: Frequency['type']) { 
+export function getIntervalLabel(interval: number, type: Frequency['type']) { 
   return `every ${ interval > 1 ? `${interval} ` : '' }${ interval === 1 ? type.slice(0, -1) : type}`
 }
 
-const DropHeader = ({ title, rightLabel, onPress, icon }: { title: string, rightLabel: () => string, onPress: () => void, icon: string }) => (
-  <View style={styles.dropBtnCon}>
-    <Text style={styles.dropBtnLabel}>{title}</Text>
-    <Pressable style={styles.dropBtn} onPress={onPress}>
-      {/* <View > */}
-        <Text style={styles.btnText}>{rightLabel()}</Text>
-      {/* </View> */}
-      <Image source={getActionIconSource(icon)} style={[UI.icon('xSmall'), { marginLeft: 'auto' }]} />
-    </Pressable>
+export function getTimesPerIntervalLabel(timesPerInterval: Frequency['timesPerInterval'], type: Frequency['type']) {
+  switch (type) {
+    case 'days': {
+      const times = timesPerInterval[0]
+      return `${times === 1 ? 'once' : times === 2 ? 'twice' : `${times} times`} a day`
+    }
+    case 'weeks': return `every ${timesPerInterval.map((day: number) => daysOfWeek[day].slice(0, 3)).join(', ')}`
+    case 'months': return `every ${timesPerInterval.map((day: number) => getOrdinalSuffix(day)).join(', ')}`
+    case 'years': return `every ${timesPerInterval.map((obj) => getMonthDayLabel(obj.month, obj.day)).join(', ')}`
+    default: return null
+  }
+}
+
+const showWarningToast = () => showToast({ text1: 'At least 1 selection is required.', style: 'info' })
+
+const TimesPerDaySelector = ({ type, times, onSelect }: { type: 'days', times: number, onSelect: (selected: number) => void }) => (
+  <ScrollSelector data={frequencyMap[type].timesPerIntervalArray} initial={times - 1} 
+    rightLabel={`${times === 1 ? 'time' : 'times'} a ${type.slice(0, -1)}`} 
+    onSelect={(selected: number) => onSelect(selected + 1)}
+  />
+)
+
+const DaySelector = ({ type, dayArray, onSelect, color }: { type: 'weeks' | 'months', dayArray: number[], onSelect: (selected: number[]) => void, color: number }) => (
+  <View style={styles.circleBtnCon}>
+    { frequencyMap[type].timesPerIntervalArray.map((day, index) => {
+      const position = type === 'weeks' ? index : index + 1
+      const label = type === 'weeks' ? day.slice(0, 2) : day
+      const selected = dayArray.includes(position)
+
+      return (
+        <Pressable key={day}
+          style={[styles.circleBtn, { backgroundColor: selected ? Colors.multi.reg[color] : Colors.shadow.light }]}
+          onPress={() => {
+            let updated: number[]
+              if (selected) {
+                if (dayArray.length > 1) updated = dayArray.filter(p => p !== position)
+                else {
+                  showWarningToast()
+                  updated = dayArray
+                }
+              } else updated = [...dayArray, position]
+              if (updated.length > 1) updated.sort((a, b) => a - b)
+            onSelect(updated)
+          }}>
+          <Text>{label}</Text>
+        </Pressable>
+      )
+    }) }
   </View>
 )
 
-const FrequencyPicker = ({ initial, color = 0, onSelectFrequency, onSelectEndDate }: Props) => {
-  const initialState = {
-    type: initial?.type ?? 'days',
-    interval: initial?.interval ?? 1,
-    timesPerInterval: initial?.timesPerInterval ?? [1],
-    ending: initial?.ending ?? false,
-    endDate: initial?.endDate ?? new Date(),
-    intervalOpen: false,
-  }
+const MonthDaySelector = ({ onSelect }: { onSelect: (selected: MonthDay) => void }) => {
+  const [month, setMonth] = useState<string>('Jan')
+  const [day, setDay] = useState<number>(1)
 
-  const [type, setType] = useState<FrequencyPicker['type']>(initialState.type)
-  const [interval, setInterval] = useState<FrequencyPicker['interval']>(initialState.interval)
-  const [timesPerInterval, setTimesPerInterval] = useState<FrequencyPicker['timesPerInterval']>(initialState.timesPerInterval)
-  const [ending, setEnding] = useState<FrequencyPicker['ending']>(initialState.ending)
-  const [endDate, setEndDate] = useState<FrequencyPicker['endDate']>(initialState.endDate)
-  const [intervalOpen, setIntervalOpen] = useState<boolean>(initialState.intervalOpen)
-  
-  const monthNames = months.map(m => m.slice(0, 3))
-
-  const frequencyKeys = Object.keys(frequencyMap)
-
-  const DateSelector = () => (
-    <View style={styles.circleBtnCon}>
-      { frequencyMap[type].timesPerIntervalArray.map((day, index) => {
-        const position = type === 'weeks' ? index : index + 1
-        const selected = timesPerInterval.includes(position)
-        const label = type === 'weeks' ? day.slice(0, 2) : day
-        return (
-          <Pressable key={day}
-            onPress={() => {
-              let updated: number[]
-              setTimesPerInterval(prev => {
-                if (selected) {
-                  if (prev.length > 1) updated = prev.filter(p => p !== position)
-                  else updated = prev
-                } else updated = [...prev, position]
-                if (updated.length > 1) updated.sort((a, b) => a - b)
-                return updated
-              })
-              onSelectFrequency('timesPerInterval', updated)
-            }}
-            style={[styles.circleBtn, { backgroundColor: selected ? Colors.multi.reg[color] : Colors.shadow.light }]}>
-            <Text>{label}</Text>
-          </Pressable>
-        )
-      }) }
+  return (
+    <View style={Spacing.flexColumnStretch}>
+      <View style={Spacing.flexRow}>
+        <ScrollSelector data={monthNames} onSelect={(selected: string) => setMonth(monthNames[selected])} />
+        <ScrollSelector data={numArray(31)} onSelect={(selected: number) => setDay(selected + 1)} />
+      </View>
+      <TransparentButton title='add' icon='increase' onPress={() => onSelect({ month: month, day: day })} size='small' />
     </View>
   )
+}
 
-  const onChangeType = (type: string) => {
-    setType(type)
-    let defaultTimesPerInterval = type === 'years' ? [{ Jan: 1 }] : [1]
-    setTimesPerInterval(defaultTimesPerInterval)
-    setInterval(1)
+const YearlySelector = ({ dayArray, onSelect }: { dayArray: MonthDay[], onSelect: (selected: MonthDay[]) => void}) => (
+  <View style={Spacing.flexColumn}>
+    <View style={styles.dayBtnCon}>
+      { dayArray.map((obj, index) => {
+        const monthDayLabel = getMonthDayLabel(obj.month, obj.day)
+        return <ActionButton key={`${obj.month}-${obj.day}`} title={monthDayLabel} icon='decrease' size='xSmall' buttonStyles={{ margin: 15 }} onPress={() => {
+          let updatedArray = []
+          if (dayArray.length > 1) updatedArray = dayArray.filter((_, i) => i !== index) 
+          else { 
+            showWarningToast()
+            updatedArray = dayArray
+          }
+          return onSelect(updatedArray)
+        }} />
+      })}
+    </View>
+    <MonthDaySelector onSelect={(selected) => {
+      const dayExisted = isObjectInArray(selected, dayArray)
+      if (dayExisted) {
+        return showToast({ text1: 'Day is already added.', style: 'info' })
+      } else return onSelect([...dayArray, selected])
+    }} />
+  </View>
+)
+
+const TypeSelector = ({ type, onSelect, color }: { type: Frequency['type'], onSelect: (selected: Frequency['type']) => void, color: number }) => (
+  <View style={styles.btnCon}>
+    {frequencyKeys.map((f, index) =>
+      <Pressable key={f} onPress={() => onSelect(f as Frequency['type'])} style={[styles.btn,
+        index === 0 && UI.rounded('left', ROUNDED),
+        index === frequencyKeys.length - 1 && UI.rounded('right', ROUNDED),
+        { backgroundColor: f === type ? Colors.multi.light[color] : Colors.shadow.light, borderRadius: type === f && ROUNDED },
+      ]}>
+        <Text>{frequencyMap[f].label}</Text>
+      </Pressable>
+    )}
+  </View>
+)
+
+const IntervalSelector = ({ type, interval, onSelect, intervalLabel }: { type: Frequency['type'], interval: Frequency['interval'], onSelect: (selected: Frequency['interval']) => void, intervalLabel: string }) => {
+  const [intervalOpen, setIntervalOpen] = useState<boolean>(false)
+
+  return (
+    <View style={styles.rowCon}>
+      <TitleLabel title='Interval' onPress={() => setIntervalOpen(!intervalOpen)} rightAction={
+        <View style={Spacing.flexRow}>     
+          <Text style={styles.btnText}>{intervalLabel}</Text>
+          <Icon name={intervalOpen ? 'up' : 'down'} size='xSmall' styles={{ marginVertical: 0, marginLeft: 'auto' }} />
+        </View>
+      } />
+      { intervalOpen && 
+        <ScrollSelector data={frequencyMap[type].intervalArray} initial={interval - 1} onSelect={(selected: number) => onSelect(selected + 1)} leftLabel='every' rightLabel={interval === 1 ? type.slice(0, -1) : type} />
+      }
+    </View>
+  )
+}
+
+const EndDateSelector = ({ endDate, ending, onSelect, color }: { endDate: string, ending: boolean, onSelect: (key: 'ending' | 'endDate', selected: string | boolean) => void , color: number }) => (
+  <View style={[styles.rowCon, { borderBottomWidth: 0 }]}>
+    <TitleLabel title='End Date' rightAction={
+      <ToggleButton isChecked={ending} onPress={() => {
+        if (ending) onSelect('endDate', null)
+        else if (!endDate) onSelect('endDate', new Date().toISOString())
+        onSelect('ending', !ending)
+      }} /> 
+    } />
+    { ending && 
+      <RNDateTimePicker display='inline' themeVariant='light' value={endDate ? new Date(endDate) : new Date()} minimumDate={new Date()} onChange={(_, selectedDate) => onSelect('endDate', selectedDate.toISOString())} accentColor={Colors.multi.dark[color]} />
+    }
+</View>
+)
+
+const FrequencyPicker = ({ frequency, color = 0, onSelectFrequency, onSelectEndDate }: Props) => {
+  const { type, interval, timesPerInterval, ending, endDate } = frequency
+
+  const timesPerIntervalLabel = getTimesPerIntervalLabel(timesPerInterval, type)
+  const intervalLabel = getIntervalLabel(interval, type)
+  const endingLabel = ending && endDate ? `until ${new Date(endDate).toLocaleDateString()}` : null
+
+  const onChangeType = (type: Frequency['type']) => {
+    let defaultTimesPerInterval = type === 'years' ? [{ month: 'Jan', day: 1 }] : [1]
     onSelectFrequency('frequency', { type, interval: 1, timesPerInterval: defaultTimesPerInterval })
   }
 
-  const Header = () => (
-    <Text style={Typography.smallHeader}>Repeats {frequencyMap[type].timesPerIntervalLabel(timesPerInterval)} {intervalLabel(interval, type)} {ending && `until ${endDate.toLocaleDateString()}`}</Text>
-  )
-
-  const onReset = () => {
-    setType(initialState.type)
-    setTimesPerInterval(initialState.timesPerInterval)
-    setInterval(initialState.interval)
-    setEnding(initialState.ending)
-    setEndDate(initialState.endDate)
-  }
-
-  useEffect(() => {
-    onReset()
-  }, [initial])
-
   return (
-    <>
-      <Header />
+    <View style={Spacing.fullCon()}>
+      <Text style={Typography.subHeader}>Repeats {timesPerIntervalLabel} {intervalLabel} {endingLabel}</Text>
       <ScrollContainer>
-        <View style={styles.rowCon}>
-          <View style={styles.btnCon}>
-            {frequencyKeys.map((f, index) =>
-              <Pressable key={f} onPress={() => onChangeType(f)} style={[styles.btn,
-                index === 0 && { ...UI.rounded('left', 30)()(ROUNDED) },
-                index === frequencyKeys.length - 1 && { ...UI.rounded('right', 30)(ROUNDED) },
-                { backgroundColor: f === type ? Colors.multi.light[color] : Colors.shadow.light, borderRadius: type === f && ROUNDED },
-              ]}>
-                <Text>{frequencyMap[f].label}</Text>
-              </Pressable>
-            )}
-          </View>
+        <TypeSelector type={type} onSelect={onChangeType} color={color} />
 
-          { type === 'days' ?
-            <View style={styles.scrollCon}>
-              <ScrollSelector data={frequencyMap[type].timesPerIntervalArray} initial={timesPerInterval[0] - 1} 
-                  rightLabel={`${timesPerInterval[0] === 1 ? 'time' : 'times'} a ${type.slice(0, -1)}`} 
-                  onSelect={(selected: number) => {
-                    setTimesPerInterval([selected + 1])
-                    onSelectFrequency('timesPerInterval', [selected + 1])
-                  }}
-                />
-            </View>
-            : type === 'weeks' ? <DateSelector />
-            : type === 'months' ? <DateSelector />
-            : type === 'years' && <View style={Spacing.flexRow}>
-              <ScrollSelector data={monthNames} initial={timesPerInterval[0]} onSelect={(selected: number) => {
-                let value = []
-                setTimesPerInterval(prev => {
-                  value = [...prev, { [monthNames[selected]] : 1 }]
-                  return value
-                })
-                onSelectFrequency('timesPerInterval', value)
-              }}  />
-              <ScrollSelector data={numArray(31)} initial={timesPerInterval[0]} onSelect={(selected: number) => {
-                let value = []
-                setTimesPerInterval(prev => {
-                  value = prev.map((p, i) => {
-                    const lastEntry = prev[prev.length - 1]
-                    const lastEntryKey = Object.keys(lastEntry)[0]
-                    return i === prev.length - 1 ? { [lastEntryKey]: selected + 1 } : p
-                  })
-                  return value
-                })
-                onSelectFrequency('timesPerInterval', value)
-              }} />
-            </View>
+        <View style={styles.rowCon}>
+          { type === 'days' 
+            ? <TimesPerDaySelector type='days' times={timesPerInterval[0]} onSelect={(selected: number) => onSelectFrequency('timesPerInterval', [selected])} />
+            : (type === 'weeks' || type === 'months') ? <DaySelector type={type} dayArray={timesPerInterval} onSelect={(selected: number[]) => onSelectFrequency('timesPerInterval', selected)} color={color} />
+            : type === 'years' && <YearlySelector dayArray={timesPerInterval} onSelect={(selected: MonthDay[]) => onSelectFrequency('timesPerInterval', selected)} />
           }
         </View>
 
-        <View style={styles.rowCon}>
-          <DropHeader title='Interval' onPress={() => setIntervalOpen(!intervalOpen)} rightLabel={() => intervalLabel(interval, type)} icon={intervalOpen ? 'up' : 'down'} />
-          { intervalOpen &&  
-            <View style={styles.scrollCon}>
-              <ScrollSelector data={frequencyMap[type].intervalArray} initial={initial?.interval - 1} onSelect={(selected: number) => {
-                setInterval(selected + 1)
-                onSelectFrequency('interval', selected + 1)
-              }} leftLabel='every' rightLabel={interval === 1 ? type.slice(0, -1) : type} />
-            </View>
-          }
-        </View>
+        <IntervalSelector type={type} interval={interval} intervalLabel={intervalLabel} onSelect={(selected: Frequency['interval']) => onSelectFrequency('interval', selected)} />
 
-        { onSelectEndDate &&
-          <View style={styles.rowCon}>
-            <View style={styles.dropBtnCon}>
-              <Text style={styles.dropBtnLabel}>End Date</Text>
-              <ToggleButton isChecked={ending} onPress={() => {
-                setEnding(!ending)
-                onSelectEndDate('ending', !ending)
-                ending && onSelectEndDate('endDate', endDate)
-              }} />
-            </View>
-            { ending && 
-              <RNDateTimePicker display='inline' themeVariant='light' value={new Date(endDate)} minimumDate={new Date()} onChange={(_, selectedDate) => {
-                setEndDate(selectedDate)
-                onSelectEndDate('endDate', selectedDate) 
-              }} accentColor={Colors.multi.dark[color]} />
-            }
-          </View>
-        }
+        { onSelectEndDate && <EndDateSelector endDate={endDate} ending={ending} onSelect={(key: 'ending' | 'endDate', selected: string | boolean) => onSelectEndDate(key, selected)} color={color} /> }
       </ScrollContainer>
-    </>
+
+      <CustomToast />
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   rowCon: {
     ...UI.tableRow(true),
+    ...Spacing.basePadding(0, 15),
     alignItems: 'center',
   },
   btn: {
@@ -277,23 +240,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.shadow.light, 
     borderRadius: ROUNDED,
   },
-  dropBtnCon: {
-    ...Spacing.flexRowStretch,
-    justifyContent: 'space-between', 
-  },
-  dropBtnLabel: {
-    ...Typography.smallHeader,
-    margin: 0,
-    color: Colors.shadow.darkest,
-  },
-  dropBtn: {
-    ...Spacing.flexRow,
-  },
   btnText: {
-    ...Typography.smallBody,
+    ...Typography.regBody,
+    marginVertical: 0,
     marginRight: 10,
-    marginLeft: 'auto',
-    maxWidth: '80%',
   },
   circleBtn: {
     ...Buttons.circle,
@@ -305,10 +255,10 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     flexWrap: 'wrap',
     maxWidth: (CIRCLE_BUTTON_WIDTH + CIRCLE_BUTTON_MARGIN * 2) * 7,
-    paddingTop: 15,
   },
-  scrollCon: {
-    height: 150,
+  dayBtnCon: {
+    ...Spacing.flexRow,
+    flexWrap: 'wrap',
   }
 })
 

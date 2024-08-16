@@ -4,10 +4,10 @@ import { Text, View } from "react-native"
 import { ToggleButton } from "@components/ButtonComponents"
 import PetInfo from "@components/PetInfo/PetInfo"
 import ColorPicker from "@components/Pickers/ColorPicker"
-import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/Pickers/FrequencyPicker"
+import FrequencyPicker, { getIntervalLabel, getTimesPerIntervalLabel } from "@components/Pickers/FrequencyPicker"
 import PetPicker from "@components/Pickers/PetPicker"
 import TitleInput from "@components/TitleInput"
-import { DateInput, ModalInput, ScrollContainer, TableForm } from "@components/UIComponents"
+import { DateInput, ModalInput, ScrollScreen, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 //types && hooks
 import type { Care, CareFormData } from "@care/CareInterface"
@@ -15,8 +15,7 @@ import { useShallowPets } from "@hooks/sharedHooks"
 import useForm from "@hooks/useForm"
 import { PetBasic } from "@pet/PetInterface"
 //styles
-import { Colors } from '@styles/index'
-import { styles } from "@styles/stylesheets/FormStyles"
+import { Colors, Spacing } from '@styles/index'
 
 interface InitialState extends Care {
   ending: boolean
@@ -56,24 +55,22 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
     onSubmit({ name, pets, repeat, startDate, endDate, frequency, color, _id })
   }
 
-  const handleValidate = useCallback(() => {
-    return onValidate({ name })
-  }, [name])
+  const handleValidate = useCallback(() => onValidate({ name }), [name])
 
   const renderPets = (
-    <ModalInput customLabel={
+    <ModalInput buttonStyles={{ ...Spacing.flexRow }} customLabel={
       pets.map((pet, index) =>
-        <View key={pet} style={{ zIndex: index, marginLeft: -10 }}>
-          <PetInfo pet={petIdToPet(pet)} size="small" />
+        <View key={pet} style={{ zIndex: index, marginLeft: -20 }}>
+          <PetInfo pet={petIdToPet(pet)} size="xSmall" />
         </View>
       )
     }>
-      <PetPicker mode="multi" onSelect={(selections: string[]) => onChange('pets', selections)} initials={pets.map((pet: PetBasic) => pet._id ?? pet)} />
+      <PetPicker mode="multi" onSelect={(selected: string[]) => onChange('pets', selected)} selected={pets.map((pet: PetBasic) => pet._id ?? pet)} />
     </ModalInput>
   )
 
   const renderStartDate = (
-    <DateInput date={startDate} onChangeDate={(selected) => onChange('startDate', selected )} color={color} />
+    <DateInput date={startDate} onChangeDate={(selected) => onChange('startDate', selected)} color={color} />
   )
 
   const renderRepeat = (
@@ -83,7 +80,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   const renderFrequency = (
     <ModalInput maxHeight='90%'
       label={
-        <Text style={{ maxWidth: '60%' }}>Repeats {frequency && frequencyMap[frequency.type].timesPerIntervalLabel(frequency.timesPerInterval)} {intervalLabel(frequency.interval, frequency.type)} {ending && `until ${endDate && endDate.toLocaleDateString()}`}</Text>
+        <Text>Repeats {getTimesPerIntervalLabel(frequency.timesPerInterval, frequency.type)} {getIntervalLabel(frequency.interval, frequency.type)} {ending && endDate ? `until ${new Date(endDate).toLocaleDateString()}` : null}</Text>
       }
       onReset={() => {
         onChange('frequency', initialState.frequency)
@@ -91,9 +88,9 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         onChange('endDate', initialState.endDate)
       }}
     > 
-      <FrequencyPicker color={color} initial={{ ...frequency, ending, endDate }}
+      <FrequencyPicker color={color} frequency={{ ...frequency, ending, endDate }}
         onSelectFrequency={(key: string, selected: any) => onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)}
-        onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | Date) => onChange(key, value)}
+        onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | string) => onChange(key, value)}
       />
     </ModalInput>
   )
@@ -117,7 +114,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   }, [handleValidate, status, color])
   
   return (
-    <View style={styles.container}>
+    <ScrollScreen bgColor={Colors.multi.lightest[color]}>
       <TitleInput initial={initialState.name} placeholder='New Task' onChange={(input: string) => onChange('name', input)} type='care' error={errors?.name} />
 
       <ColorPicker selected={color} onPress={(selected) => {
@@ -125,8 +122,8 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
         setColor(selected)
       }} />
 
-      <TableForm table={mainTable} withTitle={true} dependentRows={{ frequency: repeat }}/>
-    </View>
+      <TableForm table={mainTable} withTitle={true} dependentRows={{ frequency: repeat }} />
+    </ScrollScreen>
   )
 }
 

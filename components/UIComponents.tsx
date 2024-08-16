@@ -5,9 +5,9 @@ import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated"
 //utils & hooks
 import { useSelectPhoto } from "@hooks/sharedHooks"
 import { IconType, getIconByType } from "@utils/ui"
-import { ToastConfigParams } from "react-native-toast-message"
+import Toast, { ToastConfigParams } from "react-native-toast-message"
 //components 
-import { GoBackButton, SubButton } from "./ButtonComponents"
+import { ActionButton, GoBackButton } from "./ButtonComponents"
 //styles
 import { Colors, Spacing, Typography, UI } from "@styles/index"
 import { Size, icon, lightPalette } from "@styles/ui"
@@ -131,8 +131,8 @@ export const ErrorImage = ({ top = 0 }: { top?: number }) => (
 )
 
 export const CatToast = ({ text1, text2, props }: { text1: string, text2: string, props: any }) => (
-  <View style={[Spacing.flexRow, UI.boxShadow, { backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', minHeight: 70, shadowColor: props.style === 'success' ? Colors.green.dark : Colors.red.dark }]}>
-    <Image source={props.style === 'success' ? require('assets/icons/ui-cat-happy.png') : require('assets/icons/ui-cat-sad.png')} style={{ ...UI.icon()}} />
+  <View style={[Spacing.flexRow, UI.boxShadow, { backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', minHeight: 70, shadowColor: props.style === 'success' ? Colors.green.dark : props.style === 'info' ? Colors.blue.dark : Colors.red.dark }]}>
+    <Image source={props.style === 'success' ? require('assets/icons/ui-cat-happy.png') : require('assets/icons/ui-cat-sad.png')} style={UI.icon()} />
     <View style={[Spacing.flexColumn, { marginLeft: 10, alignItems: 'flex-start' }]}>  
       <Text style={{ textTransform: 'capitalize', fontWeight: 'bold', fontSize: 15, marginBottom: 5 }}>{props.style}!</Text>
       <Text>{text1}</Text>
@@ -147,6 +147,10 @@ export const CatToast = ({ text1, text2, props }: { text1: string, text2: string
 export const toastConfig = {
   catToast: ({ text1, text2, props }: ToastConfigParams<any>) => ( <CatToast text1={text1} text2={text2} props={props} /> )
 }
+
+export const CustomToast = () => (
+  <Toast config={toastConfig} />
+)
 
 interface BoxProps extends TitleLabelProps {
   children: ReactNode
@@ -176,7 +180,8 @@ export const TableForm = memo(({ table, withTitle = false, dependentRows, size =
       return (
         rowIsVisible && 
           <TitleLabel key={row.key} title={withTitle ? row.label : null} iconName={row.icon} size={size} rightAction={row.value} titleStyles={titleStyles} 
-            containerStyles={{ ...(index < table.length - 1 ? UI.tableRow(true) : {}), minHeight: 50, ...containerStyles }} 
+            containerStyles={{ ...(index > 0 ? { borderTopWidth: 1,
+              borderColor: lightPalette().border } : {}), minHeight: 50, ...containerStyles }} 
           />
       )
     })}
@@ -184,7 +189,7 @@ export const TableForm = memo(({ table, withTitle = false, dependentRows, size =
 ))
 
 export const EmptyList = ({ type }: { type: string }) => (
-  <Text style={type === 'task' ? { ...Typography.smallSubHeader } : { ...Typography.xSmallSubHeader }}>No {type}s added.</Text>
+  <FormHeader title={`No ${type}s added.`} size={type === 'task' ? 'med' : 'small'} />
 )
 
 interface ScrollProps {
@@ -300,8 +305,8 @@ export const ModalInput = ({ children, label, onReset, onClose, height = 'fit-co
         onClose && onClose()
         dismissModal()
       }} height={height} maxHeight={maxHeight} overlay={overlay} background={background}>
+        { onReset && <ActionButton icon='reset' onPress={onReset} position='topRight' /> }
         { children }
-        { onReset && <SubButton title='Reset' onPress={onReset} color={UI.lightPalette().unfocused} buttonStyles={{ marginBottom: 20 }} /> }
       </BottomModal>
     </>
   )

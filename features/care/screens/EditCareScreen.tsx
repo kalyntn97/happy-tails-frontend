@@ -40,12 +40,9 @@ const EditCareScreen: React.FC<EditCareProps> = ({ navigation, route }) => {
   }, [navigation, isFocused, color])
 
   return (  
-    <ScrollScreen bgColor={Colors.multi.lightest[color]}>
-      {care ? 
-        <CareForm onSubmit={handleSubmit} initialValues={initialValues} navigation={navigation} status={updateCareMutation.status} setColor={setColor} />
-        : <Loader />
-      }
-    </ScrollScreen>
+    care ? <CareForm onSubmit={handleSubmit} initialValues={initialValues} navigation={navigation} status={updateCareMutation.status} setColor={setColor} /> 
+    : <Loader />
+    
   )
 }
 

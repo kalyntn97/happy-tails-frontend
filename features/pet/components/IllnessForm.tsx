@@ -3,7 +3,7 @@ import React, { FC, useState } from 'react'
 //components
 import Dropdown from '@components/Dropdown/Dropdown'
 import { CircleIcon, ErrorMessage } from '@components/UIComponents'
-import { MainButton, TransparentButton } from '@components/ButtonComponent'
+import { MainButton, TransparentButton } from '@components/ButtonComponents'
 import MultipleInputs from '@components/MultipleInputs'
 //helpers
 import { getPetIconSource } from '@utils/ui'

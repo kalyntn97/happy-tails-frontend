@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   label: {
-    ...Typography.regBody,
+    ...Typography.largeBody,
     letterSpacing: 1,
     margin: 0,
     marginHorizontal: 30,

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { MainButton } from "@components/ButtonComponent"
+import { MainButton } from "@components/ButtonComponents"
 import { ErrorMessage } from "@components/UIComponents"
 
 interface AccountFormProps {

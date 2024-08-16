@@ -5,7 +5,7 @@ import LottieView from 'lottie-react-native'
 //context
 import { useAuth } from '@auth/AuthContext'
 //components
-import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponent'
+import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponents'
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { styles } from '@styles/stylesheets/FormStyles'

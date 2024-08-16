@@ -4,7 +4,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker'
 //components
 import Dropdown from '@components/Dropdown/Dropdown'
 import { CircleIcon, ErrorMessage } from '@components/UIComponents'
-import { CheckboxButton, MainButton, ToggleButton, TransparentButton } from '@components/ButtonComponent'
+import { CheckboxButton, MainButton, ToggleButton, TransparentButton } from '@components/ButtonComponents'
 //helpers & types
 import { Medication, MedicationFormData } from '@pet/PetInterface'
 import { getCareIconSource, getPetIconSource } from '@utils/ui'

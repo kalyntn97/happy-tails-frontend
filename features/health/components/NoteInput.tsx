@@ -2,7 +2,7 @@
 import { FC, useEffect, useState } from "react"
 import {  TextInput, TouchableOpacity, Image, Text, View } from "react-native"
 //components
-import { IconButton } from "@components/ButtonComponent"
+import { IconButton } from "@components/ButtonComponents"
 import { AlertForm, getActionIconSource } from "@utils/ui"
 //types & queries
 import { Visit } from "@health/HealthInterface"

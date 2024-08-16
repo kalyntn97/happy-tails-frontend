@@ -3,7 +3,7 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { FC, useState } from 'react'
 //components
 import AccountForm from '@profile/components/AccountForm'
-import { GoBackButton } from '@components/ButtonComponent'
+import { GoBackButton } from '@components/ButtonComponents'
 //styles
 import { UI, Spacing, Typography, Colors } from '@styles/index'
 

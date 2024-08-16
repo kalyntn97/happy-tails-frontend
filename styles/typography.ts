@@ -7,8 +7,8 @@ const base = {
 }
 
 export const textSizeMap = {
-  xLarge: { fontSize: 40, lineHeight: 50 },
-  large: { fontSize: 30, lineHeight: 40 },
+  xLarge: { fontSize: 30, lineHeight: 30 },
+  large: { fontSize: 25, lineHeight: 35 },
   med: { fontSize: 20, lineHeight: 30 },
   small: { fontSize: 15, lineHeight: 20 },
   xSmall: { fontSize: 12, lineHeight: 18 },
@@ -64,6 +64,11 @@ export const smallHeader = {
 export const smallSubHeader: TextStyle = {
   ...sub,
   ...textSizeMap.small,
+}
+
+export const largeBody = {
+  ...body,
+  ...textSizeMap.med,
 }
 
 export const regBody = {

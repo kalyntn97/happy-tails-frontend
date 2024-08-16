@@ -1,11 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
-import Toast from 'react-native-toast-message'
 //components
 import { CloseButton } from '@components/ButtonComponents'
 import PlaceHolder from '@components/PlaceHolder'
-import { ErrorImage, ScrollScreen, TopRightHeader, toastConfig } from '@components/UIComponents'
+import { ErrorImage, ScrollScreen, TopRightHeader } from '@components/UIComponents'
 //utils & types
 import { DetailType, Service } from '@pet/PetInterface'
 import { PET_DETAILS } from '@pet/petHelpers'
@@ -99,7 +98,6 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
             ) : <PlaceHolder type={type} petId={petId} navigation={navigation} /> }
           </View>
       )}
-      <Toast config={toastConfig} />
     </ScrollScreen>
   )
 }

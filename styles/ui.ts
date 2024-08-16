@@ -73,9 +73,9 @@ export const rowContent = (withColumn: boolean = false, justify: any = 'space-be
   margin: m,
 })
 
-export const tableRow = (withSeparator: boolean = true): ViewStyle => ({
+export const tableRow = (withSeparator: boolean = true, position: 'top' | 'bottom' = 'bottom'): ViewStyle => ({
   width: '100%',
-  borderBottomWidth: withSeparator ? 1 : 0,
+  ...(withSeparator ? (position === 'bottom' ? { borderBottomWidth: 1 } : { borderTopWidth: 1 }) : {}),
   borderColor: lightPalette().border,
 })
 

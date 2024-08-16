@@ -5,7 +5,7 @@ import { Text, TextInput, View } from 'react-native'
 import { ServiceFormData } from '@pet/PetInterface'
 import { getPetIconSource } from '@utils/ui'
 //components
-import { MainButton, TransparentButton } from '@components/ButtonComponent'
+import { MainButton, TransparentButton } from '@components/ButtonComponents'
 import Dropdown from '@components/Dropdown/Dropdown'
 import { CircleIcon, ErrorMessage, Header, ScrollContainer } from '@components/UIComponents'
 //styles

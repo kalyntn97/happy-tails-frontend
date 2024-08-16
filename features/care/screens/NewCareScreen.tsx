@@ -24,9 +24,7 @@ const NewCareScreen = ({ navigation }) => {
   }, [navigation, isFocused])
 
   return (
-    <ScrollScreen bgColor={Colors.multi.lightest[color]}>
-      <CareForm onSubmit={handleSubmit} navigation={navigation} status={addCareMutation.status} setColor={setColor} />
-    </ScrollScreen>  
+    <CareForm onSubmit={handleSubmit} navigation={navigation} status={addCareMutation.status} setColor={setColor} />
   )
 }
 
