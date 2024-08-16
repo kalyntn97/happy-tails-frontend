@@ -1,6 +1,6 @@
 //npm modules
 import { memo, useEffect, useMemo, useRef, useState } from "react"
-import { DimensionValue, FlatList, Keyboard, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ViewStyle } from "react-native"
+import { DimensionValue, FlatList, Keyboard, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import Fuse from "fuse.js"
 //helpers 
 import * as careHelpers from '@care/careHelpers'
@@ -24,6 +24,7 @@ interface DropdownProps {
   error?: string
   buttonStyles?: ViewStyle
   contentStyles?: ViewStyle
+  buttonTextStyles?: TextStyle
   contentPosition?: 'top' | 'bottom'
 }
 
@@ -47,7 +48,7 @@ const typeToSource = {
   'serviceTypes': () => petHelpers.SERVICE_TYPES,
 }
 
-const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = '80%', initial, buttonStyles, contentStyles, withSearch = false, searchLabel, contentPosition = 'bottom', error }: DropdownProps) => {
+const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelect, width = '80%', initial, buttonStyles, contentStyles, buttonTextStyles, searchLabel, contentPosition = 'bottom', error }: DropdownProps) => {
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
   const [visible, setVisible] = useState(false)
@@ -108,10 +109,10 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = '80%', in
   }, [dataType])
 
   const dropdownBtnStyles = useMemo(() => ([ 
-   buttonStyles ?? UI.input(), 
     styles.dropDownBtn, 
     { width: '100%' }, 
     (focused || visible) && UI.focused,
+    buttonStyles ?? UI.input(), 
   ]) as ViewStyle, [buttonStyles, focused, visible])
 
   const modalStyles = useMemo(() => ([ 
@@ -140,7 +141,7 @@ const Dropdown = memo(({ label, dataType, dataArray, onSelect, width = '80%', in
         </View>
       : 
         <TouchableOpacity style={dropdownBtnStyles} onPress={toggleDropdown} ref={DropdownBtn}>
-          <Text style={{ flex: 1  }}>{selected ?? label}</Text>
+          <Text style={[{ flex: 1  }, buttonTextStyles]}>{selected ?? label}</Text>
           <Icon name={visible ? 'up' : 'down'} styles={{ marginLeft: 15 }} />
         </TouchableOpacity>
       }

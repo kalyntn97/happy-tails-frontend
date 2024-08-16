@@ -10,7 +10,7 @@ import { DateInput, FormInput, FormLabel, Icon, ModalInput, PhotoUpload, ScrollS
 import { Header } from "@navigation/NavigationStyles"
 //helpers & utils & hooks
 import useForm from "@hooks/useForm"
-import { PetFormData, PhotoFormData } from "@pet/PetInterface"
+import { Pet, PetFormData, PhotoFormData } from "@pet/PetInterface"
 import { GENDER, SPECIES_OPTIONS, STATUS } from "@pet/petHelpers"
 import { getPetIconSource } from "@utils/ui"
 //styles
@@ -22,6 +22,97 @@ interface PetFormProps {
   initialValues?: PetFormData
   formStatus: string
   navigation: any
+}
+
+const SpeciesBreedSelector = ({ species, breed, initials, onSelectSpecies, onSelectBreed }: { species: Pet['species'], breed: Pet['breed'], initials: { species: Pet['species'], breed: Pet['breed'] }, onSelectSpecies: (selected: Pet['species']) => void, onSelectBreed: (selected: Pet['breed']) => void }) => (
+  <ModalInput height='90%' customLabel={
+    <View style={[Spacing.flexRow, { flexWrap: 'wrap' }]}>
+      <Icon type='pet' name={species} styles={{ marginRight: 10 }} />
+      { ['Dog', 'Cat', 'Bird', 'Fish'].includes(species) ?
+        <Text>{breed ?? 'Unknown breed'}</Text> 
+        : <Text>{species}</Text>
+      }
+    </View>
+  }>
+    <View style={Spacing.flexColumn}>
+      <FormLabel label='Pet Type' icon='petType' />
+      <IconPicker selected={species} options={SPECIES_OPTIONS} withCustom={true} initial={initials.species} onSelect={(selected: string) => {
+        onSelectSpecies(selected)
+        onSelectBreed(null)
+      }} customIcon={{ type: 'pet', name: 'Others' }} customLabel="breed" />
+
+      { ['Dog', 'Cat', 'Bird', 'Fish'].includes(species) && <>
+        <FormLabel label='Pet Breed' icon='pets' />
+        <Dropdown withSearch={true} label='Search Breed' dataType={species} onSelect={(selected: string) => onSelectBreed(selected)} initial={breed} width='80%' contentPosition="top" />
+      </> }
+    </View>
+  </ModalInput>
+)
+
+const GenderSelector = ({ gender, onSelect }: { gender: Pet['gender'], onSelect: (selected: Pet['gender']) => void }) => (
+  <View style={Spacing.flexRow}>
+    { GENDER.map((option: Pet['gender']) => 
+      <TouchableOpacity key={option} onPress={() => onSelect(option)} style={{ marginLeft: 20, opacity: gender === option ? 1 : 0.3 }}>
+        <Text>{option}</Text>
+      </TouchableOpacity>
+    )}
+  </View>
+)
+
+const AlteredInfo = ({ altered, onChange, gender, color }: { altered: Pet['altered'], onChange: (data: Pet['altered']) => void, gender: Pet['gender'], color: number }) => {
+  const alteredTable = [
+    { key: 'alteredValue', label: 'Altered', icon: 'altered', value: 
+      <ToggleButton isChecked={altered.value} onPress={() => onChange({ value: !altered.value, date: null })} /> 
+    },
+    { key: 'alteredDate', label: 'Surgery Date', icon: 'schedule', value: 
+      <DateInput date={altered.date} placeholder='Unknown' onChangeDate={(selected) => onChange({ ...altered, date: selected })} color={color} /> 
+    },
+  ]
+
+  return (
+    <ModalInput label={altered.value ? 
+      `${gender === 'Boy' ? 'Neutered' : gender === 'Girl' ? 'Spayed' : 'Altered'} on ${altered.date ? new Date(altered.date).toLocaleDateString() : 'unknown date'}`
+      : `Not ${gender === 'Boy' ? 'Neutered' : gender === 'Girl' ? 'Spayed' : 'Altered'}`
+    }>
+      <TableForm table={alteredTable} withTitle={true} />
+    </ModalInput>
+  )
+}
+
+const StatusInfo = ({ status, onChange, color }: { status: Pet['status'], onChange: (data: Pet['status']) => void, color: number }) => {
+  const handleSelectStatus = (selected: string) => {
+    selected === 'Healthy'
+      ? onChange({ ...status, value: selected, date: null, archive: false })
+      : onChange({ ...status, value: selected, date: null })
+  }
+
+  const renderStatusArchive = (
+    <View style={Spacing.flexRow}>
+      <Text style={{ marginRight: 15 }}>Archive</Text>
+      <ToggleButton isChecked={status.archive} onPress={() => onChange({ ...status, archive: !status.archive })} />
+    </View>
+  )
+
+  const statusTable = [
+    { key: 'statusValue', icon: 'status', value: 
+      <Dropdown label='Status' dataType="petStatus" initial={status.value} onSelect={handleSelectStatus} width={130} buttonStyles={{ marginLeft: 'auto' }} buttonTextStyles={{ textAlign: 'right' }} contentStyles={{ width: 'fit-content' as DimensionValue }}/> 
+    },
+    { key: 'statusDate', icon: 'schedule', value: 
+      <DateInput date={status.date} placeholder='Unknown date' onChangeDate={(selected) => onChange({ ...status, date: selected })} color={color} />
+    },
+    { key: 'statusArchive', icon: 'archive', value: renderStatusArchive },
+  ]
+
+  return (
+    <ModalInput height='40%' customLabel={
+      <View style={Spacing.flexRow}>
+        <Text style={{ marginRight: 10 }}>{status.value}</Text>
+        <Icon name={status.archive ? 'hide' : 'show'} />
+      </View>
+    }>
+      <TableForm table={statusTable} dependentRows={{ statusDate: status.value === STATUS[1] }} />
+    </ModalInput>
+  )
 }
 
 const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormProps) => {
@@ -53,122 +144,32 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormPro
     return getPetIconSource(icon)
   }, [species])
 
-  const handleSelectStatus = (selected: string) => {
-    selected === 'Healthy'
-      ? onChange('status', { ...status, value: selected, date: null, show: true })
-      : onChange('status', { ...status, value: selected, date: new Date() })
-  }
-
-  const handleValidate = () => {
-    onValidate({ name, 'type': species })
-  }
-
+  const handleValidate = () => onValidate({ name, 'type': species })
+  
   function handleSubmit() {
     const photoData = photo && photo !== initialState.photo ? { uri: photo, name: name, type: 'image/jpeg' } : null
     onSubmit({ name, gender, species, breed, dob, gotchaDate, altered, status, color, petId }, photoData)
   }
 
-  const renderType = (
-    <ModalInput height='90%' customLabel={
-      <View style={[Spacing.flexRow, { flexWrap: 'wrap' }]}>
-        <Icon type='pet' name={species} styles={{ marginRight: 10 }} />
-        { ['Dog', 'Cat', 'Bird', 'Fish'].includes(species) ?
-          <Text>{breed ?? 'Unknown breed'}</Text> 
-          : <Text>{species}</Text>
-        }
-      </View>
-    }>
-      <View style={Spacing.flexColumn}>
-        <FormLabel label='Pet Type' icon='petType' />
-        <IconPicker selected={species} options={SPECIES_OPTIONS} withCustom={true} initial={initialState.species} onSelect={(selected: string) => {
-          onChange('species', selected)
-          onChange('breed', null)
-        }} customIcon={{ type: 'pet', name: 'Others' }} customLabel="breed" />
-
-        { ['Dog', 'Cat', 'Bird', 'Fish'].includes(species) && <>
-          <FormLabel label='Pet Breed' icon='pets' />
-          <Dropdown withSearch={true} label='Search Breed' dataType={species} onSelect={selected => onChange('breed', selected)} initial={breed} width='80%' contentPosition="top" />
-        </> }
-      </View>
-    </ModalInput>
-  )
-
-  const renderDob = (
-    <DateInput date={dob} placeholder='Unknown' header='Date of Birth' onChangeDate={(selected) => onChange('dob', selected)} color={color} />
-  )
-
-  const renderFirstMet = (
-    <DateInput date={gotchaDate} placeholder='Unknown' onChangeDate={(selected) => onChange('gotchaDate', selected)} color={color} />
-  )
-
-  const renderGender = (
-    <View style={Spacing.flexRow}>
-      { GENDER.map(option => 
-        <TouchableOpacity key={option} onPress={() => onChange('gender', option)} style={{ marginLeft: 20, opacity: gender === option ? 1 : 0.3 }}>
-          <Text>{option}</Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  )
-
-  const renderAlteredValue = (
-    <ToggleButton isChecked={altered.value} onPress={() => onChange('altered', { value: !altered.value, date: null })} />
-  )
-  const renderAlteredDate = (
-    <DateInput date={altered.date} placeholder='Unknown' onChangeDate={(selected) => onChange('altered', { ...altered, date: selected })} color={color} />
-  )
-
-  const alteredTable = [
-    { key: 'alteredValue', label: 'Altered', icon: 'altered', value: renderAlteredValue },
-    { key: 'alteredDate', label: 'Surgery Date', icon: 'schedule', value: renderAlteredDate },
-  ]
-
-  const renderAltered = (
-    <ModalInput label={altered.value ? 
-      `${gender === 'Boy' ? 'Neutered' : gender === 'Girl' ? 'Spayed' : 'Altered'} on ${altered.date ? new Date(altered.date).toLocaleDateString() : 'unknown date'}`
-      : `Not ${gender === 'Boy' ? 'Neutered' : gender === 'Girl' ? 'Spayed' : 'Altered'}`
-    }>
-      <TableForm table={alteredTable} withTitle={true} />
-    </ModalInput>
-  )
-
-  const renderStatusValue = (
-    <Dropdown label='Status' dataType="petStatus" initial={status.value} onSelect={handleSelectStatus} width={100} buttonStyles={{ marginLeft: 'auto' }} contentStyles={{ width: 'fit-content' as DimensionValue }}/>
-  )
-  const renderStatusDate = (
-    <DateInput date={status.date} placeholder='Unknown date' onChangeDate={(selected) => onChange('status', { ...altered, date: selected })} color={color} />
-  )
-  const renderStatusArchive = (
-    <View style={Spacing.flexRow}>
-      <Text style={{ marginRight: 15 }}>Archive</Text>
-      <ToggleButton isChecked={status.archive} onPress={() => onChange('status', { ...status, archive: !status.archive })} />
-    </View>
-  )
-
-  const statusTable = [
-    { key: 'statusValue', icon: 'status', value: renderStatusValue },
-    { key: 'statusDate', icon: 'schedule', value: renderStatusDate },
-    { key: 'statusArchive', icon: 'archive', value: renderStatusArchive },
-  ]
-
-  const renderStatus = (
-    <ModalInput customLabel={
-      <View style={Spacing.flexRow}>
-        <Text style={{ marginRight: 10 }}>{status.value}</Text>
-        <Icon name={status.archive ? 'hide' : 'show'} />
-      </View>
-    }>
-      <TableForm table={statusTable} dependentRows={{ statusDate: status.value === STATUS[1] }} />
-    </ModalInput>
-  )
-    
   const mainTable = [
-    { key: 'type', label: 'Type', icon: 'pets', value: renderType },
-    { key: 'dob', label: 'Date of Birth', icon: 'birthday', value: renderDob },
-    { key: 'adopt', label: 'Adoption Date', icon: 'adopt', value: renderFirstMet }, 
-    { key: 'gender', label: 'Gender', icon: 'gender', value: renderGender },
-    { key: 'altered', label: 'Altered', icon: 'altered', value: renderAltered },
-    { key: 'status', label: 'Status', icon: 'status', value: renderStatus },
+    { key: 'type', label: 'Type', icon: 'pets', value: 
+      <SpeciesBreedSelector species={species} breed={breed} initials={{ species: initialState.species, breed: initialState.breed }} onSelectSpecies={(selected) => onChange('species', selected)} onSelectBreed={(selected) => onChange('breed', selected)} /> 
+    },
+    { key: 'dob', label: 'Date of Birth', icon: 'birthday', value:
+      <DateInput date={dob} placeholder='Unknown' header='Date of Birth' onChangeDate={(selected) => onChange('dob', selected)} color={color} /> 
+    },
+    { key: 'adopt', label: 'Adoption Date', icon: 'adopt', value: 
+      <DateInput date={gotchaDate} placeholder='Unknown' onChangeDate={(selected) => onChange('gotchaDate', selected)} color={color} /> 
+    }, 
+    { key: 'gender', label: 'Gender', icon: 'gender', value: 
+      <GenderSelector gender={gender} onSelect={(selected) => onChange('gender', selected)} />
+    },
+    { key: 'altered', label: 'Altered', icon: 'altered', value: 
+      <AlteredInfo altered={altered} onChange={(data) => onChange('altered', data)} gender={gender} color={color} />
+    },
+    { key: 'status', label: 'Status', icon: 'status', value: 
+      <StatusInfo status={status} onChange={(data) => onChange('status', data)} color={color} />
+    },
   ]
 
   const headerActions = [

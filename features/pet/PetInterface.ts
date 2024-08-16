@@ -9,7 +9,7 @@ export interface PetFormData {
   dob: string | null
   gotchaDate: string | null
   altered: { value: boolean, date: string | null}
-  status: { value: string, date: string | null, show: boolean }
+  status: { value: string, date: string | null, archive: boolean }
   color: number
   photo?: string
   petId: string | null
