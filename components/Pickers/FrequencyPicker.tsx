@@ -6,7 +6,7 @@ import { daysOfWeek, getOrdinalSuffix, months } from '@utils/datetime'
 import { Frequency } from '@utils/types'
 import { showToast } from '@utils/misc'
 //components
-import { CustomToast, Icon, ScrollContainer, TitleLabel } from '@components/UIComponents'
+import { CustomToast, Icon, ModalInput, ScrollContainer, TitleLabel } from '@components/UIComponents'
 import { ActionButton, ToggleButton, TransparentButton } from '../ButtonComponents'
 import ScrollSelector from '../ScrollSelector'
 //styles
@@ -17,10 +17,12 @@ export interface FrequencyPicker extends Frequency {
   ending?: boolean 
   endDate?: string
 }
+type FrequencyPickerKey = 'type' | 'interval' | 'timesPerInterval' | 'frequency'
+
 type Props = {
   frequency?: FrequencyPicker
   color?: number
-  onSelectFrequency: (key: string, selected: any) => void
+  onSelectFrequency: (key: FrequencyPickerKey, selected: any) => void
   onSelectEndDate?: (key: 'ending' | 'endDate', value: boolean | string) => void
 }
 type MonthDay = { month: string, day: number }
@@ -186,6 +188,20 @@ const EndDateSelector = ({ endDate, ending, onSelect, color }: { endDate: string
       <RNDateTimePicker display='inline' themeVariant='light' value={endDate ? new Date(endDate) : new Date()} minimumDate={new Date()} onChange={(_, selectedDate) => onSelect('endDate', selectedDate.toISOString())} accentColor={Colors.multi.dark[color]} />
     }
 </View>
+)
+
+export const FrequencySelector = ({ frequency, endDate, ending, onSelectFrequency, onSelectEndDate, onReset, color }: { frequency: Frequency, endDate: string, ending: boolean, onSelectFrequency: (key: FrequencyPickerKey, selected: any) => void, onSelectEndDate: (key: 'ending' | 'endDate', value: boolean | string) => void, onReset: () => void, color: number }) => (
+  <ModalInput maxHeight='90%'
+    label={
+      <Text>Repeats {getTimesPerIntervalLabel(frequency.timesPerInterval, frequency.type)} {getIntervalLabel(frequency.interval, frequency.type)} {ending && endDate ? `until ${new Date(endDate).toLocaleDateString()}` : null}</Text>
+    }
+    onReset={onReset}
+  > 
+    <FrequencyPicker color={color} frequency={{ ...frequency, ending, endDate }}
+      onSelectFrequency={(key, selected) => onSelectFrequency(key, selected)}
+      onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | string) => onSelectEndDate(key, value)}
+    />
+  </ModalInput>
 )
 
 const FrequencyPicker = ({ frequency, color = 0, onSelectFrequency, onSelectEndDate }: Props) => {

@@ -1,20 +1,20 @@
 //npm modules
 import { useEffect, useMemo } from "react"
-import { DimensionValue, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { DimensionValue, Text, TouchableOpacity, View } from "react-native"
 //components
 import { ToggleButton } from '@components/ButtonComponents'
 import Dropdown from "@components/Dropdown/Dropdown"
 import ColorPicker from "@components/Pickers/ColorPicker"
 import IconPicker from "@components/Pickers/IconPicker"
-import { DateInput, FormInput, FormLabel, Icon, ModalInput, PhotoUpload, ScrollContainer, ScrollScreen, TableForm } from "@components/UIComponents"
+import { DateInput, FormInput, FormLabel, Icon, ModalInput, PhotoUpload, ScrollScreen, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 //helpers & utils & hooks
 import useForm from "@hooks/useForm"
-import { Pet, PetFormData, PhotoFormData } from "@pet/PetInterface"
+import { PetFormData, PhotoFormData } from "@pet/PetInterface"
 import { GENDER, SPECIES_OPTIONS, STATUS } from "@pet/petHelpers"
 import { getPetIconSource } from "@utils/ui"
 //styles
-import { Colors, Spacing, UI } from '@styles/index'
+import { Colors, Spacing } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
 
 interface PetFormProps {
@@ -186,7 +186,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormPro
     <ScrollScreen bgColor={Colors.multi.lightest[color]}>
       <View style={styles.headerCon}>
         <PhotoUpload photo={photo} placeholder={placeholderPhoto} onSelect={(uri: string) => onChange('photo', uri)} />
-        <View style={[styles.titleCon, { flex: 1 }]}>
+        <View style={styles.titleCon}>
           <FormInput initial={initialState.name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} />
         </View>
       </View>

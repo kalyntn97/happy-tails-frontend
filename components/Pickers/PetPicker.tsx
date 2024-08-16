@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pressable, StyleSheet, View } from 'react-native'
 //components
-import { FormHeader } from '@components/UIComponents'
+import { FormHeader, ModalInput } from '@components/UIComponents'
 import PetInfo from '@components/PetInfo/PetInfo'
 //utils
 import { useShallowPets } from '@hooks/sharedHooks'
@@ -13,6 +13,22 @@ type Props = {
   mode?: 'multi',
   onSelect: (petIds: string[]) => void
   selected: string[]
+}
+
+export const PetSelector = ({ pets, onSelect, mode }: { pets: string[], onSelect: (selected: string[]) => void, mode: 'multi' | 'single' }) => {
+  const { petIdToPet } = useShallowPets()
+
+  return (
+    <ModalInput buttonStyles={{ ...Spacing.flexRow }} customLabel={
+      pets.map((pet, index) =>
+        <View key={pet} style={{ zIndex: index, marginLeft: -20 }}>
+          <PetInfo pet={petIdToPet(pet)} size="xSmall" />
+        </View>
+      )
+    }>
+      <PetPicker mode="multi" onSelect={(selected: string[]) => onSelect(selected)} selected={pets.map((pet: any) => pet._id ?? pet)} />
+    </ModalInput>
+  )
 }
 
 const PetPicker = ({ mode, onSelect, selected }: Props) => {

@@ -157,7 +157,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
                 setOption(section.key as SectionType)
               }} /> 
             } containerStyles={{ marginTop: 15, marginBottom: 0 }}/>
-            <View style={[UI.card(true, false, undefined, undefined, 0), Spacing.flexColumnStretch]}>
+            <View style={[UI.card(true, false, undefined, 0), Spacing.flexColumnStretch]}>
               { section.renderList }
             </View>
           </View>

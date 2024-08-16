@@ -5,12 +5,11 @@ export interface CareFormData {
   name: string
   pets: string[] | PetBasic[]
   repeat: boolean
-  startDate: string | Date
+  startDate: string
   endDate: string | null
   frequency: Frequency | null
   color: number
-  icon?: string
-  _id?: string
+  careId: string | null
 }
 export interface Care extends CareFormData {
   _id: string

@@ -99,12 +99,12 @@ export const bottomModal: ViewStyle = {
   backgroundColor: Colors.shadow.lightest,
 }
 
-export const card = (withPadding = true, withShadow = false, h?: number, v?: number, m: number = 10): ViewStyle => ({
+export const card = (withPadding = true, withShadow = false, rounded: number = 8, m: number = 10, h?: number, v?: number): ViewStyle => ({
   ...centered,
   ...(withShadow ? boxShadow : {}),
   ...(withPadding ? basePadding(h, v) : {}),
   margin: m,
-  borderRadius: 8,
+  borderRadius: rounded,
   backgroundColor: lightPalette().background,
 })
 

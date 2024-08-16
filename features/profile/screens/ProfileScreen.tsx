@@ -84,7 +84,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <PetList petArray={data.pets} size='compact' />
           </BoxWithHeader>
           
-          <View style={{...UI.card()}}>
+          <View style={UI.card()}>
             <TitleLabel title="All pet care tasks" iconName="care" onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
             <TitleLabel title="All vet visits" iconName="health" onPress={() => navigation.navigate('Home', { screen: 'HealthIndex' })} />
             <TitleLabel title="Update profile" iconName="editSquare" onPress={() => navigation.navigate('Edit', { profile : profile })} />

@@ -172,7 +172,7 @@ interface TableProps extends TitleLabelProps{
 }
 
 export const TableForm = memo(({ table, withTitle = false, dependentRows, size = 'small', tableStyles, titleStyles, containerStyles }: TableProps) => (
-  <View style={[UI.card(), { backgroundColor: Colors.white }, tableStyles]}>
+  <View style={[UI.card(true, false, 15), { backgroundColor: Colors.white }, tableStyles]}>
     { table.map((row, index) => {
       let rowIsVisible = true
       if (dependentRows && dependentRows.hasOwnProperty(row.key)) rowIsVisible = dependentRows[row.key]

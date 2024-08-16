@@ -1,7 +1,6 @@
 import { StyleSheet } from "react-native"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { lightPalette } from "@styles/ui"
+import { Spacing, Typography, UI } from '@styles/index'
 
 export const styles = StyleSheet.create({
   container: {
@@ -22,27 +21,27 @@ export const styles = StyleSheet.create({
   headerCon: {
     ...Spacing.flexRowStretch,
     flexWrap: 'wrap',
-    zIndex: 1,
     alignSelf: 'flex-start',
     marginBottom: 15,
+    zIndex: 1,
   },
   titleCon: {
     ...Spacing.flexColumnStretch,
     marginLeft: 15, 
     alignItems: 'flex-start',
+    flex: 1,
+  },
+  title: {
+    ...Typography.subHeader,
+    textAlign: 'left',
+    margin: 0,
+    maxWidth: '100%',
   },
   subtitleCon: {
     ...Spacing.flexRow,
     width: '90%',
     marginLeft: 'auto',
     marginRight: 10,
-  },
-  title: {
-    fontSize: 20, 
-    fontWeight: 'bold', 
-    textAlign: 'left',
-    maxWidth: '100%',
-    minWidth: '60%',
   },
   subtitle: {
     ...Typography.smallSubHeader,
@@ -61,15 +60,12 @@ export const styles = StyleSheet.create({
     aspectRatio: 1,
   },
   contentCon: {
-    ...UI.card,
+    ...UI.card(),
     ...Spacing.flexColumn, 
     alignItems: 'flex-start',
   },
   rowCon: {
-    ...Spacing.flexRowStretch,
-    justifyContent: 'space-between',
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: lightPalette().border,
-  }
+    ...UI.tableRow(true),
+    ...UI.rowContent(),
+  },
 })

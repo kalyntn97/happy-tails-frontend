@@ -94,17 +94,17 @@ const HealthDetailsScreen = ({ navigation, route }) => {
               </TouchableOpacity> */}
             </View>
           
-            <View style={{...UI.rowContent()}}>
+            <View style={UI.rowContent()}>
               <StatButton item={{ header: 'done', stat: daysFromDone, body: 'days ago' }} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
               <StatButton item={{ header: daysToDue >= 0 ? 'due in' : 'past due', stat: Math.abs(daysToDue), body: 'days' }} color={daysToDue < 0 && Colors.red.reg} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
               <StatButton item={{ header: 'total', stat: health.lastDone.length, body: 'visits' }} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
             </View>
-            <View style={{...UI.card()}}>
+            <View style={UI.card()}>
               <TitleLabel title='Update' iconName='editSquare' onPress={() => navigation.navigate('EditHealth', { health: health })} />
               <TitleLabel title="Delete" iconName='deleteSquare' onPress={() => showDeleteConfirmDialog(health, handleDeleteHealthCard)} color={Colors.red.reg} />
             </View>
           </View>
-          <View style={{...UI.card()}}>
+          <View style={UI.card()}>
             <TitleLabel title='All logs' iconName='noteSquare' />
             {health.lastDone.length > 1 && 
               <TouchableOpacity style={styles.showButton} onPress={() => setShowAllVisits(!showAllVisits)}>

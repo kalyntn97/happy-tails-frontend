@@ -1,17 +1,19 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ActivityIndicator, Keyboard, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
-import Fuse, { FuseResult, IFuseOptions } from 'fuse.js'
+import Fuse, { FuseResult } from 'fuse.js'
+import React, { memo, useMemo, useRef, useState } from 'react'
+import { ActivityIndicator, Image, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 //utils & helpers
-import { getCareIconSource, getHealthIconSource, getStatIconSource } from '@utils/ui'
 import { CARES } from '@care/careHelpers'
 import { HEALTHS } from '@health/healthHelpers'
 import { STATS } from '@stat/statHelpers'
+import { getIconByType, IconType } from '@utils/ui'
+//components
+import { ErrorMessage } from './UIComponents'
 //styles
-import { Spacing, Typography, Colors, UI } from '@styles/index'
-import { ErrorMessage, FormInput } from './UIComponents'
+import { Spacing, UI } from '@styles/index'
+import { styles as formStyles } from '@styles/stylesheets/FormStyles'
 
 type Props = {
-  type: 'care' | 'health' | 'log'
+  type: 'care' | 'health' | 'stat'
   initial?: string
   placeholder?: string
   onChange: (title: string) => void
@@ -21,15 +23,15 @@ type Props = {
 const TITLE_LENGTH = 50
 
 const titleMap = {
-  care: { iconSource: getCareIconSource, titles: CARES },
-  health: { iconSource: getHealthIconSource, titles: HEALTHS },
-  log: { iconSource: getStatIconSource, titles: STATS },
+  care: CARES,
+  health: HEALTHS,
+  log: STATS,
 }
 
 const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props) => {
   const titleBtn = useRef(null)
   const fuse = useMemo(() => {
-    const titles: { title: string, icon: string }[] = titleMap[type].titles
+    const titles: { title: string, icon: string }[] = titleMap[type]
     return new Fuse(titles, { keys: ['title', 'icon'] })
   }, [type])
 
@@ -41,7 +43,7 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
   const [dropdownTop, setDropdownTop] = useState(0)
   const [dropdownLeft, setDropDownLeft] = useState(0)
 
-  const iconSource = useMemo(() => titleMap[type].iconSource(icon), [type, icon])
+  const iconSource = useMemo(() => getIconByType(type as IconType, icon), [type, icon])
   const validatedStyles = useMemo(() => error ? UI.error : isFocused ? UI.focused : UI.unfocused, [error, isFocused])
   
   const openDropDown = (input: string) => {
@@ -73,12 +75,12 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
   }
 
   return (
-    <View style={[styles.container, { zIndex: isFocused ? 10 : 2 }]}>
+    <View style={[formStyles.headerCon, { zIndex: isFocused ? 10 : 2 }]}>
       { iconSource ? <Image source={iconSource} style={UI.icon('large')}/> : <ActivityIndicator /> }
-      <View style={styles.inputCon}>
+      <View style={formStyles.titleCon}>
         <TextInput
           ref={titleBtn}
-          style={[styles.input, validatedStyles]}
+          style={[formStyles.title, validatedStyles]}
           placeholder={placeholder}
           placeholderTextColor={UI.lightPalette().unfocused}
           value={title}
@@ -99,6 +101,7 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
           }
         </View>
       </View>
+
       { visible && titleSearch.length > 1 &&
         <View style={[styles.content, { top: dropdownTop, left: dropdownLeft }]}>
           { titleSearch.map(t =>
@@ -112,39 +115,20 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
   )
 })
 
-export default TitleInput
-
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.flexRowStretch,
-    alignSelf: 'flex-start'
-  },
-  inputCon: {
-    ...Spacing.flexColumnStretch,
-    alignItems: 'flex-start'
-  },
-  input: {
-    ...Typography.subHeader,
-    margin: 0,
-    marginLeft: 10,
-    maxWidth: '60%',
-    textAlign: 'left',
-  },
   inputBottom: {
     ...Spacing.flexRow,
     marginTop: 10, 
-    marginLeft: 10
-  },
-  content: {
-    ...UI.boxShadow,
-    position: 'absolute',
-    backgroundColor: Colors.pink.lightest,
-    padding: 20,
-    borderRadius: 8,
-    width: '60%',
   },
   textLength: {
     color: UI.lightPalette().unfocused, 
     fontSize: 12
   },
+  content: {
+    ...UI.card(true, true),
+    position: 'absolute',
+    backgroundColor: UI.lightPalette().background,
+  },
 }) 
+
+export default TitleInput

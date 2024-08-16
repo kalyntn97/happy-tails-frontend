@@ -57,6 +57,7 @@ const actionIconSource = {
   details: require('@assets/icons/action-details.png'),
   detailsPet: require('@assets/icons/pet-details.png'),
   logPet: require('@assets/icons/pet-log.png'),
+  reminder: require('@assets/icons/action-reminder.png'),
   repeat: require('@assets/icons/action-repeat.png'),
   repeatSquare: require('@assets/icons/action-repeat_square.png'),
   save: require('@assets/icons/action-save.png'),
