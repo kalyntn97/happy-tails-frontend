@@ -40,8 +40,8 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
   ]
 
   const actions = [
-    { key: 'edit', icon: 'editSquare', onPress: () => navigation.navigate('CareEdit', { care }) },
-    { key: 'delete', icon: 'deleteSquare', onPress: () => showDeleteConfirmDialog(care, handleDeleteCareCard) },
+    { key: 'edit', icon: 'edit', onPress: () => navigation.navigate('CareEdit', { care }) },
+    { key: 'delete', icon: 'delete', onPress: () => showDeleteConfirmDialog(care, handleDeleteCareCard) },
   ]
 
   return (

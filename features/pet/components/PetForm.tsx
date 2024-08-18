@@ -17,6 +17,10 @@ import { getPetIconSource } from "@utils/ui"
 import { Colors, Spacing } from '@styles/index'
 import { styles } from "@styles/stylesheets/FormStyles"
 
+interface InitialState extends PetFormData {
+  photoData: { uri: string, name: string, type: 'image/jpeg' } | null
+  errors: any
+}
 interface PetFormProps {
   onSubmit: (formData: PetFormData, photoData: PhotoFormData | null) => Promise<any>
   initialValues?: PetFormData
@@ -116,7 +120,7 @@ const StatusInfo = ({ status, onChange, color }: { status: Pet['status'], onChan
 }
 
 const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormProps) => {
-  const initialState = useMemo(() => ({ 
+  const initialState: InitialState = useMemo(() => ({ 
     name: initialValues?.name ?? null, 
     species: initialValues?.species ?? SPECIES_OPTIONS[0].title, 
     breed: initialValues?.breed ?? null, 

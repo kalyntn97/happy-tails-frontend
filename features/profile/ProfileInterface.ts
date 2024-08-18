@@ -11,7 +11,7 @@ export interface Streak {
 export interface ProfileData {
   profile: Profile
   pets: Pet[]
-  cares: { [key: string]: Care[] }
+  cares: Care[]
   healths: Health[]
 }
 

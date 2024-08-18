@@ -20,8 +20,8 @@ export const getCare = async (careId: string): Promise<Care>  => {
   return (await axios.get<Care>(`${BASE_URL}/${careId}`)).data
 }
 
-export const deleteCare = async (careId: string): Promise<Care> => {
-  return (await axios.delete<Care>(`${BASE_URL}/${careId}`)).data
+export const deleteCare = async (careId: string): Promise<string> => {
+  return (await axios.delete<string>(`${BASE_URL}/${careId}`)).data
 }
 
 export const checkDone = async (careId: string, trackerId: string, index: number): Promise<Tracker> => {

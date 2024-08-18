@@ -2,8 +2,8 @@ import { useCallback, useEffect } from "react"
 //components
 import { ToggleButton } from "@components/ButtonComponents"
 import ColorPicker from "@components/Pickers/ColorPicker"
-import { FrequencySelector } from "@components/Pickers/FrequencyPicker"
-import { PetSelector } from "@components/Pickers/PetPicker"
+import FrequencyPicker from "@components/Pickers/FrequencyPicker"
+import PetPicker from "@components/Pickers/PetPicker"
 import TitleInput from "@components/TitleInput"
 import { DateInput, ScrollScreen, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
@@ -26,8 +26,9 @@ interface CareFormProps {
   navigation: any
 }
 
-const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
+const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, status, navigation }) => {
   const { PET_BASICS } = useShallowPets()
+
   const initialState: InitialState = {
     name: initialValues?.name ?? null, 
     pets: initialValues?.pets ?? [PET_BASICS[0]._id],
@@ -45,7 +46,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
 
   const mainTable = [
     { key: 'pets', label: 'Pets', icon: 'pets', value: 
-      <PetSelector pets={pets} onSelect={(selected: string[]) => onChange('pets', selected)} mode='multi' /> 
+      <PetPicker pets={pets} onSelect={(selected: string[]) => onChange('pets', selected)} mode='multi' /> 
     },
     { key: 'startDate', label: 'Start Date', icon: 'schedule', value: 
       <DateInput date={startDate} onChangeDate={(selected) => onChange('startDate', selected)} color={color} /> 
@@ -54,7 +55,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
       <ToggleButton onPress={() => onChange('repeat', !repeat)} isChecked={repeat} />
     },
     { key: 'frequency', label: 'Frequency', icon: 'due', value: 
-      <FrequencySelector frequency={frequency} endDate={endDate} ending={ending} color={color}
+      <FrequencyPicker frequency={{ ...frequency, ending, endDate }} color={color}
         onSelectFrequency={(key: string, selected: any) => onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)}
         onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | string) => onChange(key, value)}
         onReset={() => {
@@ -68,13 +69,15 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation
   ]
 
   function handleSubmit() {
-    if (!repeat) ['frequency', 'endDate'].map(key => onChange(key, null))
-    if (!ending) onChange('endDate', null)
+    let updatedFrequency = frequency
+    let updatedEndDate = endDate
 
-    onSubmit({ name, pets, repeat, startDate, endDate, frequency, color, careId })
+    if (repeat === false) updatedFrequency = null
+    if (ending === false) updatedEndDate = null
+    onSubmit({ name, pets, repeat, startDate, endDate: updatedEndDate, frequency: updatedFrequency, color, careId })
   }
 
-  const handleValidate = useCallback(() => onValidate({ name }), [name])
+  const handleValidate = () => onValidate({ name })
 
   const headerActions = [
     { icon: 'reset', onPress: onReset },

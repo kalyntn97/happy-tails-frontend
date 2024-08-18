@@ -26,8 +26,8 @@ export const boxShadow: ViewStyle = {
 }
 
 export const photoSizeMap: Record<Size, ImageStyle> = {
-  tiny: { width: 20, height: 20},
-  xxSmall: { width: 30, height: 30},
+  tiny: { width: 30, height: 30},
+  xxSmall: { width: 40, height: 40},
   xSmall: { width: 50, height: 50},
   small: { width: 70, height: 70},
   med: { width: 80, height: 80},
@@ -41,17 +41,17 @@ export const photo = (size: string = 'med', r: number = 99, m: number = 5): Imag
   margin: m,
 })
 
-const iconSizeMap: Partial<Record<Size, ImageStyle>> = {
+export const iconSizeMap: Partial<Record<Size, ImageStyle>> = {
   xSmall: { width: 20, height: 20},
   small: { width: 30, height: 30},
   med: { width: 40, height: 40},
   large: { width: 60, height: 60},
-  xLarge: { width: 80, height: 80 },
+  xLarge: { width: 70, height: 70 },
 }
 
-export const icon = (size: string = 'small'): ImageStyle => ({
+export const icon = (size: string = 'small', m: number): ImageStyle => ({
   ...iconSizeMap[size],
-  margin: size === 'large' || size === 'xLarge' ? 5 : 2
+  margin: m ? m : (size === 'large' || size === 'xLarge' ? 5 : 2)
 })
 
 export const rounded = (direction: 'left' | 'right' | 'top' = 'top', rounded: number = 15): ViewStyle => ({

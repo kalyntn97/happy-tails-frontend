@@ -1,17 +1,18 @@
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import React, { useState } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, TextStyle, View } from 'react-native'
 //utils
 import { daysOfWeek, getOrdinalSuffix, months } from '@utils/datetime'
-import { Frequency } from '@utils/types'
 import { showToast } from '@utils/misc'
+import { Frequency } from '@utils/types'
 //components
-import { CustomToast, Icon, ModalInput, ScrollContainer, TitleLabel } from '@components/UIComponents'
+import { Icon, ModalInput, ScrollContainer, TitleLabel } from '@components/UIComponents'
 import { ActionButton, ToggleButton, TransparentButton } from '../ButtonComponents'
 import ScrollSelector from '../ScrollSelector'
 //styles
 import { Buttons, Colors, Spacing, Typography, UI } from '@styles/index'
 import { windowWidth } from '@utils/constants'
+import { CustomToast } from '@navigation/NavigationStyles'
 
 export interface FrequencyPicker extends Frequency {
   ending?: boolean 
@@ -24,6 +25,8 @@ type Props = {
   color?: number
   onSelectFrequency: (key: FrequencyPickerKey, selected: any) => void
   onSelectEndDate?: (key: 'ending' | 'endDate', value: boolean | string) => void
+  onReset: () => void
+  labelStyles?: TextStyle
 }
 type MonthDay = { month: string, day: number }
 
@@ -190,53 +193,44 @@ const EndDateSelector = ({ endDate, ending, onSelect, color }: { endDate: string
 </View>
 )
 
-export const FrequencySelector = ({ frequency, endDate, ending, onSelectFrequency, onSelectEndDate, onReset, color }: { frequency: Frequency, endDate: string, ending: boolean, onSelectFrequency: (key: FrequencyPickerKey, selected: any) => void, onSelectEndDate: (key: 'ending' | 'endDate', value: boolean | string) => void, onReset: () => void, color: number }) => (
-  <ModalInput maxHeight='90%'
-    label={
-      <Text>Repeats {getTimesPerIntervalLabel(frequency.timesPerInterval, frequency.type)} {getIntervalLabel(frequency.interval, frequency.type)} {ending && endDate ? `until ${new Date(endDate).toLocaleDateString()}` : null}</Text>
-    }
-    onReset={onReset}
-  > 
-    <FrequencyPicker color={color} frequency={{ ...frequency, ending, endDate }}
-      onSelectFrequency={(key, selected) => onSelectFrequency(key, selected)}
-      onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | string) => onSelectEndDate(key, value)}
-    />
-  </ModalInput>
-)
-
-const FrequencyPicker = ({ frequency, color = 0, onSelectFrequency, onSelectEndDate }: Props) => {
+const FrequencyPicker = ({ frequency, onSelectFrequency, onSelectEndDate, onReset, color = 0, labelStyles}: Props) => {
   const { type, interval, timesPerInterval, ending, endDate } = frequency
 
   const timesPerIntervalLabel = getTimesPerIntervalLabel(timesPerInterval, type)
   const intervalLabel = getIntervalLabel(interval, type)
-  const endingLabel = ending && endDate ? `until ${new Date(endDate).toLocaleDateString()}` : null
+  const endingLabel = ending && endDate ? `until ${new Date(endDate).toLocaleDateString()}` : ''
+  const frequencyLabel = `Repeats ${timesPerIntervalLabel} ${intervalLabel} ${endingLabel}`
 
   const onChangeType = (type: Frequency['type']) => {
     let defaultTimesPerInterval = type === 'years' ? [{ month: 'Jan', day: 1 }] : [1]
-    onSelectFrequency('frequency', { type, interval: 1, timesPerInterval: defaultTimesPerInterval })
+    onSelectFrequency('frequency', { type: type, interval: 1, timesPerInterval: defaultTimesPerInterval })
   }
 
   return (
-    <View style={Spacing.fullCon()}>
-      <Text style={Typography.subHeader}>Repeats {timesPerIntervalLabel} {intervalLabel} {endingLabel}</Text>
-      <ScrollContainer>
-        <TypeSelector type={type} onSelect={onChangeType} color={color} />
+    <ModalInput maxHeight='90%' onReset={onReset}
+      label={<Text style={labelStyles}>{frequencyLabel}</Text>}
+    > 
+      <View style={Spacing.fullCon()}>
+        <Text style={Typography.subHeader}>{frequencyLabel}</Text>
+        <ScrollContainer>
+          <TypeSelector type={type} onSelect={onChangeType} color={color} />
 
-        <View style={styles.rowCon}>
-          { type === 'days' 
-            ? <TimesPerDaySelector type='days' times={timesPerInterval[0]} onSelect={(selected: number) => onSelectFrequency('timesPerInterval', [selected])} />
-            : (type === 'weeks' || type === 'months') ? <DaySelector type={type} dayArray={timesPerInterval} onSelect={(selected: number[]) => onSelectFrequency('timesPerInterval', selected)} color={color} />
-            : type === 'years' && <YearlySelector dayArray={timesPerInterval} onSelect={(selected: MonthDay[]) => onSelectFrequency('timesPerInterval', selected)} />
-          }
-        </View>
+          <View style={styles.rowCon}>
+            { type === 'days' 
+              ? <TimesPerDaySelector type='days' times={timesPerInterval[0]} onSelect={(selected: number) => onSelectFrequency('timesPerInterval', [selected])} />
+              : (type === 'weeks' || type === 'months') ? <DaySelector type={type} dayArray={timesPerInterval} onSelect={(selected: number[]) => onSelectFrequency('timesPerInterval', selected)} color={color} />
+              : type === 'years' && <YearlySelector dayArray={timesPerInterval} onSelect={(selected: MonthDay[]) => onSelectFrequency('timesPerInterval', selected)} />
+            }
+          </View>
 
-        <IntervalSelector type={type} interval={interval} intervalLabel={intervalLabel} onSelect={(selected: Frequency['interval']) => onSelectFrequency('interval', selected)} />
+          <IntervalSelector type={type} interval={interval} intervalLabel={intervalLabel} onSelect={(selected: Frequency['interval']) => onSelectFrequency('interval', selected)} />
 
-        { onSelectEndDate && <EndDateSelector endDate={endDate} ending={ending} onSelect={(key: 'ending' | 'endDate', selected: string | boolean) => onSelectEndDate(key, selected)} color={color} /> }
-      </ScrollContainer>
+          { onSelectEndDate && <EndDateSelector endDate={endDate} ending={ending} onSelect={(key: 'ending' | 'endDate', selected: string | boolean) => onSelectEndDate(key, selected)} color={color} /> }
+        </ScrollContainer>
 
-      <CustomToast />
-    </View>
+        <CustomToast />
+      </View>
+    </ModalInput>
   )
 }
 

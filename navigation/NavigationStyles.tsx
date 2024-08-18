@@ -7,7 +7,8 @@ import { GoBackButton } from "@components/ButtonComponents"
 //styles
 import { Colors, UI, Typography, Spacing } from "@styles/index"
 import { getActionIconSource } from "@utils/ui"
-import { CustomToast } from "@components/UIComponents"
+import { oastConfig } from "@components/UIComponents"
+import Toast, { ToastConfigParams } from "react-native-toast-message"
 
 export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
 
@@ -58,6 +59,28 @@ export const dynamicStackOptions = (mode: 'modal' | 'card' = 'modal', showGoBack
   }
 }
 
+export const CatToast = ({ text1, text2, props }: { text1: string, text2: string, props: any }) => (
+  <View style={[Spacing.flexRow, UI.boxShadow, { borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', minHeight: 70, backgroundColor: props.style === 'success' ? Colors.green.lightest : props.style === 'info' ? Colors.yellow.lightest : Colors.red.lightest }]}>
+    <Image source={props.style === 'error' ? require('assets/icons/ui-cat-sad.png') : require('assets/icons/ui-cat-happy.png')} style={UI.icon()} />
+    <View style={[Spacing.flexColumn, { marginLeft: 10, alignItems: 'flex-start' }]}>  
+      <Text style={{ textTransform: 'capitalize', fontWeight: 'bold', fontSize: 15, marginBottom: 5 }}>{props.style}</Text>
+      <Text>{text1}</Text>
+      { text2 && <Text style={{ flex: 1 }}>{text2}</Text> }
+    </View>
+    <Pressable style={{ marginLeft: 'auto' }} onPress={props.onClose}>
+      <Image source={getActionIconSource('close')} style={UI.icon()} />
+    </Pressable>
+  </View>
+)
+
+export const toastConfig = {
+  catToast: ({ text1, text2, props }: ToastConfigParams<any>) => ( <CatToast text1={text1} text2={text2} props={props} /> )
+}
+
+export const CustomToast = () => (
+  <Toast config={toastConfig} />
+)
+
 export const styles = StyleSheet.create({
   icon: { ...UI.icon() },
   iconLabel: { fontWeight: 'bold', fontSize: 12 },
@@ -65,7 +88,7 @@ export const styles = StyleSheet.create({
     paddingTop: 25,
   },
   headerText: {
-    ...Typography.mediumHeader, 
+    ...Typography.subHeader, 
     color: Colors.pink.darkest,
     margin: 0,
   },

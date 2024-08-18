@@ -1,6 +1,6 @@
 import { IconType, getActionIconSource, getIconByType } from "@utils/ui"
 import { memo, useMemo } from "react"
-import { Image, ImageSourcePropType, Pressable, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Image, ImageSourcePropType, ImageStyle, Pressable, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 //components
 import { circleBase } from "@styles/buttons"
 //styles
@@ -58,6 +58,7 @@ export const RoundButton = memo(({ onPress, size = 'large', bgColor = Colors.pin
 })
 
 const baseButtonSizeMap = {
+  xSmall: [Buttons.xxSmall, Buttons.rounded],
   small: [Buttons.xSmall, Buttons.rounded],
   smallSquare: [Buttons.xSmall, Buttons.square],
   med: [Buttons.small, Buttons.rounded],
@@ -82,7 +83,7 @@ export const MainButton= memo(({ onPress, title, bgColor = Colors.pink.reg, colo
   return (
     <TouchableOpacity onPress={onPress} style={[sizes.buttonSize, Buttons.solid, Spacing.flexRow,
       { backgroundColor: bgColor, borderColor: bdColor, marginHorizontal: h, marginVertical: v },
-      buttonStyles
+      buttonStyles,
     ]}>
       { icon && <Image source={getActionIconSource(icon)} style={[UI.icon(sizes.iconSize), { marginRight: 5 }]} /> }
       <Text style={[Buttons.buttonText, { fontSize: sizes.textSizeAdjusted, color: color }, textStyles]}>
@@ -92,21 +93,22 @@ export const MainButton= memo(({ onPress, title, bgColor = Colors.pink.reg, colo
   )
 })
 
-export const TransparentButton= ({ title, icon, onPress, size = 'med', color = Colors.shadow.darkest, bdColor, bgColor = 'transparent', h, v, textStyles }: BaseButtonProps) => (
-  <MainButton title={title} icon={icon} onPress={onPress} size={size} h={h} v={v} color={color} bdColor={bdColor ?? color} bgColor={bgColor} buttonStyles={Buttons.transparent} textStyles={textStyles} />
+export const TransparentButton= ({ title, icon, onPress, size = 'med', color = Colors.shadow.darkest, bdColor, bgColor = 'transparent', h, v, buttonStyles, textStyles }: BaseButtonProps) => (
+  <MainButton title={title} icon={icon} onPress={onPress} size={size} h={h} v={v} color={color} bdColor={bdColor ?? color} bgColor={bgColor} buttonStyles={{ ...Buttons.transparent, borderWidth: size === 'xSmall' || size === 'small' ? 1 : 1.5, ...buttonStyles }} textStyles={textStyles} />
 )
 
 const iconButtonSizeMap = {
   small: { width: 40, minHeight: 60 },
   medium: { width: 50, minHeight: 70 },
-  large: { width: 60, minHeight: 90 },
+  large: { width: 60, minHeight: 80 },
+  xLarge: { width: 70, minHeight: 90 },
 }
 
 export const IconButton = memo(({ title, type, icon, onPress, size, buttonStyles, textStyles }: ButtonWithTypeProps) => {
   const sizes = useMemo(() => {
     const buttonSize: ViewStyle = iconButtonSizeMap[size]
-    const iconSize: string = size === 'large' ? 'med' : 'xSmall'
-    const textSize: number = size === 'med' ? 10 : 13
+    const iconSize: string = size === 'xLarge' ? 'large' : size === 'large' ? 'med' : 'xSmall'
+    const textSize: number = size === 'xLarge' || size === 'large' ? 13 : 10
     return { buttonSize, iconSize, textSize }
   }, [size])
 

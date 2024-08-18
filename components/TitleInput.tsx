@@ -53,9 +53,9 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
     if (input === search[0].item.title) return setVisible(false)
     setTitleSearch(search)
     setVisible(_ => {
-      titleBtn.current.measure((fx, fy, _w, h, px, _py) => {
-        setDropdownTop(fy + h + 10)
-        setDropDownLeft(px - fx) 
+      titleBtn.current.measure((fx, fy, w, h, px, _py) => {
+        setDropdownTop(fy + h + 30)
+        setDropDownLeft(px - fx - 30) 
       })
       return true
     })
@@ -128,6 +128,9 @@ const styles = StyleSheet.create({
     ...UI.card(true, true),
     position: 'absolute',
     backgroundColor: UI.lightPalette().background,
+    maxWidth: '90%',
+    width: '50%',
+    alignItems: 'flex-start',
   },
 }) 
 

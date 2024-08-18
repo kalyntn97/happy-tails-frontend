@@ -1,28 +1,30 @@
 import RNDateTimePicker from "@react-native-community/datetimepicker"
-import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
+import { ComponentProps, ComponentType, MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
 import { DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, Modal, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated"
 //utils & hooks
 import { useSelectPhoto } from "@hooks/sharedHooks"
 import { IconType, getIconByType } from "@utils/ui"
-import Toast, { ToastConfigParams } from "react-native-toast-message"
 //components 
 import { ActionButton, GoBackButton } from "./ButtonComponents"
 //styles
 import { Colors, Spacing, Typography, UI } from "@styles/index"
+import { basePadding } from "@styles/spacing"
 import { Size, icon, lightPalette } from "@styles/ui"
 
 interface IconProps {
   type?: IconType
   name: string
+  value?: any
   size?: Size
   styles?: ImageStyle
+  m?: number
 }
 
-export const Icon = ({ type = 'action', name, size = 'small', styles }: IconProps) =>  {
-  const source = getIconByType(type, name)
+export const Icon = ({ type = 'action', name, value, size = 'small', styles, m }: IconProps) =>  {
+  const source = getIconByType(type, name, value)
   return (
-    <Image source={source} style={[icon(size), styles]} />
+    <Image source={source} style={[icon(size, m), styles]} />
   )
 }
 
@@ -129,29 +131,6 @@ export const ErrorImage = ({ top = 0 }: { top?: number }) => (
     <Image source={require('assets/images/error.png')} style={{ maxWidth: 300, resizeMode: 'contain' }} />
   </View>
 )
-
-export const CatToast = ({ text1, text2, props }: { text1: string, text2: string, props: any }) => (
-  <View style={[Spacing.flexRow, UI.boxShadow, { backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', minHeight: 70, shadowColor: props.style === 'success' ? Colors.green.dark : props.style === 'info' ? Colors.blue.dark : Colors.red.dark }]}>
-    <Image source={props.style === 'success' ? require('assets/icons/ui-cat-happy.png') : require('assets/icons/ui-cat-sad.png')} style={UI.icon()} />
-    <View style={[Spacing.flexColumn, { marginLeft: 10, alignItems: 'flex-start' }]}>  
-      <Text style={{ textTransform: 'capitalize', fontWeight: 'bold', fontSize: 15, marginBottom: 5 }}>{props.style}!</Text>
-      <Text>{text1}</Text>
-      { text2 && <Text style={{ flex: 1 }}>{text2}</Text> }
-    </View>
-    <Pressable style={{ marginLeft: 'auto' }} onPress={props.onClose}>
-      <Icon name='close' size='small' />
-    </Pressable>
-  </View>
-)
-
-export const toastConfig = {
-  catToast: ({ text1, text2, props }: ToastConfigParams<any>) => ( <CatToast text1={text1} text2={text2} props={props} /> )
-}
-
-export const CustomToast = () => (
-  <Toast config={toastConfig} />
-)
-
 interface BoxProps extends TitleLabelProps {
   children: ReactNode
   contentStyles?: ViewStyle
@@ -196,7 +175,20 @@ interface ScrollProps {
   children: ReactNode
   props?: ScrollViewProps
   contentStyles?: ViewStyle
+  h?: number, b?: number, t?: number
 }
+
+export const ScrollHeader = ({ children, h = 10, b = 15, t = 15}: ScrollProps) => (
+  <View style={[Spacing.basePadding(h, 0, b, t), { width: '100%', justifyContent: 'center' }]}>
+    <ScrollView horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={Spacing.flexRow}
+      alwaysBounceHorizontal={false}
+    >
+      { children }
+    </ScrollView>
+  </View>
+)
 
 export const ScrollContainer = ({ children, props, contentStyles }: ScrollProps) => (
   <ScrollView
@@ -296,7 +288,8 @@ export const ModalInput = ({ children, label, onReset, onClose, height = 'fit-co
   return (
     <>
       <Pressable onPress={() => setModalVisible(!modalVisible)} style={buttonStyles}>
-        { customLabel ??
+        { customLabel 
+          ? customLabel :
           <Text {...buttonTextProps} style={buttonTextStyles}>{label}</Text>
         }
       </Pressable> 

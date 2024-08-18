@@ -1,5 +1,6 @@
 import { Alert, ImageSourcePropType } from "react-native"
 import { Colors } from "@styles/index"
+import { ToastConfigParams } from "react-native-toast-message"
 
 export const getColorArray = (): string[] => {
   const colorArrays = [
@@ -45,11 +46,9 @@ const actionIconSource = {
   increase: require('@assets/icons/action-increase.png'),
   decrease: require('@assets/icons/action-decrease.png'),
   add: require('@assets/icons/action-add.png'),
+  cancel: require('@assets/icons/action-cancel.png'),
   delete: require('@assets/icons/action-delete.png'),
   edit: require('@assets/icons/action-edit.png'),
-  editSquare: require('@assets/icons/action-edit_square.png'),
-  deleteColor: require('@assets/icons/action-delete_color.png'),
-  deleteSquare: require('@assets/icons/action-delete_square.png'),
   color: require('@assets/icons/action-color.png'),
   show: require('@assets/icons/action-show.png'),
   hide: require('@assets/icons/action-hide.png'),
@@ -59,7 +58,8 @@ const actionIconSource = {
   logPet: require('@assets/icons/pet-log.png'),
   reminder: require('@assets/icons/action-reminder.png'),
   repeat: require('@assets/icons/action-repeat.png'),
-  repeatSquare: require('@assets/icons/action-repeat_square.png'),
+  repeatColor: require('@assets/icons/action-repeat_color.png'),
+  frequency: require('@assets/icons/action-frequency.png'),
   save: require('@assets/icons/action-save.png'),
   undo: require('@assets/icons/action-undo.png'),
   reset: require('@assets/icons/action-reset.png'),
@@ -289,7 +289,7 @@ export const getStatQualIconSource = (name: string, value: number) => {
   return statQualIconSource[name][value]
 }
 
-export type IconType = 'action' | 'care' | 'health' | 'pet' | 'stat'
+export type IconType = 'action' | 'care' | 'health' | 'pet' | 'stat' | 'nav'
 
 const iconMap = {
   action: (name: string) => getActionIconSource(name),
@@ -297,10 +297,12 @@ const iconMap = {
   health: (name: string) => getHealthIconSource(name),
   pet: (name: string) => getPetIconSource(name),
   stat: (name: string) => getStatIconSource(name),
+  nav: (name: string, value: any) => getNavigationIconSource(name, value)
 }
 
-export const getIconByType = (type: IconType, name: string) => {
+export const getIconByType = (type: IconType, name: string, value?: any) => {
   const iconSource = iconMap[type]
   if (!iconSource) console.error(`Icon type ${type} not found.`)
-  return iconSource(name) || null
+  return iconSource(name, value) || null
 }
+

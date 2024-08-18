@@ -5,9 +5,9 @@ import * as React from 'react'
 //context
 import { AuthProvider } from '@auth/AuthContext'
 //components & utils
-import { CustomToast } from '@components/UIComponents'
 import AppNavigator from '@navigation/AppNavigator'
 import { showToast } from '@utils/misc'
+import { CustomToast } from '@navigation/NavigationStyles'
 
 const App: React.FC = () => {
   const queryClient = new QueryClient({

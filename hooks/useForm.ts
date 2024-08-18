@@ -26,6 +26,7 @@ const useForm = (callback: any, initialState: any) => {
       setValues(prev => ({ ...prev, errors: errors }))
     }
   }
+  
   return {
     onChange, onReset, values, onValidate
   }

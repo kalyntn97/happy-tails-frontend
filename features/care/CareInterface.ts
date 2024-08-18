@@ -5,9 +5,9 @@ export interface CareFormData {
   name: string
   pets: string[] | PetBasic[]
   repeat: boolean
+  frequency: Frequency | null
   startDate: string
   endDate: string | null
-  frequency: Frequency | null
   color: number
   careId: string | null
 }
@@ -20,9 +20,8 @@ export interface LogFormData {
   notes: string
   createdAt: string | Date
   task: string | Care
-  _id?: string
+  logId?: string
 }
-
 export interface Log extends LogFormData {
   _id: string
 }

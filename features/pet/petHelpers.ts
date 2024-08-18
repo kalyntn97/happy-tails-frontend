@@ -1,6 +1,6 @@
 //types
 import { ImageSourcePropType } from "react-native"
-import { BirdListResponse, CatBreed, DogBreedListResponse } from "./PetInterface"
+import { BirdListResponse, CatBreed, DogBreedListResponse, Gender, Status } from "./PetInterface"
 import { keyFromName } from "@utils/misc"
 
 export const getDogBreedData = async (): Promise<string[]> => {
@@ -49,9 +49,9 @@ export const SPECIES_OPTIONS = SPECIES.map(name => {
   return { title: name, icon: null, type: 'pet' }
 })
 
-export const GENDER = ['Boy', 'Girl', 'Unknown']
+export const GENDER: Gender[] = ['Boy', 'Girl', 'Unknown']
 
-export const STATUS = [ 'Healthy', 'Passed away' ]
+export const STATUS: Status[] = [ 'Healthy', 'Passed away' ]
 
 export const IDS = ['Microchip', 'License', 'Passport', 'Others']
 

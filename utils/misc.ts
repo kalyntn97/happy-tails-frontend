@@ -1,7 +1,6 @@
-import Toast, { ToastConfigParams } from "react-native-toast-message"
+import Toast from "react-native-toast-message"
 import { AlertForm } from "./ui"
-import { CatToast } from '@components/UIComponents'
-import { styles } from "@styles/stylesheets/FormStyles"
+import { FREQUENCY_TYPES } from "./constants"
 
 export const keyFromName = (data: {[key: string]: string}) => {
   const map = {}
@@ -29,3 +28,15 @@ export const showToast = ({ text1, style, text2, duration }: { text1: string, st
   Toast.show({ type: 'catToast', text1: text1, text2: text2, visibilityTime: duration ?? 3000, props: { style: style, onClose: closeToast }, position: 'bottom', bottomOffset: 50 })
 }
 
+export const sortByFrequency = (array) => {
+  const sorted = [...FREQUENCY_TYPES, 'oneTime'].reduce((result, frequency) => {
+    result[frequency] = []
+    return result
+  }, {})
+  array.forEach(item => {
+    const { frequency } = item
+    const key = frequency.type || 'oneTime'
+    sorted[key].push(item)
+  })
+  return sorted
+}

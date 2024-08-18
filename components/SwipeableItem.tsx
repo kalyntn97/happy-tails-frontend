@@ -1,13 +1,14 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { ReactNode, useRef } from 'react'
+import React, { ReactElement, ReactNode, useRef } from 'react'
 import { Swipeable } from 'react-native-gesture-handler'
 import { IconButton } from './ButtonComponents'
 import { Colors, Spacing } from '@styles/index'
 import { getActionIconSource } from '@utils/ui'
+import { Icon } from './UIComponents'
 
 type Props = {
-  swipeRightActions?: { [action: string]: () => void }
-  swipeLeftActions?: { [action: string]: () => void }
+  swipeRightActions?: { key: string, bgColor: string, onPress: () => void }[]
+  swipeLeftActions?: { key: string, bgColor: string, onPress: () => void }[]
   onPress?: () => void, 
   onLongPress?: () => void
   toggle?: { onToggle: () => void, initial: boolean }
@@ -24,45 +25,39 @@ const MAX_TASK_HEIGHT = 70
 const SwipeableItem = ({ color, title, content, swipeRightActions, swipeLeftActions, onPress, onLongPress, toggle, disabled }: Props) => {
   const swipeableRef = useRef(null)
 
+  const TASK_HEIGHT = title.length < 30 ? MIN_TASK_HEIGHT : MAX_TASK_HEIGHT
+
   const closeSwipeable = () => {
     swipeableRef.current.close()
   }
-
-  const iconButtonStyles = {
-    'edit': { icon: 'edit', bgColor: Colors.yellow.light },
-    'delete': { icon: 'deleteColor', bgColor: Colors.red.light },
-    'details': { icon: 'details', bgColor: Colors.green.light },
-  }
-
   const rightSwipeActions = () => (
-    <View style={[styles.squareBtnContainer, { height: TASK_HEIGHT }]}>
-      { Object.keys(swipeRightActions).map(action => 
-        <IconButton key={action} title={action} icon={iconButtonStyles[action].icon} type='action' size='medium' styles={{ backgroundColor: iconButtonStyles[action].bgColor, height: TASK_HEIGHT }} onPress={() => {
-          swipeRightActions[action]()
+    <View style={[styles.btnContainer, { height: TASK_HEIGHT }]}>
+      { swipeRightActions.map(action => 
+        <IconButton key={action.key} title={action.key} icon={action.key} type='action' size='med' buttonStyles={{ height: TASK_HEIGHT, width: 60, backgroundColor: Colors[action.bgColor].lightest }} textStyles={action.key === 'delete' ? { color: Colors.red.darkest, fontWeight: 'bold' } : {}} onPress={() => {
+          action.onPress()
           closeSwipeable()
         } } />
       )}
     </View>
   )
 
-  const TASK_HEIGHT = title.length < 30 ? MIN_TASK_HEIGHT : MAX_TASK_HEIGHT
 
   return (
     <Swipeable ref={swipeableRef} renderRightActions={rightSwipeActions}>
       <TouchableOpacity
         style={[
-          styles.task, 
+          styles.item, 
           { backgroundColor: color, height: TASK_HEIGHT }
         ]} 
         onPress={onPress}
         onLongPress={onLongPress}
         disabled={disabled}
       >
-        <View style={styles.taskContent}>{content}</View>
+        {content}
 
         { toggle && 
           <TouchableOpacity style={styles.bulletBtn} onPress={toggle.onToggle}>
-          { toggle.initial ? <Image source={getActionIconSource('check')} style={styles.check} />
+          { toggle.initial ? <Icon name='check' size='xSmall' />
             : <Text style={styles.bulletBtnText}>○</Text> 
           }
           </TouchableOpacity> 
@@ -73,30 +68,28 @@ const SwipeableItem = ({ color, title, content, swipeRightActions, swipeLeftActi
 }
 
 const styles = StyleSheet.create({
-  task: {
+  item: {
     ...Spacing.flexRowStretch,
+    ...Spacing.basePadding(15, 0),
     borderRadius: 15,
-    marginVertical: 5,
-    justifyContent: 'space-between'
+    marginVertical: 10,
   },
-  taskContent: {
+    btnContainer: {
     ...Spacing.flexRow,
-    justifyContent: 'space-around',
-    flex: 14,
-    paddingHorizontal: 10,
-  },
-  squareBtnContainer: {
-    ...Spacing.flexRow,
-    marginVertical: 5,
+    marginVertical: 10,
     marginLeft: 10
+  },
+  btn: {
+
   },
   check: {
     width: 30,
     height: 30,
   },
   bulletBtn: {
-    marginRight: 20,
-    flex: 1,
+    ...Spacing.centered,
+    width: 30,
+    marginLeft: 15,
   },
   bulletBtnText: {
     fontSize: 25,

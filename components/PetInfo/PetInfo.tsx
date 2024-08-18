@@ -1,9 +1,10 @@
-import { Image, StyleSheet, Text, View } from "react-native"
+import { DimensionValue, Image, StyleSheet, Text, View } from "react-native"
 import { getPetIconSource } from "@utils/ui"
 import { Spacing, UI, Typography, Colors } from '@styles/index'
 import { countYearsBetween } from "@utils/datetime"
 import { Size, photoSizeMap } from "@styles/ui"
 import { Icon } from "@components/UIComponents"
+import { basePadding } from "@styles/spacing"
 
 interface PetInfoProps {
   pet: {
@@ -22,20 +23,21 @@ const PetInfo = ({ pet, size }: PetInfoProps) => {
   const conStyles = size === 'large' ? {...Spacing.flexRow } : { ...Spacing.flexColumn }
 
   return ( 
-    <View style={conStyles}>
-      <View style={size === 'large' ? styles.containerExpanded : styles.containerCompact}>
+    <View style={[Spacing.flexRow, conStyles]}>
+      <View style={[styles.photoCon, { width: UI.iconSizeMap[size] as DimensionValue }]}>
         { size === 'large' && 
-          <Icon type='pet' name={pet.species} styles={styles.petIcon} size='med' />
+          <Icon type='pet' name={pet.species} styles={styles.petIcon} size='med' m={0} />
         }
         <Image 
           source={pet.photo ? {uri: pet.photo} : pet.species && getPetIconSource(`${pet.species}Profile`)} 
-          style={[styles.petPhoto, UI.photo(size)]} 
+          style={[styles.petPhoto, UI.photo(size, 99, 0)]} 
         />
+        
+        { size === 'med' || size === 'small'  &&
+          <Text style={styles.shortName}>{pet.name.split(' ')[0]}</Text>
+        }
       </View>
 
-      { size === 'med' || size === 'small'  &&
-        <Text style={styles.shortName}>{pet.name.split(' ')[0]}</Text>
-      }
 
       { size === 'large' && 
         <View style={styles.infoContainer}>
@@ -47,22 +49,19 @@ const PetInfo = ({ pet, size }: PetInfoProps) => {
 }
  
 const styles = StyleSheet.create({
+  photoCon: {
+    ...Spacing.flexColumn,
+  },
   shortName: {
     ...Typography.smallHeader,
-    margin: 0,
-  },
-  containerExpanded: {
-    width: '40%',
-    ...Spacing.centered,
-  },
-  containerCompact: {
-    width: '100%',
-    alignItems: 'center'
+    marginHorizontal: 0,
+    marginTop: 10,
   },
   infoContainer: {
     ...Spacing.flexColumn,
-    ...Spacing.centered,
-    width: '60%',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    flex: 1,
   },
   petPhoto: {
     position: 'relative',
@@ -77,15 +76,12 @@ const styles = StyleSheet.create({
   name: {
     ...Typography.subHeader,
     fontSize: 18,
-    padding: 10,
-    margin: 0,
-    textAlign: 'left',
+    ...basePadding(0, 10),
   },
   body: {
     ...Typography.smallSubHeader,
     marginTop: 0,
     color: 'gray',
-    textAlign: 'left',
   }
 })
 

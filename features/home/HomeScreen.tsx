@@ -20,8 +20,6 @@ const HomeScreen = ({ navigation }: HomeTabScreenProps) => {
 
   const scrollViewRef = useRef<ScrollView>(null)
 
-  const { width, height } = useWindowDimensions()
-  
   const scrollToNext = (pageNum: number) => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollTo({ y: pageNum * windowHeight, animated: true })

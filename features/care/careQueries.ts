@@ -41,12 +41,12 @@ export const useAddCare = (navigation: any) => {
     mutationFn: (formData: CareFormData) => careService.create(formData),
     onSuccess: (data: Care) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return { ...oldData, cares: { ...oldData.cares, [data.frequency || 'Others']: [ ...oldData.cares[data.frequency || 'Others'], data] } }
+        return { ...oldData, cares: [...oldData.cares, data] }
       })
-      navigation.navigate('Main')
+      navigation.navigate('Home', { screen: 'Feed' })
       showToast({ text1: `Task added.`, style: 'success' })
     },
-    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
@@ -57,13 +57,12 @@ export const useUpdateCare = (navigation: any) => {
     mutationFn: (formData: CareFormData) => careService.update(formData),
     onSuccess: (data: Care) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return { ...oldData, cares: { ...oldData.cares, [data.frequency 
-        || 'Others']: oldData.cares[data.frequency || 'Others'].map(care => care._id === data._id ? data : care) } }
-      })
-      navigation.navigate('Main')
+        return { ...oldData, cares: oldData.cares.map(care => care._id === data._id ? data : care) }
+      })      
+      navigation.navigate('Home', { screen: 'Feed' })
       showToast({ text1: `Task updated.`, style: 'success' })
     },
-    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
@@ -72,16 +71,15 @@ export const useDeleteCare = (navigation: any) => {
   
   return useMutation({
     mutationFn: (careId: string) => careService.deleteCare(careId),
-    onSuccess: (data: Care) => {
+    onSuccess: (data: string) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return { ...oldData, cares: { ...oldData.cares, [data.frequency 
-        || 'Others']: oldData.cares[data.frequency || 'Others'].filter(care => care._id !== data._id) } }
+        return { ...oldData, cares: oldData.cares.filter(care => care._id !== data) }
       })
-      navigation.navigate('Main')
+      navigation.navigate('Home', { screen: 'Feed' })
       showToast({ text1: `Task deleted.`, style: 'success' })
 
     },
-    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 

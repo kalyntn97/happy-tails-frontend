@@ -1,86 +1,153 @@
 //npm
-import { View, StyleSheet, useWindowDimensions, Text } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 import DraggableFlatList, { RenderItemParams, ShadowDecorator } from 'react-native-draggable-flatlist'
 //components
-import SwipeableCareTask from './SwipeableTasks/SwipeableCareTask'
-import SwipeableHealthTask from './SwipeableTasks/SwipeableHealthTask'
-import { EmptyList } from '@components/UIComponents'
-//store
-import { useHealthInterval } from '@store/store'
+import SwipeableItem from '@components/SwipeableItem'
+import PetList from '@components/PetInfo/PetList'
+//store & hooks
+import { useDeleteCareCard, useDeleteHealthCard } from '@hooks/sharedHooks'
 //types & utils
-import { shouldRenderCareTask, shouldRenderHealthTask } from '@home/helpers'
-import type { HomeTabScreenProps } from '@navigation/types'
+import type { Feed } from '@home/HomeInterface'
 import type { Care } from '@care/CareInterface'
-import type { Health, Visit } from '@health/HealthInterface'
-import { Feed } from '@home/HomeInterface'
-import { Typography } from '@styles/index'
+import type { Health } from '@health/HealthInterface'
 import { centerHeight } from '@utils/constants'
+//styles
+import { Colors, Spacing, Typography } from '@styles/index'
 
 interface DraggableListProps {
-  initialData: any
-  type: Feed
-  navigation: HomeTabScreenProps
-  activeDateObj: Date
-  onPressTask: (item: Care | Health, type: string) => void
+  initialData: { type: Feed, item: any }[]
+  // type: Feed
+  // navigation: HomeTabScreenProps
+  // activeDateObj: Date
+  // onPressTask: (item: Care | Health, type: string) => void
 }
 
-const DraggableList= ({ initialData, type, navigation, activeDateObj, onPressTask }: DraggableListProps) => {
-  const [counts, setCounts] = useState({ care: 0, health: 0 })
-  const healthInterval = useHealthInterval()
+interface ItemProps {
+  onLongPress: () => void
+  disabled: boolean
+}
+
+const HealthItem = ({ item, onLongPress, disabled }: { item: Health } & ItemProps) => {
+  const navigation = useNavigation()
+  const handleDeleteHealth = useDeleteHealthCard(navigation)
+
+  const handlePress = () => {
+
+  }
+
+  const toggleAll = () => {
+
+  }
+
+  const actions = [
+    { key: 'edit', bgColor: 'yellow', onPress: () => navigation.navigate('HealthEdit', { health: item }) },
+    { key: 'details', bgColor: 'green', onPress: () => navigation.navigate('HealthDetails', { health: item }) },
+    { key: 'delete', bgColor: 'red', onPress: () => handleDeleteHealth(item) },
+  ]
+
+  return (
+    <SwipeableItem
+      color={Colors.multi.light[item.pet.color]}
+      title={item.name}
+      content={
+        <View style={styles.itemContent}>
+          <Text style={styles.itemTitle}>{item.name}</Text>
+          <PetList petArray={item.pet} size='xxSmall' />
+        </View>
+      }
+      swipeRightActions={actions}
+      onPress={handlePress}
+      onLongPress={onLongPress}
+      toggle={{ onToggle: toggleAll, initial: false }}
+      disabled={disabled}
+  />
+  )
+}
+
+
+const CareItem = ({ item, onLongPress, disabled }: { item: Care } & ItemProps) => {
+  const navigation = useNavigation()
+
+  const handleDeleteCare = useDeleteCareCard(navigation)
+
+  const handlePress = () => {
+
+  }
+
+  const toggleAll = () => {
+
+  }
+
+  const actions = [
+    { key: 'edit', bgColor: 'yellow', onPress: () => navigation.navigate('CareEdit', { care: item }) },
+    { key: 'details', bgColor: 'green', onPress: () => navigation.navigate('CareDetails', { care: item }) },
+    { key: 'delete', bgColor: 'red', onPress: () => handleDeleteCare(item) },
+  ]
+
+  return (
+    <SwipeableItem
+      color={Colors.multi.light[item.color]}
+      title={item.name}
+      content={
+        <View style={styles.itemContent}>
+          <Text style={styles.itemTitle}>{item.name}</Text>
+          <PetList petArray={item.pets} size='xxSmall' />
+        </View>
+      }
+      swipeRightActions={actions}
+      onPress={handlePress}
+      onLongPress={onLongPress}
+      toggle={{ onToggle: toggleAll, initial: false }}
+      disabled={disabled}
+    />
+  )
+}
+
+const renderItem = ({ item: listItem, drag, isActive }: RenderItemParams<any>) => {
+  const props = { item: listItem.item, onLongPress: drag, disabled: isActive }
+
+  return ( 
+    <ShadowDecorator>
+      {listItem.type === 'care' ? 
+        <CareItem {...props} />
+        : <HealthItem {...props} />
+      }
+    </ShadowDecorator>
+  )
+}
+
+const DraggableList= ({ initialData }: DraggableListProps) => {
   const [data, setData] = useState(initialData)
   
-  const renderItem = ({ item, drag, isActive }: RenderItemParams<any>) => {
-    if (type === 'care' && shouldRenderCareTask(item, activeDateObj)) {
-      return (
-        <ShadowDecorator>
-          <SwipeableCareTask key={item._id} care={item} navigation={navigation} onPress={() => onPressTask(item, 'care')} onLongPress={drag} disabled={isActive} />
-        </ShadowDecorator>
-      )
-    } else if (type === 'health' && shouldRenderHealthTask(item, activeDateObj, healthInterval)) {
-      //*show future tasks based on user's selected interval, show completed tasks for the whole month
-      let filteredVisits: Visit[] = item.lastDone.filter((visit: Visit) => 
-        new Date(visit.date).getMonth() === activeDateObj.getMonth() && new Date(visit.date).getFullYear() === activeDateObj.getFullYear()
-      ).sort((a: Visit, b: Visit) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      const pastVisit: Visit = filteredVisits.length > 1 ? filteredVisits.find(visit => activeDateObj > new Date(visit.date)) : filteredVisits[0]
-      
-      return (
-        <ShadowDecorator>
-          <SwipeableHealthTask key={item._id} health={item} navigation={navigation} onPress={() => onPressTask(item, 'health')} pastVisit={pastVisit} onLongPress={drag} disabled={isActive} />
-        </ShadowDecorator>
-      )
-    } else {
-      return null
-    }
-  }
+  // useEffect(() => {
+  //   setData(initialData)
+  //   const checkCount = () => {
+  //     let careCounter = 0
+  //     let healthCounter = 0
+  //     data.forEach(item => {
+  //       if (type === 'care' && shouldRenderCareTask(item, activeDateObj)) careCounter++
+  //       if (type === 'health' && shouldRenderHealthTask(item, activeDateObj, healthInterval)) healthCounter++
+  //     })
+  //     setCounts({ care: careCounter, health: healthCounter })
+  //   }
+  //   checkCount()
+  // }, [activeDateObj, initialData])
 
   useEffect(() => {
     setData(initialData)
-    const checkCount = () => {
-      let careCounter = 0
-      let healthCounter = 0
-      data.forEach(item => {
-        if (type === 'care' && shouldRenderCareTask(item, activeDateObj)) careCounter++
-        if (type === 'health' && shouldRenderHealthTask(item, activeDateObj, healthInterval)) healthCounter++
-      })
-      setCounts({ care: careCounter, health: healthCounter })
-    }
-    checkCount()
-  }, [activeDateObj, initialData])
+  }, [initialData])
 
   return (
     <View style={styles.list}>
-      { type === 'health' && <Text style={styles.header}>Due in {healthInterval} days:</Text> }
-      { counts[type] === 0 ? <EmptyList type='task' /> : 
-        <DraggableFlatList
-          data={data}
-          onDragEnd={({ data }) => setData(data)}
-          keyExtractor={item => item._id}
-          renderItem={renderItem}
-          containerStyle={{ minHeight: centerHeight }}
-        />
-      }
-      
+      <DraggableFlatList
+        data={data}
+        onDragEnd={({ data }) => setData(data)}
+        keyExtractor={item => item._id}
+        renderItem={renderItem}
+        containerStyle={{ minHeight: centerHeight }}
+      />
     </View>
   )
 }
@@ -89,8 +156,15 @@ const styles = StyleSheet.create({
   list: {
     width: '95%',
   },
-  header: {
-    ...Typography.smallHeader,
+  itemTitle: {
+    ...Typography.focused,
+    margin: 0,
+    marginRight: 15,
+  },
+  itemContent: {
+    flex: 1,
+    ...Spacing.flexRow,
+    justifyContent: 'space-between',
   }
 })
 

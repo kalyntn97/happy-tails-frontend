@@ -14,6 +14,8 @@ import { ProfileData } from "@profile/ProfileInterface"
 import { AlertForm } from "@utils/ui"
 import { countDaysBetween } from "@utils/datetime"
 import { shouldRenderCareTask } from "../features/home/helpers"
+import { Feed } from "@home/HomeInterface"
+import { Health } from "@health/HealthInterface"
 
 export const showDeleteConfirmDialog = (item: any, handleDeleteItem: (itemId: string) => void) => {
   return Alert.alert(
@@ -29,29 +31,19 @@ export const showDeleteConfirmDialog = (item: any, handleDeleteItem: (itemId: st
 export const useDeleteCareCard = (navigation: any) => {
   const deleteCareMutation = useDeleteCare(navigation)
 
-  const handleDeleteCareCard = async (careId: string) => {
-    deleteCareMutation.mutate(careId)
-  }
+  const deleteCareCard = (careId: string) => deleteCareMutation.mutate(careId)
+  const handleDeleteCare = (care: Care) => showDeleteConfirmDialog(care, deleteCareCard)
 
-  return { handleDeleteCareCard, showDeleteConfirmDialog }
+  return handleDeleteCare
 }
 
 export const useDeleteHealthCard = (navigation: any) => {
-  const deleteHealthMutation = useDeleteHealth()
+  const deleteHealthMutation = useDeleteHealth(navigation)
 
-  const handleDeleteHealthCard = async (healthId: string) => {
-    deleteHealthMutation.mutate(healthId, {
-      onSuccess: () => {
-        navigation.navigate('Main')
-        return AlertForm({ body: `Deleted successfully`, button: 'OK' })
-      },
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      },
-    })
-  }
+  const deleteHealthCard = (healthId: string) => deleteHealthMutation.mutate(healthId)
+  const handleDeleteHealth = (health: Health) => showDeleteConfirmDialog(health, deleteHealthCard)
 
-  return { handleDeleteHealthCard, showDeleteConfirmDialog }
+  return handleDeleteHealth
 }
 
 export const useShallowPets = () => {

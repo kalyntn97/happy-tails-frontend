@@ -2,9 +2,7 @@ import { Care, Tracker } from "@care/CareInterface"
 import { Health, Visit } from "@health/HealthInterface"
 import { ProfileData } from "@profile/ProfileInterface"
 import { compareDates, getDateConstructor, getStartDate } from "@utils/datetime"
-import { Dimensions } from "react-native"
 import { produce } from "immer"
-import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
 
 export const shouldRenderCareTask = (item: Care, selectedDate: Date) => {
   const { date: date, endDate, repeat } = item
