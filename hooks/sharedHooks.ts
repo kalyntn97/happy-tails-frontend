@@ -51,7 +51,7 @@ export const useShallowPets = () => {
 
   const pets = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile)?.pets
 
-  const PET_BASICS = pets?.map(pet => ({ _id: pet._id, name: pet.name, photo: pet.photo, species: pet.species, color: pet.color }))
+  const PET_BASICS = pets?.map(pet => ({ _id: pet._id, name: pet.name, photo: pet.photo, species: pet.species, color: pet.color, gender: pet.gender }))
   const PET_NAMES = PET_BASICS.map(pet => pet.name)
   const PET_IDS = PET_BASICS.map(pet => pet._id)
 

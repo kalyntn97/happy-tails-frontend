@@ -17,7 +17,7 @@ interface PetListProps {
   width?: DimensionValue
 }
 
-const BaseList = ({ petArray, size }: PetListProps) => {
+const renderPetList = (petArray: Pet[] | PetBasic[], size: Size) => {
   const iconStyles = useMemo(() => (index: number) => {
     const baseStyle = { zIndex: index }
     const marginStyle = size === 'xSmall' || size === 'xxSmall' || size === 'tiny'
@@ -28,26 +28,23 @@ const BaseList = ({ petArray, size }: PetListProps) => {
   }, [size])
 
   return (
-    <View style={Spacing.flexRow}>
-      {petArray.map((pet: Pet | PetBasic, index: number) => 
-        <View key={pet._id} style={iconStyles(index)}>
-          <PetInfo pet={pet} size={size} key={pet.name} />
-        </View>
-      )}
+    petArray.map((pet: Pet | PetBasic, index: number) => 
+    <View key={pet._id} style={iconStyles(index)}>
+      <PetInfo pet={pet} size={size} key={pet.name} />
     </View>
   )
-}
+)}
 
-const PetList = memo(({ petArray, size, containerStyles, type = 'wrap' }: PetListProps) => {
-  const listStyles = useMemo(() => [type === 'wrap' ? { flexWrap: 'wrap' } : {}, containerStyles], [size])
+const PetList = memo(({ petArray, size, containerStyles, type = 'wrap', width = 'fit-content' as DimensionValue }: PetListProps) => {
+  const listStyles = useMemo(() => [Spacing.flexRow, type === 'wrap' ? { flexWrap: 'wrap' } : {}, { width: width }, containerStyles], [type, size, width])
 
   return (  
     <View style={listStyles as ViewStyle}>
       { type === 'scroll' ?
-        <ScrollView horizontal>
-          <BaseList petArray={petArray} size={size} />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
+          { renderPetList(petArray, size) }
         </ScrollView>
-      : <BaseList petArray={petArray} size={size} /> }
+      : renderPetList(petArray, size) }
     </View>
   )
 })

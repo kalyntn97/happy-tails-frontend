@@ -48,6 +48,7 @@ const actionIconSource = {
   add: require('@assets/icons/action-add.png'),
   cancel: require('@assets/icons/action-cancel.png'),
   delete: require('@assets/icons/action-delete.png'),
+  deleteColor: require('@assets/icons/action-delete_color.png'),
   edit: require('@assets/icons/action-edit.png'),
   color: require('@assets/icons/action-color.png'),
   show: require('@assets/icons/action-show.png'),

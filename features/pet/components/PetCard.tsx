@@ -68,7 +68,7 @@ const PetCard = ({ pet, index, scrollX, navigation }: PetCardProps) => {
           source={pet.photo ? {uri: pet.photo} : getPetIconSource(['Dog', 'Cat'].includes(pet.species) ? `${pet.species}Profile` : 'AnimalProfile')} 
         />
 
-        <StatButtonList petId={pet._id} petColor={pet.color} navigation={navigation} size="small" />
+        {/* <StatButtonList petId={pet._id} petColor={pet.color} navigation={navigation} size="small" /> */}
 
         <View style={styles.btnCon}>
           <MainButton title='Log' icon="logPet" onPress={() => navigation.navigate('CreateLog', { pet })} bgColor={Colors.multi.semiTransparent[pet.color]} buttonStyles={styles.button} />

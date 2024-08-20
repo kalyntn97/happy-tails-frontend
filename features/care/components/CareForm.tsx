@@ -8,7 +8,7 @@ import TitleInput from "@components/TitleInput"
 import { DateInput, ScrollScreen, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 //types && hooks
-import type { CareFormData } from "@care/CareInterface"
+import type { Care, CareFormData } from "@care/CareInterface"
 import { useShallowPets } from "@hooks/sharedHooks"
 import useForm from "@hooks/useForm"
 //styles
@@ -21,7 +21,7 @@ interface InitialState extends CareFormData {
 
 interface CareFormProps {
   onSubmit: (formData: CareFormData) => void
-  initialValues?: CareFormData
+  initialValues?: Care
   status: string
   navigation: any
 }

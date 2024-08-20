@@ -153,3 +153,7 @@ export function getOrdinalSuffix(n: number) {
     default: return `${n}th`
   }
 }
+
+export function getLocaleDateString(string: string) {
+  return getDateConstructor(string, true).toLocaleDateString()
+}

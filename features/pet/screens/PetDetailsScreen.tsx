@@ -52,7 +52,6 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
   const { petId } = route.params
   const petCache: Pet | undefined = queryClient.getQueryData(petKeyFactory.petById(petId))
   const {data: pet, isSuccess, isFetching, isError} = useGetPetById(petId, !petCache)
-
   const infoSetting = useGetPetSettings(petId, 'info')
   const logsSetting = useGetPetSettings(petId, 'logs')
   const { setPetSettings } = useSetActions()
@@ -68,7 +67,6 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
   
   //filter list
   const items = option === 'logs' ? Object.keys(STATS) : Object.keys(PET_DETAILS)
-  const filteredItems = option === 'logs' ? logs : info
   
   const resetItems = (type: SectionType) =>{
     switch (type) {
@@ -112,7 +110,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
 
   const renderFilteredList = (type: 'info' | 'logs') => (
     filteredList[type].titles.length > 0 ? filteredList[type].titles.map((label, index) => 
-    <TitleLabel key={label} title={filteredList[type].getName(label)} iconType={filteredList[type].iconType as IconType} iconName={label} onPress={() => filteredList[type].onNavigate(label)} size='small' containerStyles={index < filteredList[type].titles.length - 1 && UI.tableRow()} />
+    <TitleLabel key={label} title={filteredList[type].getName(label)} iconType={filteredList[type].iconType as IconType} iconName={label} onPress={() => filteredList[type].onNavigate(label)} size='small' containerStyles={{ ...(index < filteredList[type].titles.length - 1 && UI.tableRow()), ...UI.rowContent(undefined, 0)}} />
     ) 
     : <>
       <TransparentButton title='Reset options' onPress={() => resetItems(type)} color={UI.lightPalette().accent} />
@@ -146,7 +144,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
       { isSuccess && <>
         <View style={styles.infoCard}>
           <PetInfo pet={pet} size='large' />
-          <StatButtonList petId={pet._id} petColor={pet.color} size='small' navigation={navigation} />
+          {/* <StatButtonList petId={pet._id} petColor={pet.color} size='small' navigation={navigation} /> */}
         </View>
 
         { sections.map(section =>
@@ -157,7 +155,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
                 setOption(section.key as SectionType)
               }} /> 
             } containerStyles={{ marginTop: 15, marginBottom: 0 }}/>
-            <View style={[UI.card(true, false, undefined, 0), Spacing.flexColumnStretch]}>
+            <View style={styles.sectionCon}>
               { section.renderList }
             </View>
           </View>
@@ -178,15 +176,6 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
 }
  
 const styles = StyleSheet.create({
-  conHeader: {
-    ...Spacing.flexRow, 
-    marginLeft: 'auto', 
-    paddingTop: 20, 
-    paddingBottom: 15,
-    marginRight: 10,
-    width: '40%', 
-    justifyContent: 'space-between', 
-  },
   infoCard: {
     ...Spacing.flexColumn,
     ...UI.card(true),
@@ -194,13 +183,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: Colors.white,
   },
+  sectionCon: {
+    ...UI.card(true, false, undefined, 0), 
+    ...Spacing.flexColumnStretch,
+  },
   itemCon: {
     ...Spacing.flexColumn,
     margin: 20,
-  },
-  modalCon: {
-    height: '80%',
-    ...UI.bottomModal,
   },
   modalBody: {
     ...Spacing.flexRow,

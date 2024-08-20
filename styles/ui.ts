@@ -49,7 +49,7 @@ export const iconSizeMap: Partial<Record<Size, ImageStyle>> = {
   xLarge: { width: 70, height: 70 },
 }
 
-export const icon = (size: string = 'small', m: number): ImageStyle => ({
+export const icon = (size: string = 'small', m?: number): ImageStyle => ({
   ...iconSizeMap[size],
   margin: m ? m : (size === 'large' || size === 'xLarge' ? 5 : 2)
 })
@@ -66,17 +66,18 @@ export const form = (h: number = 10, b: number = 60, t: number = 0): ViewStyle =
   ...basePadding(h, 0, b, t),
 })
 
-export const rowContent = (withColumn: boolean = false, justify: any = 'space-between', h?: number, v?: number, m?: number): ViewStyle => ({
+export const rowContent = (justify: any = 'space-between', h?: number, v?: number, m?: number): ViewStyle => ({
   ...flexRowStretch,
   ...basePadding(h, v),
-  justifyContent: withColumn ? 'center' : justify,
+  justifyContent: justify,
   margin: m,
 })
 
-export const tableRow = (withSeparator: boolean = true, position: 'top' | 'bottom' = 'bottom'): ViewStyle => ({
-  width: '100%',
-  ...(withSeparator ? (position === 'bottom' ? { borderBottomWidth: 1 } : { borderTopWidth: 1 }) : {}),
+export const tableRow = (withSeparator: boolean = true, withPadding: boolean = false, h?: number, v?: number): ViewStyle => ({
+  ...(withPadding ? basePadding(h, v) : {}),
+  ...(withSeparator ? { borderBottomWidth: 1 } : {}),
   borderColor: lightPalette().border,
+  width: '100%',
 })
 
 export const overlay: ViewStyle = {
@@ -105,7 +106,7 @@ export const card = (withPadding = true, withShadow = false, rounded: number = 8
   ...(withPadding ? basePadding(h, v) : {}),
   margin: m,
   borderRadius: rounded,
-  backgroundColor: lightPalette().background,
+  backgroundColor: Colors.white,
 })
 
 export const roundedIconCon: ViewStyle = {

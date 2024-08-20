@@ -2,7 +2,7 @@ import { Care } from "@care/CareInterface"
 import { Health } from "@health/HealthInterface"
 import { Frequency } from "@utils/types"
 
-export type ClickedTask = {
+export type ClickedItem = { 
   item: Care | Health
   type: string
 }

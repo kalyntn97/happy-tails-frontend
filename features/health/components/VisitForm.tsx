@@ -15,7 +15,7 @@ import { Colors, Spacing } from '@styles/index'
 
 type Props = {
   initialValues?: any
-  pet: Pet
+  pet: PetBasic
   onSetVisit: (formData: Visit) => void
   isDue?: boolean
 }

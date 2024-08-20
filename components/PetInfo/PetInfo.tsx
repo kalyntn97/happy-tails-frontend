@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   shortName: {
     ...Typography.smallHeader,
-    marginHorizontal: 0,
+    margin: 0,
     marginTop: 10,
   },
   infoContainer: {

@@ -76,7 +76,7 @@ export const TitleLabel = memo(({ title, iconType = 'action', iconName, onPress,
   }), [size])
   
   return (
-    <Pressable onPress={onPress} style={[UI.rowContent(true, 'space-between', 0), containerStyles]}>
+    <Pressable onPress={onPress} style={[UI.rowContent('space-between', 0), containerStyles]}>
       { iconName && <Icon type={iconType} name={iconName} size={dynamicSize.icon} styles={{ marginVertical: 0, marginRight: 10 }}/> }
       { title && 
         <Text style={[

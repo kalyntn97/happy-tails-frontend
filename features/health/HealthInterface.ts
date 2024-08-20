@@ -10,7 +10,8 @@ type Appointment = {
 
 export interface HealthFormData {
   name: string
-  pet: string | PetBasic
+  details: { [key: string]: string }
+  pet: PetBasic
   repeat: boolean
   frequency: Frequency | null
   type: HealthType

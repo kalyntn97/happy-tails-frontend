@@ -51,11 +51,11 @@ const frequencyKeys = Object.keys(frequencyMap)
 
 const getMonthDayLabel = (month: string, day: number) => `${month} ${getOrdinalSuffix(day)}`
 
-export function getIntervalLabel(interval: number, type: Frequency['type']) { 
+function getIntervalLabel(interval: number, type: Frequency['type']) { 
   return `every ${ interval > 1 ? `${interval} ` : '' }${ interval === 1 ? type.slice(0, -1) : type}`
 }
 
-export function getTimesPerIntervalLabel(timesPerInterval: Frequency['timesPerInterval'], type: Frequency['type']) {
+function getTimesPerIntervalLabel(timesPerInterval: Frequency['timesPerInterval'], type: Frequency['type']) {
   switch (type) {
     case 'days': {
       const times = timesPerInterval[0]
@@ -66,6 +66,15 @@ export function getTimesPerIntervalLabel(timesPerInterval: Frequency['timesPerIn
     case 'years': return `every ${timesPerInterval.map((obj) => getMonthDayLabel(obj.month, obj.day)).join(', ')}`
     default: return null
   }
+}
+
+export function getRepeatLabels(frequency: FrequencyPicker) {
+  const { type, interval, timesPerInterval, ending, endDate } = frequency
+  const timesPerIntervalLabel = getTimesPerIntervalLabel(timesPerInterval, type)
+  const intervalLabel = getIntervalLabel(interval, type)
+  const endingLabel = ending && endDate ? `until ${new Date(endDate).toLocaleDateString()}` : ''
+  const repeatLabel = `Repeats ${timesPerIntervalLabel} ${intervalLabel} ${endingLabel}` 
+  return { timesPerIntervalLabel, intervalLabel, endingLabel, repeatLabel }
 }
 
 const showWarningToast = () => showToast({ text1: 'At least 1 selection is required.', style: 'info' })
@@ -195,12 +204,12 @@ const EndDateSelector = ({ endDate, ending, onSelect, color }: { endDate: string
 
 const FrequencyPicker = ({ frequency, onSelectFrequency, onSelectEndDate, onReset, color = 0, labelStyles}: Props) => {
   const { type, interval, timesPerInterval, ending, endDate } = frequency
-
-  const timesPerIntervalLabel = getTimesPerIntervalLabel(timesPerInterval, type)
-  const intervalLabel = getIntervalLabel(interval, type)
-  const endingLabel = ending && endDate ? `until ${new Date(endDate).toLocaleDateString()}` : ''
-  const frequencyLabel = `Repeats ${timesPerIntervalLabel} ${intervalLabel} ${endingLabel}`
-
+  const { intervalLabel, repeatLabel } = getRepeatLabels(frequency)
+  // const timesPerIntervalLabel = getTimesPerIntervalLabel(timesPerInterval, type)
+  // const intervalLabel = getIntervalLabel(interval, type)
+  // const endingLabel = ending && endDate ? `until ${new Date(endDate).toLocaleDateString()}` : ''
+  // const frequencyLabel = `Repeats ${timesPerIntervalLabel} ${intervalLabel} ${endingLabel}`
+ 
   const onChangeType = (type: Frequency['type']) => {
     let defaultTimesPerInterval = type === 'years' ? [{ month: 'Jan', day: 1 }] : [1]
     onSelectFrequency('frequency', { type: type, interval: 1, timesPerInterval: defaultTimesPerInterval })
@@ -208,10 +217,10 @@ const FrequencyPicker = ({ frequency, onSelectFrequency, onSelectEndDate, onRese
 
   return (
     <ModalInput maxHeight='90%' onReset={onReset}
-      label={<Text style={labelStyles}>{frequencyLabel}</Text>}
+      label={<Text style={labelStyles}>{repeatLabel}</Text>}
     > 
       <View style={Spacing.fullCon()}>
-        <Text style={Typography.subHeader}>{frequencyLabel}</Text>
+        <Text style={Typography.subHeader}>{repeatLabel}</Text>
         <ScrollContainer>
           <TypeSelector type={type} onSelect={onChangeType} color={color} />
 
@@ -236,8 +245,7 @@ const FrequencyPicker = ({ frequency, onSelectFrequency, onSelectEndDate, onRese
 
 const styles = StyleSheet.create({
   rowCon: {
-    ...UI.tableRow(true),
-    ...Spacing.basePadding(0, 15),
+    ...UI.tableRow(true, 0 , 15),
     alignItems: 'center',
   },
   btn: {

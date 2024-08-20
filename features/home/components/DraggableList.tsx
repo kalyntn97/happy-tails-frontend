@@ -1,64 +1,90 @@
 //npm
+import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
 import DraggableFlatList, { RenderItemParams, ShadowDecorator } from 'react-native-draggable-flatlist'
 //components
-import SwipeableItem from '@components/SwipeableItem'
 import PetList from '@components/PetInfo/PetList'
+import SwipeableItem from '@components/SwipeableItem'
 //store & hooks
 import { useDeleteCareCard, useDeleteHealthCard } from '@hooks/sharedHooks'
 //types & utils
-import type { Feed } from '@home/HomeInterface'
 import type { Care } from '@care/CareInterface'
 import type { Health } from '@health/HealthInterface'
+import type { ClickedItem, Feed } from '@home/HomeInterface'
 import { centerHeight } from '@utils/constants'
 //styles
+import { BottomModal } from '@components/UIComponents'
 import { Colors, Spacing, Typography } from '@styles/index'
+import { PetBasic } from '@pet/PetInterface'
+import CareCard from '@care/components/CareCard'
+import HealthCard from '@health/components/HealthCard'
+import { ActionButton } from '@components/ButtonComponents'
 
+type ListItem = { type: Feed, item: any }
 interface DraggableListProps {
-  initialData: { type: Feed, item: any }[]
-  // type: Feed
-  // navigation: HomeTabScreenProps
-  // activeDateObj: Date
-  // onPressTask: (item: Care | Health, type: string) => void
+  initialData: ListItem[]
 }
 
 interface ItemProps {
+  onPress: () => void
   onLongPress: () => void
   disabled: boolean
 }
 
-const HealthItem = ({ item, onLongPress, disabled }: { item: Health } & ItemProps) => {
+const ItemContent = ({ name, petArray }: { name: string, petArray: PetBasic[] }) => (
+  <View style={styles.itemContent}>
+    <Text style={styles.itemTitle}>{name}</Text>
+    <PetList petArray={petArray} size='xxSmall' />
+  </View>
+)
+
+const getCareActions = (item: Care) => {
+  const navigation = useNavigation()
+  const handleDeleteCare = useDeleteCareCard(navigation)
+
+  return ([
+    { icon: 'edit', bgColor: 'yellow', onPress: () => navigation.navigate('CareEdit', { care: item }) },
+    { icon: 'details', bgColor: 'green', onPress: () => navigation.navigate('CareDetails', { care: item }) },
+    { icon: 'deleteColor', title: 'delete', bgColor: 'red', onPress: () => handleDeleteCare(item) },
+  ])
+}
+
+const getHealthActions = (item: Health) => {
   const navigation = useNavigation()
   const handleDeleteHealth = useDeleteHealthCard(navigation)
 
-  const handlePress = () => {
+  return ([
+    { icon: 'edit', bgColor: 'yellow', onPress: () => navigation.navigate('HealthEdit', { health: item }) },
+    { icon: 'details', bgColor: 'green', onPress: () => navigation.navigate('HealthDetails', { health: item }) },
+    { icon: 'deleteColor', title: 'delete', bgColor: 'red', onPress: () => handleDeleteHealth(item) },
+  ])
+}
 
-  }
+const ItemActions = ({ listItem }: { listItem: ListItem }) => {
+  const actions = listItem.type === 'care' ? getCareActions(listItem.item) : getHealthActions(listItem.item)
 
+  return (
+    <View style={styles.actionCon}>
+      { actions.map(action => 
+        <ActionButton key={action.icon} icon={action.icon} size='xSmall' onPress={action.onPress} />
+      )}
+    </View>
+  )
+}
+
+const HealthItem = ({ item, onPress, onLongPress, disabled }: { item: Health } & ItemProps) => {
   const toggleAll = () => {
 
   }
-
-  const actions = [
-    { key: 'edit', bgColor: 'yellow', onPress: () => navigation.navigate('HealthEdit', { health: item }) },
-    { key: 'details', bgColor: 'green', onPress: () => navigation.navigate('HealthDetails', { health: item }) },
-    { key: 'delete', bgColor: 'red', onPress: () => handleDeleteHealth(item) },
-  ]
 
   return (
     <SwipeableItem
       color={Colors.multi.light[item.pet.color]}
       title={item.name}
-      content={
-        <View style={styles.itemContent}>
-          <Text style={styles.itemTitle}>{item.name}</Text>
-          <PetList petArray={item.pet} size='xxSmall' />
-        </View>
-      }
-      swipeRightActions={actions}
-      onPress={handlePress}
+      content={<ItemContent name={item.name} petArray={item.pet} />}
+      swipeRightActions={getHealthActions(item)}
+      onPress={onPress}
       onLongPress={onLongPress}
       toggle={{ onToggle: toggleAll, initial: false }}
       disabled={disabled}
@@ -66,38 +92,18 @@ const HealthItem = ({ item, onLongPress, disabled }: { item: Health } & ItemProp
   )
 }
 
-
-const CareItem = ({ item, onLongPress, disabled }: { item: Care } & ItemProps) => {
-  const navigation = useNavigation()
-
-  const handleDeleteCare = useDeleteCareCard(navigation)
-
-  const handlePress = () => {
-
-  }
-
+const CareItem = ({ item, onPress, onLongPress, disabled }: { item: Care } & ItemProps) => {
   const toggleAll = () => {
 
   }
-
-  const actions = [
-    { key: 'edit', bgColor: 'yellow', onPress: () => navigation.navigate('CareEdit', { care: item }) },
-    { key: 'details', bgColor: 'green', onPress: () => navigation.navigate('CareDetails', { care: item }) },
-    { key: 'delete', bgColor: 'red', onPress: () => handleDeleteCare(item) },
-  ]
 
   return (
     <SwipeableItem
       color={Colors.multi.light[item.color]}
       title={item.name}
-      content={
-        <View style={styles.itemContent}>
-          <Text style={styles.itemTitle}>{item.name}</Text>
-          <PetList petArray={item.pets} size='xxSmall' />
-        </View>
-      }
-      swipeRightActions={actions}
-      onPress={handlePress}
+      content={<ItemContent name={item.name} petArray={item.pets} />}
+      swipeRightActions={getCareActions(item)}
+      onPress={onPress}
       onLongPress={onLongPress}
       toggle={{ onToggle: toggleAll, initial: false }}
       disabled={disabled}
@@ -106,15 +112,31 @@ const CareItem = ({ item, onLongPress, disabled }: { item: Care } & ItemProps) =
 }
 
 const renderItem = ({ item: listItem, drag, isActive }: RenderItemParams<any>) => {
-  const props = { item: listItem.item, onLongPress: drag, disabled: isActive }
+  const [clickedItem, setClickedItem] = useState<ClickedItem>(null)
+
+  const handlePress = () => setClickedItem(listItem)
+
+  const props = { item: listItem.item, onPress: handlePress, onLongPress: drag, disabled: isActive }
+  const bgColor = listItem.type === 'care' ? listItem.item.color : listItem.item.pet.color
 
   return ( 
-    <ShadowDecorator>
-      {listItem.type === 'care' ? 
-        <CareItem {...props} />
-        : <HealthItem {...props} />
-      }
-    </ShadowDecorator>
+    <>
+      <ShadowDecorator>
+        {listItem.type === 'care' ? 
+          <CareItem {...props} />
+          : <HealthItem {...props} />
+        }
+      </ShadowDecorator>
+
+      <BottomModal modalVisible={!!clickedItem} onDismiss={() => setClickedItem(null)} background={Colors.multi.lightest[bgColor]}>
+        <ItemActions listItem={listItem} />
+
+        { listItem.type === 'care' ? 
+          <CareCard care={listItem.item} />
+          : <HealthCard health={listItem.health} />
+        }
+      </BottomModal>
+    </>
   )
 }
 
@@ -165,7 +187,15 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Spacing.flexRow,
     justifyContent: 'space-between',
-  }
+  },
+  actionCon: {
+    ...Spacing.flexRow,
+    width: '40%',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    right: 15,
+    top: 15,
+  },
 })
 
 export default DraggableList

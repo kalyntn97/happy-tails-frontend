@@ -7,8 +7,8 @@ import { getActionIconSource } from '@utils/ui'
 import { Icon } from './UIComponents'
 
 type Props = {
-  swipeRightActions?: { key: string, bgColor: string, onPress: () => void }[]
-  swipeLeftActions?: { key: string, bgColor: string, onPress: () => void }[]
+  swipeRightActions?: { icon: string, title?: string, bgColor: string, onPress: () => void }[]
+  swipeLeftActions?: { icon: string, title?: string, bgColor: string, onPress: () => void }[]
   onPress?: () => void, 
   onLongPress?: () => void
   toggle?: { onToggle: () => void, initial: boolean }
@@ -33,7 +33,7 @@ const SwipeableItem = ({ color, title, content, swipeRightActions, swipeLeftActi
   const rightSwipeActions = () => (
     <View style={[styles.btnContainer, { height: TASK_HEIGHT }]}>
       { swipeRightActions.map(action => 
-        <IconButton key={action.key} title={action.key} icon={action.key} type='action' size='med' buttonStyles={{ height: TASK_HEIGHT, width: 60, backgroundColor: Colors[action.bgColor].lightest }} textStyles={action.key === 'delete' ? { color: Colors.red.darkest, fontWeight: 'bold' } : {}} onPress={() => {
+        <IconButton key={action.icon} title={action.title ?? action.icon} icon={action.icon} type='action' size='med' buttonStyles={{ height: TASK_HEIGHT, width: 60, backgroundColor: Colors[action.bgColor].light, borderWidth: 0 }} textStyles={action.title === 'delete' ? { color: Colors.red.darkest, fontWeight: 'bold' } : {}} onPress={() => {
           action.onPress()
           closeSwipeable()
         } } />

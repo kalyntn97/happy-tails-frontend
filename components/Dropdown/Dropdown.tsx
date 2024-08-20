@@ -1,6 +1,6 @@
 //npm modules
 import { memo, useEffect, useMemo, useRef, useState } from "react"
-import { DimensionValue, FlatList, Keyboard, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { DimensionValue, FlatList, Keyboard, Modal, Pressable, ScrollView, ScrollViewProps, StyleSheet, Text, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import Fuse from "fuse.js"
 //helpers 
 import * as careHelpers from '@care/careHelpers'
@@ -47,6 +47,8 @@ const typeToSource = {
   'illnessStatus': () => petHelpers.DISEASE_STATUS,
   'serviceTypes': () => petHelpers.SERVICE_TYPES,
 }
+
+const scrollProps = { keyboardShouldPersistTaps: "handled", showsVerticalScrollIndicator: false } as ScrollViewProps
 
 const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelect, width = '80%', initial, buttonStyles, contentStyles, buttonTextStyles, searchLabel, contentPosition = 'bottom', error }: DropdownProps) => {
   const [data, setData] = useState<string[]>([])
@@ -150,7 +152,7 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
       { withSearch ?
         visible && 
           <View style={modalStyles}>
-            <ScrollView style={Spacing.fullWH}>
+            <ScrollView style={Spacing.fullWH} {...scrollProps}>
               { searchResults.length > 1 ? searchResults.map(result =>
                 <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
                   <Text style={{ color: lightPalette().text }}>
@@ -165,17 +167,18 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
         <Modal visible={visible} transparent animationType="none">
           <Pressable style={UI.overlay} onPress={() => setVisible(false)}>
             <View style={modalStyles}>
-                <FlatList 
-                  data={data} 
-                  keyExtractor={(_, idx) => idx.toString()}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity style={[styles.itemCon, item === selected && styles.itemConSelected]} onPress={() => onItemPress(item)}>
-                      <Text style={item === selected ? Typography.focused : { color: lightPalette().text }}>
-                        { item }
-                      </Text>
-                    </TouchableOpacity>
-                  )} 
-                /> 
+              <FlatList 
+                data={data} 
+                keyExtractor={(_, idx) => idx.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity style={[styles.itemCon, item === selected && styles.itemConSelected]} onPress={() => onItemPress(item)}>
+                    <Text style={item === selected ? Typography.focused : { color: lightPalette().text }}>
+                      { item }
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                {...scrollProps}
+              /> 
             </View>
           </Pressable>
         </Modal> 
@@ -196,8 +199,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   itemCon: {
-    ...UI.rowContent(false, 'flex-start', 0, 10),
-    ...UI.tableRow(true)
+    ...UI.rowContent('flex-start', 0, 10),
+    ...UI.tableRow()
   },
   itemConSelected: {
     borderTopWidth: 1,

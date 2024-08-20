@@ -1,25 +1,22 @@
 //npm
 import { useCallback, useState } from "react"
-import { ImageStyle, Modal, Pressable, StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native"
+import { ImageStyle, Pressable, StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import { Health } from "@health/HealthInterface"
 //store & queries
 import { useGetProfile } from "@profile/profileQueries"
-import Animated, { ZoomIn, ZoomOut } from "react-native-reanimated"
 //components
-import CareCard from "@care/components/CareCard"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
 import { ErrorImage, Icon, ScrollHeader } from "@components/UIComponents"
-import HealthCard from "@health/components/HealthCard"
 import DraggableList from './DraggableList'
 //types & utils
-import { ClickedTask, Feed, Filter } from "@home/HomeInterface"
+import { Feed, Filter } from "@home/HomeInterface"
+import { showToast } from "@utils/misc"
 //styles
 import { TransparentButton } from "@components/ButtonComponents"
 import { Colors, Spacing, Typography, UI } from '@styles/index'
-import { showToast } from "@utils/misc"
 
 interface HomeFeedProps {
   navigation: any
@@ -109,21 +106,9 @@ const FilterList = ({ data, filter }: { data: { care: Care[], health: Health[] }
 const HomeFeed = ({ navigation }: HomeFeedProps) => {
   const [feeds, setFeeds] = useState<Feed[]>(defaultFeeds)
   const [filter, setFilter] = useState<Filter>('all')
-  const [modalVisible, setModalVisible] = useState(false)
-  const [clickedTask, setClickedTask] = useState<ClickedTask>(null)
+
   //queries
   const { data, isFetching, isSuccess, isError } = useGetProfile()
-
-  const handleClickTask = (item: Care | Health, type: string) => {
-    setClickedTask({ item, type })
-    setModalVisible(true)
-  }
-  
-  const listProps = { 
-    navigation: navigation,
-    onPressTask: handleClickTask,
-    type: feeds
-  }
 
   return (  
     <View style={Spacing.fullScreenDown}>
@@ -137,37 +122,9 @@ const HomeFeed = ({ navigation }: HomeFeedProps) => {
           <>
             <FrequencyFilter filter={filter} onSelect={(selected: Filter) => setFilter(selected)} />
             <FilterList data={{ care: data.cares, health: data.healths }} filter={filter} />
-
-            {/* { feeds === 'care' ? 
-              <>
-                { filter === 'day' && <DraggableList initialData={[...sortByFrequency(data.cares)['days'], ...sortByFrequency(data.cares)['oneTime']]} { ...listProps } /> }
-                { filter === 'week' && <DraggableList initialData={data.cares['Weekly']} { ...listProps } /> }
-                { filter === 'month' && <DraggableList initialData={data.cares['Monthly']} { ...listProps } /> }
-                { filter === 'year' && <DraggableList initialData={data.cares['Yearly']} { ...listProps } /> }
-              </> : <DraggableList initialData={data.healths} { ...listProps } /> 
-            } */}
           </> : <PlaceHolder type={feeds.includes('care') ? 'task' : 'vet'} navigation={navigation} />
         }
       </> }
-
-      <Modal
-        animationType="fade"
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}
-        onDismiss={() => setClickedTask(null)}
-        transparent={true}
-      >
-        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...UI.modalOverlay }}> 
-          <Animated.View entering={ZoomIn} exiting={ZoomOut} style={styles.detailContainer}>
-            {clickedTask && <>
-              { clickedTask.type === 'care' ? <CareCard care={clickedTask.item as Care} navigation={navigation} onNavigate={() => setModalVisible(false)} />
-              : clickedTask.type === 'health' ? <HealthCard health={clickedTask.item as Health} navigation={navigation} onNavigate={() => setModalVisible(false)} activeDateObj = {activeDateObj} />
-              : null }
-            </> }
-          </Animated.View>
-        </Pressable>
-      </Modal> 
-      
     </View>
   )
 }
@@ -192,7 +149,6 @@ const styles = StyleSheet.create({
     borderRadius: 99,
     marginBottom: 10,
   },
-  
 })
 
 export default HomeFeed

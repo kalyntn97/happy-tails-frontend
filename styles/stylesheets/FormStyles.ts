@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   rowCon: {
-    ...UI.tableRow(true),
-    ...UI.rowContent(),
+    ...UI.tableRow(),
+    ...UI.rowContent('space-between', 0, 15, 0),
   },
 })

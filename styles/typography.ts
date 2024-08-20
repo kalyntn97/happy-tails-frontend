@@ -9,7 +9,7 @@ const base = {
 export const textSizeMap = {
   xLarge: { fontSize: 30, lineHeight: 30 },
   large: { fontSize: 25, lineHeight: 35 },
-  med: { fontSize: 20, lineHeight: 30 },
+  med: { fontSize: 20, lineHeight: 25 },
   small: { fontSize: 15, lineHeight: 20 },
   xSmall: { fontSize: 12, lineHeight: 18 },
 }
