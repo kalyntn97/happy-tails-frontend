@@ -118,11 +118,10 @@ const HomeFeed = ({ navigation }: HomeFeedProps) => {
       { isError && <ErrorImage /> }
 
       { isSuccess && <>
-        { (feeds.includes('care') && data.cares.length > 0) || (feeds.includes('health') && data.healths.length > 0) ? 
-          <>
-            <FrequencyFilter filter={filter} onSelect={(selected: Filter) => setFilter(selected)} />
-            <FilterList data={{ care: data.cares, health: data.healths }} filter={filter} />
-          </> : <PlaceHolder type={feeds.includes('care') ? 'task' : 'vet'} navigation={navigation} />
+        { (feeds.includes('care') && data.cares.length > 0) || (feeds.includes('health') && data.healths.length > 0) ? <>
+          <FrequencyFilter filter={filter} onSelect={(selected: Filter) => setFilter(selected)} />
+          <FilterList data={{ care: data.cares, health: data.healths }} filter={filter} />
+          </> : <PlaceHolder type={'care'} navigation={navigation} />
         }
       </> }
     </View>

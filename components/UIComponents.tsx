@@ -6,11 +6,12 @@ import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated"
 import { useSelectPhoto } from "@hooks/sharedHooks"
 import { IconType, getIconByType } from "@utils/ui"
 //components 
-import { ActionButton, GoBackButton } from "./ButtonComponents"
+import { ActionButton, GoBackButton, MainButton } from "./ButtonComponents"
 //styles
 import { Colors, Spacing, Typography, UI } from "@styles/index"
 import { basePadding } from "@styles/spacing"
 import { Size, icon, lightPalette } from "@styles/ui"
+import { CustomToast } from "@navigation/NavigationStyles"
 
 interface IconProps {
   type?: IconType
@@ -209,11 +210,29 @@ export const ScrollScreen = ({ children, props, contentStyles, containerStyles, 
   </View>
 )
 
-export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styles, props, maxLength = 100, width = '80%', error }: { initial: string, placeholder: string, onChange?: (input: string) => void, styles?: TextStyle, props?: TextInputProps, maxLength?: number, error?: string, width?: DimensionValue }, ref: MutableRefObject<any>) => {
+interface InputProps {
+  initial: string, 
+  placeholder: string, 
+  onChange?: (input: string) => void, 
+  styles?: TextStyle, 
+  props?: TextInputProps, 
+  maxLength?: number, 
+  error?: string, 
+  width?: DimensionValue
+}
+
+export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styles, props, maxLength = 100, width = '80%', error }: InputProps, ref: MutableRefObject<any>) => {
   const [isFocused, setIsFocused] = useState(false)
   const [value, setValue] = useState(initial ?? null)
 
   const validatedStyles = useMemo(() => error ? UI.error : isFocused ? UI.focused : UI.unfocused, [error, isFocused])
+
+  const handlePress = (text: string) => {
+    setValue(text)
+    onChange(text)
+    setIsFocused(false)
+    Keyboard.dismiss()
+  }
 
   return (
     <View style={{ width: width, zIndex: isFocused ? 10 : 2 }}>
@@ -225,10 +244,7 @@ export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styl
         value={value}
         onChangeText={(text: string) => setValue(text)}
         onFocus={() => setIsFocused(true)}
-        onBlur={() => {
-          onChange(value)
-          setIsFocused(false)
-        }}
+        onBlur={() => handlePress(value)}
         maxLength={maxLength}
         selectTextOnFocus={true}
         { ...props }
@@ -245,7 +261,17 @@ export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styl
   )
 }))
 
-export const BottomModal = ({ children, modalVisible, height = 'fit-content', maxHeight = '95%', onDismiss, background = Colors.shadow.lightest, overlay = Colors.transparent.dark }: { children: ReactNode, modalVisible: boolean, height?: string | number, maxHeight?: string | number, onDismiss: () => void, background?: string, overlay?: string }) => {
+interface ModalProps {
+  children: ReactNode, 
+  modalVisible: boolean, 
+  height?: DimensionValue, 
+  maxHeight?: string | number, 
+  onDismiss: () => void, 
+  background?: string, 
+  overlay?: string
+}
+
+export const BottomModal = ({ children, modalVisible, height = 'fit-content', maxHeight = '95%', onDismiss, background = Colors.shadow.lightest, overlay = Colors.transparent.dark }: ModalProps) => {
   const [childrenVisible, setChildrenVisible] = useState(modalVisible)
 
   const dismissModal = () => {
@@ -277,13 +303,33 @@ export const BottomModal = ({ children, modalVisible, height = 'fit-content', ma
           </Animated.View> 
         }
       </Pressable>
+      <CustomToast />
     </Modal>
   )
 }
 
-export const ModalInput = ({ children, label, onReset, onClose, height = 'fit-content', maxHeight, overlay, background, buttonStyles, buttonTextStyles, buttonTextProps, customLabel }: { children: ReactNode, label?: string | ReactElement, onReset?: () => void, onClose?: () => void, height?: number | string, maxHeight?: number | string, overlay?: string, background?: string, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle, buttonTextProps?: any, customLabel?: ReactNode}) => {
+interface ModalInputProps {
+  label?: string | ReactElement, 
+  onReset?: () => void, 
+  onDismiss?: () => void,
+  onSubmit?: () => void,
+  buttonStyles?: ViewStyle, 
+  buttonTextStyles?: TextStyle, 
+  buttonTextProps?: any, 
+  customLabel?: ReactNode
+  children?: ReactNode, 
+  height?: DimensionValue, 
+  maxHeight?: string | number, 
+  background?: string, 
+  overlay?: string
+}
+
+export const ModalInput = ({ children, label, onReset, onDismiss,onSubmit, height = 'fit-content' as DimensionValue, maxHeight, overlay, background, buttonStyles, buttonTextStyles, buttonTextProps, customLabel }: ModalInputProps) => {
   const [modalVisible, setModalVisible] = useState(false)
-  const dismissModal = () => setModalVisible(false)
+  const dismissModal = () => {
+    setModalVisible(false)
+    onDismiss && onDismiss()
+  }
 
   return (
     <>
@@ -294,34 +340,66 @@ export const ModalInput = ({ children, label, onReset, onClose, height = 'fit-co
         }
       </Pressable> 
 
-      <BottomModal modalVisible={modalVisible} onDismiss={() => {
-        onClose && onClose()
-        dismissModal()
-      }} height={height} maxHeight={maxHeight} overlay={overlay} background={background}>
+      <BottomModal modalVisible={modalVisible} onDismiss={dismissModal} height={height} maxHeight={maxHeight} overlay={overlay} background={background}>
         { onReset && <ActionButton icon='reset' onPress={onReset} position='topRight' /> }
         { children }
+        { onSubmit && <MainButton title='Submit' size='xSmall' buttonStyles={{ marginTop: 15 }} onPress={() => {
+          onSubmit()
+          dismissModal()
+        }} /> }
       </BottomModal>
     </>
   )
 }
 
-export const DateInput = ({ date, placeholder = 'No date selected', onChangeDate, color, buttonStyles, buttonTextStyles, header }: { date: Date | string, placeholder?: string, onChangeDate: (selected: string) => void, color?: number, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle, header?: string }) => (
+interface DateInputProps extends ModalInputProps {
+  date: Date | string, 
+  placeholder?: string, 
+  onChangeDate: (selected: string) => void, 
+  color?: number, 
+  header?: string
+}
+
+export const DateInput = ({ date, placeholder = 'No date selected', onChangeDate, color, buttonStyles, buttonTextStyles, header }: DateInputProps) => (
   <ModalInput label={date ? new Date(date).toLocaleDateString() : placeholder} onReset={() => onChangeDate(new Date().toISOString())} buttonStyles={buttonStyles} buttonTextStyles={buttonTextStyles}>
     { header && <FormHeader title={date ? `${header}: ${new Date(date).toLocaleDateString()}` : header} />}
     <RNDateTimePicker display="inline" themeVariant="light" value={date ? new Date(date) : new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate.toISOString())} accentColor={Colors.multi.dark[color]} />
   </ModalInput>
 )
 
-export const NoteInput = ({ notes, maxLength = 100, onChange, buttonStyles, buttonTextStyles, inputStyles, placeholder, header }: { notes: string, maxLength?: number, onChange: (text: string) => void, buttonStyles?: ViewStyle, buttonTextStyles?: TextStyle, inputStyles?: TextStyle, placeholder?: string, header?: string }) => {
-  const DEFAULT_HEIGHT = '30%'
-  const [height, setHeight] = useState(DEFAULT_HEIGHT)
+interface NoteInputProps extends ModalInputProps {
+  notes: string, 
+  maxLength?: number, 
+  onChange: (text: string) => void, 
+  inputStyles?: TextStyle, 
+  placeholder?: string, 
+  header?: string, 
+  modalHeight?: DimensionValue
+}
+
+const DEFAULT_HEIGHT = 30
+
+export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit, buttonStyles, buttonTextStyles, inputStyles, placeholder, header, customLabel, modalHeight}: NoteInputProps) => {
+  const defaultHeight = onSubmit ? `${DEFAULT_HEIGHT + 10}%` : `${DEFAULT_HEIGHT}%`
+  const [notes, setNotes] = useState(initial)
+  const [isFocused, setIsFocused] = useState(false)
+  const [height, setHeight] = useState(modalHeight ?? defaultHeight)
+
+  const validatedStyles = useMemo(() => isFocused ? UI.focused : UI.unfocused, [isFocused])
+
+  const handlePress = (text: string) => {
+    setNotes(text)
+    onChange(text)
+    setIsFocused(false)
+    Keyboard.dismiss()
+  }
 
   useEffect(() => {
-    const onShow = Keyboard.addListener('keyboardDidShow', () => {
-      setHeight('70%')
+    const onShow = Keyboard.addListener('keyboardWillShow', () => {
+      setHeight(`${DEFAULT_HEIGHT + 40 < 95 ? DEFAULT_HEIGHT + 40 : 95}%`)
     })
-    const onHide = Keyboard.addListener('keyboardDidHide', () => {
-      setHeight('30%')
+    const onHide = Keyboard.addListener('keyboardWillHide', () => {
+      setHeight(modalHeight ?? defaultHeight)
     })
     return () => {
       onShow.remove()
@@ -330,15 +408,17 @@ export const NoteInput = ({ notes, maxLength = 100, onChange, buttonStyles, butt
   }, [])
 
   return (
-    <ModalInput label={notes ?? 'No notes added.'} onReset={() => onChange(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} height={height}>
-      <FormHeader title={header ?? 'Add Note'} />
-
+    <ModalInput customLabel={customLabel} label={notes ?? 'No notes added.'} onSubmit={onSubmit} onReset={() => handlePress(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} height={height}>
+      <FormHeader title={header ?? 'Add Notes'} />
+      
       <TextInput
-        style={[UI.input(), { width: '90%', minHeight: 100, maxHeight: '30%' }, inputStyles]}
+        style={[UI.input(), { width: '90%', minHeight: maxLength, maxHeight:`${DEFAULT_HEIGHT}%` }, validatedStyles, inputStyles]}
         placeholder={placeholder ?? 'Enter notes'}
         placeholderTextColor={UI.lightPalette().unfocused}
         value={notes}
-        onChangeText={onChange}
+        onChangeText={setNotes}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => handlePress(notes)}
         maxLength={maxLength}
         selectTextOnFocus={true}
         multiline={true}

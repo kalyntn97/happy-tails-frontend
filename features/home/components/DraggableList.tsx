@@ -20,6 +20,8 @@ import { PetBasic } from '@pet/PetInterface'
 import CareCard from '@care/components/CareCard'
 import HealthCard from '@health/components/HealthCard'
 import { ActionButton } from '@components/ButtonComponents'
+import { useActiveDateString, useFullActiveDate } from '@store/store'
+import { getLocaleDateString } from '@utils/datetime'
 
 type ListItem = { type: Feed, item: any }
 interface DraggableListProps {
@@ -86,17 +88,21 @@ const HealthItem = ({ item, onPress, onLongPress, disabled }: { item: Health } &
       swipeRightActions={getHealthActions(item)}
       onPress={onPress}
       onLongPress={onLongPress}
-      toggle={{ onToggle: toggleAll, initial: false }}
+      toggle={{ onToggle: toggleAll, isChecked: false }}
       disabled={disabled}
   />
   )
 }
 
 const CareItem = ({ item, onPress, onLongPress, disabled }: { item: Care } & ItemProps) => {
+  const activeDate = useFullActiveDate()
+
+  const isChecked = item.logs.some(log => getLocaleDateString(log.date) === activeDate.toLocaleDateString())
+
   const toggleAll = () => {
-
+    
   }
-
+  
   return (
     <SwipeableItem
       color={Colors.multi.light[item.color]}
@@ -105,7 +111,7 @@ const CareItem = ({ item, onPress, onLongPress, disabled }: { item: Care } & Ite
       swipeRightActions={getCareActions(item)}
       onPress={onPress}
       onLongPress={onLongPress}
-      toggle={{ onToggle: toggleAll, initial: false }}
+      toggle={{ onToggle: toggleAll, isChecked: isChecked }}
       disabled={disabled}
     />
   )
@@ -166,9 +172,10 @@ const DraggableList= ({ initialData }: DraggableListProps) => {
       <DraggableFlatList
         data={data}
         onDragEnd={({ data }) => setData(data)}
-        keyExtractor={item => item._id}
+        keyExtractor={listItem => listItem.item._id}
         renderItem={renderItem}
-        containerStyle={{ minHeight: centerHeight }}
+        alwaysBounceVertical={false}
+        // containerStyle={{ minHeight: centerHeight }}
       />
     </View>
   )

@@ -1,47 +1,52 @@
-//npm
-import { FC, useState } from "react"
-import { Alert } from "react-native"
-import * as ImagePicker from 'expo-image-picker'
 import { useQueryClient } from "@tanstack/react-query"
+import { useNavigation } from "@react-navigation/native"
+import * as ImagePicker from 'expo-image-picker'
+import { Alert } from "react-native"
 //queries
-import { useDeleteCare } from "../features/care/careQueries"
 import { useDeleteHealth } from "@health/healthQueries"
+import { useDeleteCare } from "../features/care/careQueries"
 //types
 import { Care } from "@care/CareInterface"
-import { profileKeyFactory } from "@profile/profileQueries"
+import { Health } from "@health/HealthInterface"
 import { ProfileData } from "@profile/ProfileInterface"
+import { profileKeyFactory } from "@profile/profileQueries"
 //helpers
-import { AlertForm } from "@utils/ui"
 import { countDaysBetween } from "@utils/datetime"
 import { shouldRenderCareTask } from "../features/home/helpers"
-import { Feed } from "@home/HomeInterface"
-import { Health } from "@health/HealthInterface"
 
-export const showDeleteConfirmDialog = (item: any, handleDeleteItem: (itemId: string) => void) => {
-  return Alert.alert(
-    'Are you sure?',
-    `Remove ${item.name} Tracker ?`, 
-    [
-      { text: 'Yes', onPress: () => { handleDeleteItem(item._id) }},
-      { text: 'No' }
-    ]
-  )
-}
+export const showDeleteConfirmation = (onConfirm: (...args: any[]) => void, text2: string = 'This action cannot be undone.', text1: string = 'Are you sure?') => Alert.alert(
+  text1,
+  text2,
+  [
+    { text: 'Yes', onPress: onConfirm},
+    { text: 'No', style: 'cancel' },
+  ],
+  { cancelable: true },
+)
 
-export const useDeleteCareCard = (navigation: any) => {
+export const useDeleteCareCard = () => {
+  const navigation = useNavigation()
   const deleteCareMutation = useDeleteCare(navigation)
 
   const deleteCareCard = (careId: string) => deleteCareMutation.mutate(careId)
-  const handleDeleteCare = (care: Care) => showDeleteConfirmDialog(care, deleteCareCard)
+
+  const handleDeleteCare = (care: Care) => showDeleteConfirmation(
+    () => deleteCareCard(care._id), 
+    `Remove ${care.name} tracker?`
+  )
 
   return handleDeleteCare
 }
 
-export const useDeleteHealthCard = (navigation: any) => {
+export const useDeleteHealthCard = () => {
+  const navigation = useNavigation()
   const deleteHealthMutation = useDeleteHealth(navigation)
 
   const deleteHealthCard = (healthId: string) => deleteHealthMutation.mutate(healthId)
-  const handleDeleteHealth = (health: Health) => showDeleteConfirmDialog(health, deleteHealthCard)
+  const handleDeleteHealth = (health: Health) => showDeleteConfirmation(
+    () => deleteHealthCard(health._id), 
+    `Remove ${health.name} calendar?`
+  )
 
   return handleDeleteHealth
 }

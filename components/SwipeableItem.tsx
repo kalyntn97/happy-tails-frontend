@@ -11,7 +11,7 @@ type Props = {
   swipeLeftActions?: { icon: string, title?: string, bgColor: string, onPress: () => void }[]
   onPress?: () => void, 
   onLongPress?: () => void
-  toggle?: { onToggle: () => void, initial: boolean }
+  toggle?: { onToggle: () => void, isChecked: boolean }
   title: string
   content: ReactNode
   disabled?: boolean
@@ -57,7 +57,7 @@ const SwipeableItem = ({ color, title, content, swipeRightActions, swipeLeftActi
 
         { toggle && 
           <TouchableOpacity style={styles.bulletBtn} onPress={toggle.onToggle}>
-          { toggle.initial ? <Icon name='check' size='xSmall' />
+          { toggle.isChecked ? <Icon name='checkColor' size='small' />
             : <Text style={styles.bulletBtnText}>○</Text> 
           }
           </TouchableOpacity> 

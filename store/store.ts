@@ -12,6 +12,7 @@ const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
     month: getDateInfo('today').month - 1, 
     year: getDateInfo('today').year 
   },
+  getActiveDate: () => new Date(get().activeDate.year, get().activeDate.month, get().activeDate.date + 1),
   currentIsActive: {
     get date() { return get().activeDate.date + 1 === getDateInfo('today').date },
     get week() { return get().activeDate.week + 1 === getDateInfo('today').week },
@@ -87,6 +88,7 @@ export const useBoundStore= create<SettingSlice>()(
 //states
 export const useHealthInterval = () => useBoundStore(state => state.healthInterval)
 export const useActiveDate = () => useBoundStore(state => state.activeDate)
+export const useFullActiveDate = () => useBoundStore(state => state.getActiveDate())
 export const useActiveTaskCounts = () => useBoundStore(state => state.activeTaskCounts)
 export const useCurrentIsActive = () => useBoundStore(state => state.currentIsActive)
 export const useDisplayUnits = () => useBoundStore(state => state.displayUnits)

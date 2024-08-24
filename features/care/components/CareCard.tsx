@@ -9,6 +9,7 @@ import { getRepeatLabels } from "@components/Pickers/FrequencyPicker"
 //styles
 import { Colors } from "@styles/index"
 import { styles } from "@styles/stylesheets/ModalCardStyles"
+import ProgressTracker from "./ProgressTracker"
 
 const CareCard = ({ care }: { care: Care }) => {
   const iconSource = getCareIcon(care.name)
@@ -26,6 +27,7 @@ const CareCard = ({ care }: { care: Care }) => {
         <PetList petArray={care.pets} size='xSmall' />
       </View>
 
+      <ProgressTracker care={care} />
     </View>
   )
 }

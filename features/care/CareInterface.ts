@@ -13,14 +13,15 @@ export interface CareFormData {
 }
 export interface Care extends CareFormData {
   _id: string
+  logs: Log[]
 }
 
 export interface LogFormData {
-  value: number
+  date: string
+  value?: number
   notes: string
-  createdAt: string | Date
-  task: string | Care
-  logId?: string
+  care: string
+  logId: string | null
 }
 export interface Log extends LogFormData {
   _id: string

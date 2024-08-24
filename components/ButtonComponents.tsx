@@ -67,11 +67,11 @@ const baseButtonSizeMap = {
 }
 
 const baseButtonTextSizeMap = (n: number = 0) => ({
-  small: 15 - n / 2,
-  large: 20 - n ,
+  small: 13 - n / 2,
+  large: 18 - n ,
 })
 
-export const MainButton= memo(({ onPress, title, bgColor = Colors.pink.reg, color = UI.lightPalette().button, bdColor = 'transparent', size = 'med', icon, h = 0, v = 0, buttonStyles, textStyles }: BaseButtonProps) => {
+export const MainButton= memo(({ onPress, title, bgColor = UI.lightPalette().lightAccent, color = UI.lightPalette().button, bdColor = 'transparent', size = 'med', icon, h = 0, v = 0, buttonStyles, textStyles }: BaseButtonProps) => {
   const sizes = useMemo(() => {
     const buttonSize = baseButtonSizeMap[size]
     const textSize = size === 'large' || size === 'largeSquare' ? 'large' : 'small'

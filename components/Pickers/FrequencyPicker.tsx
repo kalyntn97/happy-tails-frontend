@@ -12,7 +12,6 @@ import ScrollSelector from '../ScrollSelector'
 //styles
 import { Buttons, Colors, Spacing, Typography, UI } from '@styles/index'
 import { windowWidth } from '@utils/constants'
-import { CustomToast } from '@navigation/NavigationStyles'
 
 export interface FrequencyPicker extends Frequency {
   ending?: boolean 
@@ -236,8 +235,6 @@ const FrequencyPicker = ({ frequency, onSelectFrequency, onSelectEndDate, onRese
 
           { onSelectEndDate && <EndDateSelector endDate={endDate} ending={ending} onSelect={(key: 'ending' | 'endDate', selected: string | boolean) => onSelectEndDate(key, selected)} color={color} /> }
         </ScrollContainer>
-
-        <CustomToast />
       </View>
     </ModalInput>
   )

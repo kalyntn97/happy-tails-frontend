@@ -5,20 +5,20 @@ import { StyleSheet, Text, View } from "react-native"
 import { TransparentButton } from "./ButtonComponents"
 
 type Props = {
-  type: 'pet' | 'task' | 'vet' | 'ids' | 'services'
+  type: 'pet' | 'care' | 'health' | 'ids' | 'services'
   petId?: string
   navigation: any
 }
 
+const map = {
+  pet: { text: 'pet', subText: '' },
+  care: { text: 'task', subText: '' },
+  health: { text: 'vet visit', subText: '' },
+  ids: { text: 'ID', subText: '' },
+  services: { text: 'service', subText: '' },
+}
+
 const PlaceHolder = ({ type, petId, navigation }: Props) => {
-  const map = {
-    pet: { text: 'pet', subText: '' },
-    task: { text: 'task', subText: '' },
-    vet: { text: 'vet visit', subText: '' },
-    ids: { text: 'ID', subText: '' },
-    services: { text: 'service', subText: '' },
-  }
-  
   const color = UI.lightPalette().accent
 
   return (  
@@ -26,8 +26,8 @@ const PlaceHolder = ({ type, petId, navigation }: Props) => {
       <LottieView source={require('@assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
       <TransparentButton title={`Add ${map[type].text}`} onPress={() => {
           type === 'pet' ? navigation.navigate('PetCreate') 
-          : type === 'task' ? navigation.navigate('CareCreate')
-          : type === 'vet' ? navigation.navigate('HealthCreate')
+          : type === 'care' ? navigation.navigate('CareCreate')
+          : type === 'health' ? navigation.navigate('HealthCreate')
           // : type === 'id' ? navigation.navigate('EditDetails', { form: type, petId })
           // : type === 'service' ? navigation.navigate('EditDetails', { form: type, petId })
           : navigation.navigate('PetEditDetails', { type, petId })
