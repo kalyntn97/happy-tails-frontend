@@ -6,19 +6,18 @@ import { Care } from "@care/CareInterface"
 import { Health } from "@health/HealthInterface"
 //store & queries
 import { useGetProfile } from "@profile/profileQueries"
+import { useFullActiveDate } from "@store/store"
 //components
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
 import { ErrorImage, Icon, ScrollHeader } from "@components/UIComponents"
 import DraggableList from './DraggableList'
+import { TransparentButton } from "@components/ButtonComponents"
 //types & utils
 import { Feed, Filter } from "@home/HomeInterface"
-import { showToast } from "@utils/misc"
+import { isItemVisible, showToast } from "@utils/misc"
 //styles
-import { TransparentButton } from "@components/ButtonComponents"
 import { Colors, Spacing, Typography, UI } from '@styles/index'
-import { isItemVisible, useIsItemVisible } from "@hooks/sharedHooks"
-import { useFullActiveDate } from "@store/store"
 
 interface HomeFeedProps {
   navigation: any
@@ -104,7 +103,7 @@ const FilterList = ({ data, filter }: { data: { care: Care[], health: Health[] }
       .filter(item => isItemVisible(item, activeDate))
       .map(item => ({ type: key as Feed, item }))
   })
-  
+
   return (
     <DraggableList initialData={filtered} />
   )

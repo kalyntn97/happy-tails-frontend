@@ -32,12 +32,12 @@ const ProgressTracker = ({ care }: { care: Care }) => {
     : 0
   
   const incrementProgress = () => {
-    shouldIncrement ? updateLogMutation.mutate({ ...log, value: log.value + 1, notes, logId: log._id })
-      : createLogMutation.mutate({ date: activeDate.toISOString(), notes, care: care._id, logId: null })
+    shouldIncrement ? updateLogMutation.mutate({ ...log, value: log.value + 1, notes: [...log.notes, notes], logId: log._id })
+      : createLogMutation.mutate({ date: activeDate.toISOString(), notes: [notes], care: care._id, logId: null })
   }
 
   const decrementProgress = () => {
-    shouldIncrement ? updateLogMutation.mutate({ ...log, value: log.value - 1, notes, logId: log._id })
+    shouldIncrement && log.value > 1 ? updateLogMutation.mutate({ ...log, value: log.value - 1, notes, logId: log._id })
       : deleteLogMutation.mutate({ logId: log._id, careId: care._id })
   }
 

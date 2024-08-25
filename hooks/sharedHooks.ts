@@ -48,28 +48,6 @@ export const useDeleteHealthCard = (navigation: any) => {
   return handleDeleteHealth
 }
 
-export const isItemVisible = (item: any, activeDate: Date): boolean => {
-  const startDate = getDateConstructor(item.startDate)
-
-  if (!item.repeat) return startDate.toLocaleDateString() === activeDate.toLocaleDateString()
-
-  const endDate = item.endDate ? getDateConstructor(item.endDate) : null
-  if (activeDate < startDate || (endDate && activeDate > endDate)) return false
-  
-  const { day, date, monthName } = getDateInfo(activeDate.toISOString())
-  
-  switch (item.frequency.type) {
-    case 'days': { 
-      const daysBetween = Math.floor((activeDate.getTime() - startDate.getTime()) / (3600 * 24 * 1000))
-      return daysBetween % item.frequency.interval === 0
-    }
-    case 'weeks': return item.frequency.timesPerInterval.some((i: number) => daysOfWeek[i] === day)
-    case 'months': return item.frequency.timesPerInterval.includes(date)
-    case 'years': return item.frequency.timesPerInterval.some(obj => obj.month === monthName.slice(0, 3) && obj.date === date)
-    default: return false
-  }
-}
-
 export const useShallowPets = () => {
   const queryClient = useQueryClient()
 

@@ -271,7 +271,7 @@ interface ModalProps {
   overlay?: string
 }
 
-export const BottomModal = ({ children, modalVisible, height = 'fit-content', maxHeight = '95%', onDismiss, background = Colors.shadow.lightest, overlay = Colors.transparent.dark }: ModalProps) => {
+export const BottomModal = ({ children, modalVisible, height = 'fit-content' as DimensionValue, maxHeight = '95%', onDismiss, background = Colors.shadow.lightest, overlay = Colors.transparent.dark }: ModalProps) => {
   const [childrenVisible, setChildrenVisible] = useState(modalVisible)
 
   const dismissModal = () => {
@@ -347,7 +347,9 @@ export const ModalInput = ({ children, label, onReset, onDismiss,onSubmit, heigh
           onSubmit()
           dismissModal()
         }} /> }
+        <CustomToast />
       </BottomModal>
+      
     </>
   )
 }

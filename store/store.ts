@@ -12,7 +12,11 @@ const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
     month: getDateInfo('today').month - 1, 
     year: getDateInfo('today').year 
   },
-  getActiveDate: () => new Date(get().activeDate.year, get().activeDate.month, get().activeDate.date + 1),
+  getActiveDate: () => {
+    const date = new Date(get().activeDate.year, get().activeDate.month, get().activeDate.date + 1)
+    date.setHours(0, 0, 0, 0)
+    return date
+  },
   currentIsActive: {
     get date() { return get().activeDate.date + 1 === getDateInfo('today').date },
     get week() { return get().activeDate.week + 1 === getDateInfo('today').week },

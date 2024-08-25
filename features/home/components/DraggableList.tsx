@@ -1,23 +1,24 @@
 import { useNavigation } from '@react-navigation/native'
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React, { ReactNode, useEffect, useState } from 'react'
+import { StyleSheet, Text, TextStyle, View } from 'react-native'
 import DraggableFlatList, { RenderItemParams, ShadowDecorator } from 'react-native-draggable-flatlist'
+import * as Progress from 'react-native-progress'
 //components
-import PetList from '@components/PetInfo/PetList'
-import SwipeableItem from '@components/SwipeableItem'
 import CareCard from '@care/components/CareCard'
 import { ActionButton } from '@components/ButtonComponents'
+import PetList from '@components/PetInfo/PetList'
+import SwipeableItem from '@components/SwipeableItem'
 import { BottomModal } from '@components/UIComponents'
 //store & hooks & queries
-import { useFullActiveDate } from '@store/store'
+import { useCreateLog, useDeleteLog, useUpdateLog } from '@care/careQueries'
 import { useDeleteCareCard, useDeleteHealthCard } from '@hooks/sharedHooks'
-import { useCreateLog, useDeleteLog } from '@care/careQueries'
+import { useFullActiveDate } from '@store/store'
 //types & utils
-import { PetBasic } from '@pet/PetInterface'
-import HealthCard from '@health/components/HealthCard'
 import type { Care, Log } from '@care/CareInterface'
+import HealthCard from '@health/components/HealthCard'
 import type { Health } from '@health/HealthInterface'
 import type { ClickedItem, Feed } from '@home/HomeInterface'
+import { PetBasic } from '@pet/PetInterface'
 import { getLocaleDateString } from '@utils/datetime'
 //styles
 import { Colors, Spacing, Typography } from '@styles/index'
@@ -32,13 +33,6 @@ interface ItemProps {
   onLongPress: () => void
   disabled: boolean
 }
-
-const ItemContent = ({ name, petArray }: { name: string, petArray: PetBasic[] }) => (
-  <View style={styles.itemContent}>
-    <Text style={styles.itemTitle}>{name}</Text>
-    <PetList petArray={petArray} size='xxSmall' />
-  </View>
-)
 
 const getCareActions = (item: Care) => {
   const navigation = useNavigation()
@@ -74,6 +68,25 @@ const ItemActions = ({ listItem }: { listItem: ListItem }) => {
   )
 }
 
+const Status = ({ progress, textStyles }: { progress: { value: number, color: number }, textStyles?: TextStyle }) => (
+  <>
+    { progress ?
+      progress.value === -1 ? <Text style={[styles.itemStatus, textStyles]}>skipped</Text>
+      : progress.value !== 1 && <Progress.Pie progress={progress.value} color={Colors.multi.darkest[progress.color]} borderColor={Colors.multi.darkest[progress.color]} size={20} borderWidth={1.5} /> 
+      : null
+    }
+  </>
+)
+
+const ItemContent = ({ name, petArray, status, titleStyles }: { name: string, petArray: PetBasic[], progress?: { value: number, color: number }, titleStyles?: TextStyle, status?: ReactNode }) => (
+  <View style={styles.itemContent}>
+    <Text style={[styles.itemTitle, titleStyles]}>{name}</Text>
+    { status }
+    <PetList petArray={petArray} size='xxSmall' containerStyles={{ marginLeft: 15 }}/>
+  </View>
+)
+
+
 const HealthItem = ({ item, onPress, onLongPress, disabled }: { item: Health } & ItemProps) => {
   const toggleAll = () => {
 
@@ -97,26 +110,35 @@ const CareItem = ({ item, onPress, onLongPress, disabled }: { item: Care } & Ite
   const activeDate = useFullActiveDate()
   const createLogMutation = useCreateLog()
   const deleteLogMutation = useDeleteLog()
+  const updateLogMutation = useUpdateLog()
 
   const log = item.logs.find((log: Log) => getLocaleDateString(log.date) === activeDate.toLocaleDateString())
-  const shouldIncrement = item.frequency.type === 'days' && item.frequency.timesPerInterval[0] > 1
 
-  const isChecked = log && shouldIncrement ? log.value === item.frequency.timesPerInterval[0] : !!log
+  const shouldIncrement = item.frequency.type === 'days' && item.frequency.timesPerInterval[0] > 1 && log
+  const progress: number = shouldIncrement ?
+    Number((log.value / item.frequency.timesPerInterval[0]).toFixed(2))
+    : log ? log.value 
+    : 0
+  const isChecked = progress === 1
+  const isSkipped = progress === -1
 
   const toggleAll = () => {
-    isChecked ? deleteLogMutation.mutate({ logId: log._id, careId: item._id }) : createLogMutation.mutate({ date: activeDate.toISOString(), value: item.frequency.timesPerInterval[0], care: item._id })
+    isChecked ? deleteLogMutation.mutate({ logId: log._id, careId: item._id }) 
+      : shouldIncrement ? updateLogMutation.mutate({ ...log, value: item.frequency.timesPerInterval[0], logId: log._id })
+      : createLogMutation.mutate({ date: activeDate.toISOString(), value: item.frequency.timesPerInterval[0], care: item._id })
   }
-  
+
   return (
     <SwipeableItem
       color={Colors.multi.light[item.color]}
       title={item.name}
-      content={<ItemContent name={item.name} petArray={item.pets as PetBasic[]} />}
+      content={<ItemContent name={item.name} petArray={item.pets as PetBasic[]} status={<Status progress={shouldIncrement ? { value: progress, color: item.color } : null} />} titleStyles={isChecked && styles.completed} />}
       swipeRightActions={getCareActions(item)}
       onPress={onPress}
       onLongPress={onLongPress}
       toggle={{ onToggle: toggleAll, isChecked: isChecked }}
-      disabled={disabled}
+      disabled={disabled || isSkipped}
+      containerStyles={isSkipped && { opacity: 0.5 }}
     />
   )
 }
@@ -185,6 +207,12 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     justifyContent: 'space-between',
   },
+  itemStatus: {
+    ...Typography.focused,
+    textTransform: 'uppercase',
+    fontStyle: 'italic',
+    fontSize: 16,
+  },
   actionCon: {
     ...Spacing.flexRow,
     width: '40%',
@@ -193,6 +221,10 @@ const styles = StyleSheet.create({
     right: 15,
     top: 15,
   },
+  completed: {
+    textDecorationLine: 'line-through', 
+    fontStyle: 'italic',
+  }
 })
 
 export default DraggableList

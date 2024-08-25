@@ -1,7 +1,7 @@
 import Toast from "react-native-toast-message"
-import { AlertForm } from "./ui"
 import { FREQUENCY_TYPES } from "./constants"
-import { Frequency } from "./types"
+import { daysOfWeek, getDateConstructor, getDateInfo } from "./datetime"
+import { AlertForm } from "./ui"
 
 export const keyFromName = (data: {[key: string]: string}) => {
   const map = {}
@@ -40,4 +40,39 @@ export const sortByFrequency = (array) => {
     sorted[key].push(item)
   })
   return sorted
+}
+
+export const isItemVisible = (item: any, activeDate: Date): boolean => {
+  const startDate = getDateConstructor(item.startDate)
+
+  if (!item.repeat) return startDate.toLocaleDateString() === activeDate.toLocaleDateString()
+
+  const endDate = item.endDate ? getDateConstructor(item.endDate) : null
+  if (activeDate < startDate || (endDate && activeDate > endDate)) return false
+  
+  const { day, date, monthName } = getDateInfo(activeDate.toISOString())
+  
+  switch (item.frequency.type) {
+    case 'days': { 
+      const daysBetween = Math.floor((activeDate.getTime() - startDate.getTime()) / (3600 * 24 * 1000))
+      return daysBetween % item.frequency.interval === 0
+    }
+    case 'weeks': {
+      const isCorrectDay = item.frequency.timesPerInterval.some((i: number) => daysOfWeek[i] === day)
+      const weeksBetween = Math.floor((activeDate.getTime() - startDate.getTime()) / (3600 * 24 * 1000 * 7))
+      return isCorrectDay && weeksBetween % item.frequency.interval === 0
+    }
+    case 'months': {
+      const isCorrectDay = item.frequency.timesPerInterval.includes(date)
+      const yearsBetween = activeDate.getFullYear() - startDate.getFullYear()
+      const monthsBetween = activeDate.getMonth() - startDate.getMonth() + yearsBetween * 12
+      return isCorrectDay && monthsBetween % item.frequency.interval === 0
+    }
+    case 'years': {
+      const isCorrectMonthDay = item.frequency.timesPerInterval.some((obj: { month: string, day: number }) => obj.month === monthName.slice(0, 3) && obj.day === date)
+      const yearsBetween = activeDate.getFullYear() - startDate.getFullYear()
+      return isCorrectMonthDay && yearsBetween % item.frequency.interval === 0
+    }
+    default: return false
+  }
 }

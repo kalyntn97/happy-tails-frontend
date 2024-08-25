@@ -7,7 +7,7 @@ export const months = [
 export const daysOfWeek: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 export const getDateInfo = (input: string) => {
-  const inputDate = input === 'today' ? new Date() : new Date(input)
+  const inputDate = getDateConstructor(input)
   const date = inputDate.getDate()
   const month = inputDate.getMonth() + 1 //0-index 
   const year = inputDate.getFullYear()
@@ -29,7 +29,7 @@ export const getDateInfo = (input: string) => {
 
 export const getDateConstructor = (string: string, withTimes: boolean = false) => {
   const date = string === 'today' ? new Date() : new Date(string)
-  if (!withTimes) date.setHours(0, 0, 0, 0)
+  if (withTimes === false) date.setHours(0, 0, 0, 0)
   return date
 }
 

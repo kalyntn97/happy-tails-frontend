@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native'
 import React, { ReactElement, ReactNode, useRef } from 'react'
 import { Swipeable } from 'react-native-gesture-handler'
 import { IconButton } from './ButtonComponents'
@@ -15,14 +15,15 @@ type Props = {
   title: string
   content: ReactNode
   disabled?: boolean
-  color: string, 
+  color: string,
+  containerStyles?: ViewStyle
   
 }
 
 const MIN_TASK_HEIGHT = 60
 const MAX_TASK_HEIGHT = 70
 
-const SwipeableItem = ({ color, title, content, swipeRightActions, swipeLeftActions, onPress, onLongPress, toggle, disabled }: Props) => {
+const SwipeableItem = ({ title, content, swipeRightActions, swipeLeftActions, onPress, onLongPress, toggle, disabled, color, containerStyles }: Props) => {
   const swipeableRef = useRef(null)
 
   const TASK_HEIGHT = title.length < 30 ? MIN_TASK_HEIGHT : MAX_TASK_HEIGHT
@@ -47,7 +48,8 @@ const SwipeableItem = ({ color, title, content, swipeRightActions, swipeLeftActi
       <TouchableOpacity
         style={[
           styles.item, 
-          { backgroundColor: color, height: TASK_HEIGHT }
+          { backgroundColor: color, height: TASK_HEIGHT },
+          containerStyles,
         ]} 
         onPress={onPress}
         onLongPress={onLongPress}
