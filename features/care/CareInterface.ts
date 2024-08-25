@@ -19,9 +19,9 @@ export interface Care extends CareFormData {
 export interface LogFormData {
   date: string
   value?: number
-  notes: string
+  notes?: string
   care: string
-  logId: string | null
+  logId?: string | null
 }
 export interface Log extends LogFormData {
   _id: string

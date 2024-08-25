@@ -1,5 +1,4 @@
 import { useQueryClient } from "@tanstack/react-query"
-import { useNavigation } from "@react-navigation/native"
 import * as ImagePicker from 'expo-image-picker'
 import { Alert } from "react-native"
 //queries
@@ -11,7 +10,7 @@ import { Health } from "@health/HealthInterface"
 import { ProfileData } from "@profile/ProfileInterface"
 import { profileKeyFactory } from "@profile/profileQueries"
 //helpers
-import { countDaysBetween } from "@utils/datetime"
+import { countDaysBetween, daysOfWeek, getDateConstructor, getDateInfo } from "@utils/datetime"
 import { shouldRenderCareTask } from "../features/home/helpers"
 
 export const showDeleteConfirmation = (onConfirm: (...args: any[]) => void, text2: string = 'This action cannot be undone.', text1: string = 'Are you sure?') => Alert.alert(
@@ -24,8 +23,7 @@ export const showDeleteConfirmation = (onConfirm: (...args: any[]) => void, text
   { cancelable: true },
 )
 
-export const useDeleteCareCard = () => {
-  const navigation = useNavigation()
+export const useDeleteCareCard = (navigation: any) => {
   const deleteCareMutation = useDeleteCare(navigation)
 
   const deleteCareCard = (careId: string) => deleteCareMutation.mutate(careId)
@@ -38,8 +36,7 @@ export const useDeleteCareCard = () => {
   return handleDeleteCare
 }
 
-export const useDeleteHealthCard = () => {
-  const navigation = useNavigation()
+export const useDeleteHealthCard = (navigation: any) => {
   const deleteHealthMutation = useDeleteHealth(navigation)
 
   const deleteHealthCard = (healthId: string) => deleteHealthMutation.mutate(healthId)
@@ -49,6 +46,28 @@ export const useDeleteHealthCard = () => {
   )
 
   return handleDeleteHealth
+}
+
+export const isItemVisible = (item: any, activeDate: Date): boolean => {
+  const startDate = getDateConstructor(item.startDate)
+
+  if (!item.repeat) return startDate.toLocaleDateString() === activeDate.toLocaleDateString()
+
+  const endDate = item.endDate ? getDateConstructor(item.endDate) : null
+  if (activeDate < startDate || (endDate && activeDate > endDate)) return false
+  
+  const { day, date, monthName } = getDateInfo(activeDate.toISOString())
+  
+  switch (item.frequency.type) {
+    case 'days': { 
+      const daysBetween = Math.floor((activeDate.getTime() - startDate.getTime()) / (3600 * 24 * 1000))
+      return daysBetween % item.frequency.interval === 0
+    }
+    case 'weeks': return item.frequency.timesPerInterval.some((i: number) => daysOfWeek[i] === day)
+    case 'months': return item.frequency.timesPerInterval.includes(date)
+    case 'years': return item.frequency.timesPerInterval.some(obj => obj.month === monthName.slice(0, 3) && obj.date === date)
+    default: return false
+  }
 }
 
 export const useShallowPets = () => {

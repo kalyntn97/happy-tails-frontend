@@ -1,4 +1,3 @@
-//npm
 import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
@@ -6,22 +5,22 @@ import DraggableFlatList, { RenderItemParams, ShadowDecorator } from 'react-nati
 //components
 import PetList from '@components/PetInfo/PetList'
 import SwipeableItem from '@components/SwipeableItem'
-//store & hooks
+import CareCard from '@care/components/CareCard'
+import { ActionButton } from '@components/ButtonComponents'
+import { BottomModal } from '@components/UIComponents'
+//store & hooks & queries
+import { useFullActiveDate } from '@store/store'
 import { useDeleteCareCard, useDeleteHealthCard } from '@hooks/sharedHooks'
+import { useCreateLog, useDeleteLog } from '@care/careQueries'
 //types & utils
-import type { Care } from '@care/CareInterface'
+import { PetBasic } from '@pet/PetInterface'
+import HealthCard from '@health/components/HealthCard'
+import type { Care, Log } from '@care/CareInterface'
 import type { Health } from '@health/HealthInterface'
 import type { ClickedItem, Feed } from '@home/HomeInterface'
-import { centerHeight } from '@utils/constants'
-//styles
-import { BottomModal } from '@components/UIComponents'
-import { Colors, Spacing, Typography } from '@styles/index'
-import { PetBasic } from '@pet/PetInterface'
-import CareCard from '@care/components/CareCard'
-import HealthCard from '@health/components/HealthCard'
-import { ActionButton } from '@components/ButtonComponents'
-import { useActiveDateString, useFullActiveDate } from '@store/store'
 import { getLocaleDateString } from '@utils/datetime'
+//styles
+import { Colors, Spacing, Typography } from '@styles/index'
 
 type ListItem = { type: Feed, item: any }
 interface DraggableListProps {
@@ -84,7 +83,7 @@ const HealthItem = ({ item, onPress, onLongPress, disabled }: { item: Health } &
     <SwipeableItem
       color={Colors.multi.light[item.pet.color]}
       title={item.name}
-      content={<ItemContent name={item.name} petArray={item.pet} />}
+      content={<ItemContent name={item.name} petArray={[item.pet] as PetBasic[]} />}
       swipeRightActions={getHealthActions(item)}
       onPress={onPress}
       onLongPress={onLongPress}
@@ -96,18 +95,23 @@ const HealthItem = ({ item, onPress, onLongPress, disabled }: { item: Health } &
 
 const CareItem = ({ item, onPress, onLongPress, disabled }: { item: Care } & ItemProps) => {
   const activeDate = useFullActiveDate()
+  const createLogMutation = useCreateLog()
+  const deleteLogMutation = useDeleteLog()
 
-  const isChecked = item.logs.some(log => getLocaleDateString(log.date) === activeDate.toLocaleDateString())
+  const log = item.logs.find((log: Log) => getLocaleDateString(log.date) === activeDate.toLocaleDateString())
+  const shouldIncrement = item.frequency.type === 'days' && item.frequency.timesPerInterval[0] > 1
+
+  const isChecked = log && shouldIncrement ? log.value === item.frequency.timesPerInterval[0] : !!log
 
   const toggleAll = () => {
-    
+    isChecked ? deleteLogMutation.mutate({ logId: log._id, careId: item._id }) : createLogMutation.mutate({ date: activeDate.toISOString(), value: item.frequency.timesPerInterval[0], care: item._id })
   }
   
   return (
     <SwipeableItem
       color={Colors.multi.light[item.color]}
       title={item.name}
-      content={<ItemContent name={item.name} petArray={item.pets} />}
+      content={<ItemContent name={item.name} petArray={item.pets as PetBasic[]} />}
       swipeRightActions={getCareActions(item)}
       onPress={onPress}
       onLongPress={onLongPress}
@@ -148,20 +152,6 @@ const renderItem = ({ item: listItem, drag, isActive }: RenderItemParams<any>) =
 
 const DraggableList= ({ initialData }: DraggableListProps) => {
   const [data, setData] = useState(initialData)
-  
-  // useEffect(() => {
-  //   setData(initialData)
-  //   const checkCount = () => {
-  //     let careCounter = 0
-  //     let healthCounter = 0
-  //     data.forEach(item => {
-  //       if (type === 'care' && shouldRenderCareTask(item, activeDateObj)) careCounter++
-  //       if (type === 'health' && shouldRenderHealthTask(item, activeDateObj, healthInterval)) healthCounter++
-  //     })
-  //     setCounts({ care: careCounter, health: healthCounter })
-  //   }
-  //   checkCount()
-  // }, [activeDateObj, initialData])
 
   useEffect(() => {
     setData(initialData)

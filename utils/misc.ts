@@ -1,6 +1,7 @@
 import Toast from "react-native-toast-message"
 import { AlertForm } from "./ui"
 import { FREQUENCY_TYPES } from "./constants"
+import { Frequency } from "./types"
 
 export const keyFromName = (data: {[key: string]: string}) => {
   const map = {}

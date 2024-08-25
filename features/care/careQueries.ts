@@ -116,7 +116,7 @@ export const useUpdateLog = () => {
           else showToast({ text1: 'An error occurred.', style: 'error' })
         })
       )      
-      showToast({ text1: `Updated successfully.`, style: 'success' })
+      // showToast({ text1: `Updated successfully.`, style: 'success' })
     },
     onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
@@ -135,16 +135,10 @@ export const useDeleteLog = () => {
           else showToast({ text1: 'An error occurred.', style: 'error' })
         })
       )      
-      showToast({ text1: `Updated successfully.`, style: 'success' })
+      // showToast({ text1: `Updated successfully.`, style: 'success' })
     },
     onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
-
-  // const deleteLog = (logId: string, careId: string) => deleteLogMutation.mutate({ logId, careId })
-
-  // const handleDeleteLog = (logId: string, careId: string) => showDeleteConfirmation(() => deleteLog(logId, careId))
-
-  // return handleDeleteLog
 }
 
 

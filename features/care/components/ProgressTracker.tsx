@@ -21,7 +21,7 @@ const ProgressTracker = ({ care }: { care: Care }) => {
   const updateLogMutation = useUpdateLog()
   const deleteLogMutation = useDeleteLog()
 
-  const color = Colors.multi.dark[care.color]
+  const color = Colors.multi.darkest[care.color]
   const activeDate: Date = useFullActiveDate()
 
   const log = care.logs.find(log => getLocaleDateString(log.date) === activeDate.toLocaleDateString())

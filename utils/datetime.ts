@@ -27,7 +27,7 @@ export const getDateInfo = (input: string) => {
   return { inputDate, date, month, monthName, year, day, week, firstDayOfMonth, lastDayOfMonth, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
 }
 
-const getDateConstructor = (string: string, withTimes: boolean = false) => {
+export const getDateConstructor = (string: string, withTimes: boolean = false) => {
   const date = string === 'today' ? new Date() : new Date(string)
   if (!withTimes) date.setHours(0, 0, 0, 0)
   return date

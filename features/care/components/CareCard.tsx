@@ -10,6 +10,7 @@ import { getRepeatLabels } from "@components/Pickers/FrequencyPicker"
 import { Colors } from "@styles/index"
 import { styles } from "@styles/stylesheets/ModalCardStyles"
 import ProgressTracker from "./ProgressTracker"
+import { PetBasic } from "@pet/PetInterface"
 
 const CareCard = ({ care }: { care: Care }) => {
   const iconSource = getCareIcon(care.name)
@@ -24,7 +25,7 @@ const CareCard = ({ care }: { care: Care }) => {
 
       <View style={styles.rowCon}>
         <Text style={styles.frequency}>{repeatLabel}</Text>
-        <PetList petArray={care.pets} size='xSmall' />
+        <PetList petArray={care.pets as PetBasic[]} size='xSmall' />
       </View>
 
       <ProgressTracker care={care} />

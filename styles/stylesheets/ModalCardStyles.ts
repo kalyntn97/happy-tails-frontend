@@ -5,7 +5,7 @@ import { basePadding } from "@styles/spacing"
 
 export const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    ...Spacing.flexColumnStretch,
     ...basePadding(0, 0),
   },
   header: {
@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
   },
   rowCon: {
     ...Spacing.flexRow,
+    width: '95%',
     justifyContent: 'space-between',
   },
   frequency: {

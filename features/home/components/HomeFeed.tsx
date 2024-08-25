@@ -17,6 +17,8 @@ import { showToast } from "@utils/misc"
 //styles
 import { TransparentButton } from "@components/ButtonComponents"
 import { Colors, Spacing, Typography, UI } from '@styles/index'
+import { isItemVisible, useIsItemVisible } from "@hooks/sharedHooks"
+import { useFullActiveDate } from "@store/store"
 
 interface HomeFeedProps {
   navigation: any
@@ -94,10 +96,15 @@ const FrequencyFilter = ({ filter, onSelect }: { filter: Filter, onSelect: (sele
 )
 
 const FilterList = ({ data, filter }: { data: { care: Care[], health: Health[] }, filter: Filter }) => {
-  const filtered = (Object.keys(data) as ('care' | 'health')[]).flatMap(key => {
-    const list = filter === 'all' ? data[key] : data[key].filter(item => item.frequency.type === filter)
-    return list.map(item => ({ type: key, item }))
+  const activeDate = useFullActiveDate()
+
+  const filtered = Object.entries(data).flatMap(([key, items]) => {
+    const list = filter === 'all' ? items : items.filter(item => item.frequency.type === filter)
+    return list
+      .filter(item => isItemVisible(item, activeDate))
+      .map(item => ({ type: key as Feed, item }))
   })
+  
   return (
     <DraggableList initialData={filtered} />
   )
