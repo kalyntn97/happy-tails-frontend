@@ -45,7 +45,7 @@ export const Header = ({ title, navigation, showGoBackButton, mode, rightActions
         )}
       </View> 
     }
-    { mode === 'modal' && <CustomToast /> }
+    {/* { mode === 'modal' && <CustomToast /> } */}
   </View> 
 )
 

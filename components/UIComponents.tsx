@@ -1,5 +1,5 @@
 import RNDateTimePicker from "@react-native-community/datetimepicker"
-import { ComponentProps, ComponentType, MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
+import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
 import { DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, Modal, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated"
 //utils & hooks
@@ -7,11 +7,10 @@ import { useSelectPhoto } from "@hooks/sharedHooks"
 import { IconType, getIconByType } from "@utils/ui"
 //components 
 import { ActionButton, GoBackButton, MainButton } from "./ButtonComponents"
+import { CustomToast } from "@navigation/NavigationStyles"
 //styles
 import { Colors, Spacing, Typography, UI } from "@styles/index"
-import { basePadding } from "@styles/spacing"
 import { Size, icon, lightPalette } from "@styles/ui"
-import { CustomToast } from "@navigation/NavigationStyles"
 
 interface IconProps {
   type?: IconType
@@ -343,13 +342,11 @@ export const ModalInput = ({ children, label, onReset, onDismiss,onSubmit, heigh
       <BottomModal modalVisible={modalVisible} onDismiss={dismissModal} height={height} maxHeight={maxHeight} overlay={overlay} background={background}>
         { onReset && <ActionButton icon='reset' onPress={onReset} position='topRight' /> }
         { children }
-        { onSubmit && <MainButton title='Submit' size='xSmall' buttonStyles={{ marginTop: 15 }} onPress={() => {
+        { onSubmit && <MainButton title='Submit' size='xSmall' buttonStyles={{ marginTop: 30 }} onPress={() => {
           onSubmit()
           dismissModal()
         }} /> }
-        <CustomToast />
       </BottomModal>
-      
     </>
   )
 }
@@ -376,12 +373,13 @@ interface NoteInputProps extends ModalInputProps {
   inputStyles?: TextStyle, 
   placeholder?: string, 
   header?: string, 
+  subHeading?: ReactNode
   modalHeight?: DimensionValue
 }
 
 const DEFAULT_HEIGHT = 30
 
-export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit, buttonStyles, buttonTextStyles, inputStyles, placeholder, header, customLabel, modalHeight}: NoteInputProps) => {
+export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit, buttonStyles, buttonTextStyles, inputStyles, placeholder, header, subHeading, customLabel, modalHeight, overlay}: NoteInputProps) => {
   const defaultHeight = onSubmit ? `${DEFAULT_HEIGHT + 10}%` : `${DEFAULT_HEIGHT}%`
   const [notes, setNotes] = useState(initial)
   const [isFocused, setIsFocused] = useState(false)
@@ -410,22 +408,27 @@ export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit,
   }, [])
 
   return (
-    <ModalInput customLabel={customLabel} label={notes ?? 'No notes added.'} onSubmit={onSubmit} onReset={() => handlePress(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} height={height}>
+    <ModalInput customLabel={customLabel} label={notes ?? 'No notes added.'} onSubmit={onSubmit} onReset={() => handlePress(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} height={height} overlay={overlay}>
       <FormHeader title={header ?? 'Add Notes'} />
-      
-      <TextInput
-        style={[UI.input(), { width: '90%', minHeight: maxLength, maxHeight:`${DEFAULT_HEIGHT}%` }, validatedStyles, inputStyles]}
-        placeholder={placeholder ?? 'Enter notes'}
-        placeholderTextColor={UI.lightPalette().unfocused}
-        value={notes}
-        onChangeText={setNotes}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => handlePress(notes)}
-        maxLength={maxLength}
-        selectTextOnFocus={true}
-        multiline={true}
-        numberOfLines={6}
-      />
+      { subHeading }
+
+      <View style={[Spacing.flexRowStretch, UI.input(), { width: '90%', minHeight: maxLength, maxHeight:`${DEFAULT_HEIGHT}%` }, validatedStyles, inputStyles]}>
+        <TextInput
+          style={{ height: '100%', flex: 1, marginRight: 10 }}
+          placeholder={placeholder ?? 'Enter notes'}
+          placeholderTextColor={UI.lightPalette().unfocused}
+          value={notes}
+          onChangeText={setNotes}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => handlePress(notes)}
+          maxLength={maxLength}
+          selectTextOnFocus={true}
+          multiline={true}
+          numberOfLines={6}
+        />
+        <Icon name='edit' size='xSmall' />
+      </View>
+
     </ModalInput>
   )
 }

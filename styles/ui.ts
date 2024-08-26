@@ -42,6 +42,7 @@ export const photo = (size: string = 'med', r: number = 99, m: number = 5): Imag
 })
 
 export const iconSizeMap: Partial<Record<Size, ImageStyle>> = {
+  xxSmall: { width: 15, height: 15},
   xSmall: { width: 20, height: 20},
   small: { width: 30, height: 30},
   med: { width: 40, height: 40},

@@ -1,3 +1,5 @@
+import { Time } from "@components/Pickers/TimePicker"
+
 export const months = [
   'January', 'February', 'March', 'April',
   'May', 'June', 'July', 'August',
@@ -156,4 +158,23 @@ export function getOrdinalSuffix(n: number) {
 
 export function getLocaleDateString(string: string) {
   return getDateConstructor(string, true).toLocaleDateString()
+}
+
+export function getCurrentTimeString(string: string = 'now') {
+  const date = string === 'now' ? new Date() : new Date(string)
+
+  let hours = date.getHours()
+  const amOrPm = hours < 12 ? 'AM' : 'PM'
+
+  hours = hours % 12
+  hours = hours ? hours : 12
+
+  const formattedHours = String(hours).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+
+  return { time: { hours: formattedHours, minutes, amOrPm }, timeString: `${formattedHours}:${minutes} ${amOrPm}` }
+}
+
+export function convertToTimeString({ hours, minutes, amOrPm }: Time) {
+  return `${hours}:${minutes} ${amOrPm}`
 }

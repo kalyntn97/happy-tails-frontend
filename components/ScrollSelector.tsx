@@ -1,9 +1,9 @@
 //npm
-import { Children, useEffect, useRef, useState } from "react"
-import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { useEffect, useRef } from "react"
+import { Pressable, StyleSheet, Text, View } from "react-native"
 import Animated, { SharedValue, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated"
 //styles
-import { Buttons, Spacing, UI, Colors, Typography } from '@styles/index'
+import { Spacing, Typography } from '@styles/index'
 
 type ScrollSelectorProps = {
   data: any[]
@@ -12,6 +12,7 @@ type ScrollSelectorProps = {
   leftLabel?: string
   rightLabel?: string
   height?: number
+  loop?: boolean
 }
 
 type RowProps = {
@@ -56,8 +57,11 @@ const Row = ({ item, index, height, scrollY }: RowProps) => {
   )
 }
 
-const ScrollSelector = ({ data, onSelect, initial, leftLabel, rightLabel, height = 50 }: ScrollSelectorProps) => {
+const ScrollSelector = ({ data, onSelect, initial = 0, leftLabel, rightLabel, height = 50, loop = false }: ScrollSelectorProps) => {
   let selected: number
+  const initialDataLength = data.length
+
+  if (loop) data = [...data, ...data, ...data]
 
   const scrollY = useSharedValue(0)
   const ScrollViewRef = useRef(null)
@@ -68,15 +72,22 @@ const ScrollSelector = ({ data, onSelect, initial, leftLabel, rightLabel, height
   })
 
   const onScrollEnd = () => {
-    selected = (Math.round(scrollY.value / height))
-    onSelect(selected)
+    selected = Math.round(scrollY.value / height ) 
+    if (loop) selected = selected % initialDataLength
+    onSelect(data[selected])
   }
 
   const initialScroll = () => {
-    if (ScrollViewRef.current && initial) {
-      ScrollViewRef.current.scrollTo({ y: initial * height, animated: true })
+    if (ScrollViewRef.current) {
+      let position = initial * height
+      if (loop) position += initialDataLength * height
+      ScrollViewRef.current.scrollTo({ y: position, animated: true })
     }
   }
+
+  useEffect(() => {
+    initialScroll()
+  }, [initial])
 
   return (
     <View style={[styles.carousel, { height: height * 3 }]}>

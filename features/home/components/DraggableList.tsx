@@ -115,6 +115,7 @@ const CareItem = ({ item, onPress, onLongPress, disabled }: { item: Care } & Ite
   const log = item.logs.find((log: Log) => getLocaleDateString(log.date) === activeDate.toLocaleDateString())
 
   const shouldIncrement = item.frequency.type === 'days' && item.frequency.timesPerInterval[0] > 1 && log
+
   const progress: number = shouldIncrement ?
     Number((log.value / item.frequency.timesPerInterval[0]).toFixed(2))
     : log ? log.value 
@@ -123,9 +124,13 @@ const CareItem = ({ item, onPress, onLongPress, disabled }: { item: Care } & Ite
   const isSkipped = progress === -1
 
   const toggleAll = () => {
-    isChecked ? deleteLogMutation.mutate({ logId: log._id, careId: item._id }) 
-      : shouldIncrement ? updateLogMutation.mutate({ ...log, value: item.frequency.timesPerInterval[0], logId: log._id })
-      : createLogMutation.mutate({ date: activeDate.toISOString(), value: item.frequency.timesPerInterval[0], care: item._id })
+    if (isChecked) {
+      deleteLogMutation.mutate({ logId: log._id, careId: item._id }) 
+    } else {
+      shouldIncrement ? 
+        updateLogMutation.mutate({ ...log, value: item.frequency.timesPerInterval[0], logId: log._id })
+        : createLogMutation.mutate({ date: activeDate.toISOString(), value: item.frequency.timesPerInterval[0], care: item._id })
+    }
   }
 
   return (

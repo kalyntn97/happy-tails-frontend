@@ -2,6 +2,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker'
 import React, { useState } from 'react'
 import { Pressable, StyleSheet, Text, TextStyle, View } from 'react-native'
 //utils
+import { windowWidth } from '@utils/constants'
 import { daysOfWeek, getOrdinalSuffix, months } from '@utils/datetime'
 import { showToast } from '@utils/misc'
 import { Frequency } from '@utils/types'
@@ -11,7 +12,6 @@ import { ActionButton, ToggleButton, TransparentButton } from '../ButtonComponen
 import ScrollSelector from '../ScrollSelector'
 //styles
 import { Buttons, Colors, Spacing, Typography, UI } from '@styles/index'
-import { windowWidth } from '@utils/constants'
 
 export interface FrequencyPicker extends Frequency {
   ending?: boolean 
@@ -79,9 +79,9 @@ export function getRepeatLabels(frequency: FrequencyPicker) {
 const showWarningToast = () => showToast({ text1: 'At least 1 selection is required.', style: 'info' })
 
 const TimesPerDaySelector = ({ type, times, onSelect }: { type: 'days', times: number, onSelect: (selected: number) => void }) => (
-  <ScrollSelector data={frequencyMap[type].timesPerIntervalArray} initial={times - 1} 
+  <ScrollSelector data={frequencyMap[type].timesPerIntervalArray}
     rightLabel={`${times === 1 ? 'time' : 'times'} a ${type.slice(0, -1)}`} 
-    onSelect={(selected: number) => onSelect(selected + 1)}
+    onSelect={(selected: number) => onSelect(selected)}
   />
 )
 
@@ -117,12 +117,12 @@ const DaySelector = ({ type, dayArray, onSelect, color }: { type: 'weeks' | 'mon
 const MonthDaySelector = ({ onSelect }: { onSelect: (selected: MonthDay) => void }) => {
   const [month, setMonth] = useState<string>('Jan')
   const [day, setDay] = useState<number>(1)
-
+  
   return (
     <View style={Spacing.flexColumnStretch}>
       <View style={Spacing.flexRow}>
-        <ScrollSelector data={monthNames} onSelect={(selected: string) => setMonth(monthNames[selected])} />
-        <ScrollSelector data={numArray(31)} onSelect={(selected: number) => setDay(selected + 1)} />
+        <ScrollSelector data={monthNames} onSelect={(selected: string) => setMonth(selected)} />
+        <ScrollSelector data={numArray(31)} onSelect={(selected: number) => setDay(selected)} />
       </View>
       <TransparentButton title='add' icon='increase' onPress={() => onSelect({ month: month, day: day })} size='small' />
     </View>
@@ -180,7 +180,7 @@ const IntervalSelector = ({ type, interval, onSelect, intervalLabel }: { type: F
         </View>
       } />
       { intervalOpen && 
-        <ScrollSelector data={frequencyMap[type].intervalArray} initial={interval - 1} onSelect={(selected: number) => onSelect(selected + 1)} leftLabel='every' rightLabel={interval === 1 ? type.slice(0, -1) : type} />
+        <ScrollSelector data={frequencyMap[type].intervalArray} onSelect={(selected: number) => onSelect(selected)} leftLabel='every' rightLabel={interval === 1 ? type.slice(0, -1) : type} />
       }
     </View>
   )
@@ -204,11 +204,7 @@ const EndDateSelector = ({ endDate, ending, onSelect, color }: { endDate: string
 const FrequencyPicker = ({ frequency, onSelectFrequency, onSelectEndDate, onReset, color = 0, labelStyles}: Props) => {
   const { type, interval, timesPerInterval, ending, endDate } = frequency
   const { intervalLabel, repeatLabel } = getRepeatLabels(frequency)
-  // const timesPerIntervalLabel = getTimesPerIntervalLabel(timesPerInterval, type)
-  // const intervalLabel = getIntervalLabel(interval, type)
-  // const endingLabel = ending && endDate ? `until ${new Date(endDate).toLocaleDateString()}` : ''
-  // const frequencyLabel = `Repeats ${timesPerIntervalLabel} ${intervalLabel} ${endingLabel}`
- 
+
   const onChangeType = (type: Frequency['type']) => {
     let defaultTimesPerInterval = type === 'years' ? [{ month: 'Jan', day: 1 }] : [1]
     onSelectFrequency('frequency', { type: type, interval: 1, timesPerInterval: defaultTimesPerInterval })
@@ -216,7 +212,7 @@ const FrequencyPicker = ({ frequency, onSelectFrequency, onSelectEndDate, onRese
 
   return (
     <ModalInput maxHeight='90%' onReset={onReset}
-      label={<Text style={labelStyles}>{repeatLabel}</Text>}
+      customLabel={<Text style={labelStyles}>{repeatLabel}</Text>}
     > 
       <View style={Spacing.fullCon()}>
         <Text style={Typography.subHeader}>{repeatLabel}</Text>
@@ -242,7 +238,7 @@ const FrequencyPicker = ({ frequency, onSelectFrequency, onSelectEndDate, onRese
 
 const styles = StyleSheet.create({
   rowCon: {
-    ...UI.tableRow(true, 0 , 15),
+    ...UI.tableRow(true, true, 0, 15),
     alignItems: 'center',
   },
   btn: {

@@ -1,10 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native'
-import React, { ReactElement, ReactNode, useRef } from 'react'
+import React, { ReactNode, useRef } from 'react'
+import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
+//components
 import { IconButton } from './ButtonComponents'
-import { Colors, Spacing } from '@styles/index'
-import { getActionIconSource } from '@utils/ui'
 import { Icon } from './UIComponents'
+//styles
+import { Colors, Spacing } from '@styles/index'
 
 type Props = {
   swipeRightActions?: { icon: string, title?: string, bgColor: string, onPress: () => void }[]
