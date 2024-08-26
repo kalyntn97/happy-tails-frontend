@@ -1,100 +1,85 @@
-//npm
-import { IdFormData } from '@pet/PetInterface'
-import React, { FC } from 'react'
-import { Text, TextInput, View } from 'react-native'
+import React, { useEffect } from 'react'
+import { ActivityIndicator, Text } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 //components
-import { MainButton, TransparentButton } from '@components/ButtonComponents'
 import Dropdown from '@components/Dropdown/Dropdown'
-import { CircleIcon, ErrorMessage } from '@components/UIComponents'
-//uteils
-import { getPetIconSource } from '@utils/ui'
+import { FormInput, Icon, NoteInput, ScrollScreen, TableForm } from '@components/UIComponents'
+import { Header } from '@navigation/NavigationStyles'
+//utils
 import useForm from '@hooks/useForm'
-import { IDS } from '@pet/petHelpers'
+import { IdFormData } from '@pet/PetInterface'
 //styles
-import { Colors } from '@styles/index'
-import { styles } from '@styles/stylesheets/FormStyles'
+import { Spacing } from '@styles/index'
 
 interface IdFormProps {
   initialValues?: IdFormData
   onSubmit: (type: 'ids', idFormData: IdFormData) => void
+  isPending: boolean
 }
 
-const IdForm : FC<IdFormProps> = ({ initialValues, onSubmit }) => {
-  const initialState = { name: initialValues?.name ?? null, allowManualType: initialValues ? !IDS.includes(initialValues.type) : true, type: initialValues?.type ?? null, no: initialValues?.no ?? null, notes: initialValues?.notes ?? null, errorMsg: false }
+interface InitialState extends IdFormData {
+  errors: any
+}
+
+const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
+  const initialState: InitialState = { 
+    name: initialValues?.name ?? null, 
+    type: initialValues?.type ?? null, 
+    no: initialValues?.no ?? null, 
+    notes: initialValues?.notes ?? null, 
+    errors: {},
+  }
 
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
 
-  const { name, allowManualType, type, no , notes, errorMsg } = values
-  
-  const handleSelectType = (item: string) => {
-    if (item === 'Others') {
-      onChange('type', null)
-      onChange('allowManualType', true)
-    } else {
-      onChange('type', item)
-      onChange('allowManualType', false)
-    }
-  }
+  const { name, type, no , notes, errors }: InitialState = values
 
+  const navigation = useNavigation()
+  
   function handleSubmit() {
     onSubmit('ids', { name, type, no, notes })
   }
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Add an ID</Text>
-      <CircleIcon iconSource={getPetIconSource('ids')} />
-      <View style={[styles.labelCon, { marginTop: 20 }]}>
-        <Text>ID type</Text>
-        <Text>Registry name</Text>
-      </View>
-      <View style={styles.rowCon}>
-        <Dropdown label='Select ID type' dataType='petIds' onSelect={handleSelectType} width={140} />
-        <TextInput 
-          style={[styles.input, styles.rightInput]}
-          placeholder='Enter registry name'
-          placeholderTextColor={Colors.shadow.reg}
-          value={name}
-          onChangeText={(text: string) => onChange('name', text)}
-        />
-      </View>
-      <View style={styles.labelCon}>
-        {allowManualType && <Text>ID type</Text>}
-        <Text>Notes (optional)</Text>
-      </View>
-      <View style={styles.rowCon}>
-        {allowManualType && 
-          <TextInput 
-            style={[styles.input, styles.leftInput]}
-            placeholder='Enter ID type'
-            placeholderTextColor={Colors.shadow.reg}
-            value={type}
-            onChangeText={(text: string) => onChange('type', text)}
-          />
-        }
-        <TextInput 
-          style={[styles.input, allowManualType && styles.rightInput]}
-          placeholder='Enter notes'
-          placeholderTextColor={Colors.shadow.reg}
-          value={notes}
-          onChangeText={(text: string) => onChange('notes', text)}
-        />
-      </View>
-      <Text style={styles.label}>ID number</Text>
-        <TextInput 
-          style={styles.input}
-          placeholder='Enter ID no.'
-          placeholderTextColor={Colors.shadow.reg}
-          value={no}
-          onChangeText={(text: string) => onChange('no', text)}
-        />
+  function handleValidate() {
+    onValidate({ type, no })
+  }
+  
+  const table = [
+    { key: 'type', icon: 'tag', value:
+      <Dropdown label='Select type' dataType='petIds' initial={type} onSelect={selected => onChange('type', selected)} width={55} withBorder={false} buttonTextStyles={{ textAlign: 'right' }} error={errors?.type}
+      />
+    },
+    { key: 'name', icon: 'ids', value: 
+      <FormInput initial={name} onChange={(text: string) => onChange('name', text)} placeholder='Enter Registry Name' withBorder={false} align='right' /> 
+    },
+    { key: 'no', icon: 'no', value: 
+      <FormInput initial={no} onChange={(text: string) => onChange('no', text)} placeholder='Enter no.'  withBorder={false} align='right' props={{ inputMode: 'numeric' }} maxLength={20} error={errors?.no}
+      />
+    },
+    { key: 'notes', icon: 'note', value: 
+      <NoteInput notes={notes} onChange={(text: string) => onChange('notes', text)} modalHeight={80} />
+    },
+  ]
 
-      {errorMsg && <ErrorMessage error={errorMsg} top={20} />}
-      <View style={[styles.btnCon, { marginTop: errorMsg ? 0 : 40 }]}>
-        <MainButton title='Submit' size='small' onPress={() => onValidate(name, type, no)} />
-        <TransparentButton title='Cancel' size='small' onPress={onReset}/>
-      </View>
-    </View>
+  const headerActions = [
+    { icon: 'reset', onPress: onReset },
+    { title: isPending ? 
+      <Text style={Spacing.flexRow}><ActivityIndicator /> Submitting...</Text>
+      : 'Submit', onPress: handleValidate },
+  ]
+
+  useEffect(() => {
+    navigation.setOptions({
+      header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' />
+    })
+  }, [headerActions])
+
+  return (
+    <ScrollScreen props={{ keyboardShouldPersistTaps: 'never' }}>
+      <Icon type='pet' name={type && type !== 'Other' ? type : 'ids'} size='large' />
+
+      <TableForm table={table} size='med' />
+    </ScrollScreen>
   )
 }
 

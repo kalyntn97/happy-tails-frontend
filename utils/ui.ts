@@ -31,6 +31,8 @@ export const AlertForm = ({ body, button }) =>
   )
 
 const actionIconSource = {
+  tag: require('@assets/icons/action-tag.png'),
+  no: require('@assets/icons/action-no.png'),
   camera: require('@assets/icons/action-camera.png'),
   birthday: require('@assets/icons/action-birthday.png'),
   birthdayColor: require('@assets/icons/action-birthday_color.png'),
@@ -252,13 +254,14 @@ const petIconSource = {
   Microchip: require('@assets/icons/id-microchip.png'),
   Passport: require('@assets/icons/id-passport.png'),
   License: require('@assets/icons/id-license.png'),
-  Id: require('@assets/icons/id-id.png'),
+  Identification: require('@assets/icons/id-id.png'),
   services: require('@assets/icons/service.png'),
-  Groomer: require('@assets/icons/service-salon.png'),
+  Groomer: require('@assets/icons/service-groomer.png'),
   Boarding: require('@assets/icons/service-boarding.png'),
+  School: require('@assets/icons/service-school.png'),
   'Pet Store': require('@assets/icons/service-store.png'),
   'ER Hospital': require('@assets/icons/service-er.png'),
-  Clinic: require('@assets/icons/service-vet.png'),
+  Clinic: require('@assets/icons/service-clinic.png'),
   Sitter: require('@assets/icons/service-sitter.png')
 }
 

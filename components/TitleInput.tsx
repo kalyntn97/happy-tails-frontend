@@ -92,10 +92,10 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
           autoCapitalize='words'
           multiline={true}
         />
-        <View style={Spacing.flexRow}>
+        <View style={[Spacing.flexRow, { position: 'absolute', bottom: 0 }]}>
           { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: 30 }} /> }
           <Text style={styles.textLength}>
-            { isFocused ? `${TITLE_LENGTH - (title ? title.length : 0)} / ${TITLE_LENGTH}` : null }
+            { isFocused && `${TITLE_LENGTH - (title ? title.length : 0)} / ${TITLE_LENGTH}` }
           </Text> 
 
         </View>

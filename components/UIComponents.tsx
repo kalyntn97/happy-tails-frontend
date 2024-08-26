@@ -242,7 +242,7 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
     <View style={[Spacing.flexColumn, { width: width, zIndex: isFocused ? 10 : 2, alignItems: align === 'left' ? 'flex-start' : 'flex-end' }]}>
       <TextInput
         ref={ref}
-        style={[withBorder ? UI.input() : UI.input(false, 0, 0, 0), styles, validatedStyles]}
+        style={[withBorder ? UI.input() : UI.input(false, 0, 15, 0), styles, validatedStyles]}
         placeholder={placeholder}
         placeholderTextColor={UI.lightPalette().unfocused}
         value={value}
@@ -253,11 +253,11 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
         selectTextOnFocus={true}
         { ...props }
       />
-      <View style={Spacing.flexRow}>
-        { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: 30 }}/> }
+      <View style={[Spacing.flexRow, { position: 'absolute', bottom: 0 }]}>
+        { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: isFocused ? 30 : 0 }}/> }
         <Text style={{ color: UI.lightPalette().unfocused, fontSize: 12 }}>
-          { isFocused ? `${maxLength - (value ? value.length : 0)}/${maxLength}` : null }
-      </Text> 
+          { isFocused && `${maxLength - (value ? value.length : 0)}/${maxLength}` }
+        </Text> 
         
       </View>
     </View>
@@ -378,16 +378,17 @@ interface NoteInputProps extends ModalInputProps {
   placeholder?: string, 
   header?: string, 
   subHeading?: ReactNode
-  modalHeight?: DimensionValue
+  modalHeight?: number
 }
 
-const DEFAULT_HEIGHT = 30
+let DEFAULT_HEIGHT = 30
 
-export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit, buttonStyles, buttonTextStyles, inputStyles, placeholder, header, subHeading, customLabel, modalHeight, overlay}: NoteInputProps) => {
+export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit, buttonStyles, buttonTextStyles, inputStyles, placeholder, header, subHeading, customLabel, modalHeight, overlay = Colors.white }: NoteInputProps) => {
+  DEFAULT_HEIGHT = modalHeight ?? DEFAULT_HEIGHT
   const defaultHeight = onSubmit ? `${DEFAULT_HEIGHT + 10}%` : `${DEFAULT_HEIGHT}%`
   const [notes, setNotes] = useState(initial)
   const [isFocused, setIsFocused] = useState(false)
-  const [height, setHeight] = useState(modalHeight ?? defaultHeight)
+  const [height, setHeight] = useState(defaultHeight)
 
   const validatedStyles = useMemo(() => isFocused ? UI.focused : UI.unfocused, [isFocused])
 
@@ -400,10 +401,10 @@ export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit,
 
   useEffect(() => {
     const onShow = Keyboard.addListener('keyboardWillShow', () => {
-      setHeight(`${DEFAULT_HEIGHT + 40 < 95 ? DEFAULT_HEIGHT + 40 : 95}%`)
+      setHeight(`${DEFAULT_HEIGHT + 40 < 93 ? DEFAULT_HEIGHT + 40 : 93}%`)
     })
     const onHide = Keyboard.addListener('keyboardWillHide', () => {
-      setHeight(modalHeight ?? defaultHeight)
+      setHeight(defaultHeight)
     })
     return () => {
       onShow.remove()
@@ -412,7 +413,7 @@ export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit,
   }, [])
 
   return (
-    <ModalInput customLabel={customLabel} label={notes ?? 'No notes added.'} onSubmit={onSubmit} onReset={() => handlePress(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} height={height} overlay={overlay}>
+    <ModalInput customLabel={customLabel} label={notes?.length ? notes : 'No notes added.'} onSubmit={onSubmit} onReset={() => handlePress(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} height={height as DimensionValue} overlay={overlay}>
       <FormHeader title={header ?? 'Add Notes'} />
       { subHeading }
 

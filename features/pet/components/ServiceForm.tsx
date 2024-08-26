@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Text, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-//helpers && types
+//helpers &  utils
 import { ServiceFormData } from '@pet/PetInterface'
 import useForm from '@hooks/useForm'
+import { useShallowPets } from '@hooks/sharedHooks'
 //components
 import Dropdown from '@components/Dropdown/Dropdown'
 import { FormInput, Icon, NoteInput, ScrollScreen, TableForm } from '@components/UIComponents'
 import { Header } from '@navigation/NavigationStyles'
+import PetPicker from '@components/Pickers/PetPicker'
 //styles
 import { styles } from '@styles/stylesheets/FormStyles'
 import { Spacing } from '@styles/index'
-import PetPicker from '@components/Pickers/PetPicker'
-import { useShallowPets } from '@hooks/sharedHooks'
 
 interface ServiceFormProps {
   initialValues?: ServiceFormData
@@ -88,7 +88,7 @@ const ServiceForm = ({ initialValues, onSubmit, isPending }: ServiceFormProps) =
   return (
     <ScrollScreen props={{ keyboardShouldPersistTaps: 'never' }}>
       <View style={styles.headerCon}>
-        <Icon type='pet' name='services' size='large' />
+        <Icon type='pet' name={type && type !== 'Other' ? type : 'services'} size='large' />
         <View style={styles.titleCon}>
           <FormInput initial={initialState.name} placeholder="New Service Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} width='100%' />
         </View>

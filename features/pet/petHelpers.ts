@@ -53,7 +53,7 @@ export const GENDER: Gender[] = ['Boy', 'Girl', 'Unknown']
 
 export const STATUS: Status[] = [ 'Healthy', 'Passed away' ]
 
-export const IDS = ['Microchip', 'License', 'Passport', 'Others']
+export const IDS = ['Identification', 'Microchip', 'License', 'Passport', 'Other']
 
 export const MED_STATUS = ['Active', 'Paused', 'Inactive']
 
@@ -61,7 +61,7 @@ export const DISEASE_TYPES = ['Skeletal/ muscular', 'Cardiovascular', 'Neurologi
 
 export const DISEASE_STATUS = ['Active', 'Cured', 'Chronic']
 
-export const SERVICE_TYPES = ['ER Hospital', 'Clinic', 'School', 'Boarding', 'Groomer', 'Sitter', 'Pet store']
+export const SERVICE_TYPES = ['ER Hospital', 'Clinic', 'School', 'Boarding', 'Groomer', 'Sitter', 'Pet Store', 'Other']
 
 export const PET_DETAILS = {
   ids: 'Identifications',
