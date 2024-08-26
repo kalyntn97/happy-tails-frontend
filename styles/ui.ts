@@ -122,7 +122,7 @@ export const inputBase = (h: number = 10, v: number = 15, m: number = 10): ViewS
   margin: m,
 })
 
-export const input = (withBorder: boolean = true, h?: number, v?: number, m?: number): ViewStyle => ({
+export const input = (withBorder: boolean = true, h?: number, v?: number, m: number = 0): ViewStyle => ({
   ...inputBase(h, v, m),
   borderRadius: 8,
   borderWidth: withBorder ? 1 : 0,

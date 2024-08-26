@@ -3,11 +3,12 @@ import LottieView from "lottie-react-native"
 import { StyleSheet, Text, View } from "react-native"
 //components
 import { TransparentButton } from "./ButtonComponents"
+import { DetailType } from "@pet/PetInterface"
+import { useNavigation } from "@react-navigation/native"
 
 type Props = {
-  type: 'pet' | 'care' | 'health' | 'ids' | 'services'
+  type: 'pet' | 'care' | 'health' | DetailType
   petId?: string
-  navigation: any
 }
 
 const map = {
@@ -18,7 +19,8 @@ const map = {
   services: { text: 'service', subText: '' },
 }
 
-const PlaceHolder = ({ type, petId, navigation }: Props) => {
+const PlaceHolder = ({ type, petId }: Props) => {
+  const navigation = useNavigation()
   const color = UI.lightPalette().accent
 
   return (  
@@ -28,8 +30,6 @@ const PlaceHolder = ({ type, petId, navigation }: Props) => {
           type === 'pet' ? navigation.navigate('PetCreate') 
           : type === 'care' ? navigation.navigate('CareCreate')
           : type === 'health' ? navigation.navigate('HealthCreate')
-          // : type === 'id' ? navigation.navigate('EditDetails', { form: type, petId })
-          // : type === 'service' ? navigation.navigate('EditDetails', { form: type, petId })
           : navigation.navigate('PetEditDetails', { type, petId })
         }} color={color} bdColor={color} 
       />

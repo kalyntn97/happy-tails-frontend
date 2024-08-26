@@ -2,11 +2,11 @@ import { useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 //components
-import { CloseButton } from '@components/ButtonComponents'
+import { ActionButton, CloseButton } from '@components/ButtonComponents'
 import PlaceHolder from '@components/PlaceHolder'
-import { ErrorImage, ScrollScreen, TopRightHeader } from '@components/UIComponents'
+import { ErrorImage, ScrollScreen, TitleLabel, TopRightHeader } from '@components/UIComponents'
 //utils & types
-import { DetailType, Service } from '@pet/PetInterface'
+import { DetailType, Pet, Service } from '@pet/PetInterface'
 import { PET_DETAILS } from '@pet/petHelpers'
 import { petKeyFactory, useDeletePetDetail } from '@pet/petQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'
@@ -58,7 +58,7 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
   
   const pet: Pet | undefined = queryClient.getQueryData(petKeyFactory.petById(petId))
 
-  const deleteDetailMutation = useDeletePetDetail(petId, navigation)
+  const { handleDeletePetDetail, isPending } = useDeletePetDetail(petId, navigation)
 
   const detailData = {
     ids: pet?.ids ?? [],
@@ -75,14 +75,14 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
         <Image source={getPetIconSource(item.type) || getPetIconSource(type)} style={{ ...UI.icon() }} />
         <Text style={styles.itemHeader}>
           {item.name}
-          <Text style={{ ...Typography.xSmallSubHeader }}> - {item.type}</Text>
+          <Text style={{ ...Typography.smallSubHeader }}> - {item.type}</Text>
         </Text>
       </View>
       {type === 'ids' ? <IdDetails id={item} />
         : type === 'services' ? <ServiceDetails service={item} />
         : null
       }
-      <CloseButton onPress={() => deleteDetailMutation.mutate({ type, detailId: item._id })} />
+      <CloseButton onPress={() => handleDeletePetDetail(type, item)} />
     </View>
   )
 
@@ -92,10 +92,13 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
       { pet && Object.keys(detailData).map((type: DetailType) =>
         (type === show) && 
           <View key={`${type}-details`} style={styles.sectionCon}>
-            <ListHeader name={type} onPress={() => openForm(type)} />
+            {/* <ListHeader name={type} onPress={() => openForm(type)} /> */}
+            <TitleLabel mode='bold' title={PET_DETAILS[type]} iconName={type} size='large' rightAction={
+              <ActionButton icon='add' onPress={() => openForm(type)} textStyles={{ ...Typography.smallHeader, margin: 0 }} />
+            } />
             { detailData[type].length > 0 ? detailData[type].map((item: any, index: number) => 
               <Item key={`${type}-${index}`} item={item} type={type} />
-            ) : <PlaceHolder type={type} petId={petId} navigation={navigation} /> }
+            ) : <PlaceHolder type={type} petId={petId} /> }
           </View>
       )}
     </ScrollScreen>

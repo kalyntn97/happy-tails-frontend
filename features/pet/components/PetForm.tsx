@@ -1,6 +1,6 @@
 //npm modules
 import { useEffect, useMemo } from "react"
-import { DimensionValue, Text, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, DimensionValue, Text, TouchableOpacity, View } from "react-native"
 //components
 import { ToggleButton } from '@components/ButtonComponents'
 import Dropdown from "@components/Dropdown/Dropdown"
@@ -47,7 +47,7 @@ const SpeciesBreedSelector = ({ species, breed, initials, onSelectSpecies, onSel
 
       { ['Dog', 'Cat', 'Bird', 'Fish'].includes(species) && <>
         <FormLabel label='Pet Breed' icon='pets' />
-        <Dropdown withSearch={true} label='Search Breed' dataType={species} onSelect={(selected: string) => onSelectBreed(selected)} initial={breed} width='80%' contentPosition="top" />
+        <Dropdown withSearch={true} label='Search Breed' dataType={species} onSelect={(selected: string) => onSelectBreed(selected)} initial={breed} width={80} contentPosition="top" />
       </> }
     </View>
   </ModalInput>
@@ -99,7 +99,7 @@ const StatusInfo = ({ status, onChange, color }: { status: Pet['status'], onChan
 
   const statusTable = [
     { key: 'statusValue', icon: 'status', value: 
-      <Dropdown label='Status' dataType="petStatus" initial={status.value} onSelect={handleSelectStatus} width={130} buttonStyles={{ marginLeft: 'auto' }} buttonTextStyles={{ textAlign: 'right' }} contentStyles={{ width: 'fit-content' as DimensionValue }}/> 
+      <Dropdown label='Status' dataType="petStatus" initial={status.value} onSelect={handleSelectStatus} width={50} withBorder={false} /> 
     },
     { key: 'statusDate', icon: 'schedule', value: 
       <DateInput date={status.date} placeholder='Unknown date' onChangeDate={(selected) => onChange({ ...status, date: selected })} color={color} />
@@ -137,7 +137,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormPro
   }), [initialValues])
 
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
-  const { name, gender, species, breed, dob, gotchaDate, altered, status, color, photo, petId, errors } = values
+  const { name, gender, species, breed, dob, gotchaDate, altered, status, color, photo, petId, errors }: InitialState = values
 
   const placeholderPhoto = useMemo(() => {
     let icon: string
@@ -178,7 +178,9 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormPro
 
   const headerActions = [
     { icon: 'reset', onPress: onReset },
-    { title: formStatus === 'pending' ? 'Submitting...' : 'Submit', onPress: handleValidate },
+    { title: formStatus === 'pending' ? 
+      <Text style={Spacing.flexRow}><ActivityIndicator /> Submitting...</Text>
+      : 'Submit', onPress: handleValidate },
   ]
 
   useEffect(() => {
@@ -192,7 +194,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormPro
       <View style={styles.headerCon}>
         <PhotoUpload photo={photo} placeholder={placeholderPhoto} onSelect={(uri: string) => onChange('photo', uri)} />
         <View style={styles.titleCon}>
-          <FormInput initial={initialState.name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} />
+          <FormInput initial={initialState.name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} />
         </View>
       </View>
       

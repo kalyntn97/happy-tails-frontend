@@ -20,11 +20,11 @@ interface PetInfoProps {
 
 const PetInfo = ({ pet, size }: PetInfoProps) => {
   const petAge = countYearsBetween(pet.dob, 'today')
-  const conStyles = size === 'large' ? {...Spacing.flexRow } : { ...Spacing.flexColumn }
+  const conStyles = size === 'large' ? { ...Spacing.flexRow } : { ...Spacing.flexColumn }
 
   return ( 
-    <View style={[Spacing.flexRow, conStyles]}>
-      <View style={[styles.photoCon, { width: UI.iconSizeMap[size] as DimensionValue }]}>
+    <View style={conStyles}>
+      <View style={[Spacing.flexColumn, { width: UI.iconSizeMap[size] as DimensionValue }]}>
         { size === 'large' && 
           <Icon type='pet' name={pet.species} styles={styles.petIcon} size='med' m={0} />
         }
@@ -33,11 +33,10 @@ const PetInfo = ({ pet, size }: PetInfoProps) => {
           style={[styles.petPhoto, UI.photo(size, 99, 0)]} 
         />
         
-        { size === 'med' || size === 'small'  &&
+        { size === 'med' || size === 'small' &&
           <Text style={styles.shortName}>{pet.name.split(' ')[0]}</Text>
         }
       </View>
-
 
       { size === 'large' && 
         <View style={styles.infoContainer}>
@@ -49,9 +48,6 @@ const PetInfo = ({ pet, size }: PetInfoProps) => {
 }
  
 const styles = StyleSheet.create({
-  photoCon: {
-    ...Spacing.flexColumn,
-  },
   shortName: {
     ...Typography.smallHeader,
     margin: 0,
@@ -59,9 +55,8 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     ...Spacing.flexColumn,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
     flex: 1,
+    marginLeft: 10,
   },
   petPhoto: {
     position: 'relative',
@@ -75,13 +70,16 @@ const styles = StyleSheet.create({
   },
   name: {
     ...Typography.subHeader,
+    margin: 0,
     fontSize: 18,
-    ...basePadding(0, 10),
+    textAlign: 'left',
   },
   body: {
     ...Typography.smallSubHeader,
-    marginTop: 0,
+    margin: 0,
+    marginTop: 15,
     color: 'gray',
+    textAlign: 'left',
   }
 })
 

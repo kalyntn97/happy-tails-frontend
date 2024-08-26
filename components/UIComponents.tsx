@@ -10,7 +10,7 @@ import { ActionButton, GoBackButton, MainButton } from "./ButtonComponents"
 import { CustomToast } from "@navigation/NavigationStyles"
 //styles
 import { Colors, Spacing, Typography, UI } from "@styles/index"
-import { Size, icon, lightPalette } from "@styles/ui"
+import { Size, icon, iconSizeMap, lightPalette } from "@styles/ui"
 
 interface IconProps {
   type?: IconType
@@ -28,11 +28,14 @@ export const Icon = ({ type = 'action', name, value, size = 'small', styles, m }
   )
 }
 
-export const CircleIcon = ({ type, name, size = 'large', bgColor }: IconProps & { bgColor?: string }) => (
-  <View style={{ backgroundColor: bgColor ?? Colors.shadow.light, ...UI.roundedIconCon }}>
-    <Icon type={type} name={name} size={size} />
-  </View>
-)
+export const CircleIcon = ({ type, name, size = 'large', bgColor = Colors.shadow.light }: IconProps & { bgColor?: string }) => { 
+  const conWidth: number = Number(iconSizeMap[size].width) + (size === 'large' ? 30 : 15)
+  return (
+    <View style={{ backgroundColor: bgColor, ...UI.roundedIconCon, width: conWidth, height: conWidth }}>
+      <Icon type={type} name={name} size={size} />
+    </View>
+  )
+}
 
 export const PhotoUpload = memo(({ photo, size = 'large', placeholder, onSelect, styles }: { photo?: string, size?: Size, placeholder?: ImageSourcePropType, onSelect: (uri: string) => void, styles?: ViewStyle }) => {
   const photoSource: ImageSourcePropType = photo ? { uri: photo } : (placeholder ?? require('assets/icons/ui-image.png'))
@@ -61,7 +64,7 @@ type TitleLabelProps = {
   iconType?: IconType
   iconName?: string
   rightAction?: ReactNode | any
-  size?: 'small' | 'med'
+  size?: 'small' | 'med' | 'large'
   rightLabel?: 'down' | 'next'
   color?: string
   titleStyles?: TextStyle
@@ -71,8 +74,8 @@ type TitleLabelProps = {
 
 export const TitleLabel = memo(({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, containerStyles, rightLabel, mode = 'normal' }: TitleLabelProps) => { 
   const dynamicSize: { icon: Size, title: number } = useMemo(() => ({
-    icon: size === 'small' ? 'xSmall' : 'small',
-    title: size === 'small' ? 15 : 18,
+    icon: size === 'small' ? 'xSmall' : size === 'large' ? 'med' :'small',
+    title: size === 'small' ? 15 : size === 'large' ? 22 : 18,
   }), [size])
   
   return (
@@ -211,16 +214,18 @@ export const ScrollScreen = ({ children, props, contentStyles, containerStyles, 
 
 interface InputProps {
   initial: string, 
-  placeholder: string, 
+  placeholder?: string, 
   onChange?: (input: string) => void, 
-  styles?: TextStyle, 
   props?: TextInputProps, 
   maxLength?: number, 
   error?: string, 
   width?: DimensionValue
+  withBorder?: boolean
+  styles?: TextStyle
+  align?: 'left' | 'right' 
 }
 
-export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styles, props, maxLength = 100, width = '80%', error }: InputProps, ref: MutableRefObject<any>) => {
+export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title', onChange, props, maxLength = 100, width = '80%', error, withBorder = true, styles, align = 'left' }: InputProps, ref: MutableRefObject<any>) => {
   const [isFocused, setIsFocused] = useState(false)
   const [value, setValue] = useState(initial ?? null)
 
@@ -234,11 +239,11 @@ export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styl
   }
 
   return (
-    <View style={{ width: width, zIndex: isFocused ? 10 : 2 }}>
+    <View style={[Spacing.flexColumn, { width: width, zIndex: isFocused ? 10 : 2, alignItems: align === 'left' ? 'flex-start' : 'flex-end' }]}>
       <TextInput
         ref={ref}
-        style={[styles ?? UI.input(), validatedStyles]}
-        placeholder={placeholder ?? 'Title'}
+        style={[withBorder ? UI.input() : UI.input(false, 0, 0, 0), styles, validatedStyles]}
+        placeholder={placeholder}
         placeholderTextColor={UI.lightPalette().unfocused}
         value={value}
         onChangeText={(text: string) => setValue(text)}
@@ -248,13 +253,12 @@ export const FormInput = memo(forwardRef(({ initial, placeholder, onChange, styl
         selectTextOnFocus={true}
         { ...props }
       />
-      <View style={[Spacing.flexRow, { marginTop: 5 }]}>
+      <View style={Spacing.flexRow}>
         { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: 30 }}/> }
-        { isFocused && 
-          <Text style={{ color: UI.lightPalette().unfocused, fontSize: 12 }}>
-            {maxLength - (value ? value.length : 0)}/{maxLength}
-          </Text> 
-        }
+        <Text style={{ color: UI.lightPalette().unfocused, fontSize: 12 }}>
+          { isFocused ? `${maxLength - (value ? value.length : 0)}/${maxLength}` : null }
+      </Text> 
+        
       </View>
     </View>
   )

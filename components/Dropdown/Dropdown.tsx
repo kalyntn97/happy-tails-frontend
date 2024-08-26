@@ -17,15 +17,15 @@ interface DropdownProps {
   dataType?: string
   dataArray?: { _id: string, name: string, [key: string]: any }[]
   onSelect: (item: string | any ) => void
-  width?: number | string
+  width?: number
+  contentWidth?: number
   initial?: string
   withSearch?: boolean
+  withBorder?: boolean
   searchLabel?: string
   error?: string
-  buttonStyles?: ViewStyle
-  contentStyles?: ViewStyle
   buttonTextStyles?: TextStyle
-  contentPosition?: 'top' | 'bottom'
+  contentPosition?: 'top' | 'bottom',
 }
 
 const typeToSource = {
@@ -50,7 +50,7 @@ const typeToSource = {
 
 const scrollProps = { keyboardShouldPersistTaps: "handled", showsVerticalScrollIndicator: false } as ScrollViewProps
 
-const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelect, width = '80%', initial, buttonStyles, contentStyles, buttonTextStyles, searchLabel, contentPosition = 'bottom', error }: DropdownProps) => {
+const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelect, width = 80, contentWidth, initial, buttonTextStyles, searchLabel, contentPosition = 'bottom', error, withBorder = true }: DropdownProps) => {
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
   const [visible, setVisible] = useState(false)
@@ -66,7 +66,7 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
   const openDropDown = (): void => {
     DropdownBtn.current.measure((fx, fy, w, h, px, py) => {
       setDropdownTop(withSearch? fy + h : py + h)
-      setDropDownLeft(withSearch ? fx - 10 : buttonStyles ? px - 20 : fx) 
+      setDropDownLeft(withSearch ? fx - 10 : px - (withBorder ? 0 : 20)) 
     })
     setVisible(true)
   }
@@ -114,18 +114,19 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
     styles.dropDownBtn, 
     { width: '100%' }, 
     (focused || visible) && UI.focused,
-    buttonStyles ?? UI.input(), 
-  ]) as ViewStyle, [buttonStyles, focused, visible])
+    withBorder ? UI.input() : UI.input(false, 0, 0, 0), 
+  ]) as ViewStyle, [focused, visible])
 
   const modalStyles = useMemo(() => ([ 
     styles.modalCon, 
-    { width: '100%', left: dropdownLeft,  maxHeight: withSearch ? 200 : '50%' },
+    { left: dropdownLeft,  maxHeight: withSearch ? 200 : '50%',
+      width: `${contentWidth ?? (withSearch ? 100 : width - (width > 50 ? 20 : 10))}%`,
+    },
     contentPosition === 'bottom' ? { top: dropdownTop } : { bottom: dropdownTop },
-    contentStyles,
-  ]) as ViewStyle, [dropdownLeft, dropdownTop, contentPosition, contentStyles])
+  ]) as ViewStyle, [dropdownLeft, dropdownTop, contentPosition, contentWidth, width])
 
   return (
-    <View style={{ width: width as DimensionValue, zIndex: focused ? 10 : 2 }}>
+    <View style={{ width: `${width}%` as DimensionValue, zIndex: focused ? 10 : 2 }}>
       { withSearch ?
         <View style={dropdownBtnStyles} ref={DropdownBtn}>
           <Icon name='search' size='xSmall' styles={{ marginRight: 15 }}/>

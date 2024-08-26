@@ -9,6 +9,7 @@ import { Colors, UI, Typography, Spacing } from "@styles/index"
 import { getActionIconSource } from "@utils/ui"
 import { oastConfig } from "@components/UIComponents"
 import Toast, { ToastConfigParams } from "react-native-toast-message"
+import { ReactNode } from "react"
 
 export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
 
@@ -27,21 +28,21 @@ export const tabBarOptions: BottomTabNavigationOptions = {
   headerShown: false,
 }
 
-const RightButton = ({ title, icon, onPress, buttonStyles }: { title?: string, icon?: string, onPress: () => void, buttonStyles?: ViewStyle }) => (
+const RightButton = ({ title, icon, onPress, buttonStyles }: { title?: string | ReactNode, icon?: string, onPress: () => void, buttonStyles?: ViewStyle }) => (
   <TouchableOpacity onPress={onPress} style={buttonStyles}>
     { icon && <Image source={getActionIconSource(icon)} style={{ width: 25, height: 25 }} /> }
     { title && <Text style={styles.buttonText}>{title}</Text> }
   </TouchableOpacity>
 )
 
-export const Header = ({ title, navigation, showGoBackButton, mode, rightActions, bgColor = Colors.shadow.lightest }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string, rightActions?: { title?: string, icon?: string, onPress: () => void }[], bgColor?: string }) => (
+export const Header = ({ title, navigation, showGoBackButton, mode, rightActions, bgColor = Colors.shadow.lightest }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string, rightActions?: { title?: string | ReactNode, icon?: string, onPress: () => void }[], bgColor?: string }) => (
   <View style={[styles.headerCon, { height: title ? 70 : 50, paddingTop: mode === 'card' ? 25 : 15, backgroundColor: bgColor }]}>
     { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} /> }
     { title && <Text style={styles.headerText}>{title}</Text> }
     {rightActions && 
       <View style={[styles.headerRight, { top: mode === 'card' ? 25 : 15 }]}>
-        { rightActions.map(action =>
-          <RightButton key={action.title || action.icon} title={action.title} icon={action.icon} onPress={action.onPress} buttonStyles={{ marginLeft: 50 }}/>      
+        { rightActions.map((action, index) =>
+          <RightButton key={index} title={action.title} icon={action.icon} onPress={action.onPress} buttonStyles={{ marginLeft: 50 }} />      
         )}
       </View> 
     }

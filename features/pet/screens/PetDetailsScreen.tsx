@@ -12,7 +12,6 @@ import Loader from "@components/Loader"
 import PetInfo from "@components/PetInfo/PetInfo"
 import { BottomModal, ErrorImage, FormHeader, Icon, ScrollScreen, TitleLabel } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
-import StatButtonList from "@pet/components/StatButtonList"
 import { IconType } from "@utils/ui"
 //store & queries
 import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
@@ -26,6 +25,8 @@ interface PetDetailsProps {
 }
 
 type SectionType = 'info' | 'logs' | 'actions'
+
+const filterHelper = (arr: string[], value: string) => arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]
 
 const Item = ({ label, type, logs, info, onPress }: { label: string, type: SectionType, logs: string[], info: string[], onPress: () => void }) => {
   const item = useMemo(() => {
@@ -47,11 +48,20 @@ const Item = ({ label, type, logs, info, onPress }: { label: string, type: Secti
 const defaultInfo = ['ids', 'services']
 const defaultLogs = ['mood', 'weight', 'energy']
 
+const headerActions = (navigation: any, pet: Pet) => ([
+  { icon: 'search', onPress: null },
+  { icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
+  { icon: 'add', onPress:() => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
+])
+
 const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
   const queryClient = useQueryClient()
   const { petId } = route.params
   const petCache: Pet | undefined = queryClient.getQueryData(petKeyFactory.petById(petId))
+
   const {data: pet, isSuccess, isFetching, isError} = useGetPetById(petId, !petCache)
+  const { handleDeletePet, isPending } = useDeletePet(navigation)
+  
   const infoSetting = useGetPetSettings(petId, 'info')
   const logsSetting = useGetPetSettings(petId, 'logs')
   const { setPetSettings } = useSetActions()
@@ -60,50 +70,49 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
   const [option, setOption] = useState<SectionType>(null)
   const [info, setInfo] = useState<string[]>(infoSetting ?? defaultInfo)
   const [logs, setLogs] = useState<string[]>(logsSetting ?? defaultLogs)
-
-  const deletePetMutation = useDeletePet(navigation)
-
-  const handleDeletePet = (petId: string) => deletePetMutation.mutate(petId)
   
   //filter list
   const items = option === 'logs' ? Object.keys(STATS) : Object.keys(PET_DETAILS)
   
   const resetItems = (type: SectionType) =>{
-    switch (type) {
-      case 'info': return setInfo(defaultInfo)
-      case 'logs': return setLogs(defaultLogs)
-      default: return
+    if (type === 'info') {
+      setInfo(defaultInfo)
+    } else if (type === 'logs') {
+      setLogs(defaultLogs)
     }
   }
 
   const toggleItem = (type: string) => {
-    switch (option) {
-      case 'logs': return setLogs(prev => logs.includes(type) ? prev.filter(p => p !== type) : [...prev, type])
-      case 'info': return setInfo(prev => info.includes(type) ? prev.filter(p => p !== type) : [...prev, type])
-      default: return 
+    if (option === 'logs') {
+      return setLogs(prev => filterHelper(prev, type))
+    } else if (option === 'info') {
+      return setInfo(prev => filterHelper(prev, type))
     }
   }
 
-  const headerActions = useMemo(() => ([
-    { icon: 'search', onPress: null },
-    { icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
-    { icon: 'add', onPress:() => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
-  ]), [navigation, pet])
-
   const filteredList = useMemo(() => ({
-    info: { titles: info, iconType: 'pet', getName: (info: string) => PET_DETAILS[info], onNavigate: (info: string) => navigation.navigate('PetMoreDetails', { petId, show: info }) },
-    logs: { titles: logs, iconType: 'stat', getName: (log: string) => log, onNavigate: (log: string) => navigation.navigate('LogDetails', { stat: log }) },
+    info: { 
+      titles: info, iconType: 'pet', 
+      getName: (info: string) => PET_DETAILS[info], 
+      onNavigate: (info: string) => navigation.navigate('PetMoreDetails', { petId, show: info }) 
+    },
+    logs: { 
+      titles: logs, iconType: 'stat', 
+      getName: (log: string) => log, 
+      onNavigate: (log: string) => navigation.navigate('LogDetails', { stat: log }) 
+    },
   }), [info, logs, petId])
 
   const actions = useMemo(() => ([
     { key: 'log', title: 'Log pet stats', icon: 'add', onPress: () => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
     { key: 'edit', title: 'Update pet info', icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
-    { key: 'delete', title: deletePetMutation.isPending ? 'Deleting...' : 'Delete pet profile', icon: 'delete', onPress: () => showDeleteConfirmDialog(pet, handleDeletePet) },
-  ]), [pet, navigation, handleDeletePet, deletePetMutation])
+    { key: 'delete', title: isPending ? 'Deleting...' : 'Delete pet profile', icon: 'delete', onPress: () => handleDeletePet(pet) },
+  ]), [pet, navigation, handleDeletePet, isPending])
 
   const renderActions = ( 
-    actions.map((action, index) =>{
+    actions.map((action, index) => {
       const focusedStyles = action.key === 'delete' && Typography.error
+
       return <TitleLabel key={action.key} title={action.title} iconName={action.icon} onPress={action.onPress} titleStyles={focusedStyles} containerStyles={index < actions.length - 1 && UI.tableRow()} size="small" />
     })
   )
@@ -126,7 +135,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
   
   useEffect(() => { 
     navigation.setOptions({
-      header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[pet?.color]} />
+      header: () => <Header showGoBackButton={true} rightActions={headerActions(navigation, pet)} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[pet?.color]} />
     })
     if (!modalVisible) {
       const timeout = setTimeout(() => {
@@ -177,10 +186,9 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
  
 const styles = StyleSheet.create({
   infoCard: {
-    ...Spacing.flexColumn,
-    ...UI.card(true),
+    ...Spacing.flexColumnStretch,
+    ...UI.card(true, false, 20, undefined, 20, 30),
     justifyContent: 'space-around',
-    borderRadius: 20,
     backgroundColor: Colors.white,
   },
   sectionCon: {

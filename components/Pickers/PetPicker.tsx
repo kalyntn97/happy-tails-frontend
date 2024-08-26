@@ -1,22 +1,25 @@
 import React, { memo } from 'react'
-import { Pressable, StyleSheet, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 //components
 import PetInfo from '@components/PetInfo/PetInfo'
+import PetList from '@components/PetInfo/PetList'
 import { FormHeader, ModalInput } from '@components/UIComponents'
+import { CustomToast } from '@navigation/NavigationStyles'
 //utils
 import { useShallowPets } from '@hooks/sharedHooks'
 import { PetBasic } from '@pet/PetInterface'
+import { showRequireSelectionToast } from '@utils/misc'
 //styles
 import { Buttons, Spacing } from '@styles/index'
-import PetList from '@components/PetInfo/PetList'
 
 type Props = {
-  // mode: 'multi' | 'single',
+  mode: 'multi' | 'single',
   onSelect: (petIds: string[]) => void
   pets: string[] | PetBasic[]
+  placeholder?: string
 }
 
-const PetPicker = memo(({ pets, mode = 'single', onSelect }: Props) => {
+const PetPicker = memo(({ placeholder = 'No pet selected', pets, mode = 'single', onSelect }: Props) => {
   const { PET_BASICS, petIdToPet } = useShallowPets()
 
   const petMapped: PetBasic[] = pets.map(pet => pet.name ? pet : petIdToPet(pet))
@@ -25,6 +28,11 @@ const PetPicker = memo(({ pets, mode = 'single', onSelect }: Props) => {
     let petArray = []
     if (mode === 'multi') {
       if (petMapped.some(p => p._id === petId)) {
+        if (petMapped.length > 1) petArray = petMapped.filter(s => s._id !== petId)
+        else {
+          petArray = petMapped
+          showRequireSelectionToast()
+        }
         petArray = petMapped.length > 1 ? petMapped.filter(s => s._id !== petId) : petMapped
       } else petArray = [...pets, petId] 
     } else petArray = [petId]
@@ -34,7 +42,7 @@ const PetPicker = memo(({ pets, mode = 'single', onSelect }: Props) => {
   return (
     
     <ModalInput buttonStyles={{ ...Spacing.flexRow }} customLabel={
-      <PetList petArray={petMapped} size='xSmall' />
+      pets.length ? <PetList petArray={petMapped} size='xSmall' /> : <Text>{placeholder}</Text>
     }>
       <FormHeader title={`Select Pet${mode === 'multi' ? 's' : ''}`} size='large'/>
       <View style={styles.container}>
@@ -44,6 +52,7 @@ const PetPicker = memo(({ pets, mode = 'single', onSelect }: Props) => {
           </Pressable>
         )}
       </View>
+      <CustomToast />
     </ModalInput>
   )
 })

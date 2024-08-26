@@ -92,13 +92,12 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
           autoCapitalize='words'
           multiline={true}
         />
-        <View style={styles.inputBottom}>
-          { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: 30 }}/> }
-          { isFocused && 
-            <Text style={styles.textLength}>
-              {TITLE_LENGTH - (title ? title.length : 0)} / {TITLE_LENGTH}
-            </Text> 
-          }
+        <View style={Spacing.flexRow}>
+          { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: 30 }} /> }
+          <Text style={styles.textLength}>
+            { isFocused ? `${TITLE_LENGTH - (title ? title.length : 0)} / ${TITLE_LENGTH}` : null }
+          </Text> 
+
         </View>
       </View>
 
@@ -116,10 +115,6 @@ const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props)
 })
 
 const styles = StyleSheet.create({
-  inputBottom: {
-    ...Spacing.flexRow,
-    marginTop: 10, 
-  },
   textLength: {
     color: UI.lightPalette().unfocused, 
     fontSize: 12

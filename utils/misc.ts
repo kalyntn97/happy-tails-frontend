@@ -29,6 +29,8 @@ export const showToast = ({ text1, style, text2, duration }: { text1: string, st
   Toast.show({ type: 'catToast', text1: text1, text2: text2, visibilityTime: duration ?? 3000, props: { style: style, onClose: closeToast }, position: 'bottom', bottomOffset: 50 })
 }
 
+export const showRequireSelectionToast = () => showToast({ text1: 'At least 1 selection is required.', style: 'info' })
+
 export const sortByFrequency = (array) => {
   const sorted = [...FREQUENCY_TYPES, 'oneTime'].reduce((result, frequency) => {
     result[frequency] = []

@@ -2,6 +2,7 @@
 export type Gender = 'Boy' | 'Girl' | 'Unknown'
 export type Species = 'Dog' | 'Cat' | 'Bird' | 'Fish' | 'Rodent' | string
 export type Status = 'Healthy' | 'Passed away'
+
 export interface PetFormData {
   name: string
   gender: Gender
@@ -21,8 +22,8 @@ export type PhotoFormData = { uri: string, name: string, type: string }
 export interface Pet extends PetFormData {
   _id: string
   photo: string | null
-  ids: Id[]
-  services: Service[]
+  ids: string[] | Id[]
+  services: string[] | Service[]
 }
 
 export interface PetBasic {
@@ -47,9 +48,13 @@ export type ServiceFormData = {
   phones: string[]
   notes: string | null
   serviceId?: string
+  pets?: string[]
 }
 
-export interface Service extends ServiceFormData { _id: string }
+export interface Service extends ServiceFormData { 
+  _id: string
+  creator: string
+}
 
 export type IdFormData = {
   name: string, 

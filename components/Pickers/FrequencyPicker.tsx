@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, TextStyle, View } from 'react-native'
 //utils
 import { windowWidth } from '@utils/constants'
 import { daysOfWeek, getOrdinalSuffix, months } from '@utils/datetime'
-import { showToast } from '@utils/misc'
+import { showRequireSelectionToast, showToast } from '@utils/misc'
 import { Frequency } from '@utils/types'
 //components
 import { Icon, ModalInput, ScrollContainer, TitleLabel } from '@components/UIComponents'
@@ -76,8 +76,6 @@ export function getRepeatLabels(frequency: FrequencyPicker) {
   return { timesPerIntervalLabel, intervalLabel, endingLabel, repeatLabel }
 }
 
-const showWarningToast = () => showToast({ text1: 'At least 1 selection is required.', style: 'info' })
-
 const TimesPerDaySelector = ({ type, times, onSelect }: { type: 'days', times: number, onSelect: (selected: number) => void }) => (
   <ScrollSelector data={frequencyMap[type].timesPerIntervalArray}
     rightLabel={`${times === 1 ? 'time' : 'times'} a ${type.slice(0, -1)}`} 
@@ -100,7 +98,7 @@ const DaySelector = ({ type, dayArray, onSelect, color }: { type: 'weeks' | 'mon
               if (selected) {
                 if (dayArray.length > 1) updated = dayArray.filter(p => p !== position)
                 else {
-                  showWarningToast()
+                  showRequireSelectionToast()
                   updated = dayArray
                 }
               } else updated = [...dayArray, position]
@@ -138,7 +136,7 @@ const YearlySelector = ({ dayArray, onSelect }: { dayArray: MonthDay[], onSelect
           let updatedArray = []
           if (dayArray.length > 1) updatedArray = dayArray.filter((_, i) => i !== index) 
           else { 
-            showWarningToast()
+            showRequireSelectionToast()
             updatedArray = dayArray
           }
           return onSelect(updatedArray)

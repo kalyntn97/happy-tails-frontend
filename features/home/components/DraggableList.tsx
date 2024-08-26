@@ -137,7 +137,11 @@ const CareItem = ({ item, onPress, onLongPress, disabled }: { item: Care } & Ite
     <SwipeableItem
       color={Colors.multi.light[item.color]}
       title={item.name}
-      content={<ItemContent name={item.name} petArray={item.pets as PetBasic[]} status={<Status progress={shouldIncrement ? { value: progress, color: item.color } : null} />} titleStyles={isChecked && styles.completed} />}
+      content={
+        <ItemContent name={item.name} petArray={item.pets as PetBasic[]} titleStyles={isChecked && styles.completed} status={
+          <Status progress={shouldIncrement ? { value: progress, color: item.color } : null} />
+        } />
+      }
       swipeRightActions={getCareActions(item)}
       onPress={onPress}
       onLongPress={onLongPress}

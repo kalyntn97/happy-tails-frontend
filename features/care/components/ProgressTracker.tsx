@@ -35,8 +35,10 @@ const ProgressTracker = ({ care }: { care: Care }) => {
     : 0
   
   const advanceProgress = () => {
-    shouldIncrement ? updateLogMutation.mutate({ ...log, value: log.value + 1, notes: [...log.notes, { value: notes, time: convertToTimeString(time) }], logId: log._id })
+    shouldIncrement ? 
+      updateLogMutation.mutate({ ...log, value: log.value + 1, notes: [...log.notes, { value: notes, time: convertToTimeString(time) }], logId: log._id })
       : createLogMutation.mutate({ date: activeDate.toISOString(), notes: [{ value: notes, time: convertToTimeString(time) }], care: care._id, logId: null })
+
     setNotes(null)
   } 
 
@@ -44,8 +46,9 @@ const ProgressTracker = ({ care }: { care: Care }) => {
     shouldIncrement && log.value > 1 ? updateLogMutation.mutate({ ...log, value: log.value - 1, notes: log.notes.slice(0, -1), logId: log._id })
       : deleteLogMutation.mutate({ logId: log._id, careId: care._id })
   }
+
   return (
-    <View style={Spacing.flexColumnStretch}>
+    <View style={[Spacing.flexColumnStretch, { width: '90%' }]}>
       <View style={styles.countBox}>
         <ActionButton icon='decrease' buttonStyles={{ marginHorizontal: 15 }} onPress={reduceProgress} />
 
@@ -54,12 +57,14 @@ const ProgressTracker = ({ care }: { care: Care }) => {
         <NoteInput overlay={Colors.white} customLabel={<Icon name='increase' />} buttonStyles={{ marginHorizontal: 15 }} notes={notes} onChange={setNotes} header="Add Notes (optional)" maxLength={50} onSubmit={advanceProgress} subHeading={<TimePicker time={time} onSelect={(time: Time) => setTime(time)} />} />
       </View>
 
-      { log && log.notes.map((note, index) =>
-        <View key={index} style={Spacing.flexRow}>
-          <Text>{note.time}: </Text>
-          <Text>{note.value}</Text> 
-        </View>
-      )}
+      <View style={styles.noteCon}>
+        { log && log.notes.map((note, index) =>
+          <View key={index} style={styles.note}>
+            <Text>{note.time} • </Text>
+            <Text>{note.value}</Text> 
+          </View>
+        )}
+      </View>
     </View>
   )
 }
@@ -67,7 +72,15 @@ const ProgressTracker = ({ care }: { care: Care }) => {
 const styles = StyleSheet.create({
   countBox: {
     ...Spacing.flexRow,
-    marginVertical: 15,
+    marginVertical: 20,
+  },
+  note: {
+    ...Spacing.flexRowStretch,
+    marginBottom: 15,
+  },
+  noteCon: {
+    ...Spacing.flexColumnStretch,
+    marginTop: 20,
   },
 })
 

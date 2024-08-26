@@ -42,7 +42,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, status, na
     errors: null,
   }
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
-  const { name, pets, repeat, startDate, ending, endDate, frequency, color, careId, errors } = values
+  const { name, pets, repeat, startDate, ending, endDate, frequency, color, careId, errors }: InitialState = values
 
   const mainTable = [
     { key: 'pets', label: 'Pets', icon: 'pets', value: 

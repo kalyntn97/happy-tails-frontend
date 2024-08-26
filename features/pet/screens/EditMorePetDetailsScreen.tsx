@@ -11,12 +11,11 @@ import { useAddPetDetail } from '@pet/petQueries'
 
 interface EditMorePetDetailsScreenProps {
   route: { params: { type: string, petId: string } }
-  navigation: any
 } 
 
-const EditMorePetDetailsScreen: FC<EditMorePetDetailsScreenProps> = ({ route, navigation }) => {
+const EditMorePetDetailsScreen = ({ route }: EditMorePetDetailsScreenProps) => {
   const { type, petId } = route.params
-  const addDetailMutation = useAddPetDetail(petId, navigation)
+  const addDetailMutation = useAddPetDetail(petId)
 
   const handleSubmit = (type: DetailType, formData: any) => {
     addDetailMutation.mutate({ type, formData })

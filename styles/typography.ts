@@ -16,7 +16,7 @@ export const textSizeMap = {
 
 export const header: TextStyle = {
   ...base,
-  margin: 20,
+  marginVertical: 20,
   fontWeight: 'bold',
   letterSpacing: 1,
   textAlign: 'center',
@@ -24,7 +24,7 @@ export const header: TextStyle = {
 
 export const sub: TextStyle = {
   ...base,
-  margin: 10,
+  marginVertical: 10,
   fontWeight: 'normal',
   textAlign: 'center',
   fontStyle: 'italic',
