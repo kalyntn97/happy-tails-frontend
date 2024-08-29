@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from "react-native"
 import { TransparentButton } from "./ButtonComponents"
 import { DetailType } from "@pet/PetInterface"
 import { useNavigation } from "@react-navigation/native"
+import { StackScreenNavigationProp } from "@navigation/types"
 
 type Props = {
   type: 'pet' | 'care' | 'health' | DetailType
@@ -15,12 +16,13 @@ const map = {
   pet: { text: 'pet', subText: '' },
   care: { text: 'task', subText: '' },
   health: { text: 'vet visit', subText: '' },
-  ids: { text: 'ID', subText: '' },
-  services: { text: 'service', subText: '' },
+  id: { text: 'ID', subText: '' },
+  service: { text: 'service', subText: '' },
+  medication: { text: 'medication', subText: '' },
 }
 
 const PlaceHolder = ({ type, petId }: Props) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation<StackScreenNavigationProp>()
   const color = UI.lightPalette().accent
 
   return (  

@@ -23,10 +23,10 @@ const EditMorePetDetailsScreen = ({ route }: EditMorePetDetailsScreenProps) => {
 
   return (
     <ScrollScreen>
-      {type === 'ids' && <IdForm onSubmit={handleSubmit} />} 
-      {type === 'meds' && <MedicationForm onSubmit={handleSubmit} />}
-      {type === 'services' && <ServiceForm onSubmit={handleSubmit} />}
-      {type === 'illnesses' && <IllnessForm onSubmit={handleSubmit} />}
+      {type === 'id' && <IdForm onSubmit={handleSubmit} />} 
+      {type === 'medication' && <MedicationForm onSubmit={handleSubmit} />}
+      {type === 'service' && <ServiceForm onSubmit={handleSubmit} />}
+      {type === 'illness' && <IllnessForm onSubmit={handleSubmit} />}
     </ScrollScreen>
   )
 }

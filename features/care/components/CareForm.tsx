@@ -13,6 +13,7 @@ import { useShallowPets } from "@hooks/sharedHooks"
 import useForm from "@hooks/useForm"
 //styles
 import { Colors } from '@styles/index'
+import { DEFAULT_FREQUENCY } from "@utils/constants"
 
 interface InitialState extends CareFormData {
   ending: boolean
@@ -35,7 +36,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, status, na
     repeat: initialValues?.repeat ?? false,
     startDate: initialValues?.startDate ?? new Date().toISOString(),
     endDate: initialValues?.endDate ?? null,
-    frequency: initialValues?.frequency ?? { type: 'days', interval: 1, timesPerInterval: [1] },
+    frequency: initialValues?.frequency ?? DEFAULT_FREQUENCY,
     color: initialValues?.color ?? 0,
     careId: initialValues?.careId ?? null,
     ending: !!initialValues?.endDate,
@@ -45,7 +46,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, status, na
   const { name, pets, repeat, startDate, ending, endDate, frequency, color, careId, errors }: InitialState = values
 
   const mainTable = [
-    { key: 'pets', label: 'Pets', icon: 'pets', value: 
+    { key: 'pets', label: 'Pets', icon: 'pet', value: 
       <PetPicker pets={pets} onSelect={(selected: string[]) => onChange('pets', selected)} mode='multi' /> 
     },
     { key: 'startDate', label: 'Start Date', icon: 'schedule', value: 

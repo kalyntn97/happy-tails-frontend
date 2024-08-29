@@ -11,6 +11,7 @@ import { PET_DETAILS } from '@pet/petHelpers'
 import { petKeyFactory, useDeletePetDetail } from '@pet/petQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
+import MedicationForm from '@pet/components/MedicationForm'
 import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 
@@ -43,8 +44,12 @@ const IdDetails = ({ id }: { id: Id }) => (
 
 const ServiceDetails = ({ service }: { service: Service }) => (
   <View>
-    { service.address && <Text style={styles.itemBody}>Address: {service.address}</Text> }
-    { service.email && <Text style={styles.itemBody}>Email: {service.email}</Text> }
+    { service.addresses && service.addresses.map(address =>
+      <Text style={styles.itemBody}>Address: {address}</Text> 
+    )}
+    { service.emails && service.emails.map(email => 
+      <Text style={styles.itemBody}>Email: {email}</Text> 
+    )}
     { service.phones && service.phones.length > 0 && service.phones.map(phone =>
       <Text style={styles.itemBody}>Phone: {phone}</Text>
     ) }
@@ -61,25 +66,26 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
   const { handleDeletePetDetail, isPending } = useDeletePetDetail(petId, navigation)
 
   const detailData = {
-    ids: pet?.ids ?? [],
-    services: pet?.services ?? [],
+    id: pet?.ids ?? [],
+    service: pet?.services ?? [],
+    medication: pet?.medications ?? [],
   }
 
   const openForm = (type: DetailType) => {
-    navigation.navigate('EditDetails', { type, petId })
+    navigation.navigate('PetEditDetails', { type, petId })
   }
 
   const Item = ({ item, type }: { item: any, type: DetailType }) => (
     <View style={styles.itemCon}>
       <View style={Spacing.flexRow}>
-        <Image source={getPetIconSource(item.type) || getPetIconSource(type)} style={{ ...UI.icon() }} />
+        <Image source={getPetIconSource(item.type) || getPetIconSource(type)} style={UI.icon()} />
         <Text style={styles.itemHeader}>
           {item.name}
           <Text style={{ ...Typography.smallSubHeader }}> - {item.type}</Text>
         </Text>
       </View>
-      {type === 'ids' ? <IdDetails id={item} />
-        : type === 'services' ? <ServiceDetails service={item} />
+      {type === 'id' ? <IdDetails id={item} />
+        : type === 'service' ? <ServiceDetails service={item} />
         : null
       }
       <CloseButton onPress={() => handleDeletePetDetail(type, item)} />
@@ -94,7 +100,7 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
           <View key={`${type}-details`} style={styles.sectionCon}>
             {/* <ListHeader name={type} onPress={() => openForm(type)} /> */}
             <TitleLabel mode='bold' title={PET_DETAILS[type]} iconName={type} size='large' rightAction={
-              <ActionButton icon='add' onPress={() => openForm(type)} textStyles={{ ...Typography.smallHeader, margin: 0 }} />
+              <ActionButton title='Add' onPress={() => openForm(type)} textStyles={{ ...Typography.smallHeader, margin: 0 }} size='small' />
             } />
             { detailData[type].length > 0 ? detailData[type].map((item: any, index: number) => 
               <Item key={`${type}-${index}`} item={item} type={type} />

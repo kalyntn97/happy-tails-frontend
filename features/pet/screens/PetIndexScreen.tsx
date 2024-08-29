@@ -9,14 +9,14 @@ import { ErrorImage } from '@components/UIComponents'
 import EmptyPetList from '@pet/components/EmptyPetList'
 import PetCard from '../components/PetCard'
 //store & queries & types
-import type { PetTabScreenProps } from '@navigation/types'
 import { useGetProfile } from '@profile/profileQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'
 import type { Pet } from '../PetInterface'
 //styles
 import { Colors, Spacing, Typography, UI } from '@styles/index'
+import { StackScreenNavigationProp } from '@navigation/types'
 
-const PetIndexScreen = ({ navigation }: PetTabScreenProps) => {
+const PetIndexScreen = ({ navigation }: { navigation: StackScreenNavigationProp }) => {
   const [currCard, setCurrCard] = useState<number>(0)
   const { data, isSuccess, isFetching, isError } = useGetProfile()
 

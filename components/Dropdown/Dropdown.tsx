@@ -25,6 +25,7 @@ interface DropdownProps {
   searchLabel?: string
   error?: string
   buttonTextStyles?: TextStyle
+  buttonStyles?: ViewStyle
   contentPosition?: 'top' | 'bottom',
 }
 
@@ -50,7 +51,7 @@ const typeToSource = {
 
 const scrollProps = { keyboardShouldPersistTaps: "handled", showsVerticalScrollIndicator: false } as ScrollViewProps
 
-const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelect, width = 80, contentWidth, initial, buttonTextStyles, searchLabel, contentPosition = 'bottom', error, withBorder = true }: DropdownProps) => {
+const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelect, width = 80, contentWidth, initial, buttonStyles, buttonTextStyles, searchLabel, contentPosition = 'bottom', error, withBorder = true }: DropdownProps) => {
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
   const [visible, setVisible] = useState(false)
@@ -64,7 +65,7 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
   const [dropdownLeft, setDropDownLeft] = useState(0)
 
   const openDropDown = (): void => {
-    DropdownBtn.current.measure((fx, fy, w, h, px, py) => {
+    DropdownBtn.current.measure((fx, fy, _w, h, px, py) => {
       setDropdownTop(withSearch? fy + h : py + h)
       setDropDownLeft(withSearch ? fx - 10 : px - (withBorder ? 0 : 20)) 
     })
@@ -104,18 +105,21 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
     }
     let ignore = false
     fetchData()
+    setSelected(initial)
+    if (withSearch) setSearchInput(initial)
 
     return () => {
       ignore = true
     }
-  }, [dataType])
+  }, [dataType, initial])
 
   const dropdownBtnStyles = useMemo(() => ([ 
     styles.dropDownBtn, 
     { width: '100%' }, 
     (focused || visible) && UI.focused,
-    withBorder ? UI.input() : UI.input(false, 0, 0, 0), 
-  ]) as ViewStyle, [focused, visible])
+    withBorder ? UI.input() : UI.input(false, 0, 0, 0),
+    buttonStyles,
+  ]) as ViewStyle, [focused, visible, buttonStyles, withBorder])
 
   const modalStyles = useMemo(() => ([ 
     styles.modalCon, 
@@ -192,7 +196,6 @@ const styles = StyleSheet.create({
   dropDownBtn: {
     ...Spacing.flexRow,
     position: 'relative',
-    marginVertical: 5,
   },
   modalCon: {
     ...UI.card(true, true),

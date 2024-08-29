@@ -1,5 +1,5 @@
 import Fuse from "fuse.js"
-import { useCallback, useEffect, useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { View } from "react-native"
 //store && types & helpers
 import { Health, HealthFormData, Visit } from "@health/HealthInterface"
@@ -114,7 +114,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
   }
 
   const mainTable = [
-    { key: 'pet', label: 'Pet', icon: 'pets', value: 
+    { key: 'pet', label: 'Pet', icon: 'pet', value: 
       <PetPicker pets={[pet]} onSelect={(selected: string[]) => onChange('pet', selected[0])} /> 
     },
     { key: 'type', label: 'Type', icon: 'healthType', value: 

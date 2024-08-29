@@ -1,16 +1,18 @@
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
-import { DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, Modal, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
-import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated"
+import { DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import Animated, { SlideInDown, SlideInLeft, SlideOutDown, SlideOutLeft } from "react-native-reanimated"
 //utils & hooks
 import { useSelectPhoto } from "@hooks/sharedHooks"
 import { IconType, getIconByType } from "@utils/ui"
 //components 
-import { ActionButton, GoBackButton, MainButton } from "./ButtonComponents"
 import { CustomToast } from "@navigation/NavigationStyles"
+import { ActionButton, GoBackButton } from "./ButtonComponents"
 //styles
 import { Colors, Spacing, Typography, UI } from "@styles/index"
+import { textSizeMap } from "@styles/typography"
 import { Size, icon, iconSizeMap, lightPalette } from "@styles/ui"
+import { windowWidth } from "@utils/constants"
 
 interface IconProps {
   type?: IconType
@@ -64,36 +66,14 @@ type TitleLabelProps = {
   iconType?: IconType
   iconName?: string
   rightAction?: ReactNode | any
-  size?: 'small' | 'med' | 'large'
+  size?: Size
   rightLabel?: 'down' | 'next'
   color?: string
   titleStyles?: TextStyle
   containerStyles?: ViewStyle
   mode?: 'normal' | 'bold'
+  capitalize?: boolean
 }
-
-export const TitleLabel = memo(({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, containerStyles, rightLabel, mode = 'normal' }: TitleLabelProps) => { 
-  const dynamicSize: { icon: Size, title: number } = useMemo(() => ({
-    icon: size === 'small' ? 'xSmall' : size === 'large' ? 'med' :'small',
-    title: size === 'small' ? 15 : size === 'large' ? 22 : 18,
-  }), [size])
-  
-  return (
-    <Pressable onPress={onPress} style={[UI.rowContent('space-between', 0), containerStyles]}>
-      { iconName && <Icon type={iconType} name={iconName} size={dynamicSize.icon} styles={{ marginVertical: 0, marginRight: 10 }}/> }
-      { title && 
-        <Text style={[
-          { fontWeight: mode, fontSize: dynamicSize.title, color: color, margin: 0, textAlign: 'left', marginRight: 20, textTransform: 'capitalize' },
-          titleStyles,
-        ]}>
-        { title }
-      </Text> }
-      <View style={[Spacing.flexRow, { marginLeft: 'auto', flex: 1, justifyContent: 'flex-end' }]}>
-        { rightAction ?? (rightLabel && <Icon name={rightLabel} size='xSmall' styles={{ marginLeft: 10 }} />) }
-      </View>
-    </Pressable>
-  )
-})
 
 const headerSize = {
   xSmall: Typography.smallSubHeader,
@@ -103,15 +83,38 @@ const headerSize = {
   xLarge: Typography.largeHeader,
 }
 
-export const FormHeader = ({ title, size = 'med', color = lightPalette().text, styles }: { title: string, size?: Size, color?: string, styles?: TextStyle }) => {
+export const TitleLabel = memo(({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, containerStyles, rightLabel, mode = 'normal', capitalize = true }: TitleLabelProps) => { 
+  const sizes = useMemo(() => {
+    const titleSize: Size = size === 'small' ? 'xSmall' : size === 'med' ? 'small' : size === 'large' ? 'med' : 'large'
+    const iconSize: Size = size === 'small' || size === 'med' ? 'small' : size === 'large' ? 'med' : 'large'
+    return { titleSize, iconSize }
+  }, [size])
+  return (
+    <Pressable onPress={onPress} style={[UI.rowContent('space-between', 0), containerStyles]}>
+      { iconName && <Icon type={iconType} name={iconName} size={sizes.iconSize} styles={{ marginVertical: 0, marginRight: 10 }}/> }
+      { title && 
+        <Text style={[textSizeMap[sizes.iconSize],
+          { fontWeight: mode, color: color, margin: 0, textAlign: 'left', marginRight: 20, textTransform: capitalize ? 'capitalize' : 'none' },
+          titleStyles,
+        ]}>
+        { title }
+      </Text> }
+      <View style={[Spacing.flexColumn, { marginLeft: 'auto', flex: 1, alignItems: 'flex-end' }]}>
+        { rightAction ?? (rightLabel && <Icon name={rightLabel} size='xSmall' styles={{ marginLeft: 10 }} />) }
+      </View>
+    </Pressable>
+  )
+})
+
+export const FormHeader = ({ title, size = 'med', color = lightPalette().text, styles, capitalize = false }: { title: string, size?: Size, color?: string, styles?: TextStyle, captitalize?: boolean }) => {
   // const defaultColor = size === 'small' || size === 'xSmall' ? lightPalette().unfocused : lightPalette().text
   return (
-    <Text style={[headerSize[size], { color: color, textTransform: 'capitalize' }, styles]}>{title}</Text>
+    <Text style={[headerSize[size], { color: color, textTransform: capitalize ? 'capitalize' : 'none' }, styles]}>{title}</Text>
   )
 }
 
-export const FormLabel = ({ label, icon }: { label: string, icon: string }) => (
-  <TitleLabel title={label} iconName={icon} titleStyles={{ ...Typography.smallHeader, margin: 0 }} />
+export const FormLabel = ({ label, icon, type = 'action', size, capitalize = false }: { label: string, icon: string, type?: IconType, size?: TitleLabelProps['size'], capitalize?: boolean }) => (
+  <TitleLabel title={label} iconName={icon} iconType={type} mode="bold" size={size} capitalize={capitalize} />
 )
 
 export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { label: string, icon?: string, onPress: () => void, top?: number, right?: number }) => (
@@ -121,12 +124,16 @@ export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { 
   </Pressable>
 )
 
-export const ErrorMessage = ({ error, styles }: { error: string, styles?: TextStyle }) => (
-  <Text style={[Typography.error, { margin: 5 }, styles]}>{error}</Text>
+export const HelperText = ({ text, styles }: { text: string, styles?: TextStyle }) => (
+  <Text style={[Typography.subBody, Typography.unFocused, { marginVertical: 5 }, styles]}>{text}</Text>
 )
 
-export const FormError = ({ errors, errorKey }: { errors: { [key: string]: string }, errorKey: string }) => (
-  errorKey in errors && <ErrorMessage error={errors[errorKey]} />
+export const ErrorMessage = ({ error, styles }: { error: string, styles?: TextStyle }) => (
+  <Text style={[Typography.error, { marginTop: 5 }, styles]}>{error}</Text>
+)
+
+export const FormError = ({ errors, errorKey, styles }: { errors: { [key: string]: string }, errorKey: string, styles?: TextStyle }) => (
+  errors && errorKey in errors && <ErrorMessage error={errors[errorKey]} styles={styles} />
 )
 
 export const ErrorImage = ({ top = 0 }: { top?: number }) => (
@@ -150,10 +157,11 @@ interface TableProps extends TitleLabelProps{
   table: { key: string, icon: string, value: any, label?: string }[], 
   withTitle?: boolean, 
   dependentRows?: { [key: string]: boolean },
-  tableStyles?: ViewStyle 
+  tableStyles?: ViewStyle
+  errors?: { [key: string]: string }
 }
 
-export const TableForm = memo(({ table, withTitle = false, dependentRows, size = 'small', tableStyles, titleStyles, containerStyles }: TableProps) => (
+export const TableForm = memo(({ table, withTitle = false, dependentRows, size = 'small', tableStyles, titleStyles, containerStyles, errors }: TableProps) => (
   <View style={[UI.card(true, false, 15), { backgroundColor: Colors.white }, tableStyles]}>
     { table.map((row, index) => {
       let rowIsVisible = true
@@ -161,10 +169,12 @@ export const TableForm = memo(({ table, withTitle = false, dependentRows, size =
 
       return (
         rowIsVisible && 
-          <TitleLabel key={row.key} title={withTitle ? row.label : null} iconName={row.icon} size={size} rightAction={row.value} titleStyles={titleStyles} 
-            containerStyles={{ ...(index > 0 ? { borderTopWidth: 1,
-              borderColor: lightPalette().border } : {}), minHeight: 50, ...containerStyles }} 
-          />
+          <TitleLabel key={row.key} title={withTitle ? row.label : null} iconName={row.icon} size={size} rightAction={
+            <View style={{ alignItems: 'flex-end'}}>
+              { row.value }
+              { errors && <FormError errorKey={row.key} errors={errors} /> }
+            </View>
+          } titleStyles={titleStyles} containerStyles={{ ...(index > 0 ? { borderTopWidth: 1, borderColor: lightPalette().border } : {}), minHeight: 50, ...containerStyles }} />
       )
     })}
   </View>
@@ -215,45 +225,63 @@ export const ScrollScreen = ({ children, props, contentStyles, containerStyles, 
 interface InputProps {
   initial: string, 
   placeholder?: string, 
-  onChange?: (input: string) => void, 
+  onChange?: (input: string) => void,
+  onFocus?: (py: number) => void
+  onBlur?: () => void
   props?: TextInputProps, 
   maxLength?: number, 
   error?: string, 
   width?: DimensionValue
   withBorder?: boolean
   styles?: TextStyle
-  align?: 'left' | 'right' 
+  align?: 'left' | 'right'
+  bottom?: number
 }
 
-export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title', onChange, props, maxLength = 100, width = '80%', error, withBorder = true, styles, align = 'left' }: InputProps, ref: MutableRefObject<any>) => {
+export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title', onChange, onFocus, onBlur, props, maxLength = 100, width, error, withBorder = true, styles, align = 'left', bottom = - 15 }: InputProps, ref: MutableRefObject<any>) => {
   const [isFocused, setIsFocused] = useState(false)
-  const [value, setValue] = useState(initial ?? null)
+  const [value, setValue] = useState(initial)
 
   const validatedStyles = useMemo(() => error ? UI.error : isFocused ? UI.focused : UI.unfocused, [error, isFocused])
 
   const handlePress = (text: string) => {
-    setValue(text)
-    onChange(text)
+    const validText = text?.trim().length === 0 ? null : text
+    setValue(validText)
+    onChange(validText)
     setIsFocused(false)
     Keyboard.dismiss()
   }
 
+  const handleFocus = () => {
+    if (ref?.current && onFocus) {
+      ref.current.measure((_fx, _fy, _w, h, _px, py) => {
+        onFocus(py + h)
+      })
+    }
+    setIsFocused(true)
+  }
+
+  const handleBlur = () => {
+    handlePress(value)
+    if (onBlur) onBlur()
+  }
+
   return (
-    <View style={[Spacing.flexColumn, { width: width, zIndex: isFocused ? 10 : 2, alignItems: align === 'left' ? 'flex-start' : 'flex-end' }]}>
+    <View style={[Spacing.flexColumn, { width: width, minWidth: 50, zIndex: isFocused ? 10 : 2, alignItems: align === 'left' ? 'flex-start' : 'flex-end' }]}>
       <TextInput
         ref={ref}
-        style={[withBorder ? UI.input() : UI.input(false, 0, 15, 0), styles, validatedStyles]}
+        style={[withBorder ? UI.input() : { ...UI.input(false, 0, 0, 0), width: '100%', textAlign: align }, styles, validatedStyles]}
         placeholder={placeholder}
         placeholderTextColor={UI.lightPalette().unfocused}
         value={value}
         onChangeText={(text: string) => setValue(text)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => handlePress(value)}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         maxLength={maxLength}
         selectTextOnFocus={true}
         { ...props }
       />
-      <View style={[Spacing.flexRow, { position: 'absolute', bottom: 0 }]}>
+      <View style={[Spacing.flexRow, { position: 'absolute', bottom: bottom }]}>
         { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: isFocused ? 30 : 0 }}/> }
         <Text style={{ color: UI.lightPalette().unfocused, fontSize: 12 }}>
           { isFocused && `${maxLength - (value ? value.length : 0)}/${maxLength}` }
@@ -268,13 +296,14 @@ interface ModalProps {
   children: ReactNode, 
   modalVisible: boolean, 
   height?: DimensionValue, 
-  maxHeight?: string | number, 
+  maxHeight?: DimensionValue, 
   onDismiss: () => void, 
   background?: string, 
   overlay?: string
+  animation?: 'horizontal' | 'vertical'
 }
 
-export const BottomModal = ({ children, modalVisible, height = 'fit-content' as DimensionValue, maxHeight = '95%', onDismiss, background = Colors.shadow.lightest, overlay = Colors.transparent.dark }: ModalProps) => {
+export const BottomModal = ({ children, modalVisible, height = 'fit-content' as DimensionValue, maxHeight = '93%', onDismiss, background = Colors.shadow.lightest, overlay = Colors.transparent.dark, animation = 'vertical'}: ModalProps) => {
   const [childrenVisible, setChildrenVisible] = useState(modalVisible)
 
   const dismissModal = () => {
@@ -299,11 +328,17 @@ export const BottomModal = ({ children, modalVisible, height = 'fit-content' as 
       <Pressable onPress={e => {
         if (e.target === e.currentTarget) dismissModal()
       }} style={[UI.modalOverlay, { backgroundColor: overlay}]}>
-        { childrenVisible && 
-          <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={[UI.bottomModal, { height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, backgroundColor: background }]}>
-            <GoBackButton onPress={dismissModal} />
-            { children }
-          </Animated.View> 
+        { childrenVisible &&
+          <KeyboardAvoidingView
+            style={{ flex: 1, paddingTop: 15 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+
+          >
+            <Animated.View entering={animation === 'vertical' ? SlideInDown : SlideInLeft} exiting={animation === 'vertical' ? SlideOutDown : SlideOutLeft} style={[UI.bottomModal, { width: windowWidth, height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, backgroundColor: background }]}>
+              <GoBackButton onPress={dismissModal} />
+                  { children }
+              </Animated.View> 
+          </KeyboardAvoidingView>
         }
       </Pressable>
       <CustomToast />
@@ -322,12 +357,13 @@ interface ModalInputProps {
   customLabel?: ReactNode
   children?: ReactNode, 
   height?: DimensionValue, 
-  maxHeight?: string | number, 
+  maxHeight?: DimensionValue, 
   background?: string, 
   overlay?: string
+  animation?: 'horizontal' | 'vertical'
 }
 
-export const ModalInput = ({ children, label, onReset, onDismiss,onSubmit, height = 'fit-content' as DimensionValue, maxHeight, overlay, background, buttonStyles, buttonTextStyles, buttonTextProps, customLabel }: ModalInputProps) => {
+export const ModalInput = ({ children, label, onReset, onDismiss, onSubmit, height, maxHeight, overlay, background, buttonStyles, buttonTextStyles, buttonTextProps, customLabel, animation }: ModalInputProps) => {
   const [modalVisible, setModalVisible] = useState(false)
   const dismissModal = () => {
     setModalVisible(false)
@@ -342,14 +378,16 @@ export const ModalInput = ({ children, label, onReset, onDismiss,onSubmit, heigh
           <Text {...buttonTextProps} style={buttonTextStyles}>{label}</Text>
         }
       </Pressable> 
-
-      <BottomModal modalVisible={modalVisible} onDismiss={dismissModal} height={height} maxHeight={maxHeight} overlay={overlay} background={background}>
-        { onReset && <ActionButton icon='reset' onPress={onReset} position='topRight' /> }
+      
+      <BottomModal modalVisible={modalVisible} onDismiss={dismissModal} height={height} maxHeight={maxHeight} overlay={overlay} background={background} animation={animation}>
+        <View style={[Spacing.flexRow, { maxWidth: '80%', justifyContent: 'space-between', position: 'absolute', right: 10, top: 10, }]}>
+          { onReset && <ActionButton icon='reset' onPress={onReset} buttonStyles={{ marginRight: onSubmit ? 30 : 0 }} /> }
+          { onSubmit && <ActionButton title='Save' size='xSmall' onPress={() => {
+            onSubmit()
+            dismissModal()
+          }} /> }
+        </View>
         { children }
-        { onSubmit && <MainButton title='Submit' size='xSmall' buttonStyles={{ marginTop: 30 }} onPress={() => {
-          onSubmit()
-          dismissModal()
-        }} /> }
       </BottomModal>
     </>
   )
@@ -363,7 +401,7 @@ interface DateInputProps extends ModalInputProps {
   header?: string
 }
 
-export const DateInput = ({ date, placeholder = 'No date selected', onChangeDate, color, buttonStyles, buttonTextStyles, header }: DateInputProps) => (
+export const DateInput = ({ date, placeholder = 'No date selected.', onChangeDate, color, buttonStyles, buttonTextStyles, header }: DateInputProps) => (
   <ModalInput label={date ? new Date(date).toLocaleDateString() : placeholder} onReset={() => onChangeDate(new Date().toISOString())} buttonStyles={buttonStyles} buttonTextStyles={buttonTextStyles}>
     { header && <FormHeader title={date ? `${header}: ${new Date(date).toLocaleDateString()}` : header} />}
     <RNDateTimePicker display="inline" themeVariant="light" value={date ? new Date(date) : new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate.toISOString())} accentColor={Colors.multi.dark[color]} />
@@ -378,46 +416,28 @@ interface NoteInputProps extends ModalInputProps {
   placeholder?: string, 
   header?: string, 
   subHeading?: ReactNode
-  modalHeight?: number
 }
 
-let DEFAULT_HEIGHT = 30
-
-export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit, buttonStyles, buttonTextStyles, inputStyles, placeholder, header, subHeading, customLabel, modalHeight, overlay = Colors.white }: NoteInputProps) => {
-  DEFAULT_HEIGHT = modalHeight ?? DEFAULT_HEIGHT
-  const defaultHeight = onSubmit ? `${DEFAULT_HEIGHT + 10}%` : `${DEFAULT_HEIGHT}%`
+export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit, buttonStyles, buttonTextStyles, inputStyles, placeholder, header, subHeading, customLabel, height = '15%', maxHeight, overlay = Colors.white }: NoteInputProps) => {
   const [notes, setNotes] = useState(initial)
   const [isFocused, setIsFocused] = useState(false)
-  const [height, setHeight] = useState(defaultHeight)
 
   const validatedStyles = useMemo(() => isFocused ? UI.focused : UI.unfocused, [isFocused])
 
   const handlePress = (text: string) => {
-    setNotes(text)
-    onChange(text)
+    const validText = text.trim().length === 0 ? null : text
+    setNotes(validText)
+    onChange(validText)
     setIsFocused(false)
     Keyboard.dismiss()
   }
 
-  useEffect(() => {
-    const onShow = Keyboard.addListener('keyboardWillShow', () => {
-      setHeight(`${DEFAULT_HEIGHT + 40 < 93 ? DEFAULT_HEIGHT + 40 : 93}%`)
-    })
-    const onHide = Keyboard.addListener('keyboardWillHide', () => {
-      setHeight(defaultHeight)
-    })
-    return () => {
-      onShow.remove()
-      onHide.remove()
-    }
-  }, [])
-
   return (
-    <ModalInput customLabel={customLabel} label={notes?.length ? notes : 'No notes added.'} onSubmit={onSubmit} onReset={() => handlePress(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} height={height as DimensionValue} overlay={overlay}>
+    <ModalInput customLabel={customLabel} label={notes?.length ? notes : 'No notes added.'} onSubmit={onSubmit} onReset={() => handlePress(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} overlay={overlay}>
       <FormHeader title={header ?? 'Add Notes'} />
       { subHeading }
 
-      <View style={[Spacing.flexRowStretch, UI.input(), { width: '90%', minHeight: maxLength, maxHeight:`${DEFAULT_HEIGHT}%` }, validatedStyles, inputStyles]}>
+      <View style={[Spacing.flexRowStretch, UI.input(), { width: '90%', minHeight: height, maxHeight: maxHeight }, validatedStyles, inputStyles]}>
         <TextInput
           style={{ height: '100%', flex: 1, marginRight: 10 }}
           placeholder={placeholder ?? 'Enter notes'}

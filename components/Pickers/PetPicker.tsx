@@ -13,13 +13,13 @@ import { showRequireSelectionToast } from '@utils/misc'
 import { Buttons, Spacing } from '@styles/index'
 
 type Props = {
-  mode: 'multi' | 'single',
+  mode?: 'multi' | 'single',
   onSelect: (petIds: string[]) => void
   pets: string[] | PetBasic[]
   placeholder?: string
 }
 
-const PetPicker = memo(({ placeholder = 'No pet selected', pets, mode = 'single', onSelect }: Props) => {
+const PetPicker = memo(({ placeholder = 'No pet selected.', pets, mode = 'single', onSelect }: Props) => {
   const { PET_BASICS, petIdToPet } = useShallowPets()
 
   const petMapped: PetBasic[] = pets.map(pet => pet.name ? pet : petIdToPet(pet))

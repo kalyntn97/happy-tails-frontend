@@ -15,7 +15,8 @@ const useForm = (callback: any, initialState: any) => {
     const errors = Object.keys(requiredFields).reduce((acc, key) => {
       const value = requiredFields[key]
       if (Array.isArray(value) ? value.length === 0 : !value) {
-        acc[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required`
+        // acc[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required`
+        acc[key] = `Required field.`
       }
       return acc
     }, {})

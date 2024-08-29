@@ -99,7 +99,7 @@ const StatusInfo = ({ status, onChange, color }: { status: Pet['status'], onChan
 
   const statusTable = [
     { key: 'statusValue', icon: 'status', value: 
-      <Dropdown label='Status' dataType="petStatus" initial={status.value} onSelect={handleSelectStatus} width={50} withBorder={false} /> 
+      <Dropdown label='Status' dataType="petStatus" initial={status.value} onSelect={handleSelectStatus} width={50} withBorder={false} buttonTextStyles={{ textAlign: 'right' }} /> 
     },
     { key: 'statusDate', icon: 'schedule', value: 
       <DateInput date={status.date} placeholder='Unknown date' onChangeDate={(selected) => onChange({ ...status, date: selected })} color={color} />
@@ -156,7 +156,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormPro
   }
 
   const mainTable = [
-    { key: 'type', label: 'Type', icon: 'pets', value: 
+    { key: 'type', label: 'Type', icon: 'pet', value: 
       <SpeciesBreedSelector species={species} breed={breed} initials={{ species: initialState.species, breed: initialState.breed }} onSelectSpecies={(selected) => onChange('species', selected)} onSelectBreed={(selected) => onChange('breed', selected)} /> 
     },
     { key: 'dob', label: 'Date of Birth', icon: 'birthday', value:

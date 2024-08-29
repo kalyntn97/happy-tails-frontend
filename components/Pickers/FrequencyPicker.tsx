@@ -201,8 +201,9 @@ const EndDateSelector = ({ endDate, ending, onSelect, color }: { endDate: string
 
 const FrequencyPicker = ({ frequency, onSelectFrequency, onSelectEndDate, onReset, color = 0, labelStyles}: Props) => {
   const { type, interval, timesPerInterval, ending, endDate } = frequency
-  const { intervalLabel, repeatLabel } = getRepeatLabels(frequency)
 
+  const { intervalLabel, repeatLabel } = getRepeatLabels(frequency)
+  
   const onChangeType = (type: Frequency['type']) => {
     let defaultTimesPerInterval = type === 'years' ? [{ month: 'Jan', day: 1 }] : [1]
     onSelectFrequency('frequency', { type: type, interval: 1, timesPerInterval: defaultTimesPerInterval })

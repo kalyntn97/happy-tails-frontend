@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react'
-import { ActivityIndicator, Text } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import React, { useEffect } from 'react'
+import { ActivityIndicator, Text, View } from 'react-native'
 //components
 import Dropdown from '@components/Dropdown/Dropdown'
-import { FormInput, Icon, NoteInput, ScrollScreen, TableForm } from '@components/UIComponents'
+import { FormInput, FormLabel, Icon, NoteInput, ScrollScreen, TableForm } from '@components/UIComponents'
 import { Header } from '@navigation/NavigationStyles'
 //utils
 import useForm from '@hooks/useForm'
 import { IdFormData } from '@pet/PetInterface'
 //styles
 import { Spacing } from '@styles/index'
+import { styles } from '@styles/stylesheets/FormStyles'
 
 interface IdFormProps {
   initialValues?: IdFormData
@@ -46,15 +47,11 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
   
   const table = [
     { key: 'type', icon: 'tag', value:
-      <Dropdown label='Select type' dataType='petIds' initial={type} onSelect={selected => onChange('type', selected)} width={55} withBorder={false} buttonTextStyles={{ textAlign: 'right' }} error={errors?.type}
+      <Dropdown label='Select type' dataType='petIds' initial={type} onSelect={selected => onChange('type', selected)} width={55} withBorder={false} buttonStyles={{ height: 20 }} buttonTextStyles={{ textAlign: 'right' }} contentWidth={40} error={errors?.type}
       />
     },
-    { key: 'name', icon: 'ids', value: 
+    { key: 'name', icon: 'id', value: 
       <FormInput initial={name} onChange={(text: string) => onChange('name', text)} placeholder='Enter Registry Name' withBorder={false} align='right' /> 
-    },
-    { key: 'no', icon: 'no', value: 
-      <FormInput initial={no} onChange={(text: string) => onChange('no', text)} placeholder='Enter no.'  withBorder={false} align='right' props={{ inputMode: 'numeric' }} maxLength={20} error={errors?.no}
-      />
     },
     { key: 'notes', icon: 'note', value: 
       <NoteInput notes={notes} onChange={(text: string) => onChange('notes', text)} modalHeight={80} />
@@ -76,9 +73,14 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
 
   return (
     <ScrollScreen props={{ keyboardShouldPersistTaps: 'never' }}>
-      <Icon type='pet' name={type && type !== 'Other' ? type : 'ids'} size='large' />
+      <View style={styles.headerCon}>
+        <Icon type='pet' name={type && type !== 'Other' ? type : 'id'} size='large' />
+        <View style={styles.titleCon}>
+          <FormInput initial={initialState.name} placeholder="New Identification No" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={20} props={{ selectTextOnFocus: true, keyboardType: 'numbers-and-punctuation' }} error={errors?.no} withBorder={false} width='100%' bottom={0} />
+        </View>
+      </View>
 
-      <TableForm table={table} size='med' />
+      <TableForm table={table} />
     </ScrollScreen>
   )
 }

@@ -7,10 +7,10 @@ import { circleBase } from "@styles/buttons"
 import { Buttons, Colors, Spacing, Typography, UI } from "@styles/index"
 import { Size } from "@styles/ui"
 
-type ButtonSize = Size | 'largeSquare' | 'smallSquare'
+export type ButtonSize = Size | 'largeSquare' | 'smallSquare'
 
 type BaseButtonProps = {
-  title?: any
+title?: any
   icon?: string
   onPress?: () => void
   size?: ButtonSize,
@@ -57,7 +57,7 @@ export const RoundButton = memo(({ onPress, size = 'large', bgColor = Colors.pin
   )
 })
 
-const baseButtonSizeMap = {
+export const baseButtonSizeMap = {
   xSmall: [Buttons.xxSmall, Buttons.rounded],
   small: [Buttons.xSmall, Buttons.rounded],
   smallSquare: [Buttons.xSmall, Buttons.square],
@@ -87,14 +87,14 @@ export const MainButton= memo(({ onPress, title, bgColor = UI.lightPalette().lig
     ]}>
       { icon && <Image source={getActionIconSource(icon)} style={[UI.icon(sizes.iconSize), { marginRight: 5 }]} /> }
       <Text style={[Buttons.buttonText, { fontSize: sizes.textSizeAdjusted, color: color }, textStyles]}>
-        { title }
+      { title }
       </Text>
     </TouchableOpacity>
   )
 })
 
 export const TransparentButton= ({ title, icon, onPress, size = 'med', color = Colors.shadow.darkest, bdColor, bgColor = 'transparent', h, v, buttonStyles, textStyles }: BaseButtonProps) => (
-  <MainButton title={title} icon={icon} onPress={onPress} size={size} h={h} v={v} color={color} bdColor={bdColor ?? color} bgColor={bgColor} buttonStyles={{ ...Buttons.transparent, borderWidth: size === 'xSmall' || size === 'small' ? 1 : 1.5, ...buttonStyles }} textStyles={textStyles} />
+<MainButton title={title} icon={icon} onPress={onPress} size={size} h={h} v={v} color={color} bdColor={bdColor ?? color} bgColor={bgColor} buttonStyles={{ ...Buttons.transparent, borderWidth: size === 'xSmall' || size === 'small' ? 1 : 1.5, ...buttonStyles }} textStyles={textStyles} />
 )
 
 const iconButtonSizeMap = {
@@ -113,31 +113,29 @@ export const IconButton = memo(({ title, type, icon, onPress, size, buttonStyles
   }, [size])
 
   const iconSource = useMemo(() => {
-    const iconName = icon ?? title
+  const iconName = icon ?? title
     return getIconByType(type as IconType, iconName)
-  }, [type, icon, title])
+}, [type, icon, title])
   
   return (
     <TouchableOpacity onPress={onPress} style={[
       UI.input(true, 10, 10, 5), sizes.buttonSize,
-      { justifyContent: title ? 'space-around' : 'center', alignItems: 'center' },
+    { justifyContent: title ? 'space-around' : 'center', alignItems: 'center' },
       buttonStyles
     ]}>
       <Image source={iconSource} style={UI.icon(sizes.iconSize)} />
-      { title && <Text style={[{ fontSize: sizes.textSize, textTransform: 'capitalize', marginTop: 5 }, textStyles]}>{title}</Text> }
+    { title && <Text style={[{ fontSize: sizes.textSize, textTransform: 'capitalize', marginTop: 5 }, textStyles]}>{title}</Text> }
     </TouchableOpacity>
   )
 })
 
 export const ActionButton= memo(({ title, icon, onPress, size = 'small', buttonStyles, textStyles, position, h, v }: BaseButtonProps) => (
-  <View style={[Spacing.flexRow, Spacing.centered, buttonStyles,
+  <TouchableOpacity onPress={onPress} style={[Spacing.flexRow, Spacing.centered, buttonStyles,
     position && positionMap(h, v)[position] as ViewStyle,
   ]}>
-    <TouchableOpacity onPress={onPress}>
-      <Image source={getActionIconSource(icon)} style={UI.icon(size)} />
-    </TouchableOpacity>
-      { title && <Text style={[{ marginLeft: 10 }, textStyles]}>{title}</Text> }
-  </View>
+    { icon && <Image source={getActionIconSource(icon)} style={UI.icon(size)} /> }
+    { title && <Text style={[{ marginLeft: 10 }, textStyles]}>{title}</Text> }
+  </TouchableOpacity>
 ))
 
 export const CloseButton = ({ onPress, position = 'topRight', size = 'small', buttonStyles }: BaseButtonProps) => (
@@ -154,7 +152,7 @@ export const SubButton = memo(({ onPress, title, color = UI.lightPalette().butto
   return (
     <TouchableOpacity onPress={onPress} style={[Buttons.sub, { borderColor: color, marginHorizontal: h, marginVertical: v },
     ]}>
-      <Text style={[Buttons.buttonText, textSize, {  color: color }, textStyles]}>{title}</Text>
+    <Text style={[Buttons.buttonText, textSize, {  color: color }, textStyles]}>{title}</Text>
     </TouchableOpacity>
   )
 })

@@ -25,36 +25,38 @@ import NewStatScreen from "@stat/screens/NewStatScreen"
 import StatDetails from "@stat/screens/StatDetails"
 //helpers
 import { getNavigationIconSource } from "@utils/ui"
+import { HomeTabParamList, RootStackParamList } from "./types"
 //styles
 import { Typography } from "@styles/index"
 import { dynamicStackOptions, styles, tabBarOptions } from "./NavigationStyles"
 
-const PrivateApp = () => {
-  const Tab = createBottomTabNavigator()
-  const Stack = createNativeStackNavigator()
+const HomeTabs = () => {
+  const Tab = createBottomTabNavigator<HomeTabParamList>()
 
-  const HomeTabs = () => {
-    return (
-      <Tab.Navigator
-        backBehavior="history"
-        screenOptions={({ route }) => ({
-          ...tabBarOptions,
-          tabBarLabel: ({ focused }) => {
-            return <Text style={[styles.iconLabel, focused ? {...Typography.focused} : {...Typography.unFocused}]}>{route.name}</Text>
-          },
-          tabBarIcon: ({ focused }) => {
-            const iconSource = getNavigationIconSource(route.name, focused ? 'active' : 'inactive')
-            return <Image source={iconSource} style={styles.icon } />
-          },
-        })}
-      >
-        <Tab.Screen name='Feed' component={HomeScreen} />
-        <Tab.Screen name='Pets' component={PetIndexScreen} />
-        <Tab.Screen name='Profile' component={ProfileScreen} />
-      </Tab.Navigator>
-    )
-  }
-  
+  return (
+    <Tab.Navigator
+      backBehavior="history"
+      screenOptions={({ route }) => ({
+        ...tabBarOptions,
+        tabBarLabel: ({ focused }) => {
+          return <Text style={[styles.iconLabel, focused ? {...Typography.focused} : {...Typography.unFocused}]}>{route.name}</Text>
+        },
+        tabBarIcon: ({ focused }) => {
+          const iconSource = getNavigationIconSource(route.name, focused ? 'active' : 'inactive')
+          return <Image source={iconSource} style={styles.icon } />
+        },
+      })}
+    >
+      <Tab.Screen name='Feed' component={HomeScreen} />
+      <Tab.Screen name='Pets' component={PetIndexScreen} />
+      <Tab.Screen name='Profile' component={ProfileScreen} />
+    </Tab.Navigator>
+  )
+}
+
+const PrivateApp = () => {
+  const Stack = createNativeStackNavigator<RootStackParamList>()
+
   return (
     <Stack.Navigator screenOptions={{ ...dynamicStackOptions('modal', true, false) }}>
       <Stack.Screen name='Home' component={HomeTabs} options={{ headerShown: false }} />
@@ -79,8 +81,8 @@ const PrivateApp = () => {
         <Stack.Screen name='PetDetails' component={PetDetailsScreen} />
         <Stack.Screen name='PetMoreDetails' component={MorePetDetailsScreen} />
         <Stack.Screen name='PetEditDetails' component={EditMorePetDetailsScreen} />
-        <Stack.Screen name='CreateLog' component={NewStatScreen} options={{ title: 'New Log' }} />
-        <Stack.Screen name='LogDetails' component={StatDetails} options={{ title: 'Details' }} />
+        <Stack.Screen name='CreateStat' component={NewStatScreen} options={{ title: 'New Log' }} />
+        <Stack.Screen name='StatDetails' component={StatDetails} options={{ title: 'Details' }} />
       </Stack.Group>
 
       <Stack.Group>

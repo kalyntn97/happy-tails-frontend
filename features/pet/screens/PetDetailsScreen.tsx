@@ -2,7 +2,6 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useEffect, useMemo, useState } from "react"
 import { Pressable, StyleSheet, Text, View } from "react-native"
 //types & context & hooks
-import { showDeleteConfirmDialog } from "@hooks/sharedHooks"
 import { Pet } from "@pet/PetInterface"
 import { PET_DETAILS } from "@pet/petHelpers"
 import { STATS } from "@stat/statHelpers"
@@ -18,9 +17,10 @@ import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
 import { useGetPetSettings, useSetActions } from "@store/store"
 //styles
 import { Colors, Spacing, Typography, UI } from '@styles/index'
+import { StackScreenNavigationProp } from "@navigation/types"
 
 interface PetDetailsProps {
-  navigation: any
+  navigation: StackScreenNavigationProp
   route: { params: { petId: string } }
 }
 
@@ -45,7 +45,7 @@ const Item = ({ label, type, logs, info, onPress }: { label: string, type: Secti
   ) 
 }
 
-const defaultInfo = ['ids', 'services']
+const defaultInfo = ['id', 'service']
 const defaultLogs = ['mood', 'weight', 'energy']
 
 const headerActions = (navigation: any, pet: Pet) => ([
@@ -80,6 +80,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
     } else if (type === 'logs') {
       setLogs(defaultLogs)
     }
+    setPetSettings(petId, type, type === 'info' ? defaultInfo : defaultLogs)
   }
 
   const toggleItem = (type: string) => {
@@ -91,7 +92,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
   }
 
   const filteredList = useMemo(() => ({
-    info: { 
+    info: {
       titles: info, iconType: 'pet', 
       getName: (info: string) => PET_DETAILS[info], 
       onNavigate: (info: string) => navigation.navigate('PetMoreDetails', { petId, show: info }) 
@@ -99,12 +100,12 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
     logs: { 
       titles: logs, iconType: 'stat', 
       getName: (log: string) => log, 
-      onNavigate: (log: string) => navigation.navigate('LogDetails', { stat: log }) 
+      onNavigate: (log: string) => navigation.navigate('StatDetails', { stat: log }) 
     },
   }), [info, logs, petId])
 
   const actions = useMemo(() => ([
-    { key: 'log', title: 'Log pet stats', icon: 'add', onPress: () => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
+    { key: 'log', title: 'Log pet stats', icon: 'add', onPress: () => navigation.navigate('CreateStat', { pet: { _id: pet._id, name: pet.name } }) },
     { key: 'edit', title: 'Update pet info', icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
     { key: 'delete', title: isPending ? 'Deleting...' : 'Delete pet profile', icon: 'delete', onPress: () => handleDeletePet(pet) },
   ]), [pet, navigation, handleDeletePet, isPending])
@@ -159,10 +160,13 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
         { sections.map(section =>
           <View key={section.key} style={Spacing.flexColumnStretch}>
             <TitleLabel size='small' title={section.title} iconName={section.iconName} mode='bold' rightAction={section.rightAction !== false &&
-              <ActionButton icon="filter" onPress={() => {
-                setModalVisible(true)
-                setOption(section.key as SectionType)
-              }} /> 
+              <View style={Spacing.flexRow}>
+                <ActionButton icon='reset' buttonStyles={{ marginRight: 30 }} onPress={() => resetItems(section.key as SectionType)} />
+                <ActionButton icon="filter" onPress={() => {
+                  setModalVisible(true)
+                  setOption(section.key as SectionType)
+                }} /> 
+              </View>
             } containerStyles={{ marginTop: 15, marginBottom: 0 }}/>
             <View style={styles.sectionCon}>
               { section.renderList }

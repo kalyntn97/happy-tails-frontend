@@ -1,3 +1,4 @@
+import { Frequency } from "@utils/types"
 
 export type Gender = 'Boy' | 'Girl' | 'Unknown'
 export type Species = 'Dog' | 'Cat' | 'Bird' | 'Fish' | 'Rodent' | string
@@ -24,6 +25,7 @@ export interface Pet extends PetFormData {
   photo: string | null
   ids: string[] | Id[]
   services: string[] | Service[]
+  medications: string[] | Medication[]
 }
 
 export interface PetBasic {
@@ -43,8 +45,8 @@ export interface PetMutationFormData {
 export type ServiceFormData = {
   name: string
   type: string
-  address: string | null
-  email: string | null
+  addresses: string[] | null
+  emails: string[] | null
   phones: string[]
   notes: string | null
   serviceId?: string
@@ -61,6 +63,7 @@ export type IdFormData = {
   type: string, 
   no: string, 
   notes: string | null
+  idId?: string | null
 }
 export interface Id extends IdFormData { _id: string }
 
@@ -69,23 +72,35 @@ type Note = {
   createdAt?: string
 }
 
-export type Medication = {
-  _id: string
-  name: string
-  dosage: { amount: string, startDate: string, endDate: string | null, times: number, frequency: string, reminder: string }
-  refill: { times: number, frequency: string, reminder: string } | null
-  status: string
-  notes: Note[]
+type MedStatus = 'Active' | 'Paused' | 'Inactive'
+
+export type Dosage = {
+  dose: string, 
+  startDate: string, 
+  endDate: string | null,
+  frequency: Frequency,
+  ending?: boolean
+}
+
+export type Refill = {
+  count: number, 
+  frequency: Frequency 
+  reminder: boolean | string
+  isActive: boolean
 }
 
 export type MedicationFormData = {
   name: string
-  dosage: { amount: string, startDate: string, endDate: string | null, times: number, frequency: string }
-  refill: { times: number, frequency: string } | null
-  status: string
-  medReminder: boolean
-  refillReminder: boolean
+  dosages: Dosage[]
+  refill: Refill | null
+  isActive: boolean
+  reminder: boolean | string
+  notes: string
+  pet: string
+  medId?: string | null
 }
+
+export interface Medication extends MedicationFormData { _id: string }
 
 export type Timeline = {
   startDate: string
@@ -124,7 +139,7 @@ export interface BirdListResponse {
   commonFeederBirds: Array<{commonNameEnglish: string}>
 }
 
-export type DetailType = 'ids' | 'services' | 'illnesses' | 'meds'
+export type DetailType = 'id' | 'service' | 'illness' | 'medication'
 
 export type Detail = Id | Service | Illness | Medication
 

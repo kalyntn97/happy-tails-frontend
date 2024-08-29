@@ -1,20 +1,18 @@
-import { StyleSheet, TouchableOpacity, Text, View, Image, ImageStyle, Pressable } from "react-native"
-import { FC, ReactNode, useEffect, useState } from "react"
+import { ReactNode, useState } from "react"
+import { View, ViewStyle } from "react-native"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { getActionIconSource } from "@utils/ui"
-import { TransparentButton } from "./ButtonComponents"
+import { Spacing } from '@styles/index'
+import { ButtonSize, TransparentButton } from "./ButtonComponents"
 
 interface FormProps {
   title: string
   children: ReactNode
-  buttonColor?: string
-  buttonBgColor?: string
-  buttonSize?: string
+  buttonStyles?: ViewStyle
+  buttonSize?: ButtonSize
   onPress?: () => void
 }
 
-const ToggleableForm = ({ title, children, onPress, buttonSize, buttonColor, buttonBgColor }: FormProps) => {
+const ToggleableForm = ({ title, children, onPress, buttonSize, buttonStyles }: FormProps) => {
   const [visible, setVisible] = useState(false)
 
   const handlePress = () => {
@@ -23,19 +21,11 @@ const ToggleableForm = ({ title, children, onPress, buttonSize, buttonColor, but
   }
   
   return (
-    <View style={styles.container}>
-      <TransparentButton title={title} onPress={handlePress} icon='down' color={buttonColor} bgColor={buttonBgColor} size={buttonSize} />
+    <View style={Spacing.flexColumnStretch}>
+      <TransparentButton title={title} onPress={handlePress} icon='down' size={buttonSize} buttonStyles={buttonStyles} />
       {visible && children}
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: '90%',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-})
- 
 export default ToggleableForm

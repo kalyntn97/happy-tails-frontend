@@ -1,13 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Detail, DetailType, Pet, PetMutationFormData } from './PetInterface'
-//utils
-import { Profile, ProfileData } from '@profile/ProfileInterface'
-import { profileKeyFactory } from '@profile/profileQueries'
-import { showToast } from '@utils/misc'
-import * as petService from './petService'
-import { showDeleteConfirmation } from '@hooks/sharedHooks'
-import { produce } from 'immer'
 import { useNavigation } from '@react-navigation/native'
+import { produce } from 'immer'
+//utils
+import * as petService from './petService'
+import { Detail, DetailType, Pet, PetMutationFormData } from './PetInterface'
+import { profileKeyFactory } from '@profile/profileQueries'
+import { ProfileData } from '@profile/ProfileInterface'
+//hooks
+import { showDeleteConfirmation } from '@hooks/sharedHooks'
+import { showToast } from '@utils/misc'
+import { StackScreenNavigationProp } from '@navigation/types'
 
 export const petKeyFactory = {
   pets: ['all-pets'],
@@ -86,7 +88,7 @@ export const useDeletePet = (navigation: any) => {
 
 export const useAddPetDetail = (petId: string) => {
   const queryClient = useQueryClient()
-  const navigation = useNavigation()
+  const navigation = useNavigation<StackScreenNavigationProp<'PetMoreDetails'>>()
 
   const addPetDetail = (type: string, formData: any) => {
     const typeToService = {
@@ -116,7 +118,7 @@ export const useAddPetDetail = (petId: string) => {
         })
         // return { ...oldData, [data.type]: [...oldData[data.type], data.item] }
       )
-      navigation.navigate('MoreDetails', { petId, show: data.type })
+      navigation.navigate('PetMoreDetails', { petId, show: data.type })
       showToast({ text1: 'Detail added.', style: 'success' })
     }, 
     onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
