@@ -128,7 +128,7 @@ const RefillManager = ({ refill, onChange }: { refill: MedicationFormData['refil
       />  
     },
     { key: 'reminder', label: 'Reminder', icon: 'reminder', value: 
-      <ToggleButton isChecked={!!refill?.reminder} onPress={() => onChange({ ...refill, reminder: !refill.reminder })} />
+      <ToggleButton isOn={!!refill?.reminder} onPress={() => onChange({ ...refill, reminder: !refill.reminder })} />
     },
   ]
 
@@ -136,10 +136,10 @@ const RefillManager = ({ refill, onChange }: { refill: MedicationFormData['refil
     <ModalInput label={label} overlay={Colors.white}>
       <FormHeader title={label} size='small' />
       <TitleLabel title='Refill' iconName='repeat' size='med' mode='bold' rightAction={
-        <ToggleButton isChecked={refill ? refill.isActive : false} onPress={toggleRefill} />
+        <ToggleButton isOn={refill ? refill.isActive : false} onPress={toggleRefill} />
       } />
       { refill?.isActive && 
-        <TableForm table={refillTable} withTitle={true} />
+        <TableForm table={refillTable} />
       }
     </ModalInput>
   )
@@ -153,22 +153,21 @@ const MedicationForm = ({ initialValues, onSubmit, isPending }: MedicationFormPr
     isActive: initialValues?.isActive ?? true,
     reminder: !!initialValues?.reminder ?? false,
     notes: initialValues?.notes ?? null,
-    pet: initialValues?.pet ?? null,
     medId: initialValues?.medId ?? null,
     errors: {}
   }
 
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
-  const { name, dosages, refill, isActive, reminder, notes, pet, medId, errors }: InitialState = values
+  const { name, dosages, refill, isActive, reminder, notes, medId, errors }: InitialState = values
 
   const navigation = useNavigation()
 
   function handleSubmit() {
-    onSubmit('meds', { name, dosages, refill, isActive, reminder, notes, pet, medId })
+    onSubmit('meds', { name, dosages, refill, isActive, reminder, notes, medId })
   }
 
   function handleValidate() {
-    onValidate({ name, dosages, pet })
+    onValidate({ name, dosages })
   }
 
   const mainTable = [
@@ -182,16 +181,13 @@ const MedicationForm = ({ initialValues, onSubmit, isPending }: MedicationFormPr
       <RefillManager refill={refill} onChange={(data: Medication['refill']) => onChange('refill', data)} />
     },
     { key: 'status', label: 'Active', icon: 'check', value: 
-      <ToggleButton isChecked={isActive} onPress={() => onChange('isActive', !isActive)} />
+      <ToggleButton isOn={isActive} onPress={() => onChange('isActive', !isActive)} />
     },
     { key: 'notes', label: 'Notes', icon: 'note', value: 
       <NoteInput notes={notes} onChange={(text: string) => onChange('notes', text)} />
     },
     { key: 'reminder', label: 'Reminder', icon: 'reminder', value:       
-      <ToggleButton isChecked={reminder} onPress={() => onChange('reminder', !reminder)} />
-    },
-    { key: 'pet', label: 'Pet', icon: 'pet', value:
-      <PetPicker pets={pet ? [pet] : []} onSelect={(selected: string[]) => onChange('pet', selected[0])} /> 
+      <ToggleButton isOn={reminder} onPress={() => onChange('reminder', !reminder)} />
     },
   ]
 
@@ -217,7 +213,7 @@ const MedicationForm = ({ initialValues, onSubmit, isPending }: MedicationFormPr
         </View>
       </View>
 
-      <TableForm table={mainTable} withTitle={true} errors={errors} />
+      <TableForm table={mainTable} errors={errors} />
     </ScrollContainer>
   )
 }

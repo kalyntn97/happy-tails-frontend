@@ -62,7 +62,7 @@ export const styles = StyleSheet.create({
   contentCon: {
     ...UI.card(),
     ...Spacing.flexColumn, 
-    alignItems: 'flex-start',
+    width: '100%',
   },
   rowCon: {
     ...UI.tableRow(),

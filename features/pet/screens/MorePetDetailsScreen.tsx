@@ -69,6 +69,7 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
     id: pet?.ids ?? [],
     service: pet?.services ?? [],
     medication: pet?.medications ?? [],
+    condition: pet?.healthConditions ?? [],
   }
 
   const openForm = (type: DetailType) => {

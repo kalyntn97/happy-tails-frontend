@@ -85,15 +85,15 @@ const headerSize = {
 
 export const TitleLabel = memo(({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, containerStyles, rightLabel, mode = 'normal', capitalize = true }: TitleLabelProps) => { 
   const sizes = useMemo(() => {
-    const titleSize: Size = size === 'small' ? 'xSmall' : size === 'med' ? 'small' : size === 'large' ? 'med' : 'large'
-    const iconSize: Size = size === 'small' || size === 'med' ? 'small' : size === 'large' ? 'med' : 'large'
+    const titleSize: Size = size === 'small' || size === 'med' ? 'small' : size === 'large' ? 'med' : 'large'
+    const iconSize: Size = size === 'small' ? 'xSmall' : size === 'med' ? 'small' : size === 'large' ? 'med' : 'large'
     return { titleSize, iconSize }
   }, [size])
   return (
-    <Pressable onPress={onPress} style={[UI.rowContent('space-between', 0), containerStyles]}>
+    <Pressable onPress={onPress} style={[UI.rowContent('space-between', 0), { position: 'relative' }, containerStyles]}>
       { iconName && <Icon type={iconType} name={iconName} size={sizes.iconSize} styles={{ marginVertical: 0, marginRight: 10 }}/> }
       { title && 
-        <Text style={[textSizeMap[sizes.iconSize],
+        <Text style={[textSizeMap[sizes.titleSize],
           { fontWeight: mode, color: color, margin: 0, textAlign: 'left', marginRight: 20, textTransform: capitalize ? 'capitalize' : 'none' },
           titleStyles,
         ]}>
@@ -161,7 +161,7 @@ interface TableProps extends TitleLabelProps{
   errors?: { [key: string]: string }
 }
 
-export const TableForm = memo(({ table, withTitle = false, dependentRows, size = 'small', tableStyles, titleStyles, containerStyles, errors }: TableProps) => (
+export const TableForm = memo(({ table, withTitle = true, dependentRows, size = 'small', tableStyles, titleStyles, containerStyles, errors }: TableProps) => (
   <View style={[UI.card(true, false, 15), { backgroundColor: Colors.white }, tableStyles]}>
     { table.map((row, index) => {
       let rowIsVisible = true
@@ -170,11 +170,11 @@ export const TableForm = memo(({ table, withTitle = false, dependentRows, size =
       return (
         rowIsVisible && 
           <TitleLabel key={row.key} title={withTitle ? row.label : null} iconName={row.icon} size={size} rightAction={
-            <View style={{ alignItems: 'flex-end'}}>
+            <View style={{ alignItems: 'flex-end' }}>
               { row.value }
               { errors && <FormError errorKey={row.key} errors={errors} /> }
             </View>
-          } titleStyles={titleStyles} containerStyles={{ ...(index > 0 ? { borderTopWidth: 1, borderColor: lightPalette().border } : {}), minHeight: 50, ...containerStyles }} />
+          } titleStyles={titleStyles} containerStyles={{ ...(index > 0 ? { borderTopWidth: 1, borderColor: lightPalette().border } : {}), minHeight: 50, zIndex: table.length - index, ...containerStyles }} />
       )
     })}
   </View>
@@ -292,6 +292,16 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
   )
 }))
 
+export  const InlinePicker = ({ options, onSelect, selected, width = '80%' }: { options: string[], onSelect: (selected: String) => void, selected: string, width?: DimensionValue }) => (
+  <View style={[Spacing.flexRow, { justifyContent: 'space-between', width: width }]}>
+    {options.map(option =>
+      <TouchableOpacity key={option} onPress={() => onSelect(option)} style={{ opacity: selected === option ? 1 : 0.3 }}>
+        <Text>{option}</Text>
+      </TouchableOpacity>
+    )}
+  </View>
+)
+
 interface ModalProps {
   children: ReactNode, 
   modalVisible: boolean, 
@@ -403,7 +413,9 @@ interface DateInputProps extends ModalInputProps {
 
 export const DateInput = ({ date, placeholder = 'No date selected.', onChangeDate, color, buttonStyles, buttonTextStyles, header }: DateInputProps) => (
   <ModalInput label={date ? new Date(date).toLocaleDateString() : placeholder} onReset={() => onChangeDate(new Date().toISOString())} buttonStyles={buttonStyles} buttonTextStyles={buttonTextStyles}>
-    { header && <FormHeader title={date ? `${header}: ${new Date(date).toLocaleDateString()}` : header} />}
+    { header && 
+      <FormHeader title={date ? `${header}: ${new Date(date).toLocaleDateString()}` : header} /> 
+    }
     <RNDateTimePicker display="inline" themeVariant="light" value={date ? new Date(date) : new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate.toISOString())} accentColor={Colors.multi.dark[color]} />
   </ModalInput>
 )
@@ -450,6 +462,7 @@ export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit,
           selectTextOnFocus={true}
           multiline={true}
           numberOfLines={6}
+          autoFocus={true}
         />
         <Icon name='edit' size='xSmall' />
       </View>

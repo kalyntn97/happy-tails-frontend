@@ -100,7 +100,7 @@ const HealthItem = ({ item, onPress, onLongPress, disabled }: { item: Health } &
       swipeRightActions={getHealthActions(item)}
       onPress={onPress}
       onLongPress={onLongPress}
-      toggle={{ onToggle: toggleAll, isChecked: false }}
+      toggle={{ onToggle: toggleAll, isOn: false }}
       disabled={disabled}
   />
   )
@@ -120,11 +120,11 @@ const CareItem = ({ item, onPress, onLongPress, disabled }: { item: Care } & Ite
     Number((log.value / item.frequency.timesPerInterval[0]).toFixed(2))
     : log ? log.value 
     : 0
-  const isChecked = progress === 1
+  const isOn = progress === 1
   const isSkipped = progress === -1
 
   const toggleAll = () => {
-    if (isChecked) {
+    if (isOn) {
       deleteLogMutation.mutate({ logId: log._id, careId: item._id }) 
     } else {
       shouldIncrement ? 
@@ -138,14 +138,14 @@ const CareItem = ({ item, onPress, onLongPress, disabled }: { item: Care } & Ite
       color={Colors.multi.light[item.color]}
       title={item.name}
       content={
-        <ItemContent name={item.name} petArray={item.pets as PetBasic[]} titleStyles={isChecked && styles.completed} status={
+        <ItemContent name={item.name} petArray={item.pets as PetBasic[]} titleStyles={isOn && styles.completed} status={
           <Status progress={shouldIncrement ? { value: progress, color: item.color } : null} />
         } />
       }
       swipeRightActions={getCareActions(item)}
       onPress={onPress}
       onLongPress={onLongPress}
-      toggle={{ onToggle: toggleAll, isChecked: isChecked }}
+      toggle={{ onToggle: toggleAll, isOn: isOn }}
       disabled={disabled || isSkipped}
       containerStyles={isSkipped && { opacity: 0.5 }}
     />

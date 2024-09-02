@@ -1,3 +1,4 @@
+import { Health } from "@health/HealthInterface"
 import { Frequency } from "@utils/types"
 
 export type Gender = 'Boy' | 'Girl' | 'Unknown'
@@ -26,6 +27,7 @@ export interface Pet extends PetFormData {
   ids: string[] | Id[]
   services: string[] | Service[]
   medications: string[] | Medication[]
+  healthConditions: string[] | HealthCondition[]
 }
 
 export interface PetBasic {
@@ -67,13 +69,6 @@ export type IdFormData = {
 }
 export interface Id extends IdFormData { _id: string }
 
-type Note = {
-  content: string
-  createdAt?: string
-}
-
-type MedStatus = 'Active' | 'Paused' | 'Inactive'
-
 export type Dosage = {
   dose: string, 
   startDate: string, 
@@ -96,27 +91,38 @@ export type MedicationFormData = {
   isActive: boolean
   reminder: boolean | string
   notes: string
-  pet: string
   medId?: string | null
 }
 
-export interface Medication extends MedicationFormData { _id: string }
+export interface Medication extends MedicationFormData { 
+    _id: string
+    pet: string
+ }
 
 export type Timeline = {
   startDate: string
   endDate: string | null
-  notes: Note[]
+  notes: string
 }
 
-export type IllnessFormData = {
+export type ConditionStatus = 'Acute' | 'Cured' | 'Chronic'
+
+export type HealthConditionFormData = {
   name: string
   type: string
   timeline: Timeline[]
   description: string | null
-  status: string
+  status: ConditionStatus
+  conditionId: string | null
 }
 
-export interface Illness extends IllnessFormData { _id: string }
+export interface HealthCondition extends HealthConditionFormData { 
+  _id: string
+  pet: string
+  medications: string[] | Medication[],
+  stats: string[] | Stat[],
+  vetVisits: string[] | Health[],
+}
 
 type Stat = {
   name: string
@@ -139,7 +145,7 @@ export interface BirdListResponse {
   commonFeederBirds: Array<{commonNameEnglish: string}>
 }
 
-export type DetailType = 'id' | 'service' | 'illness' | 'medication'
+export type DetailType = 'id' | 'service' | 'illness' | 'medication' | 'condition'
 
 export type Detail = Id | Service | Illness | Medication
 

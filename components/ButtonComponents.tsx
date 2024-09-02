@@ -22,6 +22,7 @@ title?: any
   position?: 'topRight' | 'bottomRight' | 'topLeft'
   h?: number
   v?: number
+  disabled?: boolean
 }
 
 interface ButtonWithTypeProps extends BaseButtonProps { type: string }
@@ -71,7 +72,7 @@ const baseButtonTextSizeMap = (n: number = 0) => ({
   large: 18 - n ,
 })
 
-export const MainButton= memo(({ onPress, title, bgColor = UI.lightPalette().lightAccent, color = UI.lightPalette().button, bdColor = 'transparent', size = 'med', icon, h = 0, v = 0, buttonStyles, textStyles }: BaseButtonProps) => {
+export const MainButton= memo(({ onPress, title, bgColor = UI.lightPalette().lightAccent, color = UI.lightPalette().button, bdColor = 'transparent', size = 'med', icon, h = 0, v = 0, buttonStyles, textStyles, disabled }: BaseButtonProps) => {
   const sizes = useMemo(() => {
     const buttonSize = baseButtonSizeMap[size]
     const textSize = size === 'large' || size === 'largeSquare' ? 'large' : 'small'
@@ -81,8 +82,8 @@ export const MainButton= memo(({ onPress, title, bgColor = UI.lightPalette().lig
   }, [size])
 
   return (
-    <TouchableOpacity onPress={onPress} style={[sizes.buttonSize, Buttons.solid, Spacing.flexRow,
-      { backgroundColor: bgColor, borderColor: bdColor, marginHorizontal: h, marginVertical: v },
+    <TouchableOpacity disabled={disabled} onPress={onPress} style={[sizes.buttonSize, Buttons.solid, Spacing.flexRow,
+      { backgroundColor: bgColor, borderColor: bdColor, marginHorizontal: h, marginVertical: v, opacity: disabled ? 0.5 : 1 },
       buttonStyles,
     ]}>
       { icon && <Image source={getActionIconSource(icon)} style={[UI.icon(sizes.iconSize), { marginRight: 5 }]} /> }
@@ -93,8 +94,8 @@ export const MainButton= memo(({ onPress, title, bgColor = UI.lightPalette().lig
   )
 })
 
-export const TransparentButton= ({ title, icon, onPress, size = 'med', color = Colors.shadow.darkest, bdColor, bgColor = 'transparent', h, v, buttonStyles, textStyles }: BaseButtonProps) => (
-<MainButton title={title} icon={icon} onPress={onPress} size={size} h={h} v={v} color={color} bdColor={bdColor ?? color} bgColor={bgColor} buttonStyles={{ ...Buttons.transparent, borderWidth: size === 'xSmall' || size === 'small' ? 1 : 1.5, ...buttonStyles }} textStyles={textStyles} />
+export const TransparentButton= ({ title, icon, onPress, size = 'med', color = Colors.shadow.darkest, bdColor, bgColor = 'transparent', h, v, buttonStyles, textStyles, disabled }: BaseButtonProps) => (
+<MainButton title={title} icon={icon} onPress={onPress} disabled={disabled} size={size} h={h} v={v} color={color} bdColor={bdColor ?? color} bgColor={bgColor} buttonStyles={{ ...Buttons.transparent, borderWidth: size === 'xSmall' || size === 'small' ? 1 : 1.5, ...buttonStyles }} textStyles={textStyles} />
 )
 
 const iconButtonSizeMap = {
@@ -104,7 +105,7 @@ const iconButtonSizeMap = {
   xLarge: { width: 70, minHeight: 90 },
 }
 
-export const IconButton = memo(({ title, type, icon, onPress, size, buttonStyles, textStyles }: ButtonWithTypeProps) => {
+export const IconButton = memo(({ title, type, icon, onPress, size, buttonStyles, textStyles, disabled }: ButtonWithTypeProps) => {
   const sizes = useMemo(() => {
     const buttonSize: ViewStyle = iconButtonSizeMap[size]
     const iconSize: string = size === 'xLarge' ? 'large' : size === 'large' ? 'med' : 'xSmall'
@@ -118,7 +119,7 @@ export const IconButton = memo(({ title, type, icon, onPress, size, buttonStyles
 }, [type, icon, title])
   
   return (
-    <TouchableOpacity onPress={onPress} style={[
+    <TouchableOpacity onPress={onPress} disabled={disabled} style={[
       UI.input(true, 10, 10, 5), sizes.buttonSize,
     { justifyContent: title ? 'space-around' : 'center', alignItems: 'center' },
       buttonStyles
@@ -129,8 +130,8 @@ export const IconButton = memo(({ title, type, icon, onPress, size, buttonStyles
   )
 })
 
-export const ActionButton= memo(({ title, icon, onPress, size = 'small', buttonStyles, textStyles, position, h, v }: BaseButtonProps) => (
-  <TouchableOpacity onPress={onPress} style={[Spacing.flexRow, Spacing.centered, buttonStyles,
+export const ActionButton= memo(({ title, icon, onPress, size = 'small', buttonStyles, textStyles, position, h, v, disabled }: BaseButtonProps) => (
+  <TouchableOpacity onPress={onPress} disabled={disabled} style={[Spacing.flexRow, Spacing.centered, buttonStyles,
     position && positionMap(h, v)[position] as ViewStyle,
   ]}>
     { icon && <Image source={getActionIconSource(icon)} style={UI.icon(size)} /> }
@@ -146,11 +147,11 @@ export const GoBackButton = ({ onPress, position = 'topLeft', size = 'small', bu
   <ActionButton icon='back' position={position} onPress={onPress} size={size} buttonStyles={buttonStyles} />
 )
 
-export const SubButton = memo(({ onPress, title, color = UI.lightPalette().button, h, v, size = 'small', textStyles }: BaseButtonProps) => {
+export const SubButton = memo(({ onPress, title, color = UI.lightPalette().button, h, v, size = 'small', textStyles, disabled }: BaseButtonProps) => {
   const textSize = useMemo(() => baseButtonTextSizeMap()[size], [size])
 
   return (
-    <TouchableOpacity onPress={onPress} style={[Buttons.sub, { borderColor: color, marginHorizontal: h, marginVertical: v },
+    <TouchableOpacity onPress={onPress} disabled={disabled} style={[Buttons.sub, { borderColor: color, marginHorizontal: h, marginVertical: v },
     ]}>
     <Text style={[Buttons.buttonText, textSize, {  color: color }, textStyles]}>{title}</Text>
     </TouchableOpacity>
@@ -162,11 +163,11 @@ interface PhotoButtonProps extends BaseButtonProps {
   placeholder?: string
 }
 
-export const PhotoButton = memo(({ photo, onPress, size = 'small', placeholder, bgColor = Colors.pink.light }: PhotoButtonProps) => {
+export const PhotoButton = memo(({ photo, onPress, size = 'small', placeholder, bgColor = Colors.pink.light, disabled }: PhotoButtonProps) => {
   const defaultPhoto = useMemo(() => placeholder ?? require('@assets/icons/ui-image.png'), [placeholder])
 
   return (
-  <TouchableOpacity onPress={onPress} style={{ margin: 5 }}>
+  <TouchableOpacity onPress={onPress} disabled={disabled} style={{ margin: 5 }}>
     <View style={[UI.photo(size), Spacing.centered, { backgroundColor: bgColor }]}>
       <Image source={photo ? { uri: photo } : defaultPhoto as ImageSourcePropType} style={UI.photo(size)} />
     </View>
@@ -198,14 +199,14 @@ export const StatButton = ({ header, stat, iconUri, body, bgColor, color = Color
   </TouchableOpacity>
 )
 
-interface ToggleButtonProps extends BaseButtonProps { isChecked: boolean, switchColor?: string, width?: number }
+interface ToggleButtonProps extends BaseButtonProps { isOn: boolean, switchColor?: string, width?: number }
 
-export const CheckBoxButton = memo(({ isChecked, onPress, color, bgColor }: ToggleButtonProps) => (
+export const CheckBoxButton = memo(({ isOn, onPress, color, bgColor }: ToggleButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[Spacing.centered, 
     { width: 20, height: 20, borderRadius: 4, borderWidth: 1, marginLeft: 10, backgroundColor: bgColor, borderColor: bgColor },
   ]}>
     <Text style={{ fontSize: 15, fontWeight: 'bold', color: color }}>
-      {isChecked ? '✓' : ''}
+      {isOn ? '✓' : ''}
     </Text>
   </TouchableOpacity>
 ))
@@ -217,12 +218,12 @@ const widthMap = {
 }
 const padding = 2
 
-export const ToggleButton = memo(({ isChecked, onPress, size = 'small' , bgColor = Colors.shadow.light, switchColor = Colors.green.reg }: ToggleButtonProps) => {
+export const ToggleButton = memo(({ isOn, onPress, size = 'small' , bgColor = Colors.shadow.light, switchColor = Colors.green.reg, disabled }: ToggleButtonProps) => {
   const width = useMemo(() => widthMap[size], [size])
 
   return (
-    <Pressable onPress={onPress} style={[Spacing.flexRow, { width: width * 1.7, height: width + padding * 2, borderRadius: 30, backgroundColor: bgColor, padding: padding, justifyContent: isChecked ? 'flex-start' : 'flex-end' }]}>
-      <View style={[circleBase, { width: width, height: width, backgroundColor: isChecked ? switchColor : Colors.shadow.lightest }]} />
+    <Pressable onPress={onPress} disabled={disabled} style={[Spacing.flexRow, { width: width * 1.7, height: width + padding * 2, borderRadius: 30, backgroundColor: bgColor, padding: padding, justifyContent: isOn ? 'flex-start' : 'flex-end' }]}>
+      <View style={[circleBase, { width: width, height: width, backgroundColor: isOn ? switchColor : Colors.shadow.lightest }]} />
     </Pressable>
   )
 })

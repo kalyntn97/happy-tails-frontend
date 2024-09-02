@@ -187,7 +187,7 @@ const IntervalSelector = ({ type, interval, onSelect, intervalLabel }: { type: F
 const EndDateSelector = ({ endDate, ending, onSelect, color }: { endDate: string, ending: boolean, onSelect: (key: 'ending' | 'endDate', selected: string | boolean) => void , color: number }) => (
   <View style={[styles.rowCon, { borderBottomWidth: 0 }]}>
     <TitleLabel title='End Date' rightAction={
-      <ToggleButton isChecked={ending} onPress={() => {
+      <ToggleButton isOn={ending} onPress={() => {
         if (ending) onSelect('endDate', null)
         else if (!endDate) onSelect('endDate', new Date().toISOString())
         onSelect('ending', !ending)

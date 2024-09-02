@@ -7,10 +7,11 @@ import * as careHelpers from '@care/careHelpers'
 import * as healthHelpers from '@health/healthHelpers'
 import * as petHelpers from '@pet/petHelpers'
 //components
-import { ErrorMessage, Icon } from "@components/UIComponents"
+import { ErrorMessage, Icon, ScrollContainer } from "@components/UIComponents"
 //styles
 import { Colors, Spacing, Typography, UI } from '@styles/index'
 import { lightPalette } from "@styles/ui"
+import { windowHeight } from "@utils/constants"
 
 interface DropdownProps {
   label?: string
@@ -27,6 +28,7 @@ interface DropdownProps {
   buttonTextStyles?: TextStyle
   buttonStyles?: ViewStyle
   contentPosition?: 'top' | 'bottom',
+  align?: 'left' | 'right'
 }
 
 const typeToSource = {
@@ -43,15 +45,15 @@ const typeToSource = {
   'catVaccines': () => healthHelpers.CAT_VACCINE_NAMES,
   'petStatus': () => petHelpers.STATUS,
   'petIds': () => petHelpers.IDS,
-  'medStatus': () => petHelpers.MED_STATUS,
-  'illnessTypes': () => petHelpers.DISEASE_TYPES,
-  'illnessStatus': () => petHelpers.DISEASE_STATUS,
+  'medStatus': () => petHelpers.MEDICATION_STATUS,
+  'conditionTypes': () => petHelpers.HEALTH_CONDITION_TYPES,
+  'conditionStatus': () => petHelpers.HEALTH_CONDITION_STATUS,
   'serviceTypes': () => petHelpers.SERVICE_TYPES,
 }
 
 const scrollProps = { keyboardShouldPersistTaps: "handled", showsVerticalScrollIndicator: false } as ScrollViewProps
 
-const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelect, width = 80, contentWidth, initial, buttonStyles, buttonTextStyles, searchLabel, contentPosition = 'bottom', error, withBorder = true }: DropdownProps) => {
+const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelect, width = 80, contentWidth, initial, buttonStyles, buttonTextStyles, searchLabel, contentPosition = 'bottom', error, withBorder = true, align = 'left' }: DropdownProps) => {
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
   const [visible, setVisible] = useState(false)
@@ -97,7 +99,7 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
     setSearchResults(search)
     openDropDown()
   }
-
+  
   useEffect(() => {
     const fetchData = async () => {
       const result = dataArray ? dataArray.map(item => item.name) : await typeToSource[dataType]()
@@ -115,9 +117,8 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
 
   const dropdownBtnStyles = useMemo(() => ([ 
     styles.dropDownBtn, 
-    { width: '100%' }, 
-    (focused || visible) && UI.focused,
     withBorder ? UI.input() : UI.input(false, 0, 0, 0),
+    (focused || visible) && UI.focused,
     buttonStyles,
   ]) as ViewStyle, [focused, visible, buttonStyles, withBorder])
 
@@ -130,17 +131,20 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
   ]) as ViewStyle, [dropdownLeft, dropdownTop, contentPosition, contentWidth, width])
 
   return (
-    <View style={{ width: `${width}%` as DimensionValue, zIndex: focused ? 10 : 2 }}>
+    <View style={[styles.container, { width: `${width}%` as DimensionValue, zIndex: focused ? 10 : 2 }]}>
       { withSearch ?
         <View style={dropdownBtnStyles} ref={DropdownBtn}>
           <Icon name='search' size='xSmall' styles={{ marginRight: 15 }}/>
           <TextInput
-            style={{ flex: 1 }}
+            style={[{ flex: 1, textAlign: align }, buttonTextStyles]}
             placeholder={label ?? 'enter search'}
             placeholderTextColor={UI.lightPalette().unfocused}
             value={searchInput}
             onChangeText={onSearch}
-            onFocus={() => setFocused(true)}
+            onFocus={() => {
+              setFocused(true)
+              setVisible(true)
+            }}
             onBlur={() => setFocused(false)}
             maxLength={50}
             selectTextOnFocus={true}
@@ -148,31 +152,30 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
         </View>
       : 
         <TouchableOpacity style={dropdownBtnStyles} onPress={toggleDropdown} ref={DropdownBtn}>
-          <Text style={[{ flex: 1  }, buttonTextStyles]}>{selected ?? label}</Text>
+          <Text style={[{ flex: 1, textAlign: align  }, buttonTextStyles]}>{selected ?? label}</Text>
           <Icon name={visible ? 'up' : 'down'} styles={{ marginLeft: 15 }} />
         </TouchableOpacity>
       }
-      { error && <ErrorMessage error={error} /> }
+      { error && <ErrorMessage error={error} styles={{ textAlign: align }}/> }
 
       { withSearch ?
-        visible && 
-          <View style={modalStyles}>
-            <ScrollView style={Spacing.fullWH} {...scrollProps}>
-              { searchResults.length > 1 ? searchResults.map(result =>
-                <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
-                  <Text style={{ color: lightPalette().text }}>
-                    { result.item }
-                  </Text>
-                </TouchableOpacity>
-              )
-              : <Text>No {searchLabel ?? 'item'} found.</Text> }
-            </ScrollView>
-          </View>
+        visible && <View style={modalStyles}>
+          <ScrollContainer props={{ ...scrollProps }}>
+            { searchResults.length > 1 ? searchResults.map(result =>
+              <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
+                <Text style={{ color: lightPalette().text }}>
+                  { result.item }
+                </Text>
+              </TouchableOpacity>
+            )
+            : <Text>No {searchLabel ?? 'item'} found.</Text> }
+          </ScrollContainer>
+        </View>
       : 
         <Modal visible={visible} transparent animationType="none">
           <Pressable style={UI.overlay} onPress={() => setVisible(false)}>
             <View style={modalStyles}>
-              <FlatList 
+              <FlatList
                 data={data} 
                 keyExtractor={(_, idx) => idx.toString()}
                 renderItem={({ item }) => (
@@ -193,9 +196,12 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
 })
  
 const styles = StyleSheet.create({
+  container :{
+    position: 'relative',
+  },
   dropDownBtn: {
     ...Spacing.flexRow,
-    position: 'relative',
+    width: '100%',
   },
   modalCon: {
     ...UI.card(true, true),
@@ -208,7 +214,7 @@ const styles = StyleSheet.create({
   },
   itemConSelected: {
     borderTopWidth: 1,
-    borderBottomWidth: 1,
+    borderBottomWidth: 2,
   },
 })
 

@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 //components
 import IdForm from '@pet/components/IdForm'
-import IllnessForm from '@pet/components/IllnessForm'
+import HealthConditionForm from '@pet/components/HealthConditionForm'
 import MedicationForm from '@pet/components/MedicationForm'
 import ServiceForm from '@pet/components/ServiceForm'
 import { ScrollScreen } from '@components/UIComponents'
@@ -26,7 +26,7 @@ const EditMorePetDetailsScreen = ({ route }: EditMorePetDetailsScreenProps) => {
       {type === 'id' && <IdForm onSubmit={handleSubmit} />} 
       {type === 'medication' && <MedicationForm onSubmit={handleSubmit} />}
       {type === 'service' && <ServiceForm onSubmit={handleSubmit} />}
-      {type === 'illness' && <IllnessForm onSubmit={handleSubmit} />}
+      {type === 'condition' && <HealthConditionForm onSubmit={handleSubmit} />}
     </ScrollScreen>
   )
 }

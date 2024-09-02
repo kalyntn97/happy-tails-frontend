@@ -57,7 +57,7 @@ const AppointmentForm = ({ appointment, pet, onSetAppointment, isDue = true }: {
   )
 
   const renderCompleted = (
-    <ToggleButton isChecked={appointment.completed} onPress={() => onSetAppointment({ ...appointment, completed: !appointment.completed })} />
+    <ToggleButton isOn={appointment.completed} onPress={() => onSetAppointment({ ...appointment, completed: !appointment.completed })} />
   )
 
   const formData = [

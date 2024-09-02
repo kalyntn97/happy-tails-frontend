@@ -123,7 +123,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
       </ModalInput> 
     },
     { key: 'repeat', label: 'Repeat', icon: 'repeat', value: 
-      <ToggleButton onPress={handleToggleRepeat} isChecked={repeat} />
+      <ToggleButton onPress={handleToggleRepeat} isOn={repeat} />
     },
     { key: 'frequency', label: 'Frequency', icon: 'due', value: 
       <FrequencyPicker frequency={frequency} color={pet.color}
@@ -151,7 +151,7 @@ const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, naviga
         <Dropdown label='Search Vaccine' withSearch={true} searchLabel='vaccine' dataType={pet.species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={(selected: string) => onChange('details', { ...details, ['vaccine']: selected })} initial={details.vaccine} width='80%' buttonStyles={{ ...UI.input(), alignSelf: 'center' }} />
       }
 
-      <TableForm table={mainTable} withTitle={true} dependentRows={{ frequency: repeat }}/>
+      <TableForm table={mainTable} dependentRows={{ frequency: repeat }}/>
 
       <TitleLabel title='Next Visit' iconName='schedule' />
       <View style={styles.contentCon}>

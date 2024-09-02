@@ -53,7 +53,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, status, na
       <DateInput date={startDate} onChangeDate={(selected) => onChange('startDate', selected)} color={color} /> 
     },
     { key: 'repeat', label: 'Repeat', icon: 'repeat', value: 
-      <ToggleButton onPress={() => onChange('repeat', !repeat)} isChecked={repeat} />
+      <ToggleButton onPress={() => onChange('repeat', !repeat)} isOn={repeat} />
     },
     { key: 'frequency', label: 'Frequency', icon: 'due', value: 
       <FrequencyPicker frequency={{ ...frequency, ending, endDate }} color={color}
@@ -97,7 +97,7 @@ const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, status, na
 
       <ColorPicker selected={color} onPress={(selected) => onChange('color', selected)} />
 
-      <TableForm table={mainTable} withTitle={true} dependentRows={{ frequency: repeat }} />
+      <TableForm table={mainTable} dependentRows={{ frequency: repeat }} />
     </ScrollScreen>
   )
 }

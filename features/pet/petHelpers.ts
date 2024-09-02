@@ -1,5 +1,5 @@
 //types
-import { CatBreed, DogBreedListResponse, Gender, Status } from "./PetInterface"
+import { CatBreed, ConditionStatus, DogBreedListResponse, Gender, HealthCondition, Status } from "./PetInterface"
 
 export const getDogBreedData = async (): Promise<string[]> => {
   try {
@@ -53,11 +53,11 @@ export const STATUS: Status[] = [ 'Healthy', 'Passed away' ]
 
 export const IDS = ['Identification', 'Microchip', 'License', 'Passport', 'Other']
 
-export const MED_STATUS = ['Active', 'Paused', 'Inactive']
+export const MEDICATION_STATUS = ['Active', 'Paused', 'Inactive']
 
-export const DISEASE_TYPES = ['Skeletal/ muscular', 'Cardiovascular', 'Neurological', 'Eyes', 'Ears', 'Skin', 'Endocrine', 'Gastrointestinal', 'Urinary/ Reproductive', 'Cancer', 'Behavioral', 'Poison', 'Allergy', 'Autoimmune', 'Diabetes', 'Liver', 'Trauma/ Injury'].sort()
+export const HEALTH_CONDITION_TYPES: string[] = ['Skeletal/ muscular', 'Cardiovascular', 'Neurological', 'Eyes', 'Ears', 'Skin', 'Endocrine', 'Gastrointestinal', 'Urinary/ Reproductive', 'Cancer', 'Behavioral', 'Poison', 'Allergy', 'Autoimmune', 'Diabetes', 'Liver', 'Trauma/ Injury'].sort()
 
-export const DISEASE_STATUS = ['Active', 'Cured', 'Chronic']
+export const HEALTH_CONDITION_STATUS: ConditionStatus[] = ['Acute', 'Cured', 'Chronic']
 
 export const SERVICE_TYPES = ['ER Hospital', 'Clinic', 'School', 'Boarding', 'Groomer', 'Sitter', 'Pet Store', 'Other']
 
@@ -66,7 +66,7 @@ export const PET_DETAILS = {
   service: 'Services',
   medication: 'Medications',
   allergy: 'Allergies',
-  illness: 'Health Conditions',
+  condition: 'Health Conditions',
 }
 
 export const getDetailHeader = (key: string) => {

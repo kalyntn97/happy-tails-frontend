@@ -6,7 +6,7 @@ import { ToggleButton } from '@components/ButtonComponents'
 import Dropdown from "@components/Dropdown/Dropdown"
 import ColorPicker from "@components/Pickers/ColorPicker"
 import IconPicker from "@components/Pickers/IconPicker"
-import { DateInput, FormInput, FormLabel, Icon, ModalInput, PhotoUpload, ScrollScreen, TableForm } from "@components/UIComponents"
+import { DateInput, FormInput, FormLabel, Icon, InlinePicker, ModalInput, PhotoUpload, ScrollScreen, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 //helpers & utils & hooks
 import useForm from "@hooks/useForm"
@@ -53,20 +53,10 @@ const SpeciesBreedSelector = ({ species, breed, initials, onSelectSpecies, onSel
   </ModalInput>
 )
 
-const GenderSelector = ({ gender, onSelect }: { gender: Pet['gender'], onSelect: (selected: Pet['gender']) => void }) => (
-  <View style={Spacing.flexRow}>
-    { GENDER.map((option: Pet['gender']) => 
-      <TouchableOpacity key={option} onPress={() => onSelect(option)} style={{ marginLeft: 20, opacity: gender === option ? 1 : 0.3 }}>
-        <Text>{option}</Text>
-      </TouchableOpacity>
-    )}
-  </View>
-)
-
 const AlteredInfo = ({ altered, onChange, gender, color }: { altered: Pet['altered'], onChange: (data: Pet['altered']) => void, gender: Pet['gender'], color: number }) => {
   const alteredTable = [
     { key: 'alteredValue', label: 'Altered', icon: 'altered', value: 
-      <ToggleButton isChecked={altered.value} onPress={() => onChange({ value: !altered.value, date: null })} /> 
+      <ToggleButton isOn={altered.value} onPress={() => onChange({ value: !altered.value, date: null })} /> 
     },
     { key: 'alteredDate', label: 'Surgery Date', icon: 'schedule', value: 
       <DateInput date={altered.date} placeholder='Unknown' onChangeDate={(selected) => onChange({ ...altered, date: selected })} color={color} /> 
@@ -78,7 +68,7 @@ const AlteredInfo = ({ altered, onChange, gender, color }: { altered: Pet['alter
       `${gender === 'Boy' ? 'Neutered' : gender === 'Girl' ? 'Spayed' : 'Altered'} on ${altered.date ? new Date(altered.date).toLocaleDateString() : 'unknown date'}`
       : `Not ${gender === 'Boy' ? 'Neutered' : gender === 'Girl' ? 'Spayed' : 'Altered'}`
     }>
-      <TableForm table={alteredTable} withTitle={true} />
+      <TableForm table={alteredTable} />
     </ModalInput>
   )
 }
@@ -93,7 +83,7 @@ const StatusInfo = ({ status, onChange, color }: { status: Pet['status'], onChan
   const renderStatusArchive = (
     <View style={Spacing.flexRow}>
       <Text style={{ marginRight: 15 }}>Archive</Text>
-      <ToggleButton isChecked={status.archive} onPress={() => onChange({ ...status, archive: !status.archive })} />
+      <ToggleButton isOn={status.archive} onPress={() => onChange({ ...status, archive: !status.archive })} />
     </View>
   )
 
@@ -166,7 +156,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormPro
       <DateInput date={gotchaDate} placeholder='Unknown' onChangeDate={(selected) => onChange('gotchaDate', selected)} color={color} /> 
     }, 
     { key: 'gender', label: 'Gender', icon: 'gender', value: 
-      <GenderSelector gender={gender} onSelect={(selected) => onChange('gender', selected)} />
+      <InlinePicker selected={gender} options={GENDER} onSelect={(selected) => onChange('gender', selected)} />
     },
     { key: 'altered', label: 'Altered', icon: 'altered', value: 
       <AlteredInfo altered={altered} onChange={(data) => onChange('altered', data)} gender={gender} color={color} />
@@ -200,7 +190,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormPro
       
       <ColorPicker selected={color} onPress={selected => onChange('color', selected)} />
 
-      <TableForm table={mainTable} withTitle={true} />
+      <TableForm table={mainTable} />
     </ScrollScreen>
   )
 }

@@ -54,7 +54,7 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
       <FormInput initial={name} onChange={(text: string) => onChange('name', text)} placeholder='Enter Registry Name' withBorder={false} align='right' /> 
     },
     { key: 'notes', icon: 'note', value: 
-      <NoteInput notes={notes} onChange={(text: string) => onChange('notes', text)} modalHeight={80} />
+      <NoteInput notes={notes} onChange={(text: string) => onChange('notes', text)} />
     },
   ]
 
