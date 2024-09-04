@@ -73,9 +73,8 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
   const openDropDown = (): void => {
     DropdownBtn.current.measure((fx, fy, _w, h, px, py) => {
       setDropdownTop(withSearch? fy + h : py + h)
-      setDropDownLeft(withSearch ? fx - 10 : px - (withBorder ? 0 : 20)) 
+      setDropDownLeft(withSearch ? fx - 10 : px - (withBorder ? 0 : 10)) 
     })
-    console.log(dropdownTop)
     setVisible(true)
   }
 

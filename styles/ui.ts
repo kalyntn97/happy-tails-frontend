@@ -87,14 +87,13 @@ export const overlay: ViewStyle = {
 }
 
 export const modalOverlay: ViewStyle = {
-  ...fullWH,
-  ...centered,
+  flex: 1,
   position: 'relative',
   backgroundColor: Colors.transparent.semiLight,
 }
 
 export const bottomModal: ViewStyle = {
-  ...form(10, 60, 40),
+  // ...form(10, 60, 40),
   ...rounded(),
   ...boxShadow,
   marginTop: 'auto',

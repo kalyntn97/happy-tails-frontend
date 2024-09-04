@@ -1,23 +1,21 @@
 import { useNavigation } from '@react-navigation/native'
+import Fuse from 'fuse.js'
 import React, { useEffect } from 'react'
 import { ActivityIndicator, View } from 'react-native'
-import Fuse from 'fuse.js'
 //utils & types
 import { Health } from '@health/HealthInterface'
+import { ALLERGIES } from '@pet/petHelpers'
 import { HealthCondition, Medication } from '@pet/PetInterface'
 import { Stat } from '@stat/statInterface'
-import { ALLERGIES } from '@pet/petHelpers'
 //hooks
 import useForm from '@hooks/useForm'
 //components
-import { BoxWithHeader, FormInput, FormLabel, getHeaderActions, Icon, ScrollScreen, TableForm, TitleLabel } from '@components/UIComponents'
+import TagPicker from '@components/Pickers/TagPicker'
+import Dropdown from '@components/Dropdown/Dropdown'
 import { Header } from '@navigation/NavigationStyles'
+import { FormInput, FormLabel, getHeaderActions, Icon, ScrollScreen, TableForm } from '@components/UIComponents'
 //styles
 import { styles } from '@styles/stylesheets/FormStyles'
-import TagPicker from '@components/Pickers/TagPicker'
-import { Buttons, Spacing, UI } from '@styles/index'
-import Dropdown from '@components/Dropdown/Dropdown'
-import { windowHeight } from '@utils/constants'
 
 type Props = {
   initialValues: HealthCondition
@@ -80,8 +78,7 @@ const AllergyForm = ({ initialValues, onSubmit, isPending }: Props) => {
   }
 
   function handleSubmit() {
-    console.log(name, description, pet, medications, stats, vetVisits, conditionId)
-    // onSubmit('allergy', { name, description, pet, medications, stats, vetVisits, conditionId })
+    onSubmit('allergy', { name, type, description, pet, medications, stats, vetVisits, conditionId })
   }
 
   function handleValidate() {

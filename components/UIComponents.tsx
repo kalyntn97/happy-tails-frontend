@@ -1,6 +1,6 @@
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
-import { ActivityIndicator, DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { ActivityIndicator, DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native"
 import Animated, { SlideInDown, SlideInLeft, SlideOutDown, SlideOutLeft } from "react-native-reanimated"
 //utils & hooks
 import { useSelectPhoto } from "@hooks/sharedHooks"
@@ -219,7 +219,7 @@ export const ScrollContainer = ({ children, props, contentStyles }: ScrollProps)
     alwaysBounceVertical={false} 
     showsVerticalScrollIndicator={false} 
     style={{ width: '100%' }} 
-    contentContainerStyle={contentStyles ?? UI.form(10, 60)}
+    contentContainerStyle={[{ flexGrow: 1 }, contentStyles ?? UI.form(10, 60)]}
     { ...props }
   >
     { children }
@@ -340,6 +340,11 @@ export const BottomModal = ({ children, modalVisible, height = 'fit-content' as 
 
   useEffect(() => {
     setChildrenVisible(modalVisible)
+    const keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', dismissModal)
+
+    return () => {
+      keyboardWillHideListener.remove()
+    }
   },[modalVisible])
 
   return (
@@ -355,17 +360,24 @@ export const BottomModal = ({ children, modalVisible, height = 'fit-content' as 
       }} style={[UI.modalOverlay, { backgroundColor: overlay}]}>
         { childrenVisible &&
           <KeyboardAvoidingView
-            style={{ flex: 1, paddingTop: 15 }}
+            style={{ marginTop: 'auto' }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-
           >
-            <Animated.View entering={animation === 'vertical' ? SlideInDown : SlideInLeft} exiting={animation === 'vertical' ? SlideOutDown : SlideOutLeft} style={[UI.bottomModal, { width: windowWidth, height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, backgroundColor: background }]}>
+            <Animated.ScrollView 
+              entering={animation === 'vertical' ? SlideInDown : SlideInLeft} 
+              exiting={animation === 'vertical' ? SlideOutDown : SlideOutLeft} 
+              style={[UI.bottomModal, { width: windowWidth, height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, backgroundColor: background }]}
+              contentContainerStyle={[UI.form(10, 60, 40), { flexGrow: 1 }]}
+              alwaysBounceVertical={false}
+              keyboardShouldPersistTaps='handled'
+            >
               <GoBackButton onPress={dismissModal} />
-                  { children }
-              </Animated.View> 
+              { children }
+            </Animated.ScrollView> 
           </KeyboardAvoidingView>
         }
       </Pressable>
+
       <CustomToast />
     </Modal>
   )
@@ -390,6 +402,7 @@ interface ModalInputProps {
 
 export const ModalInput = ({ children, label, onReset, onDismiss, onSubmit, height, maxHeight, overlay, background, buttonStyles, buttonTextStyles, buttonTextProps, customLabel, animation }: ModalInputProps) => {
   const [modalVisible, setModalVisible] = useState(false)
+
   const dismissModal = () => {
     setModalVisible(false)
     onDismiss && onDismiss()

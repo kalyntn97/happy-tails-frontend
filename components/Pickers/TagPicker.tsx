@@ -1,8 +1,9 @@
-import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import React from 'react'
+//components
 import { TransparentButton } from '@components/ButtonComponents'
-import { FormInput } from '@components/UIComponents'
 import Dropdown from '@components/Dropdown/Dropdown'
+//styles
 import { Spacing } from '@styles/index'
 
 type Props = {
@@ -36,6 +37,7 @@ const TagPicker = ({ tags, onSelect }: Props) => {
 const styles = StyleSheet.create({
   tagCon: {
     ...Spacing.flexRowStretch,
+    justifyContent: 'center',
     flexWrap: 'wrap',
     marginTop: 15,
   }
