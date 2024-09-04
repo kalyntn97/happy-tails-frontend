@@ -1,4 +1,5 @@
 import { Health } from "@health/HealthInterface"
+import { Stat } from "@stat/statInterface"
 import { Frequency } from "@utils/types"
 
 export type Gender = 'Boy' | 'Girl' | 'Unknown'
@@ -28,6 +29,7 @@ export interface Pet extends PetFormData {
   services: string[] | Service[]
   medications: string[] | Medication[]
   healthConditions: string[] | HealthCondition[]
+  allergies: string[] | HealthCondition[]
 }
 
 export interface PetBasic {
@@ -111,7 +113,7 @@ export type HealthConditionFormData = {
   name: string
   type: string
   timeline: Timeline[]
-  description: string | null
+  description: string[]
   status: ConditionStatus
   conditionId: string | null
 }
@@ -122,14 +124,6 @@ export interface HealthCondition extends HealthConditionFormData {
   medications: string[] | Medication[],
   stats: string[] | Stat[],
   vetVisits: string[] | Health[],
-}
-
-type Stat = {
-  name: string
-  date: Date
-  record: number
-  unit: string
-  notes?: string
 }
 
 export interface DogBreedListResponse {

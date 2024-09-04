@@ -1,6 +1,6 @@
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
-import { DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { ActivityIndicator, DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import Animated, { SlideInDown, SlideInLeft, SlideOutDown, SlideOutLeft } from "react-native-reanimated"
 //utils & hooks
 import { useSelectPhoto } from "@hooks/sharedHooks"
@@ -124,6 +124,16 @@ export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { 
   </Pressable>
 )
 
+export const getHeaderActions = (onReset: () => void, isPending: boolean, handleValidate: () => void): { icon?: string, title?: string | ReactNode, onPress: () => void }[] => {
+  return [
+    { icon: 'reset', onPress: onReset },
+    { title: isPending ? 
+        <Text style={Spacing.flexRow}><ActivityIndicator /> Submitting...</Text>
+        : 'Submit', 
+      onPress: handleValidate },
+  ]
+}
+
 export const HelperText = ({ text, styles }: { text: string, styles?: TextStyle }) => (
   <Text style={[Typography.subBody, Typography.unFocused, { marginVertical: 5 }, styles]}>{text}</Text>
 )
@@ -146,9 +156,9 @@ interface BoxProps extends TitleLabelProps {
   contentStyles?: ViewStyle
 }
 
-export const BoxWithHeader = memo(({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, rightLabel = 'down', children, contentStyles }: BoxProps) => (
-  <View style={UI.card()}>
-    <TitleLabel size={size} onPress={onPress} title={title} iconType={iconType} iconName={iconName} color={color} rightAction={rightAction} titleStyles={titleStyles} rightLabel={rightLabel} />
+export const BoxWithHeader = memo(({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, rightLabel = 'down', mode = 'bold', children, contentStyles, containerStyles }: BoxProps) => (
+  <View style={[UI.card(), containerStyles]}>
+    <TitleLabel size={size} onPress={onPress} title={title} iconType={iconType} iconName={iconName} color={color} rightAction={rightAction} titleStyles={titleStyles} rightLabel={rightLabel} mode={mode} />
     <View style={[{ flex: 1, paddingVertical: 10 }, contentStyles]}>{children}</View>
   </View>
 ))
@@ -248,6 +258,7 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
     const validText = text?.trim().length === 0 ? null : text
     setValue(validText)
     onChange(validText)
+    console.log(text)
     setIsFocused(false)
     Keyboard.dismiss()
   }
@@ -265,6 +276,10 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
     handlePress(value)
     if (onBlur) onBlur()
   }
+
+  useEffect(() => {
+    setValue(initial)
+  }, [initial])
 
   return (
     <View style={[Spacing.flexColumn, { width: width, minWidth: 50, zIndex: isFocused ? 10 : 2, alignItems: align === 'left' ? 'flex-start' : 'flex-end' }]}>
@@ -437,7 +452,7 @@ export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit,
   const validatedStyles = useMemo(() => isFocused ? UI.focused : UI.unfocused, [isFocused])
 
   const handlePress = (text: string) => {
-    const validText = text.trim().length === 0 ? null : text
+    const validText = text && text.trim().length === 0 ? null : text
     setNotes(validText)
     onChange(validText)
     setIsFocused(false)

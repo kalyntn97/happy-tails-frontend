@@ -29,7 +29,7 @@ const getDosageLabel = (dosage: Dosage) => {
   const startDateLabel = new Date(dosage.startDate).toLocaleDateString()
   const { timesPerIntervalLabel, intervalLabel, endingLabel } = getRepeatLabels({ ...dosage.frequency, endDate: dosage.endDate, ending: dosage.ending })
   const repeatLabel = (timesPerIntervalLabel && intervalLabel) ? ` ${timesPerIntervalLabel} ${intervalLabel} from ${startDateLabel}${endingLabel ? ` ${endingLabel}` : ''}` : ''
-  return `${dosage.dose ?? 'Unknown amount'} ${repeatLabel}, reminder ${dosage.reminder ? 'on' : 'off'}`
+  return `${dosage.dose ?? 'Unknown amount'} ${repeatLabel}`
 }
 
 const DosageSelector = ({ dosage, onSelect }: { dosage: Dosage, onSelect: (data: Dosage) => void }) => {
@@ -209,7 +209,7 @@ const MedicationForm = ({ initialValues, onSubmit, isPending }: MedicationFormPr
       <View style={styles.headerCon}>
         <Icon type='pet' name='medication' size='large' />
         <View style={styles.titleCon}>
-          <FormInput initial={initialState.name} placeholder="New Medication Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} width='100%' bottom={0} />
+          <FormInput initial={name} placeholder="New Medication Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} width='100%' bottom={0} />
         </View>
       </View>
 

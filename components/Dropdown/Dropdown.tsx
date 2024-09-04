@@ -1,7 +1,7 @@
 //npm modules
-import { memo, useEffect, useMemo, useRef, useState } from "react"
-import { DimensionValue, FlatList, Keyboard, Modal, Pressable, ScrollView, ScrollViewProps, StyleSheet, Text, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import Fuse from "fuse.js"
+import { memo, useEffect, useMemo, useRef, useState } from "react"
+import { DimensionValue, FlatList, Keyboard, Modal, NativeSyntheticEvent, Pressable, ScrollViewProps, StyleSheet, Text, TextInput, TextInputEndEditingEventData, TextStyle, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native"
 //helpers 
 import * as careHelpers from '@care/careHelpers'
 import * as healthHelpers from '@health/healthHelpers'
@@ -18,6 +18,8 @@ interface DropdownProps {
   dataType?: string
   dataArray?: { _id: string, name: string, [key: string]: any }[]
   onSelect: (item: string | any ) => void
+  onSelectCustom?: (text: string) => void
+  shouldReset: boolean
   width?: number
   contentWidth?: number
   initial?: string
@@ -49,11 +51,13 @@ const typeToSource = {
   'conditionTypes': () => petHelpers.HEALTH_CONDITION_TYPES,
   'conditionStatus': () => petHelpers.HEALTH_CONDITION_STATUS,
   'serviceTypes': () => petHelpers.SERVICE_TYPES,
+  'allergySymptoms': () => petHelpers.ALLERGY_SYMPTOMS,
+  'allergyTypes': () => petHelpers.ALLERGIES.map(i => i.icon)
 }
 
 const scrollProps = { keyboardShouldPersistTaps: "handled", showsVerticalScrollIndicator: false } as ScrollViewProps
 
-const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelect, width = 80, contentWidth, initial, buttonStyles, buttonTextStyles, searchLabel, contentPosition = 'bottom', error, withBorder = true, align = 'left' }: DropdownProps) => {
+const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelect, onSelectCustom, shouldReset, width = 80, contentWidth, initial, buttonStyles, buttonTextStyles, searchLabel, contentPosition = 'bottom', error, withBorder = true, align = 'left' }: DropdownProps) => {
   const [data, setData] = useState<string[]>([])
   const [selected, setSelected] = useState<string>(initial ?? null)
   const [visible, setVisible] = useState(false)
@@ -71,6 +75,7 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
       setDropdownTop(withSearch? fy + h : py + h)
       setDropDownLeft(withSearch ? fx - 10 : px - (withBorder ? 0 : 20)) 
     })
+    console.log(dropdownTop)
     setVisible(true)
   }
 
@@ -80,16 +85,16 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
   
   const onItemPress = (item: string): void => {
     if (withSearch) {
+      Keyboard.dismiss()
       setSearchInput(item)
       setFocused(false)
-      Keyboard.dismiss()
     } else {
       setSelected(item)
     }
     dataArray ? onSelect(dataArray.find(i => i.name === item)) : onSelect(item)
+    if (shouldReset) withSearch ? setSearchInput(initial) : setSelected(initial)
     setVisible(false)
   }
-
 
   const onSearch = (input: string) => {
     setSearchInput(input)
@@ -99,16 +104,22 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
     setSearchResults(search)
     openDropDown()
   }
-  
+
+  const onSubmit = (e: NativeSyntheticEvent<TextInputEndEditingEventData>) => {
+    if (onSelectCustom) onSelectCustom(e.nativeEvent.text)
+    setVisible(false)
+  }
+
   useEffect(() => {
     const fetchData = async () => {
-      const result = dataArray ? dataArray.map(item => item.name) : await typeToSource[dataType]()
+      let result = []
+      if (dataArray) result = dataArray.map(item => item.name)
+      else if (dataType) result = await typeToSource[dataType]()
       if (!ignore) setData(result)
     }
     let ignore = false
     fetchData()
-    setSelected(initial)
-    if (withSearch) setSearchInput(initial)
+    withSearch ? setSearchInput(initial) : setSelected(initial)
 
     return () => {
       ignore = true
@@ -124,73 +135,76 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
 
   const modalStyles = useMemo(() => ([ 
     styles.modalCon, 
-    { left: dropdownLeft,  maxHeight: withSearch ? 200 : '50%',
+    { left: dropdownLeft,
+      maxHeight: withSearch ? dropdownTop * 4 : '50%',
       width: `${contentWidth ?? (withSearch ? 100 : width - (width > 50 ? 20 : 10))}%`,
     },
     contentPosition === 'bottom' ? { top: dropdownTop } : { bottom: dropdownTop },
   ]) as ViewStyle, [dropdownLeft, dropdownTop, contentPosition, contentWidth, width])
 
   return (
-    <View style={[styles.container, { width: `${width}%` as DimensionValue, zIndex: focused ? 10 : 2 }]}>
+    <View style={[styles.container, { width: `${width}%` as DimensionValue, zIndex: focused ? 100 : 2 }]}>
       { withSearch ?
-        <View style={dropdownBtnStyles} ref={DropdownBtn}>
-          <Icon name='search' size='xSmall' styles={{ marginRight: 15 }}/>
-          <TextInput
-            style={[{ flex: 1, textAlign: align }, buttonTextStyles]}
-            placeholder={label ?? 'enter search'}
-            placeholderTextColor={UI.lightPalette().unfocused}
-            value={searchInput}
-            onChangeText={onSearch}
-            onFocus={() => {
-              setFocused(true)
-              setVisible(true)
-            }}
-            onBlur={() => setFocused(false)}
-            maxLength={50}
-            selectTextOnFocus={true}
-          />
-        </View>
+        <>
+          <View style={dropdownBtnStyles} ref={DropdownBtn}>
+            <Icon name='search' size='xSmall' styles={{ marginRight: 15 }}/>
+            <TextInput
+              style={[{ flex: 1, textAlign: align }, buttonTextStyles]}
+              placeholder={label ?? 'enter search'}
+              placeholderTextColor={UI.lightPalette().unfocused}
+              value={searchInput}
+              onChangeText={onSearch}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              onSubmitEditing={onSubmit}
+              maxLength={50}
+              selectTextOnFocus={true}
+            />
+          </View>
+
+          { visible && 
+            <View style={modalStyles}>
+              <ScrollContainer props={{ ...scrollProps }}>
+                { searchResults.length > 1 ? searchResults.map(result =>
+                    <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
+                      <Text style={{ color: lightPalette().text }}>
+                        { result.item }
+                      </Text>
+                    </TouchableOpacity>
+                )
+                : <Text>No {searchLabel ?? 'item'} found.</Text> }
+              </ScrollContainer>
+            </View> 
+          }
+        </>
       : 
-        <TouchableOpacity style={dropdownBtnStyles} onPress={toggleDropdown} ref={DropdownBtn}>
-          <Text style={[{ flex: 1, textAlign: align  }, buttonTextStyles]}>{selected ?? label}</Text>
-          <Icon name={visible ? 'up' : 'down'} styles={{ marginLeft: 15 }} />
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity style={dropdownBtnStyles} onPress={toggleDropdown} ref={DropdownBtn}>
+            <Text style={[{ flex: 1, textAlign: align  }, buttonTextStyles]}>{selected ?? label}</Text>
+            <Icon name={visible ? 'up' : 'down'} size='xSmall' styles={{ marginLeft: 15 }} />
+          </TouchableOpacity>
+
+          <Modal visible={visible} transparent animationType="none">
+            <Pressable style={UI.overlay} onPress={() => setVisible(false)}>
+              <View style={modalStyles}>
+                <FlatList
+                  data={data} 
+                  keyExtractor={(_, idx) => idx.toString()}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity style={[styles.itemCon, item === selected && styles.itemConSelected]} onPress={() => onItemPress(item)}>
+                      <Text style={item === selected ? Typography.focused : { color: lightPalette().text }}>
+                        { item }
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  {...scrollProps}
+                /> 
+              </View>
+            </Pressable>
+          </Modal> 
+        </>
       }
       { error && <ErrorMessage error={error} styles={{ textAlign: align }}/> }
-
-      { withSearch ?
-        visible && <View style={modalStyles}>
-          <ScrollContainer props={{ ...scrollProps }}>
-            { searchResults.length > 1 ? searchResults.map(result =>
-              <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
-                <Text style={{ color: lightPalette().text }}>
-                  { result.item }
-                </Text>
-              </TouchableOpacity>
-            )
-            : <Text>No {searchLabel ?? 'item'} found.</Text> }
-          </ScrollContainer>
-        </View>
-      : 
-        <Modal visible={visible} transparent animationType="none">
-          <Pressable style={UI.overlay} onPress={() => setVisible(false)}>
-            <View style={modalStyles}>
-              <FlatList
-                data={data} 
-                keyExtractor={(_, idx) => idx.toString()}
-                renderItem={({ item }) => (
-                  <TouchableOpacity style={[styles.itemCon, item === selected && styles.itemConSelected]} onPress={() => onItemPress(item)}>
-                    <Text style={item === selected ? Typography.focused : { color: lightPalette().text }}>
-                      { item }
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                {...scrollProps}
-              /> 
-            </View>
-          </Pressable>
-        </Modal> 
-      }
     </View>
   )
 })

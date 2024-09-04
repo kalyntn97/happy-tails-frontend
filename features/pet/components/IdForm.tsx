@@ -1,15 +1,14 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useEffect } from 'react'
-import { ActivityIndicator, Text, View } from 'react-native'
+import { View } from 'react-native'
 //components
 import Dropdown from '@components/Dropdown/Dropdown'
-import { FormInput, FormLabel, Icon, NoteInput, ScrollScreen, TableForm } from '@components/UIComponents'
+import { FormInput, getHeaderActions, Icon, NoteInput, ScrollScreen, TableForm } from '@components/UIComponents'
 import { Header } from '@navigation/NavigationStyles'
 //utils
 import useForm from '@hooks/useForm'
 import { IdFormData } from '@pet/PetInterface'
 //styles
-import { Spacing } from '@styles/index'
 import { styles } from '@styles/stylesheets/FormStyles'
 
 interface IdFormProps {
@@ -44,7 +43,9 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
   function handleValidate() {
     onValidate({ type, no })
   }
-  
+
+  const headerActions = getHeaderActions(onReset, isPending, handleValidate)
+
   const table = [
     { key: 'type', icon: 'tag', value:
       <Dropdown label='Select type' dataType='petIds' initial={type} onSelect={selected => onChange('type', selected)} width={55} withBorder={false} buttonStyles={{ height: 20 }} buttonTextStyles={{ textAlign: 'right' }} contentWidth={40} error={errors?.type}
@@ -58,13 +59,6 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
     },
   ]
 
-  const headerActions = [
-    { icon: 'reset', onPress: onReset },
-    { title: isPending ? 
-      <Text style={Spacing.flexRow}><ActivityIndicator /> Submitting...</Text>
-      : 'Submit', onPress: handleValidate },
-  ]
-
   useEffect(() => {
     navigation.setOptions({
       header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' />
@@ -76,7 +70,7 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
       <View style={styles.headerCon}>
         <Icon type='pet' name={type && type !== 'Other' ? type : 'id'} size='large' />
         <View style={styles.titleCon}>
-          <FormInput initial={initialState.name} placeholder="New Identification No" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={20} props={{ selectTextOnFocus: true, keyboardType: 'numbers-and-punctuation' }} error={errors?.no} withBorder={false} width='100%' bottom={0} />
+          <FormInput initial={name} placeholder="New Identification No" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={20} props={{ selectTextOnFocus: true, keyboardType: 'numbers-and-punctuation' }} error={errors?.no} withBorder={false} width='100%' bottom={0} />
         </View>
       </View>
 

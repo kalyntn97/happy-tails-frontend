@@ -1,6 +1,5 @@
-import { Alert, ImageSourcePropType } from "react-native"
 import { Colors } from "@styles/index"
-import { ToastConfigParams } from "react-native-toast-message"
+import { Alert } from "react-native"
 
 export const getColorArray = (): string[] => {
   const colorArrays = [
@@ -123,8 +122,9 @@ const careIconSource = {
   refillMed: require('@assets/icons/care-med.png'),
   train: require('@assets/icons/care-train.png'),
   feed: require('@assets/icons/care-feed.png'),
-  others: require('@assets/icons/health-misc_exam.png'),
+  others: require('@assets/icons/care-others.png'),
 }
+
 const healthIconSource = {
   Routine: require('@assets/icons/health-type-routine.png'),
   Emergency: require('@assets/icons/health-type-emergency.png'),
@@ -139,6 +139,7 @@ const healthIconSource = {
   ultra: require('@assets/icons/health-ultrasound.png'),
   xray: require('@assets/icons/health-xray.png'),
   iv: require('@assets/icons/health-iv_drip.png'),
+  others: require('@assets/icons/health-misc_exam.png'),
 }
 
 const navigationIconSource = {
@@ -246,9 +247,6 @@ const petIconSource = {
   DogProfile: require('@assets/icons/pet-dog_profile.png'),
   CatProfile: require('@assets/icons/pet-cat_profile.png'),
   OtherProfile: require('@assets/icons/pets.png'),
-  medication: require('@assets/icons/care-med.png'),
-  allergy: require('@assets/icons/pet-allergy.png'),
-  condition: require('@assets/icons/pet-condition.png'),
   id: require('@assets/icons/pet-id.png'),
   Microchip: require('@assets/icons/id-microchip.png'),
   Passport: require('@assets/icons/id-passport.png'),
@@ -258,6 +256,15 @@ const petIconSource = {
   Groomer: require('@assets/icons/service-groomer.png'),
   Boarding: require('@assets/icons/service-boarding.png'),
   School: require('@assets/icons/service-school.png'),
+  medication: require('@assets/icons/care-med.png'),
+  condition: require('@assets/icons/pet-condition.png'),
+  allergy: require('@assets/icons/pet-allergy.png'),
+  Food: require('@assets/icons/allergy-food.png'),
+  Environmental: require('@assets/icons/allergy-environmental.png'),
+  'Flea/ Insect': require('@assets/icons/allergy-flea.png'),
+  Contact: require('@assets/icons/allergy-contact.png'),
+  Drug: require('@assets/icons/allergy-drug.png'),
+  Asthma: require('@assets/icons/allergy-asthma.png'),
   'Pet Store': require('@assets/icons/service-store.png'),
   'ER Hospital': require('@assets/icons/service-er.png'),
   Clinic: require('@assets/icons/service-clinic.png'),
@@ -272,7 +279,7 @@ export const getCareIconSource = (name: string) => {
   return careIconSource[name] || careIconSource['others']
 }
 export const getHealthIconSource = (name: string) => {
-  return healthIconSource[name] || require('@assets/icons/health-misc_exam.png')
+  return healthIconSource[name] || healthIconSource['others']
 }
 
 export const getNavigationIconSource = (name: string, status: string) => {
@@ -302,6 +309,7 @@ const iconMap = {
   care: (name: string) => getCareIconSource(name),
   health: (name: string) => getHealthIconSource(name),
   pet: (name: string) => getPetIconSource(name),
+  allergy: (name: string) => getPetIconSource(name) || petIconSource['allergy'],
   stat: (name: string) => getStatIconSource(name),
   nav: (name: string, value: any) => getNavigationIconSource(name, value)
 }

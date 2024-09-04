@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Text, View } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
 import { StackScreenNavigationProp } from '@navigation/types'
+import { useNavigation } from '@react-navigation/native'
+import React, { useEffect } from 'react'
+import { Text, View } from 'react-native'
+import RNDateTimePicker from '@react-native-community/datetimepicker'
 //components
 import Dropdown from '@components/Dropdown/Dropdown'
-import { DateInput, FormHeader, FormInput, Icon, InlinePicker, ModalInput, NoteInput, ScrollScreen, TableForm, TitleLabel } from '@components/UIComponents'
+import { DateInput, FormHeader, FormInput, getHeaderActions, Icon, InlinePicker, ModalInput, NoteInput, ScrollScreen, TableForm, TitleLabel } from '@components/UIComponents'
+import { ActionButton, MainButton, ToggleButton } from '@components/ButtonComponents'
 import { Header } from '@navigation/NavigationStyles'
 //helpers
 import { HealthConditionFormData, Timeline } from '@pet/PetInterface'
@@ -14,9 +16,6 @@ import useForm from '@hooks/useForm'
 //styles
 import { Spacing, Typography, UI } from '@styles/index'
 import { styles } from '@styles/stylesheets/FormStyles'
-import ScrollSelector from '@components/ScrollSelector'
-import RNDateTimePicker from '@react-native-community/datetimepicker'
-import { ActionButton, MainButton, ToggleButton } from '@components/ButtonComponents'
 
 interface HealthConditionFormProps {
   initialValues?: HealthConditionFormData
@@ -61,7 +60,7 @@ const TimelineManager = ({ timeline, onChange }: { timeline: Timeline[], onChang
   <View style={styles.contentCon}>
     { timeline.length ? timeline.map((t, index) => {
       const startDateLabel = new Date(t.startDate).toLocaleDateString()
-      const endDateLabel = t.endDate ? new Date(t.endDate).toLocaleDateString() : '?'
+      const endDateLabel = t.endDate ? new Date(t.endDate).toLocaleDateString() : 'now'
 
       return (
         <View key={index} style={[Spacing.flexRowStretch, { marginVertical: 15, alignItems: 'flex-start' }]}>
@@ -87,7 +86,7 @@ const HealthConditionForm = ({ initialValues, onSubmit, isPending }: HealthCondi
     type: initialValues?.type ?? null, 
     status: initialValues?.status ?? HEALTH_CONDITION_STATUS[0],
     timeline: initialValues?.timeline ?? [], 
-    description: initialValues?.description ?? null,
+    description: initialValues?.description ?? [],
     conditionId: initialValues?.conditionId ?? null,
     errors: null,
   }
@@ -105,23 +104,18 @@ const HealthConditionForm = ({ initialValues, onSubmit, isPending }: HealthCondi
     onValidate({ name, type, })
   }
 
+  const headerActions = getHeaderActions(onReset, isPending, handleValidate)
+
   const table = [
     { key: 'type', icon: 'tag', label: 'Type', value:
       <Dropdown label='Select type' dataType='conditionTypes' initial={type} onSelect={selected => onChange('type', selected)} withBorder={false} buttonStyles={{ height: 20 }} align='right' error={errors?.type} width={95} contentWidth={50} /> 
     },
     { key: 'description', icon: 'note', label: 'Description', value: 
-      <NoteInput notes={description} onChange={(text: string) => onChange('description', text)} /> 
+      <NoteInput notes={description[0]} onChange={(text: string) => onChange('description', [text])} /> 
     },
     { key: 'status', icon: 'check', label: 'Status', value: 
       <InlinePicker selected={status} options={HEALTH_CONDITION_STATUS} onSelect={(selected: string) => onChange('status', selected)} />
     },
-  ]
-
-  const headerActions = [
-    { icon: 'reset', onPress: onReset },
-    { title: isPending ? 
-      <Text style={Spacing.flexRow}><ActivityIndicator /> Submitting...</Text>
-      : 'Submit', onPress: handleValidate },
   ]
 
   useEffect(() => {
@@ -135,7 +129,7 @@ const HealthConditionForm = ({ initialValues, onSubmit, isPending }: HealthCondi
       <View style={styles.headerCon}>
         <Icon type='pet' name='condition' size='large' />
         <View style={styles.titleCon}>
-          <FormInput initial={initialState.name} placeholder="Health Condition Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={100} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} width='100%' bottom={0} />
+          <FormInput initial={name} placeholder="Health Condition Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={100} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} width='100%' bottom={0} />
         </View>
       </View>
 

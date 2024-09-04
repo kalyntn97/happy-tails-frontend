@@ -11,7 +11,6 @@ import { PET_DETAILS } from '@pet/petHelpers'
 import { petKeyFactory, useDeletePetDetail } from '@pet/petQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
-import MedicationForm from '@pet/components/MedicationForm'
 import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 
@@ -70,6 +69,7 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
     service: pet?.services ?? [],
     medication: pet?.medications ?? [],
     condition: pet?.healthConditions ?? [],
+    allergy: pet?.allergies ?? [],
   }
 
   const openForm = (type: DetailType) => {

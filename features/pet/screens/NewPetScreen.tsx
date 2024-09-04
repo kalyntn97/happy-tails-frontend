@@ -1,14 +1,9 @@
-//npm modules
-import { useState } from "react"
 //queries & store
 import { useAddPet } from "../petQueries"
 //components
 import PetForm from "../components/PetForm"
-import { ScrollScreen } from "@components/UIComponents"
 //utils
 import { PetFormData, PhotoFormData } from "@pet/PetInterface"
-//styles
-import { Colors } from "@styles/index"
 
 const NewPetScreen = ({ navigation }) => {
   const addPetMutation = useAddPet(navigation)
@@ -18,7 +13,7 @@ const NewPetScreen = ({ navigation }) => {
   }
 
   return ( 
-    <PetForm onSubmit={handleAddPet} navigation={navigation} formStatus={addPetMutation.status} />
+    <PetForm onSubmit={handleAddPet} navigation={navigation} isPending={addPetMutation.isPending} />
   )
 }
 

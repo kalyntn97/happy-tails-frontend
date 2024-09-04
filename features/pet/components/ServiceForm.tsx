@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Text, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import React, { useEffect } from 'react'
+import { View } from 'react-native'
 //helpers &  utils
-import { ServiceFormData } from '@pet/PetInterface'
-import useForm from '@hooks/useForm'
 import { useShallowPets } from '@hooks/sharedHooks'
+import useForm from '@hooks/useForm'
+import { ServiceFormData } from '@pet/PetInterface'
 //components
 import Dropdown from '@components/Dropdown/Dropdown'
-import { FormError, FormInput, Icon, NoteInput, ScrollScreen, TableForm } from '@components/UIComponents'
-import { Header } from '@navigation/NavigationStyles'
 import PetPicker from '@components/Pickers/PetPicker'
+import { FormError, FormInput, getHeaderActions, Icon, NoteInput, ScrollScreen, TableForm } from '@components/UIComponents'
+import { Header } from '@navigation/NavigationStyles'
 //styles
 import { styles } from '@styles/stylesheets/FormStyles'
-import { Spacing } from '@styles/index'
 
 interface ServiceFormProps {
   initialValues?: ServiceFormData
-  onSubmit: (type: 'services', formData: ServiceFormData) => void
+  onSubmit: (type: 'service', formData: ServiceFormData) => void
   isPending: boolean
 } 
 
@@ -44,13 +43,15 @@ const ServiceForm = ({ initialValues, onSubmit, isPending }: ServiceFormProps) =
   const { name, type, addresses, emails, phones, notes, pets, errors }: InitialState = values
 
   function handleSubmit() {
-    onSubmit('services', { name, type, addresses, emails, phones, notes, pets })
+    onSubmit('service', { name, type, addresses, emails, phones, notes, pets })
   }
 
   function handleValidate() {
     onValidate({ name, type, phones })
   }
-  console.log(errors)
+  
+  const headerActions = getHeaderActions(onReset, isPending, handleValidate)
+
   const table = [
     { key: 'type', icon: 'service', value:
       <>
@@ -78,13 +79,6 @@ const ServiceForm = ({ initialValues, onSubmit, isPending }: ServiceFormProps) =
     },
   ]
 
-  const headerActions = [
-    { icon: 'reset', onPress: onReset },
-    { title: isPending ? 
-      <Text style={Spacing.flexRow}><ActivityIndicator /> Submitting...</Text>
-      : 'Submit', onPress: handleValidate },
-  ]
-
   useEffect(() => {
     navigation.setOptions({
       header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' />
@@ -96,7 +90,7 @@ const ServiceForm = ({ initialValues, onSubmit, isPending }: ServiceFormProps) =
       <View style={styles.headerCon}>
         <Icon type='pet' name={type && type !== 'Other' ? type : 'service'} size='large' />
         <View style={styles.titleCon}>
-          <FormInput initial={initialState.name} placeholder="New Service Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} width='100%' bottom={0} />
+          <FormInput initial={name} placeholder="New Service Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} width='100%' bottom={0} />
         </View>
       </View>
 

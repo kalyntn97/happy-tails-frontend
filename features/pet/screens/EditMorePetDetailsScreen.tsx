@@ -8,6 +8,7 @@ import { ScrollScreen } from '@components/UIComponents'
 //utils
 import { DetailType } from '@pet/PetInterface'
 import { useAddPetDetail } from '@pet/petQueries'
+import AllergyForm from '@pet/components/AllergyForm'
 
 interface EditMorePetDetailsScreenProps {
   route: { params: { type: string, petId: string } }
@@ -23,10 +24,12 @@ const EditMorePetDetailsScreen = ({ route }: EditMorePetDetailsScreenProps) => {
 
   return (
     <ScrollScreen>
-      {type === 'id' && <IdForm onSubmit={handleSubmit} />} 
-      {type === 'medication' && <MedicationForm onSubmit={handleSubmit} />}
-      {type === 'service' && <ServiceForm onSubmit={handleSubmit} />}
-      {type === 'condition' && <HealthConditionForm onSubmit={handleSubmit} />}
+      { type === 'id' && <IdForm onSubmit={handleSubmit} /> }  
+      { type === 'medication' && <MedicationForm onSubmit={handleSubmit} /> }
+      { type === 'service' && <ServiceForm onSubmit={handleSubmit} /> }
+      { type === 'condition' && <HealthConditionForm onSubmit={handleSubmit} /> }
+      { type === 'condition' && <HealthConditionForm onSubmit={handleSubmit} /> }
+      { type === 'allergy' && <AllergyForm onSubmit={handleSubmit} /> }
     </ScrollScreen>
   )
 }

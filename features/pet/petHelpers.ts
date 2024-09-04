@@ -72,3 +72,14 @@ export const PET_DETAILS = {
 export const getDetailHeader = (key: string) => {
   return PET_DETAILS[key]
 }
+
+export const ALLERGIES = [
+  { icon: 'Food', title: ['beef', 'pork', 'chicken', 'turkey', 'lamb', 'egg', 'corn', 'wheat', 'dairy'] },
+  { icon: 'Environmental', title: ['pollen', 'grass', 'mold', 'mildew', 'dust mites'] },
+  { icon: 'Flea/ Insect', title: ['spiders', 'ticks', 'fleas', 'blackflies', 'deerflies', 'horseflies', 'mosquitoes', 'ants', 'bees', 'hornets', 'wasps'] },
+  { icon: 'Contact', title: ['flea collar', 'wool', 'pesticides', 'grass', 'synthetics', 'shampoo'] },
+  { icon: 'Drug', title: ['antibiotic', 'anticonvulsant', 'antihypertensive', 'NSAID', 'antiarrhythmic', 'vaccine'] },
+  { icon: 'Asthma', title: ['cigarette', 'litter dust', 'hair spray', 'mold', 'pollen', 'powder', 'household chemicals', 'air freshener'] },
+]
+
+export const ALLERGY_SYMPTOMS = ['skin irritation', 'generalized itching', 'hives', 'respiratory distress', 'vomiting', 'diarrhea', 'swelling', 'sneezing', 'itchy ears', 'chronic ear infections', 'itchy, runny eyes', 'constant licking', 'anaphylactic shock', 'itchy paws']

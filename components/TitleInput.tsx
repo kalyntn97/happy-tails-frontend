@@ -11,9 +11,10 @@ import { ErrorMessage } from './UIComponents'
 //styles
 import { Spacing, UI } from '@styles/index'
 import { styles as formStyles } from '@styles/stylesheets/FormStyles'
+import { ALLERGIES } from '@pet/petHelpers'
 
 type Props = {
-  type: 'care' | 'health' | 'stat'
+  type: 'care' | 'health' | 'stat' | 'allergy'
   initial?: string
   placeholder?: string
   onChange: (title: string) => void
@@ -28,12 +29,14 @@ const titleMap = {
   log: STATS,
 }
 
+const fuzzySearch = (type: Props['type']) => {
+  const titles: { title: string, icon: string }[] = titleMap[type]
+  return new Fuse(titles, { keys: ['title', 'icon'] })
+}
+
 const TitleInput = memo(({ type, initial, onChange, placeholder, error }: Props) => {
   const titleBtn = useRef(null)
-  const fuse = useMemo(() => {
-    const titles: { title: string, icon: string }[] = titleMap[type]
-    return new Fuse(titles, { keys: ['title', 'icon'] })
-  }, [type])
+  const fuse = fuzzySearch(type)
 
   const [title, setTitle] = useState(initial ?? null)
   const [titleSearch, setTitleSearch] = useState<FuseResult<any>[]>([])

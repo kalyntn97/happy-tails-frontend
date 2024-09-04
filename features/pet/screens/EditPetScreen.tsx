@@ -4,9 +4,6 @@ import PetForm from "../components/PetForm"
 //hooks & queries & utils
 import { Pet, PetFormData, PhotoFormData } from "@pet/PetInterface"
 import { useUpdatePet } from "@pet/petQueries"
-//styles
-import { ScrollScreen } from "@components/UIComponents"
-
 
 interface EditPetProps {
   navigation: any
@@ -28,7 +25,7 @@ const EditPetScreen: React.FC<EditPetProps> = ({ navigation, route }) => {
   return (
     <>
       { pet ?
-        <PetForm onSubmit={handleEditPet} initialValues={initialValues} navigation={navigation} formStatus={updatePetMutation.status} />
+        <PetForm onSubmit={handleEditPet} initialValues={initialValues} navigation={navigation} isPending={updatePetMutation.isPending} />
         : <Loader />
       }
     </>

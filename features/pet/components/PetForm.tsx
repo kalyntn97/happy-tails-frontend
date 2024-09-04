@@ -6,7 +6,7 @@ import { ToggleButton } from '@components/ButtonComponents'
 import Dropdown from "@components/Dropdown/Dropdown"
 import ColorPicker from "@components/Pickers/ColorPicker"
 import IconPicker from "@components/Pickers/IconPicker"
-import { DateInput, FormInput, FormLabel, Icon, InlinePicker, ModalInput, PhotoUpload, ScrollScreen, TableForm } from "@components/UIComponents"
+import { DateInput, FormInput, FormLabel, getHeaderActions, Icon, InlinePicker, ModalInput, PhotoUpload, ScrollScreen, TableForm } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 //helpers & utils & hooks
 import useForm from "@hooks/useForm"
@@ -24,7 +24,7 @@ interface InitialState extends PetFormData {
 interface PetFormProps {
   onSubmit: (formData: PetFormData, photoData: PhotoFormData | null) => Promise<any>
   initialValues?: PetFormData
-  formStatus: string
+  isPending: boolean
   navigation: any
 }
 
@@ -109,7 +109,7 @@ const StatusInfo = ({ status, onChange, color }: { status: Pet['status'], onChan
   )
 }
 
-const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormProps) => {
+const PetForm = ({ onSubmit, initialValues, navigation, isPending }: PetFormProps) => {
   const initialState: InitialState = useMemo(() => ({ 
     name: initialValues?.name ?? null, 
     species: initialValues?.species ?? SPECIES_OPTIONS[0].title, 
@@ -145,6 +145,8 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormPro
     onSubmit({ name, gender, species, breed, dob, gotchaDate, altered, status, color, petId }, photoData)
   }
 
+  const headerActions = getHeaderActions(onReset, isPending, handleValidate)
+
   const mainTable = [
     { key: 'type', label: 'Type', icon: 'pet', value: 
       <SpeciesBreedSelector species={species} breed={breed} initials={{ species: initialState.species, breed: initialState.breed }} onSelectSpecies={(selected) => onChange('species', selected)} onSelectBreed={(selected) => onChange('breed', selected)} /> 
@@ -166,13 +168,6 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormPro
     },
   ]
 
-  const headerActions = [
-    { icon: 'reset', onPress: onReset },
-    { title: formStatus === 'pending' ? 
-      <Text style={Spacing.flexRow}><ActivityIndicator /> Submitting...</Text>
-      : 'Submit', onPress: handleValidate },
-  ]
-
   useEffect(() => {
     navigation.setOptions({
       header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[color]} />
@@ -184,7 +179,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, formStatus }: PetFormPro
       <View style={styles.headerCon}>
         <PhotoUpload photo={photo} placeholder={placeholderPhoto} onSelect={(uri: string) => onChange('photo', uri)} />
         <View style={styles.titleCon}>
-          <FormInput initial={initialState.name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} />
+          <FormInput initial={name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} />
         </View>
       </View>
       

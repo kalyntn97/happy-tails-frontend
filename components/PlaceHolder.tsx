@@ -20,6 +20,7 @@ const map = {
   service: { text: 'service', subText: '' },
   medication: { text: 'medication', subText: '' },
   condition: { text: 'health condition', subText: '' },
+  allergy: { text: 'allergy', subText: '' },
 }
 
 const PlaceHolder = ({ type, petId }: Props) => {

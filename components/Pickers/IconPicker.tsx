@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useRef, useState } from 'react'
-import { Keyboard, View, ViewStyle } from 'react-native'
+import { View, ViewStyle } from 'react-native'
 //components
 import { IconButton } from '@components/ButtonComponents'
 import { BottomModal, FormHeader, FormInput } from '@components/UIComponents'
