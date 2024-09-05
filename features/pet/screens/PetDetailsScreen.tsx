@@ -16,8 +16,8 @@ import { IconType } from "@utils/ui"
 import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
 import { useGetPetSettings, useSetActions } from "@store/store"
 //styles
-import { Colors, Spacing, Typography, UI } from '@styles/index'
 import { StackScreenNavigationProp } from "@navigation/types"
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 interface PetDetailsProps {
   navigation: StackScreenNavigationProp
@@ -157,11 +157,12 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
           {/* <StatButtonList petId={pet._id} petColor={pet.color} size='small' navigation={navigation} /> */}
         </View>
 
-        { sections.map(section =>
+        { sections.map(section => 
           <View key={section.key} style={Spacing.flexColumnStretch}>
             <TitleLabel size='small' title={section.title} iconName={section.iconName} mode='bold' rightAction={section.rightAction !== false &&
               <View style={Spacing.flexRow}>
                 <ActionButton icon='reset' buttonStyles={{ marginRight: 30 }} onPress={() => resetItems(section.key as SectionType)} />
+
                 <ActionButton icon="filter" onPress={() => {
                   setModalVisible(true)
                   setOption(section.key as SectionType)
@@ -174,8 +175,8 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
           </View>
         )}
       </> }
-
-      <BottomModal modalVisible={modalVisible} onDismiss={() => setModalVisible(false)}>
+      
+      <BottomModal height='100%' modalVisible={modalVisible} onDismiss={() => setModalVisible(false)}>
         <View style={Spacing.flexRow}>
           <FormHeader title={option === 'info' ? 'Show Pet Details' : 'Show Pet Logs'} />
           <Icon name="filter" />
@@ -184,10 +185,11 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
           { items.map((item: string, index: number) => <Item key={`${item}-${index}`} label={item} type={option} logs={logs} info={info} onPress={() => toggleItem(item)} />) }
         </View>
       </BottomModal>
+      
     </ScrollScreen>
   )
 }
- 
+
 const styles = StyleSheet.create({
   infoCard: {
     ...Spacing.flexColumnStretch,

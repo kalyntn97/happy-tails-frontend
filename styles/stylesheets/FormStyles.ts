@@ -4,7 +4,7 @@ import { Spacing, Typography, UI } from '@styles/index'
 
 export const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    ...Spacing.flexColumnStretch,
   },
   labelCon: {
     ...Spacing.flexRowStretch,
@@ -61,8 +61,8 @@ export const styles = StyleSheet.create({
   },
   contentCon: {
     ...UI.card(),
-    ...Spacing.flexColumn, 
     width: '100%',
+    alignItems: 'flex-start',
   },
   rowCon: {
     ...UI.tableRow(),

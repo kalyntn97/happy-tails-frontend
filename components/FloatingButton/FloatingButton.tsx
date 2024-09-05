@@ -50,9 +50,10 @@ const FloatingButton = ({ navigation }) => {
     }, 300)
   }
   // tap animation 
-  const tap = Gesture.Tap().onEnd(e => {
-    opened ? runOnJS(_close)() : runOnJS(_open)() 
-  })
+  const tap = Gesture.Tap()
+    .onEnd(e => {
+      opened ? runOnJS(_close)() : runOnJS(_open)() 
+    })
   // drag animation
   const pan = Gesture.Pan()
     .onStart(() => { 

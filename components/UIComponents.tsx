@@ -328,7 +328,7 @@ interface ModalProps {
   animation?: 'horizontal' | 'vertical'
 }
 
-export const BottomModal = ({ children, modalVisible, height = 'fit-content' as DimensionValue, maxHeight = '93%', onDismiss, background = Colors.shadow.lightest, overlay = Colors.transparent.dark, animation = 'vertical'}: ModalProps) => {
+export const BottomModal = ({ children, modalVisible, height = 'fit-content' as DimensionValue, maxHeight = '93.5%', onDismiss, background = Colors.shadow.lightest, overlay = Colors.transparent.dark, animation = 'vertical'}: ModalProps) => {
   const [childrenVisible, setChildrenVisible] = useState(modalVisible)
 
   const dismissModal = () => {

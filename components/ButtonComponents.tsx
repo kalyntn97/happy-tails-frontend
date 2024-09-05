@@ -1,6 +1,6 @@
 import { IconType, getActionIconSource, getIconByType } from "@utils/ui"
 import { memo, useMemo } from "react"
-import { Image, ImageSourcePropType, ImageStyle, Pressable, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Image, ImageSourcePropType, Pressable, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 //components
 import { circleBase } from "@styles/buttons"
 //styles
@@ -201,12 +201,12 @@ export const StatButton = ({ header, stat, iconUri, body, bgColor, color = Color
 
 interface ToggleButtonProps extends BaseButtonProps { isOn: boolean, switchColor?: string, width?: number }
 
-export const CheckBoxButton = memo(({ isOn, onPress, color, bgColor }: ToggleButtonProps) => (
+export const CheckBoxButton = memo(({ isChecked, onPress, color, bgColor }: BaseButtonProps & { isChecked: boolean }) => (
   <TouchableOpacity onPress={onPress} style={[Spacing.centered, 
     { width: 20, height: 20, borderRadius: 4, borderWidth: 1, marginLeft: 10, backgroundColor: bgColor, borderColor: bgColor },
   ]}>
     <Text style={{ fontSize: 15, fontWeight: 'bold', color: color }}>
-      {isOn ? '✓' : ''}
+      {isChecked ? '✓' : ''}
     </Text>
   </TouchableOpacity>
 ))

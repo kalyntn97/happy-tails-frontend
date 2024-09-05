@@ -207,7 +207,7 @@ export const statIconSource = {
   treats: require('@assets/icons/stat-treats.png'),
 }
 
-export const statQualIconSource = {
+export const statValueIconSource = {
   heart: [
     require('@assets/icons/stat-heart-0.png'),
     require('@assets/icons/stat-heart-1.png'),
@@ -298,11 +298,11 @@ export const getStatIconSource = (name: string) => {
   return statIconSource[name]
 }
 
-export const getStatQualIconSource = (name: string, value: number) => {
-  return statQualIconSource[name][value]
+export const getStatValueIconSource = (name: string, value: number) => {
+  return statValueIconSource[name][value]
 }
 
-export type IconType = 'action' | 'care' | 'health' | 'pet' | 'stat' | 'nav'
+export type IconType = 'action' | 'care' | 'health' | 'pet' | 'stat' | 'statValue' | 'nav'  
 
 const iconMap = {
   action: (name: string) => getActionIconSource(name),
@@ -311,6 +311,7 @@ const iconMap = {
   pet: (name: string) => getPetIconSource(name),
   allergy: (name: string) => getPetIconSource(name) || petIconSource['allergy'],
   stat: (name: string) => getStatIconSource(name),
+  statValue: (name: string, value: number) => getStatValueIconSource(name, value),
   nav: (name: string, value: any) => getNavigationIconSource(name, value)
 }
 

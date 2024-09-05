@@ -1,13 +1,15 @@
 //npm
-import { FC, useState } from "react"
-import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native"
+import { useState } from "react"
+import { Pressable, StyleSheet, Text, View } from "react-native"
 //helpers
-import { getActionIconSource, statQualIconSource } from "@utils/ui"
+import { statValueIconSource } from "@utils/ui"
 import { STATS, STAT_QUAL_VALUES } from "../statHelpers"
 //styles
-import { UI, Spacing, Typography } from "@styles/index"
-import { TextInput } from "react-native-gesture-handler"
+import { FormHeader, Icon } from "@components/UIComponents"
+import { Spacing, UI } from "@styles/index"
 import NoteForm from "./NoteForm"
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated"
+import { Gesture, GestureDetector } from "react-native-gesture-handler"
 
 interface LogFormProps {
   name: string
@@ -15,69 +17,96 @@ interface LogFormProps {
   onSelect: (item: { name: string, value: number, notes: string }) => void
 }
 
-const IconStatForm: FC<LogFormProps> = ({ name, initialValues, onSelect }) => {
+const IconButton = ({ name, onPress, index }) => {
+  const scale = useSharedValue<number>(1)
+
+  const animatedBtnStyles = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value}],
+  }))
+
+  const tap = Gesture.Tap()
+    .onBegin(() => {
+      scale.value = withSpring(1.2)
+    })
+    .onFinalize(() => {
+      scale.value = withSpring(1)
+      runOnJS(onPress)(index)
+    })
+
+  return (
+    <GestureDetector gesture={tap}>
+      <Animated.View style={animatedBtnStyles}>
+        <Icon type='statValue' name={name} value={index} size="xLarge" />
+      </Animated.View> 
+    </GestureDetector>
+  )
+}
+
+const IconStatForm = ({ name, initialValues, onSelect }: LogFormProps) => {
   const [value, setValue] = useState<number>(initialValues?.value ?? null)
   const [notes, setNotes] = useState<string>(initialValues?.notes ?? null)
-
-  const options = statQualIconSource[name]
   
-  let optionCon = []
+  const options = statValueIconSource[name]
 
-  for (let i = options.length - 1; i >=0; i--) {
-    optionCon.push(
-      <TouchableOpacity key={i} style={{ ...Spacing.flexColumn, margin: 10 }} onPress={() => {
-        value === i ? setValue(null) : setValue(i)
-        onSelect({ name, value: i, notes })
-      }}>
-        <Image source={options[i]} style={{ ...UI.xLargeIcon, margin: 10 }} />
-        {value === i &&
-          <>
-            <Image source={getActionIconSource('check')} style={styles.selected} />
-            <Text style={styles.label}>{STAT_QUAL_VALUES[i]}</Text>
-          </>
-        }
-      </TouchableOpacity>
-    )
+  const opacity = useSharedValue<number>(0)
+
+  const animatedCheckStyles = useAnimatedStyle(() => ({
+    opacity: opacity.value
+  }))
+
+  const handlePress = (index: number) => {
+    opacity.value = withTiming(1, { duration: 300 })
+    const newValue = value === index ? null : index
+    setValue(newValue)
+    if (newValue >= 0) onSelect({ name, value: newValue, notes })
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={{ ...Typography.mediumHeader }}>{STATS[name].name}</Text>
+    <View style={Spacing.fullCon('col', true)}>
+      <FormHeader title={STATS[name].name} size="large" />
       {initialValues?.date && 
         <Text>{new Date(initialValues.date).toLocaleString()}</Text>
       }
-      <View style={styles.optionCon}>{ optionCon }</View>
+      <View style={styles.optionCon}>
+        { options.map((_, index: number) =>
+          <View style={styles.buttonCon}>
+            <IconButton name={name} index={index} onPress={handlePress} />
+            <Text>{STAT_QUAL_VALUES[index]}</Text>
 
-      <NoteForm onAddNote={setNotes} />
+            {value === index &&
+              <Animated.View style={[animatedCheckStyles, styles.selected]}>
+                <Icon name='checkColor' />
+              </Animated.View>
+            }
+          </View>
+        )}
+      </View>
+
+      <NoteForm onAddNote={(text: string) => {
+        setNotes(text)
+        if (text) onSelect({ name, value, notes: text })
+      }} />
       
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullCon(null, true),
-  },
   optionCon: {
     ...Spacing.flexRowStretch,
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginBottom: 40,
   },
   selected: {
-    ...UI.icon(),
     position: 'absolute',
     zIndex: 1,
-    top: 5,
-    right: 0,
+    top: 0,
+    right: -5,
   },
-  label: {
-    position: 'absolute',
-    bottom: -5,
+  buttonCon: {
+    ...Spacing.flexColumn,
+    margin: 10,
   },
-  input: {
-    ...UI.input(),
-  }
 })
 
 export default IconStatForm
