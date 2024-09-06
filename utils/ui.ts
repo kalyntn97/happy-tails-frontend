@@ -208,33 +208,33 @@ export const statIconSource = {
 }
 
 export const statValueIconSource = {
-  heart: [
-    require('@assets/icons/stat-heart-0.png'),
-    require('@assets/icons/stat-heart-1.png'),
-  ],
-  paw: [
-    require('@assets/icons/stat-paw-0.png'),
-    require('@assets/icons/stat-paw-1.png'),
-  ],
-  mood: [
-    require('@assets/icons/stat-mood-0.png'),
-    require('@assets/icons/stat-mood-1.png'),
-    require('@assets/icons/stat-mood-2.png'),
-    require('@assets/icons/stat-mood-3.png'),
-    require('@assets/icons/stat-mood-4.png'),
-  ],
-  appetite: [
-    require('@assets/icons/stat-appetite-0.png'),
-    require('@assets/icons/stat-appetite-1.png'),
-  ],
-  energy: [
-    require('@assets/icons/stat-energy-0.png'),
-    require('@assets/icons/stat-energy-1.png'),
-  ],
-  sleep: [
-    require('@assets/icons/stat-sleep-0.png'),
-    require('@assets/icons/stat-sleep-1.png'),
-  ],
+  heart: {
+    0: require('@assets/icons/stat-heart-0.png'),
+    1: require('@assets/icons/stat-heart-1.png'),
+  },
+  paw: {
+    0: require('@assets/icons/stat-paw-0.png'),
+    1: require('@assets/icons/stat-paw-1.png'),
+  },
+  mood: {
+    0: require('@assets/icons/stat-mood-0.png'),
+    1: require('@assets/icons/stat-mood-1.png'),
+    2: require('@assets/icons/stat-mood-2.png'),
+    3: require('@assets/icons/stat-mood-3.png'),
+    4: require('@assets/icons/stat-mood-4.png'),
+  },
+  appetite: {
+    0: require('@assets/icons/stat-appetite-0.png'),
+    1: require('@assets/icons/stat-appetite-1.png'),
+  },
+  energy: {
+    0: require('@assets/icons/stat-energy-0.png'),
+    1: require('@assets/icons/stat-energy-1.png'),
+  },
+  sleep: {
+    0: require('@assets/icons/stat-sleep-0.png'),
+    1: require('@assets/icons/stat-sleep-1.png'),
+  },
 }
 
 const petIconSource = {

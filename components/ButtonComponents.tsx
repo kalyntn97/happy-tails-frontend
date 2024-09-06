@@ -1,5 +1,7 @@
+import { Gesture, GestureDetector } from "react-native-gesture-handler"
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
 import { IconType, getActionIconSource, getIconByType } from "@utils/ui"
-import { memo, useMemo } from "react"
+import { memo, ReactNode, useMemo } from "react"
 import { Image, ImageSourcePropType, Pressable, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 //components
 import { circleBase } from "@styles/buttons"
@@ -228,5 +230,28 @@ export const ToggleButton = memo(({ isOn, onPress, size = 'small' , bgColor = Co
   )
 })
 
+export const ScaleAnimatedButton = ({ scaleFactor, onPress, index, children }: { scaleFactor: number, onPress: (index?: number) => void, index?: number, children: ReactNode }) => {
+  const scale = useSharedValue<number>(1)
 
+  const animatedBtnStyles = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value}],
+  }))
+
+  const tap = Gesture.Tap()
+    .onBegin(() => {
+      scale.value = withSpring(scaleFactor)
+    })
+    .onFinalize(() => {
+      scale.value = withSpring(1)
+      runOnJS(onPress)(index)
+    })
+
+  return (
+    <GestureDetector gesture={tap}>
+      <Animated.View style={animatedBtnStyles}>
+        { children }
+      </Animated.View> 
+    </GestureDetector>
+  )
+}
 

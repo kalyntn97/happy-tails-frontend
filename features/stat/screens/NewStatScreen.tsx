@@ -39,7 +39,7 @@ const NewStatScreen = ({ navigation, route }: NewStatScreenProps) => {
   const onSelect = (selected: string) => {
     names.includes(selected) 
     ? setNames(prev => prev.filter(n => n !== selected))
-    : setNames(prev => [...prev, selected])
+    : prev => [...prev, selected]
   } 
 
   const handleSubmit = (petId: string, logs: LogData[]) => {
