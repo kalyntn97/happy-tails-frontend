@@ -6,8 +6,7 @@ import { Profile } from "@profile/ProfileInterface";
 //props
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { CompositeNavigationProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack"
-import { Stat } from "@stat/statInterface";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type DefaultParamList = {
   [key: string]: undefined;

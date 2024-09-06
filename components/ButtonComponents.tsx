@@ -12,7 +12,7 @@ import { Size } from "@styles/ui"
 export type ButtonSize = Size | 'largeSquare' | 'smallSquare'
 
 type BaseButtonProps = {
-title?: any
+  title?: any
   icon?: string
   onPress?: () => void
   size?: ButtonSize,
@@ -84,21 +84,34 @@ export const MainButton= memo(({ onPress, title, bgColor = UI.lightPalette().lig
   }, [size])
 
   return (
-    <TouchableOpacity disabled={disabled} onPress={onPress} style={[sizes.buttonSize, Buttons.solid, Spacing.flexRow,
-      { backgroundColor: bgColor, borderColor: bdColor, marginHorizontal: h, marginVertical: v, opacity: disabled ? 0.5 : 1 },
-      buttonStyles,
-    ]}>
-      { icon && <Image source={getActionIconSource(icon)} style={[UI.icon(sizes.iconSize), { marginRight: 5 }]} /> }
-      <Text style={[Buttons.buttonText, { fontSize: sizes.textSizeAdjusted, color: color }, textStyles]}>
-      { title }
-      </Text>
-    </TouchableOpacity>
+    <AnimatedButton disabled={disabled} scaleFactor={0.9} withOpacity={true} onPress={onPress}>
+      <View style={[sizes.buttonSize, Buttons.solid, Spacing.flexRow,
+        { backgroundColor: bgColor, borderColor: bdColor, marginHorizontal: h, marginVertical: v, opacity: disabled ? 0.5 : 1 },
+        buttonStyles,
+      ]}>
+        { icon && <Image source={getActionIconSource(icon)} style={[UI.icon(sizes.iconSize), { marginRight: 5 }]} /> }
+        <Text style={[Buttons.buttonText, { fontSize: sizes.textSizeAdjusted, color: color }, textStyles]}>
+        { title }
+        </Text>
+      </View>
+    </AnimatedButton>
   )
 })
 
 export const TransparentButton= ({ title, icon, onPress, size = 'med', color = Colors.shadow.darkest, bdColor, bgColor = 'transparent', h, v, buttonStyles, textStyles, disabled }: BaseButtonProps) => (
 <MainButton title={title} icon={icon} onPress={onPress} disabled={disabled} size={size} h={h} v={v} color={color} bdColor={bdColor ?? color} bgColor={bgColor} buttonStyles={{ ...Buttons.transparent, borderWidth: size === 'xSmall' || size === 'small' ? 1 : 1.5, ...buttonStyles }} textStyles={textStyles} />
 )
+
+export const SubButton = memo(({ onPress, title, color = UI.lightPalette().button, h, v, size = 'small', textStyles, disabled }: BaseButtonProps) => {
+  const textSize = useMemo(() => baseButtonTextSizeMap(size === 'xSmall' ? 2 : 0)[size], [size])
+
+  return (
+    <TouchableOpacity onPress={onPress} disabled={disabled} style={[Buttons.sub, { borderColor: color, marginHorizontal: h, marginVertical: v },
+    ]}>
+      <Text style={[Buttons.buttonText, {  fontSize: textSize, color: color }, textStyles]}>{title}</Text>
+    </TouchableOpacity>
+  )
+})
 
 const iconButtonSizeMap = {
   small: { width: 40, minHeight: 60 },
@@ -127,7 +140,7 @@ export const IconButton = memo(({ title, type, icon, onPress, size, buttonStyles
       buttonStyles
     ]}>
       <Image source={iconSource} style={UI.icon(sizes.iconSize)} />
-    { title && <Text style={[{ fontSize: sizes.textSize, textTransform: 'capitalize', marginTop: 5 }, textStyles]}>{title}</Text> }
+      { title && <Text style={[{ fontSize: sizes.textSize, textTransform: 'capitalize', marginTop: 5 }, textStyles]}>{title}</Text> }
     </TouchableOpacity>
   )
 })
@@ -149,31 +162,18 @@ export const GoBackButton = ({ onPress, position = 'topLeft', size = 'small', bu
   <ActionButton icon='back' position={position} onPress={onPress} size={size} buttonStyles={buttonStyles} />
 )
 
-export const SubButton = memo(({ onPress, title, color = UI.lightPalette().button, h, v, size = 'small', textStyles, disabled }: BaseButtonProps) => {
-  const textSize = useMemo(() => baseButtonTextSizeMap()[size], [size])
-
-  return (
-    <TouchableOpacity onPress={onPress} disabled={disabled} style={[Buttons.sub, { borderColor: color, marginHorizontal: h, marginVertical: v },
-    ]}>
-    <Text style={[Buttons.buttonText, textSize, {  color: color }, textStyles]}>{title}</Text>
-    </TouchableOpacity>
-  )
-})
-
 interface PhotoButtonProps extends BaseButtonProps {
   photo: string
   placeholder?: string
 }
 
-export const PhotoButton = memo(({ photo, onPress, size = 'small', placeholder, bgColor = Colors.pink.light, disabled }: PhotoButtonProps) => {
+export const PhotoButton = memo(({ photo, onPress, size = 'small', placeholder, bgColor = Colors.pink.light, disabled, buttonStyles }: PhotoButtonProps) => {
   const defaultPhoto = useMemo(() => placeholder ?? require('@assets/icons/ui-image.png'), [placeholder])
 
   return (
-  <TouchableOpacity onPress={onPress} disabled={disabled} style={{ margin: 5 }}>
-    <View style={[UI.photo(size), Spacing.centered, { backgroundColor: bgColor }]}>
-      <Image source={photo ? { uri: photo } : defaultPhoto as ImageSourcePropType} style={UI.photo(size)} />
-    </View>
-  </TouchableOpacity>
+    <TouchableOpacity onPress={onPress} disabled={disabled} style={[UI.photo(size, 99, 0), Spacing.centered, { backgroundColor: bgColor }, buttonStyles]}>
+      <Image source={photo ? { uri: photo } : defaultPhoto as ImageSourcePropType} style={UI.photo(size, 99, 0)} />
+    </TouchableOpacity>
   ) 
 })
 
@@ -230,19 +230,24 @@ export const ToggleButton = memo(({ isOn, onPress, size = 'small' , bgColor = Co
   )
 })
 
-export const ScaleAnimatedButton = ({ scaleFactor, onPress, index, children }: { scaleFactor: number, onPress: (index?: number) => void, index?: number, children: ReactNode }) => {
+export const AnimatedButton = ({ scaleFactor, withOpacity = false, onPress, index, children, disabled = false }: { scaleFactor: number, withOpacity?: boolean, onPress: (index?: number) => void, index?: number, children: ReactNode, disabled?: boolean }) => {
   const scale = useSharedValue<number>(1)
+  const opacity = useSharedValue<number>(1)
 
   const animatedBtnStyles = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value}],
+    opacity: opacity.value,
   }))
 
   const tap = Gesture.Tap()
+    .enabled(!disabled)
     .onBegin(() => {
       scale.value = withSpring(scaleFactor)
+      opacity.value = withOpacity ? withSpring(0.3) : 1
     })
     .onFinalize(() => {
       scale.value = withSpring(1)
+      opacity.value = withOpacity ? withSpring(1) : 1
       runOnJS(onPress)(index)
     })
 

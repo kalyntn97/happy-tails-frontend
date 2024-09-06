@@ -7,7 +7,7 @@ import { LogData } from '@stat/statInterface'
 import { useGetPetSettings } from '@store/store'
 import { useAddStats } from '@stat/statQueries'
 //components
-import IconStatForm from '@stat/components/IconStatForm'
+import IconForm from '@stat/components/IconForm'
 import InputForm from '@stat/components/InputForm'
 import RatingForm from '@stat/components/RatingForm'
 import { CheckBoxButton, MainButton, TransparentButton } from '@components/ButtonComponents'
@@ -39,7 +39,7 @@ const NewStatScreen = ({ navigation, route }: NewStatScreenProps) => {
   const onSelect = (selected: string) => {
     names.includes(selected) 
     ? setNames(prev => prev.filter(n => n !== selected))
-    : prev => [...prev, selected]
+    : setNames(prev => [...prev, selected])
   } 
 
   const handleSubmit = (petId: string, logs: LogData[]) => {
@@ -68,10 +68,10 @@ const NewStatScreen = ({ navigation, route }: NewStatScreenProps) => {
         names.map((name, i) =>
           <View key={name} style={[{ zIndex: i === index - 1 ? 1 : 0 }, styles.itemOverlay]}>
             { name === 'mood' 
-              ? <IconStatForm name={name} onSelect={addLog} /> 
-              : Object.keys(STATS).filter(key => STATS[key].type === 'qual').includes(name) && name !== 'mood' 
-              ? <RatingForm name={name} onSelect={addLog} />
-              : <InputForm name={name} onSelect={addLog} />
+              ? <IconForm name={name} onSelect={addLog} /> 
+              : STATS[name].type === 'qual' 
+                ? <RatingForm name={name} onSelect={addLog} />
+                : <InputForm name={name} onSelect={addLog} />
             }
           </View>
       )}

@@ -1,16 +1,14 @@
-//npm
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 //helpers
 import { STATS, STAT_QUAL_VALUES } from '../statHelpers'
-import { getStatQualIconSource } from '@utils/ui'
-//styles
-import { Colors, Spacing, Typography, UI, Buttons } from '@styles/index'
-import NoteForm from './NoteForm'
+//components
+import { AnimatedButton } from '@components/ButtonComponents'
 import { FormHeader, Icon } from '@components/UIComponents'
-import { ScaleAnimatedButton } from '@components/ButtonComponents'
-import { lightPalette } from '@styles/ui'
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import NoteForm from './NoteForm'
+//styles
+import { Colors, Spacing } from '@styles/index'
 
 interface RatingFormProps {
   name: string
@@ -22,7 +20,7 @@ const dotWidths = [50, 35, 25, 35, 50]
 const checkSizes = [25, 20, 13, 20, 25]
 const colors = [Colors.red.dark, Colors.red.reg, Colors.shadow.reg, Colors.green.reg, Colors.green.dark]
 
-const RatingForm: FC<RatingFormProps> = ({ name, initialValues, onSelect }) => {
+const RatingForm = ({ name, initialValues, onSelect }: RatingFormProps) => {
   const [value, setValue] = useState<number>(initialValues?.value ?? null)
   const [notes, setNotes] = useState<string>(initialValues?.notes ?? null)
 
@@ -55,14 +53,14 @@ const RatingForm: FC<RatingFormProps> = ({ name, initialValues, onSelect }) => {
           const isSelected = value === index
           return (
             <View key={index} style={styles.dotCon}>
-              <ScaleAnimatedButton index={index} scaleFactor={0.8} onPress={handlePress}>
+              <AnimatedButton index={index} scaleFactor={0.8} onPress={handlePress}>
                 <View style={[styles.dot, { width: dotWidth, height: dotWidth, borderColor: colors[index] }, isSelected && { backgroundColor: colors[index] }]}>
                   { isSelected && 
-                    <Text style={[styles.check, { fontSize: checkSize }]}>✓</Text> 
+                    <Animated.Text style={[animatedCheckStyles, styles.check, { fontSize: checkSize }]}>✓</Animated.Text> 
                   }
                 </View>
-              </ScaleAnimatedButton>
-              <Animated.Text style={[animatedCheckStyles, { color: isSelected ? colors[index] : Colors.shadow.reg }]}>{STAT_QUAL_VALUES[index]}</Animated.Text>
+              </AnimatedButton>
+              <Text style={[, { color: isSelected ? colors[index] : Colors.shadow.dark }]}>{STAT_QUAL_VALUES[index]}</Text>
             </View>
           )
         })}

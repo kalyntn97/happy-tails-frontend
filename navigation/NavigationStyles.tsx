@@ -1,15 +1,14 @@
 import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs"
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack"
-import { moderateVerticalScale } from "react-native-size-matters"
 import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native"
+import { moderateVerticalScale } from "react-native-size-matters"
 //components
-import { GoBackButton } from "@components/ButtonComponents"
+import { ActionButton, GoBackButton } from "@components/ButtonComponents"
 //styles
-import { Colors, UI, Typography, Spacing } from "@styles/index"
+import { Colors, Spacing, Typography, UI } from "@styles/index"
 import { getActionIconSource } from "@utils/ui"
-import { oastConfig } from "@components/UIComponents"
-import Toast, { ToastConfigParams } from "react-native-toast-message"
 import { ReactNode } from "react"
+import Toast, { ToastConfigParams } from "react-native-toast-message"
 
 export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
 
@@ -42,7 +41,7 @@ export const Header = ({ title, navigation, showGoBackButton, mode, rightActions
     {rightActions && 
       <View style={[styles.headerRight, { top: mode === 'card' ? 25 : 15 }]}>
         { rightActions.map((action, index) =>
-          <RightButton key={index} title={action.title} icon={action.icon} onPress={action.onPress} buttonStyles={{ marginLeft: 50 }} />      
+          <RightButton key={index} title={action.title} icon={action.icon} onPress={action.onPress} buttonStyles={{ marginLeft: 50 }} />
         )}
       </View> 
     }

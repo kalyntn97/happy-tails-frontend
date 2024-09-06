@@ -11,7 +11,7 @@ interface NoteFormProps {
   onAddNote: (notes: string) => void
 }
 
-const NoteForm: FC<NoteFormProps> = ({ onAddNote }) => {
+const NoteForm = ({ onAddNote }: NoteFormProps) => {
   const [notes, setNotes] = useState<string>(null)
 
   const onEdit = (text: string) => {

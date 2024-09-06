@@ -1,9 +1,10 @@
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
-import { ActivityIndicator, DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native"
+import { ActivityIndicator, DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import Animated, { SlideInDown, SlideInLeft, SlideOutDown, SlideOutLeft } from "react-native-reanimated"
 //utils & hooks
 import { useSelectPhoto } from "@hooks/sharedHooks"
+import { windowWidth } from "@utils/constants"
 import { IconType, getIconByType } from "@utils/ui"
 //components 
 import { CustomToast } from "@navigation/NavigationStyles"
@@ -12,7 +13,6 @@ import { ActionButton, GoBackButton } from "./ButtonComponents"
 import { Colors, Spacing, Typography, UI } from "@styles/index"
 import { textSizeMap } from "@styles/typography"
 import { Size, icon, iconSizeMap, lightPalette } from "@styles/ui"
-import { windowWidth } from "@utils/constants"
 
 interface IconProps {
   type?: IconType
@@ -31,9 +31,9 @@ export const Icon = ({ type = 'action', name, value, size = 'small', styles, m }
 }
 
 export const CircleIcon = ({ type, name, size = 'large', bgColor = Colors.shadow.light }: IconProps & { bgColor?: string }) => { 
-  const conWidth: number = Number(iconSizeMap[size].width) + (size === 'large' ? 30 : 15)
+  const conWidth = Number(iconSizeMap[size].width) + (size === 'large' ? 30 : 15)
   return (
-    <View style={{ backgroundColor: bgColor, ...UI.roundedIconCon, width: conWidth, height: conWidth }}>
+    <View style={[UI.roundedIconCon, { backgroundColor: bgColor, width: conWidth, height: conWidth }]}>
       <Icon type={type} name={name} size={size} />
     </View>
   )
@@ -198,20 +198,24 @@ interface ScrollProps {
   children: ReactNode
   props?: ScrollViewProps
   contentStyles?: ViewStyle
+  containerStyles?: ViewStyle
   h?: number, b?: number, t?: number
 }
 
-export const ScrollHeader = ({ children, h = 10, b = 15, t = 15}: ScrollProps) => (
-  <View style={[Spacing.basePadding(h, 0, b, t), { width: '100%', justifyContent: 'center' }]}>
-    <ScrollView horizontal
+export const ScrollHeader = forwardRef<ScrollView, ScrollProps>(({ children, h = 10, b = 15, t = 15, containerStyles, contentStyles, props }, ref) => (
+  <View style={[Spacing.flexRow, Spacing.basePadding(h, 0, b, t), containerStyles]}>
+    <ScrollView 
+      ref={ref}
+      horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={Spacing.flexRow}
+      contentContainerStyle={[Spacing.flexRow, contentStyles]}
       alwaysBounceHorizontal={false}
+      { ...props }
     >
       { children }
     </ScrollView>
   </View>
-)
+))
 
 export const ScrollContainer = ({ children, props, contentStyles }: ScrollProps) => (
   <ScrollView

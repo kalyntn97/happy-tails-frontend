@@ -3,15 +3,15 @@ import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated
 import { moderateScale } from 'react-native-size-matters'
 //types & utils
 import { Pet } from "@pet/PetInterface"
-import { SPECIES, SPECIES_OPTIONS } from "@pet/petHelpers"
+import { SPECIES } from "@pet/petHelpers"
 import { countYearsBetween } from "@utils/datetime"
 import { IconType, getPetIconSource } from "@utils/ui"
 //components
 import { MainButton } from "@components/ButtonComponents"
-import StatButtonList from "./StatButtonList"
 //styles
 import { Icon } from "@components/UIComponents"
 import { Colors, Spacing, Typography, UI } from '@styles/index'
+import { windowWidth } from "@utils/constants"
 interface PetCardProps {
   pet: Pet
   index: number
@@ -24,24 +24,22 @@ const PetCard = ({ pet, index, scrollX, navigation }: PetCardProps) => {
 
   const { width } = useWindowDimensions()
   
-  const animatedStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { translateX: interpolate(
-          scrollX.value,
-          [(index - 1) * width, index * width, (index + 1) * width],
-          [-width * 0.1, 0, width * 0.1],
-          'clamp'
-        )},
-        { scale: interpolate(
-          scrollX.value,
-          [(index - 1) * width, index * width, (index + 1) * width],
-          [0.9, 1, 0.9],
-          'clamp'
-        )},
-      ],
-    }
-  })
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: interpolate(
+        scrollX.value,
+        [(index - 1) * width, index * width, (index + 1) * width],
+        [-width * 0.1, 0, width * 0.1],
+        'clamp'
+      ) },
+      { scale: interpolate(
+        scrollX.value,
+        [(index - 1) * width, index * width, (index + 1) * width],
+        [0.9, 1, 0.9],
+        'clamp'
+      ) },
+    ],
+  }))
 
   const infoMap = [
     { type: 'pet', icon: !SPECIES.includes(pet.species) ? 'Others' : pet.species, text: pet.breed ? pet.breed : 'Unknown' },
@@ -71,7 +69,7 @@ const PetCard = ({ pet, index, scrollX, navigation }: PetCardProps) => {
         {/* <StatButtonList petId={pet._id} petColor={pet.color} navigation={navigation} size="small" /> */}
 
         <View style={styles.btnCon}>
-          <MainButton title='Log' icon="logPet" onPress={() => navigation.navigate('CreateLog', { pet })} bgColor={Colors.multi.semiTransparent[pet.color]} buttonStyles={styles.button} />
+          <MainButton title='Log' icon="logPet" onPress={() => navigation.navigate('CreateStat', { pet })} bgColor={Colors.multi.semiTransparent[pet.color]} buttonStyles={styles.button} />
           <MainButton title='Details' icon='detailsPet' onPress={() => navigation.navigate('PetDetails', { petId: pet._id })} bgColor={Colors.multi.semiTransparent[pet.color]} buttonStyles={styles.button} />
         </View>  
 
@@ -86,7 +84,8 @@ const styles = StyleSheet.create({
     ...UI.card(true, true),
     justifyContent: 'flex-start',
     alignItems: 'center',
-    transform: [{ scale: moderateScale(0.8, 1.5) }],
+    width: windowWidth * 0.9,
+    // transform: [{ scale: moderateScale(0.8, 1.5) }],
   },
   petName: {
     ...Typography.subHeader,
@@ -103,11 +102,10 @@ const styles = StyleSheet.create({
   },
   btnCon: { 
     ...Spacing.flexRowStretch,
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     marginVertical: 20,
   },
   button: {
-    flex: 1,
     marginHorizontal: 15,
   }
 })

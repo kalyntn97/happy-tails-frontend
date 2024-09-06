@@ -1,20 +1,26 @@
 //npm modules
 import { useRef, useState } from 'react'
-import { Image, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native"
-import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
+import { DimensionValue, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native"
+import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
 //components
-import { PhotoButton, RoundButton } from '@components/ButtonComponents'
+import { ActionButton, PhotoButton, RoundButton } from '@components/ButtonComponents'
 import Loader from '@components/Loader'
-import { ErrorImage } from '@components/UIComponents'
+import { ErrorImage, ScrollHeader } from '@components/UIComponents'
 import EmptyPetList from '@pet/components/EmptyPetList'
-import PetCard from '../components/PetCard'
+import PetCard from '@pet/components/PetCard'
 //store & queries & types
-import { useGetProfile } from '@profile/profileQueries'
-import { getActionIconSource, getPetIconSource } from '@utils/ui'
-import type { Pet } from '../PetInterface'
-//styles
-import { Colors, Spacing, Typography, UI } from '@styles/index'
 import { StackScreenNavigationProp } from '@navigation/types'
+import type { Pet } from '@pet/PetInterface'
+import { useGetProfile } from '@profile/profileQueries'
+import { getPetIconSource } from '@utils/ui'
+//styles
+import { Spacing, Typography, UI } from '@styles/index'
+
+const navButtonSize = 'small'
+const navSize = 'xSmall'
+const navMargin = 5
+const navIconWidth = Number(UI.photoSizeMap[navSize].width) + navMargin * 2
+const navButtonWith = Number(UI.iconSizeMap[navButtonSize].width)
 
 const PetIndexScreen = ({ navigation }: { navigation: StackScreenNavigationProp }) => {
   const [currCard, setCurrCard] = useState<number>(0)
@@ -25,8 +31,12 @@ const PetIndexScreen = ({ navigation }: { navigation: StackScreenNavigationProp 
   const petCount: number = pets?.length ?? 0
   
   const { width } = useWindowDimensions()
+  const navWidth = width - navMargin * 2 - navButtonWith * 2
+  const navNumberOfIcons = Math.floor(navWidth / navButtonWith)
+
   const scrollX = useSharedValue(0)
-  const FlatListRef = useRef<Animated.FlatList<Pet>>(null)
+  const flatListRef = useRef<Animated.FlatList<Pet>>(null)
+  const navRef = useRef<ScrollView>(null)
 
   const onScrollHandler = useAnimatedScrollHandler(event => {
     scrollX.value = event.contentOffset.x
@@ -38,47 +48,34 @@ const PetIndexScreen = ({ navigation }: { navigation: StackScreenNavigationProp 
   }
 
   const handleClickNext = () => {
-    const nextCard = Math.min(currCard + 1, petCount - 1)
-    if (FlatListRef.current) {
-      (FlatListRef.current as any).scrollToIndex({ index: nextCard })
+    // const nextCard = Math.min(currCard + 1, petCount - 1)
+    const nextNavPos = scrollX.value + navNumberOfIcons * navIconWidth
+    const nextCard = Math.min(currCard + navNumberOfIcons, petCount - 1)
+    if (flatListRef.current) {
+      (flatListRef.current as any).scrollToIndex({ index: nextCard })
+    }
+    if (navRef.current) {
+      (navRef.current as any).scrollTo({ y: nextNavPos, animated: true })
     }
   }
+
   const handleClickPrev = () => {
-    const prevCard = Math.max(currCard - 1, 0)
-    if (FlatListRef.current) {
-      (FlatListRef.current as any).scrollToIndex({ index: prevCard })
+    // const prevCard = Math.max(currCard - 1, 0)
+    const prevNavPos = scrollX.value - navNumberOfIcons * navIconWidth
+    const prevCard = Math.max(currCard - navNumberOfIcons, 0)
+    if (flatListRef.current) {
+      (flatListRef.current as any).scrollToIndex({ index: prevCard })
+    }
+    if (navRef.current) {
+      (navRef.current as any).scrollTo({ y: prevNavPos, animated: true })
+
     }
   }
 
   const handleClickPhoto = (index: number) => {
-    if (FlatListRef.current) {
-      (FlatListRef.current as any).scrollToIndex({ index: index })
+    if (flatListRef.current) {
+      (flatListRef.current as any).scrollToIndex({ index: index })
     }
-  }
-
-  const DotNav = ({ index }) => {
-    const currIndex = currCard === 0 ? 0 : currCard === pets.length - 1 ? 2 : 1
-    const animatedDot = useAnimatedStyle(() => {
-      const color = interpolate(
-        currIndex,
-        [index - 1, index , index + 1],
-        [0, 1, 0],
-        'clamp'
-      )
-      const scale = interpolate(
-        currIndex,
-        [index - 1, index , index + 1],
-        [1, 1.3, 1],
-        'clamp'
-      )
-      return {
-        backgroundColor: color === 1 ? Colors.pink.reg : 'black',
-        transform: [{ scale }],
-      }    
-    })
-    return (
-      <Animated.View style={[styles.dot, animatedDot, petCount > 3 && index === 1 && currCard > 1 && { width: 15 }]} />
-    )
   }
 
   if (isFetching) return <Loader />
@@ -88,17 +85,18 @@ const PetIndexScreen = ({ navigation }: { navigation: StackScreenNavigationProp 
     <View style={styles.container}>
       { isSuccess && pets.length > 0 ? <>
         <View style={styles.petNav}>
-          <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 10, justifyContent: 'flex-start', alignItems: 'center' }} showsHorizontalScrollIndicator={false}>
-            <RoundButton type='add' size='med' onPress={() => navigation.navigate('PetCreate')} />
-            {pets.map((pet, index) => 
-              <PhotoButton key={`photo-${pet._id}`} photo={pet.photo} placeholder={getPetIconSource('AnimalProfile')} size='xSmall' onPress={() => handleClickPhoto(index)} />
-            )}
-          </ScrollView>
+          <ActionButton icon='prevRound' onPress={handleClickPrev} size={navButtonSize} disabled={currCard === 0} />
+          <ScrollHeader h={0} b={0} t={0} containerStyles={{ flex: 1 }} ref={navRef}>
+            { pets.map((pet, index) => 
+              <PhotoButton key={`photo-${pet._id}`} photo={pet.photo} placeholder={getPetIconSource('AnimalProfile')} size={navSize} onPress={() => handleClickPhoto(index)} buttonStyles={{ marginHorizontal: navMargin, opacity: currCard === index ? 1 : 0.5 }} />
+            ) }
+          </ScrollHeader>
+          <ActionButton icon='nextRound' onPress={handleClickNext} size={navButtonSize} disabled={currCard === petCount - 1} />
         </View>
       
         <View style={styles.carousel}>
           <Animated.FlatList 
-            ref={FlatListRef}
+            ref={flatListRef}
             horizontal
             showsHorizontalScrollIndicator={false}
             onScroll={onScrollHandler}
@@ -110,34 +108,9 @@ const PetIndexScreen = ({ navigation }: { navigation: StackScreenNavigationProp 
               return <PetCard pet={item} index={index} scrollX={scrollX} navigation={navigation} />
             }}
           />
-          
         </View>
 
-        { petCount > 2 &&
-          <View style={styles.rowCon}>
-            <Pressable 
-              onPress={handleClickPrev} 
-              style={[styles.prevBtn, currCard == 0 && styles.disabled, styles.baseNavBtn]}
-              disabled={currCard == 0}
-            >
-              <Image source={getActionIconSource('prev')} style={{...UI.icon('xSmall')}}/> 
-            </Pressable>
-            
-            <View style={styles.dotNav}>
-              {Array(3).fill(0).map((_, i) =>
-                <DotNav key={i} index={i} />
-              )}
-            </View>
-            
-            <Pressable 
-              onPress={handleClickNext} 
-              style={[styles.nextBtn, currCard == petCount - 1  && styles.disabled, styles.baseNavBtn]}
-              disabled={currCard == petCount - 1}
-            >
-              <Image source={getActionIconSource('next')} style={{ ...UI.icon('xSmall') }}/> 
-            </Pressable>
-          </View>
-        }
+        <RoundButton type='add' size='large' onPress={() => navigation.navigate('PetCreate')} position='bottomRight' />
       </> : 
         <View style={{ ...Spacing.fullWH, justifyContent: 'center' }}> 
           <EmptyPetList navigation={navigation} />
@@ -180,20 +153,9 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   petNav: {
+    ...Spacing.flexRowStretch,
     marginTop: 50,
-    width: '100%',
-  },
-  dotNav: {
-    ...Spacing.flexRow,
-    marginTop: 10,
-    width: 120,
-    justifyContent: 'space-between',
-  },
-  dot: {
-    margin: 10,
-    width: 8,
-    height: 8,
-    borderRadius: 99,
+    paddingHorizontal: navMargin
   },
   disabled: {
     opacity: 0.5

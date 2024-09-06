@@ -1,22 +1,22 @@
 // npm
-import { useEffect, useState } from "react"
-import { Text, View, StyleSheet, DeviceEventEmitter, useWindowDimensions, Image, ImageStyle, ViewStyle } from "react-native"
+import { DeviceEventEmitter, Image, ImageStyle, StyleSheet, Text, useWindowDimensions } from "react-native"
 import { State, TapGestureHandler } from "react-native-gesture-handler"
-import Animated, { BounceInDown, BounceInUp, BounceOutDown, FadeInUp, useAnimatedStyle, useSharedValue } from "react-native-reanimated"
+import Animated, { BounceInDown, useAnimatedStyle, useSharedValue } from "react-native-reanimated"
 // styles
-import { ButtonStyles, Button, subBtn_tap_event } from "./constants"
-import { Spacing, Colors, UI } from "@styles/index"
+import { useNavigation } from "@react-navigation/native"
+import { Colors, UI } from "@styles/index"
 import { getActionIconSource } from "@utils/ui"
+import { Button, ButtonStyles, subBtn_tap_event } from "./constants"
 
 type Props = {
   label: string
-  onPress: (navigation) => any
-  navigation: any
+  onPress: (navigation) => void
   index: number
   x: number
 }
 
-const SubFloatingButton = ({ onPress, label, index, x, navigation }: Props) => {
+const SubFloatingButton = ({ onPress, label, index, x }: Props) => {
+  const navigation = useNavigation()
   const { width } = useWindowDimensions()
  
   const iconSource = getActionIconSource(label)
@@ -46,7 +46,7 @@ const SubFloatingButton = ({ onPress, label, index, x, navigation }: Props) => {
 
   return (
     <TapGestureHandler onHandlerStateChange={_onTapHandlerStateChange}>
-      <Animated.View entering={BounceInDown.delay(100 * index)} style={[
+      <Animated.View entering={BounceInDown.delay(100 * (index + 1))} style={[
         styles.button, 
         { backgroundColor: Colors.multi.dark[index + 1] }, 
         animatedStyles

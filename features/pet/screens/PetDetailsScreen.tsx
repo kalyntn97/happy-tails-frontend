@@ -49,9 +49,9 @@ const defaultInfo = ['id', 'service']
 const defaultLogs = ['mood', 'weight', 'energy']
 
 const headerActions = (navigation: any, pet: Pet) => ([
-  { icon: 'search', onPress: null },
-  { icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
-  { icon: 'add', onPress:() => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
+  { icon: 'search', onPress: () => navigation.goBack(), size: 'xSmall' },
+  { icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }), size: 'xSmall' },
+  { icon: 'add', onPress:() => navigation.navigate('CreateStat', { pet: { _id: pet._id, name: pet.name } }), size: 'xSmall' },
 ])
 
 const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {

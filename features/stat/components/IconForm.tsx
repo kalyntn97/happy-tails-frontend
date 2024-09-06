@@ -1,4 +1,3 @@
-//npm
 import { useState } from "react"
 import { StyleSheet, Text, View } from "react-native"
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated"
@@ -7,10 +6,10 @@ import { statValueIconSource } from "@utils/ui"
 import { STATS, STAT_QUAL_VALUES } from "../statHelpers"
 //components
 import NoteForm from "./NoteForm"
-import { ScaleAnimatedButton } from "@components/ButtonComponents"
+import { AnimatedButton } from "@components/ButtonComponents"
 import { FormHeader, Icon } from "@components/UIComponents"
 //styles
-import { Spacing } from "@styles/index"
+import { Colors, Spacing } from "@styles/index"
 
 interface LogFormProps {
   name: string
@@ -18,7 +17,7 @@ interface LogFormProps {
   onSelect: (item: { name: string, value: number, notes: string }) => void
 }
 
-const IconStatForm = ({ name, initialValues, onSelect }: LogFormProps) => {
+const IconForm = ({ name, initialValues, onSelect }: LogFormProps) => {
   const [value, setValue] = useState<number>(initialValues?.value ?? null)
   const [notes, setNotes] = useState<string>(initialValues?.notes ?? null)
   
@@ -46,15 +45,16 @@ const IconStatForm = ({ name, initialValues, onSelect }: LogFormProps) => {
       <View style={styles.optionCon}>
         { options.map(option => {
           const index = Number(option)
+          const isSelected = value === index
 
           return (
             <View style={styles.buttonCon} key={index}>
-              <ScaleAnimatedButton scaleFactor={1.2} index={Number(option)} onPress={handlePress}>
+              <AnimatedButton scaleFactor={1.2} index={Number(option)} onPress={handlePress}>
                 <Icon type='statValue' name={name} value={index} size="xLarge" />
-              </ScaleAnimatedButton>
-              <Text>{STAT_QUAL_VALUES[index]}</Text>
+              </AnimatedButton>
+              <Text style={{ color: isSelected ? Colors.black : Colors.shadow.dark }}>{STAT_QUAL_VALUES[index]}</Text>
 
-              {value === index &&
+              {isSelected &&
                 <Animated.View style={[animatedCheckStyles, styles.selected]}>
                   <Icon name='checkColor' />
                 </Animated.View>
@@ -91,4 +91,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default IconStatForm
+export default IconForm
