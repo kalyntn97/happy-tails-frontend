@@ -113,8 +113,8 @@ export const FormHeader = ({ title, size = 'med', color = lightPalette().text, s
   )
 }
 
-export const FormLabel = ({ label, icon, type = 'action', size, capitalize = false }: { label: string, icon: string, type?: IconType, size?: TitleLabelProps['size'], capitalize?: boolean }) => (
-  <TitleLabel title={label} iconName={icon} iconType={type} mode="bold" size={size} capitalize={capitalize} />
+export const FormLabel = ({ label, icon, type = 'action', size, capitalize = false, containerStyles }: { label: string, icon?: string, type?: IconType, size?: TitleLabelProps['size'], capitalize?: boolean, containerStyles?: ViewStyle }) => (
+  <TitleLabel title={label} iconName={icon} iconType={type} mode="bold" size={size} capitalize={capitalize} containerStyles={containerStyles} />
 )
 
 export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { label: string, icon?: string, onPress: () => void, top?: number, right?: number }) => (

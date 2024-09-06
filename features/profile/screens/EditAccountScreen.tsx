@@ -9,7 +9,7 @@ import { UI, Spacing, Typography, Colors } from '@styles/index'
 
 interface EditAccountScreenProps {
   navigation: any
-  route: { params: { form: string } }
+  route: { params: { form: 'update' | 'delete' } }
 }
 
 const UpdateAccountForm = ({ navigation }) => {

@@ -26,6 +26,8 @@ export type RootStackParamList = DefaultParamList & {
   CreateStat: { pet: { _id: string, name: string } },
   StatDetails: { stat: string },
   ProfileEdit: { profile: Profile },
+  Account: { form: 'update' | 'delete' },
+  Settings: { sectionIndex?: number, itemIndex?: number, sectionTitle?: string },
 }
 
 export type StackScreenNavigationProp<T extends keyof RootStackParamList = keyof RootStackParamList> = NativeStackNavigationProp<RootStackParamList, T>
