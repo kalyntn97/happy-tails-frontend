@@ -1,11 +1,16 @@
 import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs"
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack"
+import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native"
 import { moderateVerticalScale } from "react-native-size-matters"
-import { StyleSheet, Text, View } from "react-native"
 //components
-import { GoBackButton } from "@components/ButtonComponent"
+import { ActionButton, GoBackButton } from "@components/ButtonComponents"
 //styles
-import { Colors, UI, Typography } from "@styles/index"
+import { Colors, Spacing, Typography, UI } from "@styles/index"
+import { getActionIconSource } from "@utils/ui"
+import { ReactNode } from "react"
+import Toast, { ToastConfigParams } from "react-native-toast-message"
+
+export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
 
 const headerOptions: any = {
   headerTitleStyle: { fontSize: 18, fontWeight: 'bold' },
@@ -17,18 +22,34 @@ const contentStyle: NativeStackNavigationOptions = {
   contentStyle: { backgroundColor: Colors.shadow.lightest },
 }
 
-export const TAB_BAR_HEIGHT = moderateVerticalScale(70, 1.5)
+export const tabBarOptions: BottomTabNavigationOptions = {
+  tabBarStyle: { padding : 10, height: TAB_BAR_HEIGHT, backgroundColor: Colors.white },
+  headerShown: false,
+}
 
-const Header = ({ title, navigation, showGoBackButton, mode }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string }) => (
-  title ? 
-    <View style={[styles.headerCon, { marginTop: mode === 'card' ? 25 : 15 }]}>
-      { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={mode === 'card' ? 15 : 10} left={10} /> }
-      { title && <Text style={styles.headerText}>{title}</Text>}
-    </View> 
-  : showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} position="topLeft" top={mode === 'card' ? 45 : 15} left={10} />
+const RightButton = ({ title, icon, onPress, buttonStyles }: { title?: string | ReactNode, icon?: string, onPress: () => void, buttonStyles?: ViewStyle }) => (
+  <TouchableOpacity onPress={onPress} style={buttonStyles}>
+    { icon && <Image source={getActionIconSource(icon)} style={{ width: 25, height: 25 }} /> }
+    { title && <Text style={styles.buttonText}>{title}</Text> }
+  </TouchableOpacity>
 )
 
-export const dynamicStackOptions = (mode: string = 'modal', showGoBackButton: boolean = true, showTitle: boolean = true): NativeStackNavigationOptions => {
+export const Header = ({ title, navigation, showGoBackButton, mode, rightActions, bgColor = Colors.shadow.lightest }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string, rightActions?: { title?: string | ReactNode, icon?: string, onPress: () => void }[], bgColor?: string }) => (
+  <View style={[styles.headerCon, { height: title ? 70 : 50, paddingTop: mode === 'card' ? 25 : 15, backgroundColor: bgColor }]}>
+    { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} /> }
+    { title && <Text style={styles.headerText}>{title}</Text> }
+    {rightActions && 
+      <View style={[styles.headerRight, { top: mode === 'card' ? 25 : 15 }]}>
+        { rightActions.map((action, index) =>
+          <RightButton key={index} title={action.title} icon={action.icon} onPress={action.onPress} buttonStyles={{ marginLeft: 50 }} />
+        )}
+      </View> 
+    }
+    {/* { mode === 'modal' && <CustomToast /> } */}
+  </View> 
+)
+
+export const dynamicStackOptions = (mode: 'modal' | 'card' = 'modal', showGoBackButton = true, showTitle = true): NativeStackNavigationOptions => {
   return {
     ...headerOptions,
     presentation: mode,
@@ -38,19 +59,47 @@ export const dynamicStackOptions = (mode: string = 'modal', showGoBackButton: bo
   }
 }
 
-export const tabBarOptions: BottomTabNavigationOptions = {
-  tabBarStyle: { padding : 10, height: TAB_BAR_HEIGHT, backgroundColor: Colors.white },
-  headerShown: false,
+export const CatToast = ({ text1, text2, props }: { text1: string, text2: string, props: any }) => (
+  <View style={[Spacing.flexRow, UI.boxShadow, { borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', minHeight: 70, backgroundColor: props.style === 'success' ? Colors.green.lightest : props.style === 'info' ? Colors.yellow.lightest : Colors.red.lightest }]}>
+    <Image source={props.style === 'error' ? require('assets/icons/ui-cat-sad.png') : require('assets/icons/ui-cat-happy.png')} style={UI.icon()} />
+    <View style={[Spacing.flexColumn, { marginLeft: 10, alignItems: 'flex-start' }]}>  
+      <Text style={{ textTransform: 'capitalize', fontWeight: 'bold', fontSize: 15, marginBottom: 5 }}>{props.style}</Text>
+      <Text>{text1}</Text>
+      { text2 && <Text style={{ flex: 1 }}>{text2}</Text> }
+    </View>
+    <Pressable style={{ marginLeft: 'auto' }} onPress={props.onClose}>
+      <Image source={getActionIconSource('close')} style={UI.icon()} />
+    </Pressable>
+  </View>
+)
+
+export const toastConfig = {
+  catToast: ({ text1, text2, props }: ToastConfigParams<any>) => ( <CatToast text1={text1} text2={text2} props={props} /> )
 }
 
+export const CustomToast = () => (
+  <Toast config={toastConfig} />
+)
+
 export const styles = StyleSheet.create({
-  icon: { ...UI.smallIcon },
+  icon: { ...UI.icon() },
   iconLabel: { fontWeight: 'bold', fontSize: 12 },
+  headerCon: {
+    paddingTop: 25,
+  },
   headerText: {
-    ...Typography.mediumHeader, color: Colors.pink.darkest,
+    ...Typography.subHeader, 
+    color: Colors.pink.darkest,
+    margin: 0,
   },
-  headerCon: { 
-    height: 70,
-    backgroundColor: Colors.shadow.lightest,
+  buttonText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: Colors.black,
   },
+  headerRight: {
+    ...Spacing.flexRow,
+    position: 'absolute',
+    right: 20,
+  }
 })

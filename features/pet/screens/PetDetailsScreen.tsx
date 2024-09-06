@@ -1,244 +1,209 @@
-//npm modules
-import { useEffect, useState } from "react"
-import { StyleSheet, View, Text, ScrollView, Pressable, Image, Modal } from "react-native"
 import { useQueryClient } from "@tanstack/react-query"
+import { useEffect, useMemo, useState } from "react"
+import { Pressable, StyleSheet, Text, View } from "react-native"
 //types & context & hooks
 import { Pet } from "@pet/PetInterface"
-import { STATS } from "@stat/statHelpers"
 import { PET_DETAILS } from "@pet/petHelpers"
-import { showDeleteConfirmDialog } from "@hooks/sharedHooks"
+import { STATS } from "@stat/statHelpers"
 //components
-import PetInfo from "@components/PetInfo/PetInfo"
+import { ActionButton, TransparentButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
-import {  BoxHeader, EmptyList, ErrorImage } from "@components/UIComponents"
-import { getActionIconSource, getPetIconSource, getStatIconSource } from "@utils/ui"
-import { ActionButton, TransparentButton } from "@components/ButtonComponent"
+import PetInfo from "@components/PetInfo/PetInfo"
+import { BottomModal, ErrorImage, FormHeader, Icon, ScrollScreen, TitleLabel } from "@components/UIComponents"
+import { Header } from "@navigation/NavigationStyles"
+import { IconType } from "@utils/ui"
 //store & queries
 import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
 import { useGetPetSettings, useSetActions } from "@store/store"
 //styles
-import { Buttons, Spacing, UI, Colors, Typography } from '@styles/index'
-import StatButtonList from "@pet/components/StatButtonList"
+import { StackScreenNavigationProp } from "@navigation/types"
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 interface PetDetailsProps {
-  navigation: any
+  navigation: StackScreenNavigationProp
   route: { params: { petId: string } }
 }
 
 type SectionType = 'info' | 'logs' | 'actions'
 
-const SectionHeader = ({ type, onPress }: { type: SectionType, onPress?: () => void }) => {
-  const title = type === 'info' ? "Important" : type === 'logs' ? 'Logs' : 'Actions'
-  const icon = type === 'info' ? 'saveSquare' : type === 'logs' ? 'chart' : 'actionSquare'
+const filterHelper = (arr: string[], value: string) => arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]
+
+const Item = ({ label, type, logs, info, onPress }: { label: string, type: SectionType, logs: string[], info: string[], onPress: () => void }) => {
+  const item = useMemo(() => {
+    switch (type) {
+      case 'info': return { isActive: info.includes(label), iconType: 'pet', name: PET_DETAILS[label] }
+      case 'logs': return { isActive: logs.includes(label), iconType: 'stat', name: STATS[label].name }
+      default: return null
+    }
+  }, [label, info, logs])
 
   return (
-    <View style={styles.sectionHeaderCon}>
-      <Image source={getActionIconSource(icon)} style={{ ...UI.smallIcon }} />
-      <Text style={styles.sectionHeader}>{title}</Text>
-      { onPress && <ActionButton title={'filter'} onPress={onPress} left='auto' /> }
-    </View>
-  )
-}
-
-const ItemHeaderList= ({ type, logs, info, navigation, onReset, petId }: { type: SectionType, logs: string[], info: string[], navigation: any, onReset: () => void, petId: string }) => {
-  const getHeader = () => ({
-    key: (log: string) => log,
-    titles: () => type === 'logs' ? logs : info, 
-    getIcon: (log: string) => type === 'logs' ? getStatIconSource(log) : getActionIconSource(log), 
-    getName: (log: string) => type === 'logs' ? STATS[log].name : PET_DETAILS[log],
-    onNavigate: (log: string) => {
-      switch(type) {
-        case 'info': return navigation.navigate('MoreDetails', { petId, show: log })
-        case 'logs': return navigation.navigate('LogDetails', { stat: log })
-        default: return null
-      }
-    } 
-  })
-  const header = getHeader()
-  const titles = header.titles()
-
-  return (
-    titles.length > 0 ? titles.map(log =>
-      <BoxHeader key={header.key(log)} title={header.getName(log)} titleIconSource={header.getIcon(log)} mode='light' onPress={() => header.onNavigate(log)} />
-    ) : <TransparentButton title='Reset' onPress={onReset} />
-  )
-}
-
-const ModalItem = ({ type, option, logs, info, onPress }: { type: string, option: SectionType, logs: string[], info: string[], onPress: () => void }) => {
-  const getItem = () => ({
-    key: type,
-    isActive: () => option === 'logs' ? logs.includes(type) : info.includes(type),
-    getIcon: () => option === 'logs' ? getStatIconSource(type) : getPetIconSource(type),
-    getName:() => option === 'logs' ? STATS[type].name : PET_DETAILS[type]
-  })
-  const item = getItem()
-
-  return (
-    <Pressable style={[styles.itemCon, item.isActive() ? { ...UI.active } : { ...UI.inactive }]} onPress={onPress}>
-      <Image source={item.getIcon()} style={{ ...UI.largeIcon }}/>
-      <Text style={{ ...Typography.xSmallHeader, margin: 0 }}>{item.getName()}</Text>
+    <Pressable style={[styles.itemCon, item.isActive ? UI.active : UI.inactive]} onPress={onPress}>
+      <Icon type={item.iconType as IconType} name={label} size={'large'} />
+      <Text style={[Typography.smallHeader, {  margin: 0 }]}>{item.name}</Text>
     </Pressable>
   ) 
 }
 
-const PetDetailsScreen: React.FC<PetDetailsProps> = ({ navigation, route }) => {
+const defaultInfo = ['id', 'service']
+const defaultLogs = ['mood', 'weight', 'energy']
+
+const headerActions = (navigation: any, pet: Pet) => ([
+  { icon: 'search', onPress: () => navigation.goBack(), size: 'xSmall' },
+  { icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }), size: 'xSmall' },
+  { icon: 'add', onPress:() => navigation.navigate('CreateStat', { pet: { _id: pet._id, name: pet.name } }), size: 'xSmall' },
+])
+
+const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
   const queryClient = useQueryClient()
   const { petId } = route.params
   const petCache: Pet | undefined = queryClient.getQueryData(petKeyFactory.petById(petId))
-  const {data: pet, isSuccess, isFetching, isError} = useGetPetById(petId, !petCache)
 
+  const {data: pet, isSuccess, isFetching, isError} = useGetPetById(petId, !petCache)
+  const { handleDeletePet, isPending } = useDeletePet(navigation)
+  
   const infoSetting = useGetPetSettings(petId, 'info')
   const logsSetting = useGetPetSettings(petId, 'logs')
   const { setPetSettings } = useSetActions()
-
-  const defaultInfo = ['ids', 'services']
-  const defaultLogs = ['mood', 'weight', 'energy']
 
   const [modalVisible, setModalVisible] = useState(false)
   const [option, setOption] = useState<SectionType>(null)
   const [info, setInfo] = useState<string[]>(infoSetting ?? defaultInfo)
   const [logs, setLogs] = useState<string[]>(logsSetting ?? defaultLogs)
-
-  const deletePetMutation = useDeletePet(navigation)
-
-  const handleDeletePet = (petId: string) => {
-    deletePetMutation.mutate(petId)
-  }
+  
   //filter list
   const items = option === 'logs' ? Object.keys(STATS) : Object.keys(PET_DETAILS)
+  
+  const resetItems = (type: SectionType) =>{
+    if (type === 'info') {
+      setInfo(defaultInfo)
+    } else if (type === 'logs') {
+      setLogs(defaultLogs)
+    }
+    setPetSettings(petId, type, type === 'info' ? defaultInfo : defaultLogs)
+  }
 
   const toggleItem = (type: string) => {
-    if (option === 'logs') { 
-      setLogs(prev => logs.includes(type) ? prev.filter(p => p !== type) : [...prev, type])
-    } else {
-      setInfo(prev => info.includes(type) ? prev.filter(p => p !== type) : [...prev, type])
+    if (option === 'logs') {
+      return setLogs(prev => filterHelper(prev, type))
+    } else if (option === 'info') {
+      return setInfo(prev => filterHelper(prev, type))
     }
   }
 
-  const handleReset = (type: SectionType) => type === 'info' ? setInfo(defaultInfo) : setLogs(defaultLogs)
+  const filteredList = useMemo(() => ({
+    info: {
+      titles: info, iconType: 'pet', 
+      getName: (info: string) => PET_DETAILS[info], 
+      onNavigate: (info: string) => navigation.navigate('PetMoreDetails', { petId, show: info }) 
+    },
+    logs: { 
+      titles: logs, iconType: 'stat', 
+      getName: (log: string) => log, 
+      onNavigate: (log: string) => navigation.navigate('StatDetails', { stat: log }) 
+    },
+  }), [info, logs, petId])
 
-  const bottomActions = [
-    { key: 'log', title: 'Log pet stats', icon: 'log', onPress: () => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
-    { key: 'edit', title: 'Update pet info', icon: 'editSquare', onPress: () => navigation.navigate('Edit', { pet: pet }) },
-    { key: 'delete', title: deletePetMutation.isPending ? 'Deleting...' : 'Delete pet profile', icon: 'deleteSquare', onPress: () => showDeleteConfirmDialog(pet, handleDeletePet) },
+  const actions = useMemo(() => ([
+    { key: 'log', title: 'Log pet stats', icon: 'add', onPress: () => navigation.navigate('CreateStat', { pet: { _id: pet._id, name: pet.name } }) },
+    { key: 'edit', title: 'Update pet info', icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
+    { key: 'delete', title: isPending ? 'Deleting...' : 'Delete pet profile', icon: 'delete', onPress: () => handleDeletePet(pet) },
+  ]), [pet, navigation, handleDeletePet, isPending])
+
+  const renderActions = ( 
+    actions.map((action, index) => {
+      const focusedStyles = action.key === 'delete' && Typography.error
+
+      return <TitleLabel key={action.key} title={action.title} iconName={action.icon} onPress={action.onPress} titleStyles={focusedStyles} containerStyles={index < actions.length - 1 && UI.tableRow()} size="small" />
+    })
+  )
+
+  const renderFilteredList = (type: 'info' | 'logs') => (
+    filteredList[type].titles.length > 0 ? filteredList[type].titles.map((label, index) => 
+    <TitleLabel key={label} title={filteredList[type].getName(label)} iconType={filteredList[type].iconType as IconType} iconName={label} onPress={() => filteredList[type].onNavigate(label)} size='small' containerStyles={{ ...(index < filteredList[type].titles.length - 1 && UI.tableRow()), ...UI.rowContent(undefined, 0)}} />
+    ) 
+    : <>
+      <TransparentButton title='Reset options' onPress={() => resetItems(type)} color={UI.lightPalette().accent} />
+      <FormHeader title="No option selected" size='xSmall' />
+    </>
+  )
+
+  const sections = [
+    { key: 'info', title: 'Important', iconName: 'info', renderList: renderFilteredList('info') },
+    { key: 'logs', title: 'Logs', iconName: 'chart', renderList: renderFilteredList('logs') },
+    { key: 'actions', title: 'Actions', iconName: 'action', rightAction: false, renderList: renderActions },
   ]
-
-  const topActions = [
-    { key: 'search' },
-    { key: 'edit', onPress: () => navigation.navigate('Edit', { pet: pet }) },
-    { key: 'add', onPress:() => navigation.navigate('CreateLog', { pet: { _id: pet._id, name: pet.name } }) },
-  ] 
-
-  useEffect(() => {
+  
+  useEffect(() => { 
+    navigation.setOptions({
+      header: () => <Header showGoBackButton={true} rightActions={headerActions(navigation, pet)} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[pet?.color]} />
+    })
     if (!modalVisible) {
       const timeout = setTimeout(() => {
         setPetSettings(petId, option, option === 'info' ? info : logs)
       }, 2000)
       return () => clearTimeout(timeout)
     }
-  }, [modalVisible, info, logs]);
+  }, [modalVisible, info, logs, pet, headerActions, navigation])
 
   return (    
-    <View style={{ ...Spacing.scrollScreenDown, backgroundColor: Colors.multi.lightest[pet?.color] }}>
-      <View style={styles.conHeader}>
-        { topActions.map(action => <ActionButton key={action.key} title={action.key} onPress={action.onPress} size='small' />) }
-      </View>
+    <ScrollScreen bgColor={Colors.multi.lightest[pet.color]}>  
+      { isFetching && <Loader /> }
+      { isError && <ErrorImage /> }
+      
+      { isSuccess && <>
+        <View style={styles.infoCard}>
+          <PetInfo pet={pet} size='large' />
+          {/* <StatButtonList petId={pet._id} petColor={pet.color} size='small' navigation={navigation} /> */}
+        </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false} contentContainerStyle={{ ...Spacing.scrollContent, width: '100%' }}>  
-        { isError && <ErrorImage /> }
-        { isFetching && <Loader /> }
-        
-        { isSuccess && <>
-          <View style={styles.infoCard}>
-            <PetInfo pet={pet} size='expanded' />
-            <StatButtonList petId={pet._id} petColor={pet.color} size='large' navigation={navigation} />
-          </View>
+        { sections.map(section => 
+          <View key={section.key} style={Spacing.flexColumnStretch}>
+            <TitleLabel size='small' title={section.title} iconName={section.iconName} mode='bold' rightAction={section.rightAction !== false &&
+              <View style={Spacing.flexRow}>
+                <ActionButton icon='reset' buttonStyles={{ marginRight: 30 }} onPress={() => resetItems(section.key as SectionType)} />
 
-          { ['info', 'logs'].map((type: SectionType) =>
-            <View key={type}>
-              <SectionHeader type={type} onPress={() => {
-                setModalVisible(true)
-                setOption(type)
-              }} />
-              <View style={{ ...UI.roundedCon }}>
-                <ItemHeaderList type={type} logs={logs} info={info} onReset={() => handleReset(type)} navigation={navigation} petId={petId} />
+                <ActionButton icon="filter" onPress={() => {
+                  setModalVisible(true)
+                  setOption(section.key as SectionType)
+                }} /> 
               </View>
-            </View>
-          ) } 
-          
-          <View>
-            <SectionHeader type='actions' />
-            <View style={{ ...UI.roundedCon }}>
-              { bottomActions.map(action => <BoxHeader key={action.key} title={action.title} titleIconSource={getActionIconSource(action.icon)} onPress={action.onPress} titleColor={action.key === 'delete' && Colors.red.dark} mode={action.key === 'delete' ? 'dark' : 'light'} />) }
+            } containerStyles={{ marginTop: 15, marginBottom: 0 }}/>
+            <View style={styles.sectionCon}>
+              { section.renderList }
             </View>
           </View>
-
-        </> }
-      </ScrollView>
-
-      <Modal 
-        animationType='slide'
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}
-        onDismiss={() => {
-          setPetSettings(petId, option, option === 'info' ? info : logs)
-          setOption(null)
-        }}
-        transparent={true}
-      >
-        <Pressable onPress={(e) => e.target === e.currentTarget && setModalVisible(false)} style={{ ...UI.modalOverlay }}>
-          <View style={styles.modalCon}>
-            <View style={Spacing.flexRow}>
-              <Text style={{ ...Typography.smallHeader }}>{option === 'info' ? 'Show Pet Details' : 'Show Pet Logs'}</Text>
-              <Image source={getActionIconSource('filter')} style={{ ...UI.smallIcon }} />
-            </View>
-            <View style={styles.modalBody}>
-              { items.map((type: string, index: number) => <ModalItem key={`${type}-${index}`} type={type} option={option} logs={logs} info={info} onPress={() => toggleItem(type)} />) }
-            </View>
-          </View>
-        </Pressable>
-      </Modal>
-    </View> 
+        )}
+      </> }
+      
+      <BottomModal height='100%' modalVisible={modalVisible} onDismiss={() => setModalVisible(false)}>
+        <View style={Spacing.flexRow}>
+          <FormHeader title={option === 'info' ? 'Show Pet Details' : 'Show Pet Logs'} />
+          <Icon name="filter" />
+        </View>
+        <View style={styles.modalBody}>
+          { items.map((item: string, index: number) => <Item key={`${item}-${index}`} label={item} type={option} logs={logs} info={info} onPress={() => toggleItem(item)} />) }
+        </View>
+      </BottomModal>
+      
+    </ScrollScreen>
   )
 }
- 
+
 const styles = StyleSheet.create({
-  conHeader: {
-    ...Spacing.flexRow, 
-    marginLeft: 'auto', 
-    paddingTop: 50, 
-    paddingBottom: 10,
-    marginRight: 10,
-    width: '40%', 
-    justifyContent: 'space-between', 
-  },
   infoCard: {
-    ...Spacing.flexColumn,
-    ...UI.card,
-    width: '90%',
-    height: 290,
+    ...Spacing.flexColumnStretch,
+    ...UI.card(true, false, 20, undefined, 20, 30),
     justifyContent: 'space-around',
-    borderRadius: 20,
     backgroundColor: Colors.white,
   },
-  sectionHeader: {
-    ...Typography.xSmallHeader,
-    marginVertical: 0,
-    marginLeft: 10,
-  },
-  sectionHeaderCon: {
-    ...Spacing.flexRow,
-    width: '90%',
-    marginBottom: 0,
-    marginTop: 10,
+  sectionCon: {
+    ...UI.card(true, false, undefined, 0), 
+    ...Spacing.flexColumnStretch,
   },
   itemCon: {
     ...Spacing.flexColumn,
     margin: 20,
-  },
-  modalCon: {
-    height: '80%',
-    ...UI.bottomModal,
   },
   modalBody: {
     ...Spacing.flexRow,

@@ -1,14 +1,13 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 //npm modules
-import Toast from 'react-native-toast-message'
-import * as React from 'react'
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import * as React from 'react'
 //context
 import { AuthProvider } from '@auth/AuthContext'
 //components & utils
 import AppNavigator from '@navigation/AppNavigator'
 import { showToast } from '@utils/misc'
-import { toastConfig } from '@components/UIComponents'
+import { CustomToast } from '@navigation/NavigationStyles'
 
 const App: React.FC = () => {
   const queryClient = new QueryClient({
@@ -23,7 +22,7 @@ const App: React.FC = () => {
       <AuthProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <AppNavigator />
-          <Toast config={toastConfig} />
+          <CustomToast />
         </GestureHandlerRootView>
       </AuthProvider>
     </QueryClientProvider>

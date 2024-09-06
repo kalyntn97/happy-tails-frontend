@@ -1,17 +1,15 @@
 //npm
-import { FC, useEffect } from "react"
 import { useIsFocused } from "@react-navigation/native"
-import { View, Text, StyleSheet } from "react-native"
+import { FC, useEffect } from "react"
 //components
 import HealthForm from "@health/components/HealthForm"
-import { SubButton } from "@components/ButtonComponent"
 import { AlertForm } from "@utils/ui"
+import { ScrollScreen } from "@components/UIComponents"
 //queries & types
-import { Pet } from "@pet/PetInterface"
 import { Health, Visit } from "@health/HealthInterface"
 import { useUpdateHealth } from "@health/healthQueries"
+import { Pet } from "@pet/PetInterface"
 //styles
-import { Spacing } from "@styles/index"
 
 interface EditHealthProps {
   navigation: any
@@ -47,17 +45,10 @@ const EditHealthScreen: FC<EditHealthProps> = ({ navigation, route }) => {
   }, [navigation, isFocused])
 
   return (
-    <View style={styles.container}>
+    <ScrollScreen>
       <HealthForm navigation={navigation} onSubmit={handleSubmit} status={updateHealthMutation.status} initialValues={initialValues}/>
-    </View>
+    </ScrollScreen>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-    ...Spacing.centered
-  }
-})
- 
 export default EditHealthScreen

@@ -8,12 +8,12 @@ import { Profile } from "@profile/ProfileInterface"
 import { useSetActions } from "@store/store"
 import { useUpdateProfile } from "@profile/profileQueries"
 //components
-import { MainButton, SubButton } from "@components/ButtonComponent"
+import { MainButton, SubButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 import { AlertForm } from "@utils/ui"
-import { ErrorMessage } from "@components/UIComponents"
+import { ErrorMessage, ScrollScreen } from "@components/UIComponents"
 
 interface EditProfileProps {
   navigation: any
@@ -72,7 +72,7 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
   }, [navigation, isFocused])
   
   return ( 
-    <ScrollView contentContainerStyle={styles.container} alwaysBounceVertical={false} keyboardShouldPersistTaps='handled'>
+    <ScrollScreen>
       {profile ? 
         <>
           <View style={styles.photoUpload}>
@@ -112,16 +112,16 @@ const EditProfileScreen: React.FC<EditProfileProps> = ({ navigation, route }) =>
         </>
         : <Loader />
       }
-    </ScrollView>
+    </ScrollScreen>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.fullCon(),
   },
   photoUpload: {
-    ...UI.photo,
+    ...UI.photo(),
     position: 'relative',
     overflow: 'hidden',
     margin: 20,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     margin: 10
   },
   input: {
-    ...UI.input,
+    ...UI.input(),
     borderColor: Colors.pink.reg,
   },
   multiline: {

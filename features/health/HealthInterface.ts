@@ -1,15 +1,38 @@
-import { Pet } from "@pet/PetInterface"
+import { Pet, PetBasic, Service } from "@pet/PetInterface"
+import { Frequency } from "@utils/types"
 
-export interface Visit {
-  _id: string
+type HealthType = 'Routine' | 'Illness' | 'Emergency'
+type Appointment = {
   date: string
-  notes: string
+  vet: Service
+  completed: boolean
+}
+
+export interface HealthFormData {
+  name: string
+  details: { [key: string]: string }
+  pet: PetBasic
+  repeat: boolean
+  frequency: Frequency | null
+  type: HealthType
+  lastDone: Visit[] | []
+  nextDue: Visit | null
+  healthId: string | null
+}
+export interface Health extends HealthFormData {
+  _id: string
 }
 
 export interface VisitFormData {
-  date: string
-  notes: string
-  healthId?: string
+  dueDate: string
+  overDue: boolean
+  appointment: Appointment | null
+  notes: string | null
+  health: string | Health
+  visitId: string | null
+}
+export interface Visit extends VisitFormData {
+  _id: string | null
 }
 
 export interface DeleteVisitFormData {
@@ -22,27 +45,4 @@ export interface AddVisitNotesFormData {
   visitId: string
   notes: string
   due?: boolean
-}
-export interface Health {
-  _id: string
-  pet: Pet
-  name: string
-  type: string
-  vaccine: string
-  times: number
-  frequency: string
-  lastDone: Visit[]
-  nextDue: Visit
-}
-
-export interface HealthFormData {
-  pet: string
-  name: string
-  type: string
-  vaccine?: string
-  times?: number
-  frequency?: string
-  lastDone?: Visit[]
-  nextDue?: Visit
-  healthId?: string
 }

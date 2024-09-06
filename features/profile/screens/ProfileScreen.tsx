@@ -1,21 +1,18 @@
 //npm modules
-import { Suspense, useEffect, useState } from "react"
-import { View, Text, Button, StyleSheet, FlatList, Image, TouchableOpacity, ImageStyle, Touchable, Pressable, ScrollView } from "react-native"
-import { useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
+import { Image, ImageStyle, Pressable, StyleSheet, Text, View } from "react-native"
 //store & queries
-import { profileKeyFactory, useAddBanner, useGetProfile } from "@profile/profileQueries"
+import { useAddBanner, useGetProfile } from "@profile/profileQueries"
 //types
-import { Profile, ProfileData } from "@profile/ProfileInterface"
-import { Pet, PetBasic } from "@pet/PetInterface"
 //components
-import PetList from "@components/PetInfo/PetList"
 import Loader from "@components/Loader"
-import { BoxHeader, BoxWithHeader, ErrorImage } from "@components/UIComponents"
+import PetList from "@components/PetInfo/PetList"
+import { BoxWithHeader, ErrorImage, ScrollScreen, TitleLabel } from "@components/UIComponents"
 //hooks & utils
-import { AlertForm, getActionIconSource } from "@utils/ui"
-import { useCaresByFrequency, useSelectPhoto, useTaskCounts } from "@hooks/sharedHooks"
+import { useSelectPhoto } from "@hooks/sharedHooks"
+import { AlertForm } from "@utils/ui"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 const ProfileScreen = ({ navigation, route }) => {
   const { data, isFetching, isError } = useGetProfile()
@@ -55,16 +52,16 @@ const ProfileScreen = ({ navigation, route }) => {
   if (isError) return <ErrorImage />
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollScreen contentStyles={{ position: 'relative' }}>
       <Pressable style={styles.bannerCon} onPress={addBanner}>
         <View style={styles.cameraIcon}>
-          <Image source={require('@assets/icons/action-camera.png')} style={{...UI.smallIcon}} />
+          <Image source={require('@assets/icons/action-camera.png')} style={{...UI.icon()}} />
         </View>
         { banner && <Image source={{ uri: banner }} style={styles.banner as ImageStyle} /> }
       </Pressable>
 
       <View style={styles.profileCon}>
-        <View style={styles.headerContainer}>
+        <View style={Spacing.flexColumnStretch}>
           <View style={styles.profileHeader}>
             <Image source={{ uri: profile.photo ?? randomProfilePhotos[randomIdx] }} style={styles.profilePhoto }/>
             <Text style={styles.header}>{profile.name}</Text>
@@ -75,7 +72,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <Text style={styles.bioText}>{profile.bio}</Text>
           </View>
             
-          {/* <View style={{...UI.rowCon}}>
+          {/* <View style={{...UI.rowContent()}}>
             <StatButton item={ {header: 'streak', stat: 0, body: 'days'}} />
             <StatButton item={ {header: 'tasks', stat: careCounts(new Date()) , body: 'today'}} />
             <StatButton item={ {header: 'visit due', stat: Math.abs(healthCounter), body: `days ${healthCounter < 0 && 'ago'}`}} color={healthCounter < 0 && Colors.red.reg} />
@@ -83,21 +80,20 @@ const ProfileScreen = ({ navigation, route }) => {
         </View>
 
         <View style={styles.bodyCon}>
-          <BoxWithHeader title='All Pets' titleIconSource={getActionIconSource('home')} onPress={() => navigation.navigate('Pets', { screen: 'Index' })} content={
-            <View style={{ width: '100%', paddingTop: 10 }}>
-              <PetList petArray={data.pets} size='compact' />
-            </View>
-          } />
-          <View style={{...UI.roundedCon}}>
-            <BoxHeader title="All pet care tasks" titleIconSource={getActionIconSource('care')} onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
-            <BoxHeader title="All vet visits" titleIconSource={getActionIconSource('health')} onPress={() => navigation.navigate('Home', { screen: 'HealthIndex' })} />
-            <BoxHeader title="Update profile" titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('Edit', { profile : profile })} />
-            <BoxHeader title="Settings" titleIconSource={getActionIconSource('settings')} onPress={() => navigation.navigate('Settings', { profile : profile })} />
+          <BoxWithHeader title='All Pets' iconName="home" onPress={() => navigation.navigate('Pets', { screen: 'Index' })}>
+            <PetList petArray={data.pets} size='compact' />
+          </BoxWithHeader>
+          
+          <View style={UI.card()}>
+            <TitleLabel title="All pet care tasks" iconName="care" onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
+            <TitleLabel title="All vet visits" iconName="health" onPress={() => navigation.navigate('Home', { screen: 'HealthIndex' })} />
+            <TitleLabel title="Update profile" iconName="editSquare" onPress={() => navigation.navigate('Edit', { profile : profile })} />
+            <TitleLabel title="Settings" iconName="settings" onPress={() => navigation.navigate('Settings', { profile : profile })} />
           </View>
         </View>
       </View>
     
-    </ScrollView>
+    </ScrollScreen>
   )
 }
 
@@ -134,13 +130,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
   },
   profileCon: {
-    width: '100%',
+    ...Spacing.flexColumnStretch,
     marginTop: 120,
-    ...Spacing.flexColumn,
-  },
-  headerContainer: {
-    width: '100%',
-    ...Spacing.flexColumn,
   },
   profileHeader: {
     width: '90%',
@@ -151,7 +142,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   header: {
-    ...Typography.xSmallHeader,
+    ...Typography.smallHeader,
     marginTop: 10,
     marginBottom: 0,
     borderTopRightRadius: 15,
@@ -163,9 +154,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   profilePhoto: {
-    ...UI.smallPhoto,
+    ...UI.photo('large', 99, 10),
     backgroundColor: Colors.pink.light,
-    margin: 10,
   },
   bioBox: {
     width: '90%',
@@ -174,7 +164,7 @@ const styles = StyleSheet.create({
   },
   bioText: {
     textAlign: 'left',
-    ...Typography.xSmallBody,
+    ...Typography.smallBody,
     lineHeight: 20,
   },
   statsCon: {

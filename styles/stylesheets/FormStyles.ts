@@ -1,42 +1,14 @@
 import { StyleSheet } from "react-native"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { Spacing, Typography, UI } from '@styles/index'
 
 export const styles = StyleSheet.create({
   container: {
-    ...Spacing.scrollScreenDown,
-    paddingTop: 50,
-  },
-  header: {
-    ...Typography.mediumHeader,
-    marginTop: 30,
-    color: Colors.pink.darkest
-  },
-  inputFocused: {
-    borderColor: Colors.pink.darkest,
-    color: Colors.pink.darkest,
-  },
-  inputUnfocused: {
-    borderColor: Colors.shadow.dark,
-    color: Colors.black,
-  },
-  rowCon: {
-    ...Spacing.flexRow,
-    justifyContent: 'space-between',
-    width: 300,
-    marginTop: 10,
-  },
-  rowText: {
-    fontSize: 15
-  },
-  bottomCon: {
-    ...Spacing.flexColumn,
-    marginTop: 30,
+    ...Spacing.flexColumnStretch,
   },
   labelCon: {
-    ...Spacing.flexRow,
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-between',
-    width: '100%',
     marginVertical: 20,
   },
   label: {
@@ -46,33 +18,33 @@ export const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 5,
   },
-  photoUpload: {
-    ...UI.photo,
-    position: 'relative',
-    overflow: 'hidden',
-    margin: 20,
-    backgroundColor: Colors.pink.light,
-    elevation: 2,
+  headerCon: {
+    ...Spacing.flexRowStretch,
+    flexWrap: 'wrap',
+    alignSelf: 'flex-start',
+    marginBottom: 15,
+    zIndex: 1,
   },
-  image: {
-    ...Spacing.fullWH,
+  titleCon: {
+    ...Spacing.flexColumnStretch,
+    marginLeft: 15, 
+    alignItems: 'flex-start',
+    flex: 1,
   },
-  uploadBtnContainer: {
-    opacity: 0.7,
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    backgroundColor: Colors.pink.reg,
-    width: '100%',
-    height: '25%',
+  title: {
+    ...Typography.subHeader,
+    textAlign: 'left',
+    margin: 0,
+    maxWidth: '100%',
   },
-  uploadBtn: {
-    display: 'flex',
-    ...Spacing.centered
+  subtitleCon: {
+    ...Spacing.flexRow,
+    width: '90%',
+    marginLeft: 'auto',
+    marginRight: 10,
   },
-  cameraIcon: {
-    width: 20,
-    height: 20,
+  subtitle: {
+    ...Typography.smallSubHeader,
   },
   leftInput: {
     width: 140,
@@ -86,5 +58,14 @@ export const styles = StyleSheet.create({
   catAnimation: {
     width: '60%',
     aspectRatio: 1,
-  }
+  },
+  contentCon: {
+    ...UI.card(),
+    width: '100%',
+    alignItems: 'flex-start',
+  },
+  rowCon: {
+    ...UI.tableRow(),
+    ...UI.rowContent('space-between', 0, 15, 0),
+  },
 })

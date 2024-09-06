@@ -1,125 +1,104 @@
-//npm
-import { useRef, useState } from "react"
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, useWindowDimensions, Pressable, Dimensions } from "react-native"
-import RNDateTimePicker from "@react-native-community/datetimepicker"
+import { useCallback, useEffect } from "react"
 //components
-import Dropdown from "@components/Dropdown/Dropdown"
-import { CheckboxButton, MainButton, SubButton, ToggleButton, TransparentButton } from "@components/ButtonComponent"
-import { DateInput, ErrorMessage, FormInput, FormLabel, BottomModal, ModalInput } from "@components/UIComponents"
-import ColorPicker from "@components/ColorPicker"
-import PetPicker from "@components/PetPicker"
+import { ToggleButton } from "@components/ButtonComponents"
+import ColorPicker from "@components/Pickers/ColorPicker"
+import FrequencyPicker from "@components/Pickers/FrequencyPicker"
+import PetPicker from "@components/Pickers/PetPicker"
 import TitleInput from "@components/TitleInput"
-import FrequencyPicker, { frequencyMap, intervalLabel } from "@components/FrequencyPicker"
+import { DateInput, ScrollScreen, TableForm } from "@components/UIComponents"
+import { Header } from "@navigation/NavigationStyles"
 //types && hooks
-import useForm from "@hooks/useForm"
-import { PetBasic } from "@pet/PetInterface"
 import type { Care, CareFormData } from "@care/CareInterface"
-
+import { useShallowPets } from "@hooks/sharedHooks"
+import useForm from "@hooks/useForm"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { styles } from "@styles/stylesheets/FormStyles"
-import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
+import { Colors } from '@styles/index'
+import { DEFAULT_FREQUENCY } from "@utils/constants"
 
-
-interface InitialState extends Care {
+interface InitialState extends CareFormData {
   ending: boolean
-  errorMsg: string
+  errors: any
 }
 
 interface CareFormProps {
   onSubmit: (formData: CareFormData) => void
   initialValues?: Care
-  navigation: any
   status: string
-  setColor?: (color: number) => void
+  navigation: any
 }
 
-const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, navigation, status, setColor }) => {
+const CareForm: React.FC<CareFormProps> = ({ onSubmit, initialValues, status, navigation }) => {
+  const { PET_BASICS } = useShallowPets()
+
   const initialState: InitialState = {
     name: initialValues?.name ?? null, 
-    pets: initialValues?.pets ?? [],
+    pets: initialValues?.pets ?? [PET_BASICS[0]._id],
     repeat: initialValues?.repeat ?? false,
-    startDate: initialValues?.startDate ?? new Date(),
-    ending: !!initialValues?.endDate,
+    startDate: initialValues?.startDate ?? new Date().toISOString(),
     endDate: initialValues?.endDate ?? null,
-    frequency: initialValues?.frequency ?? { type: 'days', interval: 1, timesPerInterval: [1] },
+    frequency: initialValues?.frequency ?? DEFAULT_FREQUENCY,
     color: initialValues?.color ?? 0,
-    icon: initialValues?.icon ?? null,
-    _id: initialValues?._id ?? null,
-    errorMsg: '',
+    careId: initialValues?.careId ?? null,
+    ending: !!initialValues?.endDate,
+    errors: null,
   }
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
-  const { name, pets, repeat, startDate, ending, endDate, frequency, color, _id, errorMsg } = values
+  const { name, pets, repeat, startDate, ending, endDate, frequency, color, careId, errors }: InitialState = values
 
-  const height = useWindowDimensions().height
+  const mainTable = [
+    { key: 'pets', label: 'Pets', icon: 'pet', value: 
+      <PetPicker pets={pets} onSelect={(selected: string[]) => onChange('pets', selected)} mode='multi' /> 
+    },
+    { key: 'startDate', label: 'Start Date', icon: 'schedule', value: 
+      <DateInput date={startDate} onChangeDate={(selected) => onChange('startDate', selected)} color={color} /> 
+    },
+    { key: 'repeat', label: 'Repeat', icon: 'repeat', value: 
+      <ToggleButton onPress={() => onChange('repeat', !repeat)} isOn={repeat} />
+    },
+    { key: 'frequency', label: 'Frequency', icon: 'due', value: 
+      <FrequencyPicker frequency={{ ...frequency, ending, endDate }} color={color}
+        onSelectFrequency={(key: string, selected: any) => onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)}
+        onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | string) => onChange(key, value)}
+        onReset={() => {
+          onChange('frequency', initialState.frequency)
+          onChange('ending', initialState.ending)
+          onChange('endDate', initialState.endDate)
+        }}
+      />
+    },
+    // { key: 'reminder', label: 'Reminder', icon: 'reminder', value: renderReminder },
+  ]
 
   function handleSubmit() {
-    if (!name || !pets.length) {
-      onChange('errorMsg', 'Please enter all fields.')
-    } else {
-      onChange('errorMsg', '')
+    let updatedFrequency = frequency
+    let updatedEndDate = endDate
 
-      if (!repeat) ['frequency', 'endDate'].map(value => onChange(value, null))
-      
-      if (!ending) onChange('endDate', null)
-      onSubmit({ name, pets, repeat, startDate, endDate, frequency, color, _id })
-    }
+    if (repeat === false) updatedFrequency = null
+    if (ending === false) updatedEndDate = null
+    onSubmit({ name, pets, repeat, startDate, endDate: updatedEndDate, frequency: updatedFrequency, color, careId })
   }
+
+  const handleValidate = () => onValidate({ name })
+
+  const headerActions = [
+    { icon: 'reset', onPress: onReset },
+    { title: status === 'pending' ? 'Submitting...' : 'Submit', onPress: handleValidate },
+  ]
+
+  useEffect(() => {
+    navigation.setOptions({
+      header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[color]} />
+    })
+  }, [handleValidate, status, color])
+  
   return (
-    <ScrollView
-      style={{ width: '90%' }}
-      keyboardShouldPersistTaps='handled'
-      contentContainerStyle={[styles.container, { minHeight: height * 0.75}]}
-      showsVerticalScrollIndicator={false}
-      alwaysBounceVertical={false}
-    >
-      <View style={{ position: 'absolute', right: 0, top: 20, zIndex: 999 }}>
-        <ColorPicker mode='modal' onPress={(selected) => {
-          onChange('color', selected)
-          setColor(selected)
-      }} initial={color} />
-      </View>
-      <TitleInput initial={name} placeholder='New Task' onChange={(input) => onChange('name', input)} type='care' />
-      <FormLabel label='Select Pets' icon="pets" width='100%' top={30} />
-      
-      <PetPicker mode="multi" onSelect={(selections) => onChange('pets', selections)} initials={pets?.map((pet: PetBasic) => pet._id ?? pet)} />
+    <ScrollScreen bgColor={Colors.multi.lightest[color]}>
+      <TitleInput initial={initialState.name} placeholder='New Task' onChange={(input: string) => onChange('name', input)} type='care' error={errors?.name} />
 
-      <FormLabel label='Start Date' icon="schedule" width='100%' top={30} />
-      <DateInput date={startDate} onChangeDate={selectedDate => onChange('startDate', selectedDate)} color={color} />
+      <ColorPicker selected={color} onPress={(selected) => onChange('color', selected)} />
 
-      <View style={styles.labelCon}>
-        <FormLabel label='Repeat' icon="repeat" top={0} bottom={0} />
-        <ToggleButton onPress={() => onChange('repeat', !repeat)} initial={repeat} size='small' />
-      </View>
-
-      { repeat &&
-        <ModalInput maxHeight='90%'
-          label={
-            <Text>Repeats {frequency && frequencyMap[frequency.type].timesPerIntervalLabel(frequency.timesPerInterval)} {intervalLabel(frequency.interval, frequency.type)} {ending && `until ${endDate && endDate.toLocaleDateString()}`}</Text>
-          }
-          onReset={() => {
-            onChange('frequency', initialState.frequency)
-            onChange('ending', initialState.ending)
-            onChange('endDate', initialState.endDate)
-            onChange('showFrequencyPicker', false)
-          }}
-        >
-          <FrequencyPicker color={color} initial={{ ...frequency, ending, endDate }}
-            onSelectFrequency={(key: string, selected: any) => onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)}
-            onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | Date) => onChange(key, value)}
-          />
-        </ModalInput>
-      }
-      
-      <View style={styles.bottomCon}>
-        {errorMsg && <ErrorMessage error={errorMsg} />}
-        <View style={Spacing.flexRow}>
-          <MainButton onPress={() => onValidate(name, pets.length, startDate)} title={status === 'pending' ? 'Submitting...' : !!name ? 'Save' : 'Create'} />
-          <TransparentButton onPress={onReset} title='Clear' />
-        </View>
-      </View>
-
-    </ScrollView>
+      <TableForm table={mainTable} dependentRows={{ frequency: repeat }} />
+    </ScrollScreen>
   )
 }
 

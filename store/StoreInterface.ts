@@ -4,6 +4,7 @@ import { Care } from '@care/CareInterface'
 import { Health } from '@health/HealthInterface'
 export interface SettingSlice {
   activeDate: { date: number, week: number, month: number, year: number }
+  getActiveDate: () => Date
   currentIsActive: { date: boolean, week: boolean, month: boolean, year: boolean }
   activeTaskCounts: { care: number, health: number }
   healthInterval: number

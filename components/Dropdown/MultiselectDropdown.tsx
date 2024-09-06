@@ -94,7 +94,7 @@ const MultiselectDropdown: React.FC<MultiselectDropdownProps> = ({ label, dataTy
 const styles = StyleSheet.create({
   dropDownBtn: {
     ...Spacing.flexRow,
-    ...UI.input,
+    ...UI.input(),
     height: 'auto',
     borderColor: Colors.pink.reg,
     justifyContent: 'space-between',

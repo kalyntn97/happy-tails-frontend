@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { MainButton } from "@components/ButtonComponent"
+import { MainButton } from "@components/ButtonComponents"
 import { ErrorMessage } from "@components/UIComponents"
 
 interface AccountFormProps {
@@ -97,11 +97,10 @@ const styles = StyleSheet.create({
   },
   form: {
     ...UI.form,
-    width: '100%',
     height: '90%'
   },
   input: {
-    ...UI.input,
+    ...UI.input(),
     height: 40,
     margin: 5,
     borderColor: Colors.pink.reg,

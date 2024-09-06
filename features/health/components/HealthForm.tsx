@@ -1,157 +1,196 @@
-//npm
-import { useState } from "react"
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
-import RNDateTimePicker from "@react-native-community/datetimepicker"
+import Fuse from "fuse.js"
+import { useEffect, useMemo } from "react"
+import { View } from "react-native"
 //store && types & helpers
-import { Health, Visit, VisitFormData } from "@health/HealthInterface"
+import { Health, HealthFormData, Visit } from "@health/HealthInterface"
 import * as healthHelpers from '@health/healthHelpers'
-import { useShallowPetBasics } from "@store/storeUtils"
-//components
-import Dropdown from "@components/Dropdown/Dropdown"
-import { CheckboxButton, MainButton, SubButton } from "@components/ButtonComponent"
-import MultipleInputs from "@components/MultipleInputs"
-import PetPicker from "@components/PetPicker"
-//styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { styles } from "@styles/stylesheets/FormStyles"
-import { ErrorMessage } from "@components/UIComponents"
+import { FormErrors } from "@utils/types"
+//hooks & utils
 import { useShallowPets } from "@hooks/sharedHooks"
+import useForm from "@hooks/useForm"
+import { compareDates, getDateFromRange, getDateInfo } from "@utils/datetime"
+//components
+import { ActionButton, ToggleButton } from "@components/ButtonComponents"
+import Dropdown from "@components/Dropdown/Dropdown"
+import FrequencyPicker from "@components/Pickers/FrequencyPicker"
+import IconPicker from "@components/Pickers/IconPicker"
+import PetPicker from "@components/Pickers/PetPicker"
+import TitleInput from "@components/TitleInput"
+import { FormError, Icon, ModalInput, TableForm, TitleLabel } from "@components/UIComponents"
+import { Header } from "@navigation/NavigationStyles"
+import VisitForm from "./VisitForm"
+//styles
+import { UI } from "@styles/index"
+import { styles } from "@styles/stylesheets/FormStyles"
 
-interface initialStates extends Health {
-  healthId: string
-}
 interface HealthFormProps {
-  onSubmit: (pet: string, type: string, name: string, vaccine: string, times: number, frequency: string, lastDone: VisitFormData[], nextDue: VisitFormData, healthId: string) => void
-  initialValues?: initialStates 
+  onSubmit: (formData: HealthFormData) => void
+  initialValues?: Health
   navigation: any
   status: string
 }
+interface InitialState extends HealthFormData {
+  errors: FormErrors
+}
+
+const vaccineFuse = new Fuse(['vaccination', 'vaccine'])
 
 const HealthForm: React.FC<HealthFormProps> = ({ onSubmit, initialValues, navigation, status }) => {
-  const [pet, setPet] = useState<string>(initialValues?.pet._id ?? null)
-  const [name, setName] = useState<string>(healthHelpers.HEALTHS[initialValues?.name] ?? null)
-  const [vaccine, setVaccine] = useState<string>(healthHelpers.VACCINES[initialValues?.vaccine]?.name ?? null)
-  const [type, setType] = useState<string>(initialValues?.type ?? 'Routine')
-  const [times, setTimes] = useState<number>(initialValues?.times ?? null)
-  const [frequency, setFrequency] = useState<string>(initialValues?.frequency ?? null)
-  const [lastDone, setLastDone] = useState<Visit[] | VisitFormData[]>(initialValues?.lastDone ?? [])
-  const [nextDue, setNextDue] = useState<Visit | VisitFormData>(initialValues?.nextDue ?? null)
+  const { petIdToColor, PET_BASICS, petIdToPet } = useShallowPets()
+  const { date, monthName } = getDateInfo('today')
 
-  const [species, setSpecies] = useState<string>(null)
-  const [allowManualName, setAllowManualName] = useState<boolean>(false)
-  const [allowManualDueDate, setAllowManualDueDate] = useState<boolean>(false)
-  const [errorMsg, setErrorMsg] = useState<string>(null)
+  const initialState: InitialState = {
+    name: initialValues?.name ?? null,
+    details: initialValues?.details ?? null,
+    pet: initialValues?.pet ?? PET_BASICS[0],
+    type: initialValues?.type ?? 'Routine',
+    repeat: initialValues?.repeat ?? false,
+    frequency: initialValues?.frequency ?? { type: 'years', interval: 1, timesPerInterval: [{ month: monthName.slice(0, 3), day: date }] },
+    lastDone: initialValues?.lastDone ?? [],
+    nextDue: initialValues?.nextDue ?? null,
+    healthId: initialValues?._id ?? null,
+    errors: {},
+  }
 
-  const healthId: string | null = initialValues?.healthId ?? null
-  const initialVisits = lastDone.map((visit: Visit) => visit.date)
+  const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
 
-  const handleSelectName = (selected: string) => {
-    setName(() => {
-      if (selected === 'Others') {
-        setAllowManualName(true)
-        return ''
-      } else {
-        setAllowManualName(false)
-        const healthKey: string = healthHelpers.healthKeyFromName[selected]
-        return healthKey
-      }
+  const { name, details, pet, type, repeat, frequency, lastDone, nextDue, healthId, errors }: InitialState = values
+
+  const sortedVisits = [...lastDone].sort((a: Visit, b: Visit) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime())
+  
+  const isVaccine = useMemo(() => {
+    const search = name ? vaccineFuse.search(name) : null
+    return !!search?.length && (pet.species === 'Cat' || pet.species === 'Dog')
+  }, [name, pet.species])
+
+  function handleSubmit() {
+    if (!repeat) ['frequency', 'lastDone', 'nextDue'].map(key => onChange(key, null))
+    onSubmit({ name, details, type, pet, repeat, frequency, lastDone, nextDue, healthId })
+  }
+
+  const handleValidate = () => repeat ? onValidate({ name, type }) : onValidate({ name, type, 'last visit': lastDone })
+  
+  const updateNextDue = (latestDueDate: string = sortedVisits[0].dueDate) => {
+    const nextDueDate = getDateFromRange(latestDueDate, frequency.type.slice(0, -1), frequency.interval, 1, frequency.timesPerInterval)
+
+    const overdue = compareDates('today', nextDueDate.toISOString())
+    onChange('nextDue', { dueDate: nextDueDate, overdue: overdue, appointment: { date: nextDueDate, vet: null, completed: false }, notes: null }) 
+  }
+
+  const handleAddVisit = () => {
+    let newDueDate = new Date()
+    let lastDueDate = sortedVisits.length ? sortedVisits[sortedVisits.length - 1].dueDate : 'today'
+
+    if (repeat && frequency) {
+      if(!nextDue) updateNextDue(lastDueDate)
+      newDueDate = getDateFromRange(lastDueDate, frequency.type.slice(0, -1), frequency.interval, -1, frequency.timesPerInterval)
+    } else newDueDate = getDateFromRange(lastDueDate, 'day', 1, -1)
+
+    const overdue = compareDates(newDueDate.toISOString(), 'today') < 0
+    onChange('lastDone', [...sortedVisits, { dueDate: newDueDate, overDue: overdue, appointment: { date: newDueDate, vet: null, completed: true }, notes: null } ])
+  }
+    const handleDeleteVisit = (index: number) => {
+    if (sortedVisits.length === 1) onChange('nextDue', null)
+    else if (index === 0) updateNextDue()
+    
+    onChange('lastDone', sortedVisits.filter((_, idx) => idx !== index))
+  }
+
+  const handleUpdateVisit = (formData: Visit, index: number) => {
+    const shouldUpdateNextDue = compareDates(formData.dueDate, sortedVisits[0].dueDate)
+    if (shouldUpdateNextDue) updateNextDue(formData.dueDate)
+    onChange('lastDone', sortedVisits.map((v, idx) => idx === index ? formData : v))
+  }
+
+  const handleToggleRepeat = () => {
+    if (repeat === true) onChange('nextDue', null)
+    if (!nextDue && sortedVisits.length) updateNextDue()
+    onChange('repeat', !repeat)
+  }
+
+  const handleUpdateFrequency = (key: string, selected: string ) => {
+    onChange('frequency', frequency[key] ? { ...frequency, [key]: selected } : selected)
+    if (sortedVisits.length) updateNextDue()
+  }
+
+  const mainTable = [
+    { key: 'pet', label: 'Pet', icon: 'pet', value: 
+      <PetPicker pets={[pet]} onSelect={(selected: string[]) => onChange('pet', selected[0])} /> 
+    },
+    { key: 'type', label: 'Type', icon: 'healthType', value: 
+      <ModalInput label={type}>
+        <IconPicker selected={type} options={healthHelpers.HEALTH_TYPES_OPTIONS} initial={initialState.type} onSelect={(selected: string) =>  onChange('type', selected)} pickerStyles={{ marginTop: 15 }}/>
+      </ModalInput> 
+    },
+    { key: 'repeat', label: 'Repeat', icon: 'repeat', value: 
+      <ToggleButton onPress={handleToggleRepeat} isOn={repeat} />
+    },
+    { key: 'frequency', label: 'Frequency', icon: 'due', value: 
+      <FrequencyPicker frequency={frequency} color={pet.color}
+        onSelectFrequency={handleUpdateFrequency}
+        onReset={() =>  onChange('frequency', initialState.frequency)}
+      />
+    },
+  ]
+
+  const headerActions = [
+    { icon: 'reset', onPress: onReset },
+    { title: status === 'pending' ? 'Submitting...' : 'Submit', onPress: handleValidate },
+  ]
+
+  useEffect(() => {
+    navigation.setOptions({
+      header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' />
     })
-  }
-
-  const { PET_BASICS } = useShallowPets()
-  const handleSelectPet = (selected: string[]) => {
-    setPet(selected[0])
-    setSpecies(PET_BASICS.find(pet => pet._id === selected[0]).species)
-    if (vaccine) setVaccine(null)
-  }
-
-  const handleSaveVaccine = (vaccineName: string) => {
-    const vaccineAbbr: string = healthHelpers.vaccineKeyFromName[vaccineName]
-    return setVaccine(vaccineAbbr)
-  }
-
-  const editPastVisits = (inputs: Date[]) => {
-    const results = inputs.map(input => ({ date: input, notes: null }))
-    setLastDone(results)
-  }
-
-  const handleSubmit = () => {
-    if (!name || !times || !frequency || !pet || !type) {
-      setErrorMsg('Please enter all fields.')
-    } else {
-      setErrorMsg('')
-      onSubmit(pet, type, name, vaccine, times, frequency, lastDone, nextDue, healthId)
-    }
-  }
+  }, [handleValidate, status])
 
   return (
-    <ScrollView
-      keyboardShouldPersistTaps='handled'
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
-      {errorMsg && <ErrorMessage error={errorMsg} />}
-
-      <Text style={styles.label}>Pet</Text>
-      {/* <Dropdown label={'Select Pet'} dataType="petNames" onSelect={handleSelectPet} initial={initialPetName} width={300} /> */}
-      <PetPicker onSelect={handleSelectPet} initials={[pet]} />
-      <View style={styles.labelCon}>
-        <Text>Name</Text>
-        <Text>Type</Text>
-      </View>
-      <View style={styles.rowCon}>
-        <Dropdown label={'Select Name'} dataType="health" onSelect={handleSelectName} initial={healthHelpers.HEALTHS[name]} width={175} />
-        <Dropdown label={'Select Type'} dataType="healthTypes" onSelect={setType} initial={type} width={120} />
-      </View>
-    
-      {allowManualName && 
-        <TextInput 
-          style={styles.input}
-          placeholder="Specify name"
-          placeholderTextColor={Colors.shadow.reg}
-          onChangeText={(text: string) => setName(text)}
-          value={name}
-          autoCapitalize="words"
-        />
+    <View style={styles.container}>
+      <TitleInput initial={initialState.name} placeholder='New Vet Visit' onChange={(input: string) => onChange('name', input)} type='health' error={errors?.name} />
+      { isVaccine &&
+        <Dropdown label='Search Vaccine' withSearch={true} searchLabel='vaccine' dataType={pet.species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={(selected: string) => onChange('details', { ...details, ['vaccine']: selected })} initial={details.vaccine} width='80%' buttonStyles={{ ...UI.input(), alignSelf: 'center' }} />
       }
-      {((name === 'vax' && (species === 'Cat' || species === 'Dog')) || vaccine) &&
-        <Dropdown label={'Select Vaccine Name'} dataType={species === 'Cat' ? 'catVaccines' : 'dogVaccines'} onSelect={handleSaveVaccine} initial={vaccine} width={300} />
-      }
-      <Text style={styles.label}>Previous visits</Text>
-      <MultipleInputs inputName='visit' type='date' initials={initialVisits} onEdit={editPastVisits} />
 
-      <View style={styles.labelCon}>
-        <Text>Next visit due in</Text>
-        <View style={Spacing.flexRow}>
-          <Text>Enter manually</Text>
-          <CheckboxButton initial={allowManualDueDate} onPress={() => setAllowManualDueDate(!allowManualDueDate)} />
-        </View>
-      </View>
+      <TableForm table={mainTable} dependentRows={{ frequency: repeat }}/>
 
-      {!allowManualDueDate && 
-        <View style={styles.rowCon}>
-          <TextInput
-            style={[styles.input, { width: 110 }]}
-            placeholder='Enter times'
-            placeholderTextColor={Colors.shadow.reg}
-            onChangeText={(text: string) => setTimes(Number(text))} 
-            value={(times ?? '').toString()} 
-            keyboardType="numeric"
+      <TitleLabel title='Next Visit' iconName='schedule' />
+      <View style={styles.contentCon}>
+        { nextDue ? 
+          <ModalInput customLabel={
+            <View style={[styles.rowCon, { borderBottomWidth: 0 }]}>
+              <ActionButton icon='decrease' onPress={() => onChange('nextDue', null)} 
+                title={`Due ${new Date(nextDue.dueDate).toDateString()}`}  
+              />
+              <Icon name={nextDue.appointment.completed ? 'done' : 'skipped'} />
+            </View>
+          }>
+            <VisitForm initialValues={nextDue} onSetVisit={(formData: Visit) => onChange('nextDue', formData)} pet={pet} isDue={true} />
+          </ModalInput>
+          : <ActionButton title='add visit' icon='increase'
+            onPress={() => onChange('nextDue', { dueDate: new Date(), overdue: false, appointment: { date: new Date(), vet: null, completed: false }, notes: null }) } 
           />
-          <Dropdown label='Select Frequency' dataType="healthFrequency" onSelect={setFrequency} width={185} initial={frequency} />
-        </View>
-      }
-      
-
-    {allowManualDueDate &&
-      <View style={{ marginTop: 15 }}>
-        <RNDateTimePicker themeVariant='light' value={new Date(nextDue?.date ?? new Date())} minimumDate={new Date()} onChange={(event, selectedDate) => { setNextDue({ date: selectedDate.toISOString(), notes: '' }) }} />
+        }
       </View>
-    }
-      <MainButton onPress={handleSubmit} title={status === 'pending' ? 'Submitting...' : initialValues?.name ? 'Save' : 'Create'} top={30} bottom={10} />
-      <SubButton onPress={() => navigation.goBack()} title='Cancel' top={10} bottom={10} />
 
-    </ScrollView>
+      <TitleLabel title='Previous Visits' iconName='schedule' />
+      <View style={styles.contentCon}>
+        { errors.hasOwnProperty('last visit') && <FormError errors={errors} errorKey="last visit" /> }
+        { sortedVisits.map((visit, index) =>
+          <ModalInput key={`visit-${index}`} customLabel={
+            <View style={styles.rowCon}>
+              <ActionButton icon='decrease' onPress={() => handleDeleteVisit(index)}
+                title={`${new Date(visit.appointment.date).toDateString()} at ${visit.appointment.vet?.name ?? 'Unknown Vet'}`}  
+              />
+              <Icon name={visit.appointment.completed ? 'done' : 'skipped'} />
+            </View>
+          }>
+            <VisitForm initialValues={visit} onSetVisit={(formData: Visit) => handleUpdateVisit(formData, index)} pet={pet} />
+          </ModalInput>
+          
+        )}
+        <ActionButton title='add visit' icon='increase' onPress={handleAddVisit} buttonStyles={{ paddingTop: sortedVisits.length ? 15 : 0 }}/>
+      </View>
+    </View>
   )
 }
 

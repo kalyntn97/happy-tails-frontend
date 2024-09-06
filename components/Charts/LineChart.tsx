@@ -24,7 +24,6 @@ export default LineChart
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    ...Spacing.flexRow,
+    ...Spacing.flexRowStretch,
   },
 })

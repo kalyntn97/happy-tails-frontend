@@ -1,12 +1,14 @@
-//npm
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 //helpers
 import { STATS, STAT_QUAL_VALUES } from '../statHelpers'
-import { getStatQualIconSource } from '@utils/ui'
-//styles
-import { Colors, Spacing, Typography, UI, Buttons } from '@styles/index'
+//components
+import { AnimatedButton } from '@components/ButtonComponents'
+import { FormHeader, Icon } from '@components/UIComponents'
 import NoteForm from './NoteForm'
+//styles
+import { Colors, Spacing } from '@styles/index'
 
 interface RatingFormProps {
   name: string
@@ -14,89 +16,79 @@ interface RatingFormProps {
   onSelect: (item: { name: string, value: number, notes: string }) => void
 }
 
-const RatingForm: FC<RatingFormProps> = ({ name, initialValues, onSelect }) => {
+const dotWidths = [50, 35, 25, 35, 50]
+const checkSizes = [25, 20, 13, 20, 25]
+const colors = [Colors.red.dark, Colors.red.reg, Colors.shadow.reg, Colors.green.reg, Colors.green.dark]
+
+const RatingForm = ({ name, initialValues, onSelect }: RatingFormProps) => {
   const [value, setValue] = useState<number>(initialValues?.value ?? null)
   const [notes, setNotes] = useState<string>(initialValues?.notes ?? null)
 
-  let optionCon = []
-  for (let i = 0; i < 5; i++) {
-    optionCon.push(
-      <TouchableOpacity key={i} style={styles.dotCon} onPress={() => {
-        value === i ? setValue(null) : setValue(i)
-        onSelect({ name, value: i, notes })
-      }}>
-        <View style={[
-          styles.dot, i === 0 || i === 4 ? styles.large : i === 2 ? styles.small : styles.medium, value === i && styles.selected
-        ]}>
-          { value === i && <Text style={[styles.check, { fontSize: i === 0 || i === 4 ? 25 : i === 2 ? 13 : 20 }]}>✓</Text> }
-        </View>
-        <Text style={[styles.label, value === i && { color: Colors.shadow.darkest }]}>{STAT_QUAL_VALUES[i]}</Text>
-      </TouchableOpacity>
-    )
+  const opacity = useSharedValue<number>(0)
+
+  const animatedCheckStyles = useAnimatedStyle(() => ({
+    opacity: opacity.value
+  }))
+
+  const handlePress = (index: number) => {
+    opacity.value = withTiming(1, { duration: 500 })
+    const newValue = value === index ? null : index
+    setValue(newValue)
+    if (newValue >= 0) onSelect({ name, value: newValue, notes })
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={{ ...Typography.mediumHeader }}>{STATS[name].name}</Text>
-      <View style={styles.iconCon}>
-        <Image source={getStatQualIconSource(name, 0)} style={{ ...UI.largeIcon }} />
-        <Image source={getStatQualIconSource(name, 1)} style={{ ...UI.largeIcon }} />
-      </View>
-      <View style={styles.optionCon}>{ optionCon }</View>
+    <View style={Spacing.fullCon('col', true)}>
+      <FormHeader title={STATS[name].name} size="large" />
 
-      <NoteForm onAddNote={setNotes} />
+      <View style={styles.optionCon}>
+        <Icon type='statValue' name={name} value={0} size="xLarge" />
+        <Icon type='statValue' name={name} value={1} size="xLarge" />
+      </View>
+
+      <View style={styles.optionCon}>
+        { [...Array(5)].map((_, index) => {
+          const dotWidth = dotWidths[index]
+          const checkSize = checkSizes[index]
+          const isSelected = value === index
+          return (
+            <View key={index} style={styles.dotCon}>
+              <AnimatedButton index={index} scaleFactor={0.8} onPress={handlePress}>
+                <View style={[styles.dot, { width: dotWidth, height: dotWidth, borderColor: colors[index] }, isSelected && { backgroundColor: colors[index] }]}>
+                  { isSelected && 
+                    <Animated.Text style={[animatedCheckStyles, styles.check, { fontSize: checkSize }]}>✓</Animated.Text> 
+                  }
+                </View>
+              </AnimatedButton>
+              <Text style={[, { color: isSelected ? colors[index] : Colors.shadow.dark }]}>{STAT_QUAL_VALUES[index]}</Text>
+            </View>
+          )
+        })}
+      </View>
+
+      <NoteForm onAddNote={(text: string) => {
+        setNotes(text)
+        if (text) onSelect({ name, value, notes: text })
+      }} />
     </View>
   )
 }
 
 
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-    ...Spacing.centered,
-  },
   optionCon: {
-    width: '100%',
-    ...Spacing.flexRow,
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    ...Spacing.flexRowStretch,
+    justifyContent: 'space-between',
   },
   dotCon: {
-    width: 70,
-    height: 60,
-    ...Spacing.centered,
+    ...Spacing.flexColumn,
+    height: dotWidths[0] + 30,
+    justifyContent: 'space-around',
   },
   dot: {
-    borderRadius: 99,
-    borderColor: Colors.pink.reg,
-    borderWidth: 2,
     ...Spacing.centered,
-  },
-  selected: {
-    backgroundColor: Colors.pink.reg,
-  },
-  large: {
-    width: 50,
-    height: 50,
-  },
-  small: {
-    width: 20,
-    height: 20,
-  },
-  medium: {
-    width: 35,
-    height: 35,
-  },
-  label: {
-    position: 'absolute',
-    bottom: -20,
-    color: Colors.shadow.reg
-  },
-  iconCon: {
-    ...Spacing.flexRow,
-    width: '90%',
-    justifyContent: 'space-between',
-    margin: 20
+    borderRadius: 99,
+    borderWidth: 2,
   },
   check: {
     color: Colors.white,

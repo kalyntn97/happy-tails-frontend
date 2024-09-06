@@ -1,28 +1,32 @@
 import { Pet, PetBasic } from "@pet/PetInterface"
+import { Frequency } from "@utils/types"
 
-export type CareFrequency = {
-  type: 'days' | 'weeks' | 'months' | 'years'
-  interval: number
-  timesPerInterval: any[]
-}
-
-type Done = {
-  value: number
-  notes: string
-} 
 export interface CareFormData {
   name: string
   pets: string[] | PetBasic[]
   repeat: boolean
-  startDate: string | Date
+  frequency: Frequency | null
+  startDate: string
   endDate: string | null
-  frequency: CareFrequency | null
   color: number
-  icon?: string
+  careId: string | null
 }
 export interface Care extends CareFormData {
   _id: string
+  logs: Log[]
 }
+
+export interface LogFormData {
+  date: string
+  value?: number
+  notes?: { value: string, time: string }[]
+  care: string
+  logId?: string | null
+}
+export interface Log extends LogFormData {
+  _id: string
+}
+
 export interface Tracker {
   _id: string
   name: string
@@ -37,3 +41,8 @@ export interface TrackerFormData {
   trackerId: string
   index: number
 }
+
+type Done = {
+  value: number
+  notes: string
+} 

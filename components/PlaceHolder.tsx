@@ -1,32 +1,41 @@
-import { StyleSheet, View, Text } from "react-native"
+import { Colors, Spacing, Typography, UI } from "@styles/index"
 import LottieView from "lottie-react-native"
-import { Typography, Colors, Spacing } from "@styles/index"
-import { TransparentButton } from "./ButtonComponent"
+import { StyleSheet, Text, View } from "react-native"
+//components
+import { TransparentButton } from "./ButtonComponents"
+import { DetailType } from "@pet/PetInterface"
+import { useNavigation } from "@react-navigation/native"
+import { StackScreenNavigationProp } from "@navigation/types"
 
 type Props = {
-  type: 'task' | 'vet' | 'ids' | 'services'
+  type: 'pet' | 'care' | 'health' | DetailType
   petId?: string
-  navigation: any
 }
 
-const PlaceHolder = ({ type, petId, navigation }: Props) => {
-  const map = {
-    task: { text: 'task', subText: '' },
-    vet: { text: 'vet visit', subText: '' },
-    ids: { text: 'ID', subText: '' },
-    services: { text: 'service', subText: '' },
-  }
+const map = {
+  pet: { text: 'pet', subText: '' },
+  care: { text: 'task', subText: '' },
+  health: { text: 'vet visit', subText: '' },
+  id: { text: 'ID', subText: '' },
+  service: { text: 'service', subText: '' },
+  medication: { text: 'medication', subText: '' },
+  condition: { text: 'health condition', subText: '' },
+  allergy: { text: 'allergy', subText: '' },
+}
+
+const PlaceHolder = ({ type, petId }: Props) => {
+  const navigation = useNavigation<StackScreenNavigationProp>()
+  const color = UI.lightPalette().accent
 
   return (  
-    <View style={styles.container}>
+    <View style={Spacing.flexColumn}>
       <LottieView source={require('@assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
       <TransparentButton title={`Add ${map[type].text}`} onPress={() => {
-          type === 'task' ? navigation.navigate('CareCreate')
-          : type === 'vet' ? navigation.navigate('HealthCreate')
-          // : type === 'id' ? navigation.navigate('EditDetails', { form: type, petId })
-          // : type === 'service' ? navigation.navigate('EditDetails', { form: type, petId })
-          : navigation.navigate('EditDetails', { type, petId })
-        }} color={Colors.pink.dark} bdColor={Colors.pink.dark} top={-40}
+          type === 'pet' ? navigation.navigate('PetCreate') 
+          : type === 'care' ? navigation.navigate('CareCreate')
+          : type === 'health' ? navigation.navigate('HealthCreate')
+          : navigation.navigate('PetEditDetails', { type, petId })
+        }} color={color} bdColor={color} 
       />
       <Text style={styles.msg}>No {map[type].text}s found. {map[type].subText}</Text>
     </View>
@@ -34,12 +43,8 @@ const PlaceHolder = ({ type, petId, navigation }: Props) => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.flexColumn,
-  },
   msg: {
-    ...Typography.xSmallSubHeader,
-    margin: 0,
+    ...Typography.smallSubHeader,
   },
   catAnimation: {
     width: 300,

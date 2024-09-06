@@ -1,16 +1,14 @@
 //npm modules
-import { useEffect, useState } from "react"
-import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert } from "react-native"
-import { useIsFocused } from "@react-navigation/native"
+import { Alert, StyleSheet, Text, View } from "react-native"
 //component
-import { BoxHeader } from "@components/UIComponents"
+import { ScrollScreen, TitleLabel } from "@components/UIComponents"
 //context
-import { useDisplayUnits, useSetActions } from "@store/store"
 import { useAuth } from "@auth/AuthContext"
+import { useDisplayUnits, useSetActions } from "@store/store"
 //helpers
 import { FOOD_UNITS, WEIGHT_UNITS } from "@stat/statHelpers"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 interface AccountProps {
   navigation: any
@@ -62,22 +60,22 @@ const SettingsScreen: React.FC<AccountProps> = ({ navigation }) => {
   ]
   
   return (
-    <ScrollView contentContainerStyle={styles.scrollViewContent}> 
+    <ScrollScreen> 
       <Text style={styles.sectionHeader}>Display settings</Text>
-      <View style={{ ...UI.roundedCon }}>
+      <View style={UI.card()}>
         { displaySettings.map(setting =>
-          <BoxHeader key={setting.key} title={setting.title} rightContent={ <Text>{setting.currentValue}</Text>} onPress={setting.setValue} mode='light' />
+          <TitleLabel key={setting.key} title={setting.title} rightAction={<Text>{setting.currentValue}</Text>} onPress={setting.setValue} mode='light' />
         )}
       </View>
 
       <Text style={styles.sectionHeader}>Account settings</Text>
-      <View style={{ ...UI.roundedCon }}>
+      <View style={UI.card()}>
         { accountSettings.map(setting =>
-          <BoxHeader key={setting.key} title={setting.title} onPress={setting.onPress} mode={ setting.key === 'delete' ? 'dark' : 'light'} titleColor={setting.key === 'delete' && Colors.red.darkest} />
+          <TitleLabel key={setting.key} title={setting.title} onPress={setting.onPress} mode={setting.key === 'delete' ? 'dark' : 'light'} color={setting.key === 'delete' && Colors.red.darkest} />
         )}
       </View>
 
-    </ScrollView>
+    </ScrollScreen>
   )
 }
  

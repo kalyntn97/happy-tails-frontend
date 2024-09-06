@@ -1,57 +1,51 @@
-//npm
-import { FC, useState } from "react"
-import { Alert } from "react-native"
-import * as ImagePicker from 'expo-image-picker'
 import { useQueryClient } from "@tanstack/react-query"
+import * as ImagePicker from 'expo-image-picker'
+import { Alert } from "react-native"
 //queries
-import { useDeleteCare } from "../features/care/careQueries"
 import { useDeleteHealth } from "@health/healthQueries"
+import { useDeleteCare } from "../features/care/careQueries"
 //types
 import { Care } from "@care/CareInterface"
-import { profileKeyFactory } from "@profile/profileQueries"
+import { Health } from "@health/HealthInterface"
 import { ProfileData } from "@profile/ProfileInterface"
+import { profileKeyFactory } from "@profile/profileQueries"
 //helpers
-import { AlertForm } from "@utils/ui"
-import { countDaysBetween } from "@utils/datetime"
+import { countDaysBetween, daysOfWeek, getDateConstructor, getDateInfo } from "@utils/datetime"
 import { shouldRenderCareTask } from "../features/home/helpers"
 
-export const showDeleteConfirmDialog = (item: any, handleDeleteItem: (itemId: string) => void) => {
-  return Alert.alert(
-    'Are you sure?',
-    `Remove ${item.name} Tracker ?`, 
-    [
-      { text: 'Yes', onPress: () => { handleDeleteItem(item._id) }},
-      { text: 'No' }
-    ]
-  )
-}
+export const showDeleteConfirmation = (onConfirm: (...args: any[]) => void, text2: string = 'This action cannot be undone.', text1: string = 'Are you sure?') => Alert.alert(
+  text1,
+  text2,
+  [
+    { text: 'Yes', onPress: onConfirm},
+    { text: 'No', style: 'cancel' },
+  ],
+  { cancelable: true },
+)
 
 export const useDeleteCareCard = (navigation: any) => {
   const deleteCareMutation = useDeleteCare(navigation)
 
-  const handleDeleteCareCard = async (careId: string) => {
-    deleteCareMutation.mutate(careId)
-  }
+  const deleteCareCard = (careId: string) => deleteCareMutation.mutate(careId)
 
-  return { handleDeleteCareCard, showDeleteConfirmDialog }
+  const handleDeleteCare = (care: Care) => showDeleteConfirmation(
+    () => deleteCareCard(care._id), 
+    `Remove ${care.name} tracker?`
+  )
+
+  return handleDeleteCare
 }
 
 export const useDeleteHealthCard = (navigation: any) => {
-  const deleteHealthMutation = useDeleteHealth()
+  const deleteHealthMutation = useDeleteHealth(navigation)
 
-  const handleDeleteHealthCard = async (healthId: string) => {
-    deleteHealthMutation.mutate(healthId, {
-      onSuccess: () => {
-        navigation.navigate('Main')
-        return AlertForm({ body: `Deleted successfully`, button: 'OK' })
-      },
-      onError: (error) => {
-        return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
-      },
-    })
-  }
+  const deleteHealthCard = (healthId: string) => deleteHealthMutation.mutate(healthId)
+  const handleDeleteHealth = (health: Health) => showDeleteConfirmation(
+    () => deleteHealthCard(health._id), 
+    `Remove ${health.name} calendar?`
+  )
 
-  return { handleDeleteHealthCard, showDeleteConfirmDialog }
+  return handleDeleteHealth
 }
 
 export const useShallowPets = () => {
@@ -59,7 +53,7 @@ export const useShallowPets = () => {
 
   const pets = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile)?.pets
 
-  const PET_BASICS = pets?.map(pet => ({ _id: pet._id, name: pet.name, photo: pet.photo, species: pet.species, color: pet.color }))
+  const PET_BASICS = pets?.map(pet => ({ _id: pet._id, name: pet.name, photo: pet.photo, species: pet.species, color: pet.color, gender: pet.gender }))
   const PET_NAMES = PET_BASICS.map(pet => pet.name)
   const PET_IDS = PET_BASICS.map(pet => pet._id)
 
@@ -73,7 +67,11 @@ export const useShallowPets = () => {
     return PET_BASICS.find(pet => pet._id === petId)
   }
 
-  return { petIdToColor, petIdToPet, PET_NAMES, PET_IDS, PET_BASICS }
+  const petServices = (petId: string) => {
+    return pets.find(pet => pet._id === petId).services ?? []
+  }
+
+  return { petIdToColor, petIdToPet, PET_NAMES, PET_IDS, PET_BASICS, petServices }
 }
 
 

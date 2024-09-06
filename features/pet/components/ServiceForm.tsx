@@ -1,90 +1,101 @@
-//npm
-import { View, Text, TextInput, Pressable } from 'react-native'
-import React, { FC, useState } from 'react'
-//helpers && types
-import { Service, ServiceFormData } from '@pet/PetInterface'
-import { getPetIconSource } from '@utils/ui'
+import { useNavigation } from '@react-navigation/native'
+import React, { useEffect } from 'react'
+import { View } from 'react-native'
+//helpers &  utils
+import { useShallowPets } from '@hooks/sharedHooks'
+import useForm from '@hooks/useForm'
+import { ServiceFormData } from '@pet/PetInterface'
 //components
-import { CircleIcon, ErrorMessage } from '@components/UIComponents'
-import { ActionButton, MainButton, TransparentButton } from '@components/ButtonComponent'
 import Dropdown from '@components/Dropdown/Dropdown'
+import PetPicker from '@components/Pickers/PetPicker'
+import { FormError, FormInput, getHeaderActions, Icon, NoteInput, ScrollScreen, TableForm } from '@components/UIComponents'
+import { Header } from '@navigation/NavigationStyles'
 //styles
 import { styles } from '@styles/stylesheets/FormStyles'
-import { Colors, UI, Spacing, Typography } from '@styles/index'
-import MultipleInputs from '@components/MultipleInputs'
-import useForm from '@hooks/useForm'
 
 interface ServiceFormProps {
   initialValues?: ServiceFormData
-  onSubmit: (type: 'services', formData: ServiceFormData) => void
+  onSubmit: (type: 'service', formData: ServiceFormData) => void
+  isPending: boolean
 } 
 
-const ServiceForm: FC<ServiceFormProps> = ({ initialValues, onSubmit }) => {
-  const initialState = { name: initialValues?.name ?? null, type: initialValues?.type ?? null, address: initialValues?.address ?? null, email: initialValues?.email ?? null, phones: initialValues?.phones ?? [], notes: initialValues?.notes ?? null, errorMsg: false }
-  
-  const [reset, setReset] = useState(false)
+interface InitialState extends ServiceFormData {
+  errors: any
+}
+
+const ServiceForm = ({ initialValues, onSubmit, isPending }: ServiceFormProps) => {
+  const { PET_BASICS } = useShallowPets()
+
+  const initialState: InitialState = { 
+    name: initialValues?.name ?? null, 
+    type: initialValues?.type ?? null, 
+    addresses: initialValues?.addresses ?? [], 
+    emails: initialValues?.emails ?? [], 
+    phones: initialValues?.phones ?? [], 
+    notes: initialValues?.notes ?? null,
+    pets: initialValues?.pets ?? [PET_BASICS[0]._id],
+    errors: {}
+  }
+
+  const navigation = useNavigation()
 
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
-  const { name, type, address, email, phones, notes, errorMsg } = values
+  const { name, type, addresses, emails, phones, notes, pets, errors }: InitialState = values
 
   function handleSubmit() {
-    onSubmit('services', { name, type, address, email, phones, notes })
+    onSubmit('service', { name, type, addresses, emails, phones, notes, pets })
+  }
+
+  function handleValidate() {
+    onValidate({ name, type, phones })
   }
   
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Add a Service</Text>
-      <CircleIcon iconSource={getPetIconSource('services')} />
-      <View style={styles.labelCon}>
-        <Text>Name</Text>
-        <Text>Type</Text>
-      </View>
-      <View style={styles.rowCon}>
-        <TextInput 
-          style={[styles.input, { width: 170 }]}
-          placeholder='Enter name'
-          placeholderTextColor={Colors.shadow.reg}
-          value={name}
-          onChangeText={(text: string) => onChange('name', text)}
-        />
-        <Dropdown label='Select type' dataType='serviceTypes' initial={type} onSelect={selected => onChange('type', selected)} width={125} />
-      </View>
-      <Text style={styles.label}>Address</Text>
-      <TextInput 
-        style={styles.input}
-        placeholder='Enter address'
-        placeholderTextColor={Colors.shadow.reg}
-        value={address}
-        onChangeText={(text: string) =>  onChange('address', text)}
-      />
-      <Text style={styles.label}>Email</Text>
-      <TextInput 
-        style={styles.input}
-        placeholder='Enter email'
-        placeholderTextColor={Colors.shadow.reg}
-        value={email}
-        onChangeText={(text: string) =>  onChange('email', text)}
-        inputMode='email'
-      />
-      <Text style={styles.label}>Phone</Text>
-    
-      <MultipleInputs inputName='phone' inputMode='tel' initials={phones} onEdit={(inputs) => onChange('phones', inputs)} />
-      
-      <Text style={styles.label}>Notes</Text>
-      <TextInput 
-        style={styles.input}
-        placeholder='Enter notes'
-        placeholderTextColor={Colors.shadow.reg}
-        value={notes}
-        onChangeText={(text: string) => onChange('notes', text)}
-      />
+  const headerActions = getHeaderActions(onReset, isPending, handleValidate)
 
-      {errorMsg && <ErrorMessage error={errorMsg} top={20} />}
-      <View style={[styles.btnCon, { marginTop: errorMsg ? 0 : 40 }]}>
-        <MainButton title='Submit' size='small' onPress={() => onValidate(name, type)} />
-        <TransparentButton title='Cancel' size='small' onPress={() => { onReset(); setReset(!reset) }} />
+  const table = [
+    { key: 'type', icon: 'service', value:
+      <>
+        <Dropdown label='Select type' dataType='serviceTypes' initial={type} onSelect={selected => onChange('type', selected)} width={50} withBorder={false} buttonTextStyles={{ textAlign: 'right' }} buttonStyles={{ height: 20 }} />
+        <FormError errorKey='type' errors={errors} />
+      </>
+    },
+    { key: 'addresses', icon: 'address', value: 
+      <FormInput initial={addresses[addresses.length - 1]} onChange={(text: string) => onChange('addresses', [...addresses, text])} placeholder='Enter address' withBorder={false} align='right' props={{ multiline: true }} />
+    },
+    { key: 'emails', icon: 'email', value: 
+      <FormInput initial={emails[emails.length - 1]} onChange={(text: string) => onChange('emails', [...emails, text])} placeholder='Enter email' withBorder={false} align='right' props={{ inputMode: 'email' }} />
+    },
+    { key: 'phones', icon: 'phone', value:
+      <>
+        <FormInput initial={phones[phones.length - 1]} onChange={(text: string) => onChange('phones', [...phones, text])} placeholder='Enter phone' withBorder={false} align='right' props={{ inputMode: 'tel' }} />
+        <FormError errorKey='phones' errors={errors} />
+      </>
+    },
+    { key: 'notes', icon: 'note', value: 
+      <NoteInput notes={notes} onChange={(text: string) => onChange('notes', text)} />
+    },
+    { key: 'pets', label: 'Pets', icon: 'pet', value: 
+      <PetPicker pets={pets} onSelect={(selected: string[]) => onChange('pets', selected)} mode='multi' /> 
+    },
+  ]
+
+  useEffect(() => {
+    navigation.setOptions({
+      header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' />
+    })
+  }, [headerActions])
+
+  return (
+    <ScrollScreen props={{ keyboardShouldPersistTaps: 'never' }}>
+      <View style={styles.headerCon}>
+        <Icon type='pet' name={type && type !== 'Other' ? type : 'service'} size='large' />
+        <View style={styles.titleCon}>
+          <FormInput initial={name} placeholder="New Service Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} width='100%' bottom={0} />
+        </View>
       </View>
-    </View>
+
+      <TableForm table={table} />
+    </ScrollScreen>
   )
 }
 

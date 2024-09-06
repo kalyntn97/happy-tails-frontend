@@ -1,16 +1,17 @@
-import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { StyleSheet, View } from 'react-native'
 //hooks
 import { useCaresByPet, useHealthDueByPet } from '@hooks/sharedHooks'
 //components
-import { StatButton } from '@components/ButtonComponent'
+import { StatButton } from '@components/ButtonComponents'
 //styles
 import { Colors, Spacing } from '@styles/index'
+import { Size } from '@styles/ui'
 
 type Props = {
   petId: string
   petColor: number
-  size?: string
+  size?: Size
   navigation?: any
 }
 
@@ -36,8 +37,7 @@ const StatButtonList = ({ petId, petColor, size, navigation }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.flexRow,
-    width: '100%',
+    ...Spacing.flexRowStretch,
     justifyContent: 'space-evenly',
     marginVertical: 15,
   }

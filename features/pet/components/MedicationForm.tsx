@@ -1,129 +1,220 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { FC, useState } from 'react'
-import RNDateTimePicker from '@react-native-community/datetimepicker'
+import React, { useEffect, useRef } from 'react'
+import { ActivityIndicator, Text, View } from 'react-native'
 //components
-import Dropdown from '@components/Dropdown/Dropdown'
-import { CircleIcon, ErrorMessage } from '@components/UIComponents'
-import { CheckboxButton, MainButton, ToggleButton, TransparentButton } from '@components/ButtonComponent'
+import { ActionButton, MainButton, ToggleButton } from '@components/ButtonComponents'
+import FrequencyPicker, { getRepeatLabels } from '@components/Pickers/FrequencyPicker'
+import PetPicker from '@components/Pickers/PetPicker'
+import { DateInput, ErrorMessage, FormError, FormHeader, FormInput, HelperText, Icon, ModalInput, NoteInput, ScrollContainer, TableForm, TitleLabel } from '@components/UIComponents'
 //helpers & types
-import { Medication, MedicationFormData } from '@pet/PetInterface'
-import { getCareIconSource, getPetIconSource } from '@utils/ui'
-//styles
-import { styles } from '@styles/stylesheets/FormStyles'
-import { Colors, UI, Spacing, Typography } from '@styles/index'
 import useForm from '@hooks/useForm'
-import { MED_STATUS } from '@pet/petHelpers'
+import { Dosage, Medication, MedicationFormData, Refill } from '@pet/PetInterface'
+//styles
+import ToggleableForm from '@components/ToggleableForm'
+import { Header } from '@navigation/NavigationStyles'
+import { useNavigation } from '@react-navigation/native'
+import { Colors, Spacing, Typography } from '@styles/index'
+import { styles } from '@styles/stylesheets/FormStyles'
+import { DEFAULT_FREQUENCY } from '@utils/constants'
 
 interface MedicationFormProps {
-  initialValues?: Medication
+  initialValues?: MedicationFormData
   onSubmit: (type: 'meds', medFormData: MedicationFormData) => void
+  isPending: boolean
+}
+interface InitialState extends MedicationFormData { reminder: boolean, errors: any }
+
+const DEFAULT_DOSAGE = { dose: null, startDate: new Date().toISOString(), endDate: null, ending: false, frequency: DEFAULT_FREQUENCY, reminder: false }
+
+const getDosageLabel = (dosage: Dosage) => {
+  const startDateLabel = new Date(dosage.startDate).toLocaleDateString()
+  const { timesPerIntervalLabel, intervalLabel, endingLabel } = getRepeatLabels({ ...dosage.frequency, endDate: dosage.endDate, ending: dosage.ending })
+  const repeatLabel = (timesPerIntervalLabel && intervalLabel) ? ` ${timesPerIntervalLabel} ${intervalLabel} from ${startDateLabel}${endingLabel ? ` ${endingLabel}` : ''}` : ''
+  return `${dosage.dose ?? 'Unknown amount'} ${repeatLabel}`
 }
 
-const MedicationForm :FC<MedicationFormProps>= ({ initialValues, onSubmit }) => {
-  const initialState = { name: initialValues?.name ?? null, amount: initialValues?.dosage.amount ?? null, times: initialValues?.dosage.times ?? null, frequency: initialValues?.dosage.frequency ?? 'Daily', startDate: initialValues?.dosage.startDate ?? null, ending: !!initialValues?.dosage.endDate ?? false, endDate: initialValues?.dosage.endDate ?? null, medReminder: !!initialValues?.dosage.reminder ?? false, refillTimes: initialValues?.refill?.times ?? null, refillFrequency: initialValues?.refill?.frequency ?? 'Monthly', refillReminder: !!initialValues?.refill.reminder ?? false, status: initialValues?.status ?? 'Active', errorMsg: false }
+const DosageSelector = ({ dosage, onSelect }: { dosage: Dosage, onSelect: (data: Dosage) => void }) => {
+  const inputRef = useRef(null)
 
-  const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
-  const { name, amount, times, frequency, startDate, ending, endDate, medReminder, refillTimes, refillFrequency, refillReminder, status, errorMsg } = values
-  const dosage = status !== 'Inactive' ? { amount, times, frequency, startDate, endDate: ending ? endDate : null } : null
-  const refill = status !== 'Inactive' && refillReminder ? { times: refillTimes, frequency: refillFrequency } : null
+  const dosageLabel = getDosageLabel(dosage)
 
-  function handleSubmit() {
-    onSubmit('meds', { name, dosage, refill, status, medReminder, refillReminder })
-  }
+  const dosageTable = [
+    { key: 'dose', label: 'Dose', icon: 'medication', value:
+      <View style={{ flexDirection: 'column', justifyContent: 'flex-end', width: '100%' }}>
+        <FormInput ref={inputRef} initial={dosage?.dose} onChange={(text: string) => onSelect({ ...dosage, dose: text })} placeholder='Enter dose' withBorder={false} align='right' />
+        { dosage && !dosage.dose && <ErrorMessage error='Required fields.' /> } 
+      </View>
+    },
+    { key: 'startDate', label: 'Start Date', icon: 'schedule', value: 
+      <DateInput date={dosage?.startDate} onChangeDate={(selected) => onSelect({ ...dosage, startDate: selected })} />  
+    },  
+    { key: 'frequency', label: 'Frequency', icon: 'due', value: 
+      <FrequencyPicker frequency={{ ...dosage?.frequency, endDate: dosage?.endDate, ending: dosage?.ending }}
+        onSelectFrequency={(key: string, selected: any) => onSelect({ ...dosage, [key]: selected })}
+        onSelectEndDate={(key: 'ending' | 'endDate', value: boolean | string) => onSelect({ ...dosage,[key]: value })}
+        onReset={() => onSelect(null)}
+      /> 
+    },
+  ]
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Add a Medication</Text>
-      <CircleIcon iconSource={getCareIconSource('meds')}/>
-      <Text style={styles.label}>Name</Text>
-      <TextInput 
-        style={styles.input}
-        placeholder='Enter name'
-        placeholderTextColor={Colors.shadow.reg}
-        value={name}
-        onChangeText={(text: string) => onChange('name', text)}
-      />
-      <View style={styles.labelCon}>
-        {status !== 'Inactive' && <Text>Medication amount</Text>}
-        <Text>Status</Text>
+    <ModalInput customLabel={
+      <View>
+        <Text style={{flexWrap: 'wrap' }}>{dosageLabel}</Text>
+        <HelperText text='Tap to edit' />
       </View>
-      <View style={styles.rowCon}>  
-        {status !== 'Inactive' && <TextInput 
-          style={[styles.input, { width: 195  }]}
-          placeholder='Enter amount'
-          placeholderTextColor={Colors.shadow.reg}
-          value={amount}
-          onChangeText={(text: string) => onChange('amount', text)}
-        />}
-        <Dropdown dataType='medStatus' initial={status} onSelect={selected => onChange('status', selected)} width={status === 'Inactive' ? 300 : 100} />
-      </View>
-      {status !== 'Inactive' && <>
-      
-        <View style={styles.labelCon}>
-          <Text style={styles.rowText}>Start date</Text>
-          <View style={Spacing.flexRow}>
-            <Text style={styles.rowText}>End date</Text>
-            <CheckboxButton onPress={() => onChange('ending', !ending)} initial={ending} />
-          </View>
-          
-        </View>
-        <View style={styles.rowCon}>
-          <View style={(!ending) && { width: 300, alignItems: 'center' }}>
-            <RNDateTimePicker themeVariant="light" value={startDate ? new Date(startDate) : new Date()} onChange={(event, selectedDate) => { onChange('startDate', selectedDate) }} accentColor={Colors.pink.dark} />
-          </View>
-          { ending &&
-            <>
-              <Text style={{ marginLeft: 10 }}> - </Text>
-              <RNDateTimePicker themeVariant='light' value={endDate ? new Date(endDate) : new Date()} onChange={(event, selectedDate) => { onChange('endDate', selectedDate) }} accentColor={Colors.pink.dark} />
-            </>
-          }
-        </View>
+    }>
+      <TableForm table={dosageTable} />
+    </ModalInput>
+  )
+}
 
-        <Text style={styles.label}>Medication frequency</Text>
-        <View style={styles.rowCon}>
-          <TextInput
-            style={[UI.inputBase, styles.leftInput, { marginRight: 5 }]}
-            placeholder='Enter times'
-            placeholderTextColor={Colors.shadow.reg}
-            onChangeText={(text: string) => onChange('times', Number(text))} 
-            value={(times ?? '').toString()} 
-            keyboardType="numeric"
-          />
-          <Dropdown label='...' dataType="frequency" onSelect={selected => onChange('frequency', selected)} width={styles.rightInput.width} initial={frequency} />
-        </View>
-        
-        <View style={styles.labelCon}>
-          <Text>Medication reminder</Text>
-          <ToggleButton initial={medReminder} onPress={() =>  onChange('medReminder', !medReminder)} size='small' />
-        </View>
+const DosageEditor = ({ dosages, index, updateDosages }: { dosages: Medication['dosages'], index: number, updateDosages: (dosages: Dosage[]) => void }) => (
+  <View style={Spacing.flexRowStretch}>
+    <ActionButton icon='cancel' size='xSmall' onPress={() => updateDosages(dosages.filter((d, i) => i !== index))} buttonStyles={{ marginRight: 15 }} />
+    <DosageSelector dosage={dosages[index]} onSelect={(data: Dosage) => updateDosages(dosages.map((d, i) => i === index ? data : d))} />
+  </View>
+)
 
-        <View style={styles.labelCon}>
-          <Text>Refill reminder</Text>
-          <ToggleButton initial={refillReminder} onPress={() => onChange('refillReminder', !refillReminder)} size='small' />
-        </View>
-        {refillReminder && <>
-          <Text style={styles.label}>Refill frequency</Text>
-          <View style={[styles.rowCon, { marginBottom: 70 }]}>
-            <TextInput
-              style={[UI.inputBase, styles.leftInput, { marginRight: 5 }]}
-              placeholder='Enter times'
-              placeholderTextColor={Colors.shadow.reg}
-              onChangeText={(text: string) => onChange('refillTimes', Number(text))} 
-              value={(refillTimes ?? '').toString()} 
-              keyboardType="numeric"
-            />
-            <Dropdown label='...' dataType="frequency" onSelect={selected => onChange('refillFrequency', selected)} width={styles.rightInput.width} initial={refillFrequency} />
-          </View>
-        </>}
-      </>}
-      
-      {errorMsg && <ErrorMessage error={errorMsg} top={20} />}
-      <View style={[styles.btnCon, { marginTop: errorMsg ? 0 : 40 }]}>
-        <MainButton title='Submit' size='small' onPress={() => status !== 'Inactive' ? onValidate(name, dosage, status) : onValidate(name, status)} />
-        <TransparentButton title='Cancel' size='small' onPress={onReset} />
-      </View>
+const DosageManager = ({ dosages, onChange }: { dosages: Medication['dosages'], onChange: (dosages: Medication['dosages']) => void }) => (
+  <ModalInput height='100%' animation='horizontal'
+    label={dosages.length ? 
+      getDosageLabel(dosages[dosages.length - 1])
+      : 'No dosage added.'
+    }
+  > 
+    <View style={[Spacing.flexColumn, { paddingHorizontal: 20 }]}>
+      <Text style={Typography.smallHeader}>Current Dosage</Text>
+      { dosages.length ? 
+        <DosageEditor dosages={dosages} index={dosages.length - 1} updateDosages={(data: Dosage[]) => onChange(data)} />
+        : <MainButton title='Add dosage' onPress={() => onChange([...dosages, DEFAULT_DOSAGE])} />
+      }
 
+      { dosages.length > 1 &&
+        <ToggleableForm title='Previous dosages' buttonStyles={{ marginTop: 30 }}>
+          { [...dosages].reverse().map((_, i) => 
+            i > 0 && <DosageEditor key={i} dosages={dosages} index={i} updateDosages={(data: Dosage[]) => onChange(data)} />
+          )}
+        </ToggleableForm> 
+      }
     </View>
+  </ModalInput>
+)
+
+const getLabel = (refill: Medication['refill']) => {
+  if (refill) {
+    const { intervalLabel, timesPerIntervalLabel } = getRepeatLabels(refill.frequency)
+    return `Refill ${refill.count} ${intervalLabel} ${timesPerIntervalLabel}, reminder ${refill.reminder ? 'on' : 'off'}.`
+  }
+  else return 'No refill setup.'
+}
+
+const RefillManager = ({ refill, onChange }: { refill: MedicationFormData['refill'], onChange: (data: MedicationFormData['refill']) => void }) => {
+  const inputRef = useRef(null)
+  const label = getLabel(refill)
+
+  const toggleRefill = () => {
+    refill ? onChange(null) : onChange({ isActive: true, count: 1, frequency: DEFAULT_FREQUENCY, reminder: false })
+  }
+
+  const refillTable = [
+    { key: 'count', label: 'Count', icon: 'no', value: 
+      <FormInput ref={inputRef} initial={refill?.count.toString()} maxLength={3} onChange={(text: string) => onChange({ ...refill, count: Number(text) })} placeholder='Enter count' withBorder={false} align='right' /> 
+    },
+    { key: 'repeat', label: 'Frequency', icon: 'due', value: 
+      <FrequencyPicker 
+        frequency={{ ...refill?.frequency }}
+        onSelectFrequency={(key: string, selected: any) => onChange({ ...refill, [key]: selected })}
+        onReset={() => onChange(null)}
+      />  
+    },
+    { key: 'reminder', label: 'Reminder', icon: 'reminder', value: 
+      <ToggleButton isOn={!!refill?.reminder} onPress={() => onChange({ ...refill, reminder: !refill.reminder })} />
+    },
+  ]
+
+  return (
+    <ModalInput label={label} overlay={Colors.white}>
+      <FormHeader title={label} size='small' />
+      <TitleLabel title='Refill' iconName='repeat' size='med' mode='bold' rightAction={
+        <ToggleButton isOn={refill ? refill.isActive : false} onPress={toggleRefill} />
+      } />
+      { refill?.isActive && 
+        <TableForm table={refillTable} />
+      }
+    </ModalInput>
+  )
+}
+
+const MedicationForm = ({ initialValues, onSubmit, isPending }: MedicationFormProps) => {
+  const initialState: InitialState = { 
+    name: initialValues?.name ?? null, 
+    dosages: initialValues?.dosages ?? [],
+    refill: initialValues?.refill ?? null,
+    isActive: initialValues?.isActive ?? true,
+    reminder: !!initialValues?.reminder ?? false,
+    notes: initialValues?.notes ?? null,
+    medId: initialValues?.medId ?? null,
+    errors: {}
+  }
+
+  const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
+  const { name, dosages, refill, isActive, reminder, notes, medId, errors }: InitialState = values
+
+  const navigation = useNavigation()
+
+  function handleSubmit() {
+    onSubmit('meds', { name, dosages, refill, isActive, reminder, notes, medId })
+  }
+
+  function handleValidate() {
+    onValidate({ name, dosages })
+  }
+
+  const mainTable = [
+    { key: 'dosage', label: 'Dosage', icon: 'medication', value:
+      <>
+        <DosageManager dosages={dosages} onChange={(data: Medication['dosages']) => onChange('dosages', data)} /> 
+        <FormError errorKey='dosages' errors={errors} />
+      </>
+    },
+    { key: 'refill', label: 'Refill', icon: 'repeat', value: 
+      <RefillManager refill={refill} onChange={(data: Medication['refill']) => onChange('refill', data)} />
+    },
+    { key: 'status', label: 'Active', icon: 'check', value: 
+      <ToggleButton isOn={isActive} onPress={() => onChange('isActive', !isActive)} />
+    },
+    { key: 'notes', label: 'Notes', icon: 'note', value: 
+      <NoteInput notes={notes} onChange={(text: string) => onChange('notes', text)} />
+    },
+    { key: 'reminder', label: 'Reminder', icon: 'reminder', value:       
+      <ToggleButton isOn={reminder} onPress={() => onChange('reminder', !reminder)} />
+    },
+  ]
+
+  const headerActions = [
+    { icon: 'reset', onPress: onReset },
+    { title: isPending ? 
+      <Text style={Spacing.flexRow}><ActivityIndicator /> Submitting...</Text>
+      : 'Submit', onPress: handleValidate },
+  ]
+
+  useEffect(() => {
+    navigation.setOptions({
+      header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' />
+    })
+  }, [headerActions])
+
+  return (
+    <ScrollContainer props={{ keyboardShouldPersistTaps: 'never' }}>
+      <View style={styles.headerCon}>
+        <Icon type='pet' name='medication' size='large' />
+        <View style={styles.titleCon}>
+          <FormInput initial={name} placeholder="New Medication Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} width='100%' bottom={0} />
+        </View>
+      </View>
+
+      <TableForm table={mainTable} errors={errors} />
+    </ScrollContainer>
   )
 }
 

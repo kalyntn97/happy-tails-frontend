@@ -1,10 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import * as careService from "./careService"
-import { Care, CareFormData, Tracker, TrackerFormData } from "./CareInterface"
-import { alertError, alertSuccess, showToast } from "@utils/misc"
-import { profileKeyFactory } from "@profile/profileQueries"
+import { showDeleteConfirmation } from "@hooks/sharedHooks"
 import { ProfileData } from "@profile/ProfileInterface"
-import { useAllCares } from "@hooks/sharedHooks"
+import { profileKeyFactory } from "@profile/profileQueries"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { showToast } from "@utils/misc"
+import { produce } from "immer"
+import { Care, CareFormData, Log, LogFormData, TrackerFormData } from "./CareInterface"
+import * as careService from "./careService"
 
 export const careKeyFactory = {
   cares: ['all-cares'],
@@ -41,12 +42,12 @@ export const useAddCare = (navigation: any) => {
     mutationFn: (formData: CareFormData) => careService.create(formData),
     onSuccess: (data: Care) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return { ...oldData, cares: { ...oldData.cares, [data.frequency || 'Others']: [ ...oldData.cares[data.frequency || 'Others'], data] } }
+        return { ...oldData, cares: [...oldData.cares, data] }
       })
-      navigation.navigate('Main')
+      navigation.navigate('Home', { screen: 'Feed' })
       showToast({ text1: `Task added.`, style: 'success' })
     },
-    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
@@ -57,13 +58,12 @@ export const useUpdateCare = (navigation: any) => {
     mutationFn: (formData: CareFormData) => careService.update(formData),
     onSuccess: (data: Care) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return { ...oldData, cares: { ...oldData.cares, [data.frequency 
-        || 'Others']: oldData.cares[data.frequency || 'Others'].map(care => care._id === data._id ? data : care) } }
-      })
-      navigation.navigate('Main')
+        return { ...oldData, cares: oldData.cares.map(care => care._id === data._id ? data : care) }
+      })      
+      navigation.navigate('Home', { screen: 'Feed' })
       showToast({ text1: `Task updated.`, style: 'success' })
     },
-    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
@@ -72,18 +72,75 @@ export const useDeleteCare = (navigation: any) => {
   
   return useMutation({
     mutationFn: (careId: string) => careService.deleteCare(careId),
-    onSuccess: (data: Care) => {
+    onSuccess: (data: string) => {
       queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return { ...oldData, cares: { ...oldData.cares, [data.frequency 
-        || 'Others']: oldData.cares[data.frequency || 'Others'].filter(care => care._id !== data._id) } }
+        return { ...oldData, cares: oldData.cares.filter(care => care._id !== data) }
       })
-      navigation.navigate('Main')
+      navigation.navigate('Home', { screen: 'Feed' })
       showToast({ text1: `Task deleted.`, style: 'success' })
 
     },
-    onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
+
+export const useCreateLog = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (formData: LogFormData) => careService.createLog(formData),
+    onSuccess: (data: Log) => {
+      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => 
+        produce(oldData, draft => {
+          const care = draft.cares.find(care => care._id === data.care)
+          if (care) care.logs.push(data)
+          else showToast({ text1: 'An error occurred.', style: 'error' })
+        })
+      )      
+      showToast({ text1: `Task updated.`, style: 'success' })
+    },
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
+  })
+}
+
+export const useUpdateLog = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (formData: LogFormData) => careService.updateLog(formData),
+    onSuccess: (data: Log) => {
+      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => 
+        produce(oldData, draft => {
+          const care = draft.cares.find(care => care._id === data.care)
+          if (care) care.logs = care.logs.map(log => log._id === data._id ? data : log)
+          else showToast({ text1: 'An error occurred.', style: 'error' })
+        })
+      )      
+      // showToast({ text1: `Updated successfully.`, style: 'success' })
+    },
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
+  })
+}
+
+export const useDeleteLog = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: ({ logId, careId }: { logId: string, careId: string }) => careService.deleteLog(logId, careId),
+    onSuccess: (data: Log) => {
+      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => 
+        produce(oldData, draft => {
+          const care = draft.cares.find(care => care._id === data.care)
+          if (care) care.logs = care.logs.filter(log => log._id !== data._id)
+          else showToast({ text1: 'An error occurred.', style: 'error' })
+        })
+      )      
+      // showToast({ text1: `Updated successfully.`, style: 'success' })
+    },
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
+  })
+}
+
 
 export const useCheckDoneCare = () => {
   

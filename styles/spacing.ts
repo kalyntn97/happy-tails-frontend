@@ -1,14 +1,13 @@
-import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
 import { ViewStyle } from "react-native"
 
-export const baseMargin = 10
-
-export const basePadding: ViewStyle = {
-  paddingVertical: 15,
-  paddingHorizontal: 20,
-}
+export const basePadding = (h: number = 20, v: number = 15, b?: number, t?: number): ViewStyle => ({
+  paddingHorizontal: h,
+  paddingTop: t ?? v,
+  paddingBottom: b ?? v,
+})
 
 export const centered: ViewStyle = {
+  display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
 }
@@ -28,6 +27,16 @@ export const fullWH: ViewStyle = {
   height: '100%',
 }
 
+export const flexRowStretch: ViewStyle = {
+  ...flexRow,
+  width: '100%',
+}
+
+export const flexColumnStretch: ViewStyle = {
+  ...flexColumn,
+  width: '100%',
+}
+
 export const fullScreenDown: ViewStyle = {
   ...fullWH,
   ...flexColumn
@@ -43,14 +52,8 @@ export const fullScreenCentered: ViewStyle = {
   ...centered,
 }
 
-export const scrollScreenDown: ViewStyle = {
-  ...flexColumn,
-  width: '100%',
-  paddingBottom: 60,
-}
-
-export const scrollContent: ViewStyle = {
-  ...flexColumn,
-  width: '100%',
-  paddingBottom: 20,
-}
+export const fullCon = (flex: 'row' | 'col' = 'col', isCentered: boolean = false): ViewStyle => ({
+  ...fullWH,
+  ...(flex === 'col' ? flexColumn : flexRow),
+  ...(isCentered ? centered : {}),
+})

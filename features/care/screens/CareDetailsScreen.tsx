@@ -1,25 +1,24 @@
 //npm
 import React, { FC } from "react"
-import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ImageStyle, ScrollView, Pressable } from "react-native"
+import { Image, Text, View } from "react-native"
 //types & helpers & queries
 import { Care, Tracker } from "@care/CareInterface"
-import { useDeleteCareCard } from "@hooks/sharedHooks"
 import { CARES, getCareIcon, getCurrentTrackerIndex } from "@care/careHelpers"
-import { careKeyFactory, useGetCareById } from "@care/careQueries"
+import { useGetCareById } from "@care/careQueries"
+import { useDeleteCareCard } from "@hooks/sharedHooks"
 //components
-import { getActionIconSource, getCareIconSource } from "@utils/ui"
-import PetList from "@components/PetInfo/PetList"
-import DailyChart from "@components/Charts/DailyChart"
+import { ActionButton, StatButton } from "@components/ButtonComponents"
 import BarChart from "@components/Charts/BarChart"
-import YearChart from "@components/Charts/YearChart"
+import DailyChart from "@components/Charts/DailyChart"
 import FillChart from "@components/Charts/FillChart"
+import YearChart from "@components/Charts/YearChart"
 import Loader from "@components/Loader"
-import { BoxHeader, BoxWithHeader, ErrorImage } from "@components/UIComponents"
-import { ActionButton, StatButton } from "@components/ButtonComponent"
+import PetList from "@components/PetInfo/PetList"
+import { BoxWithHeader, ErrorImage, ScrollContainer, TitleLabel } from "@components/UIComponents"
+import { getActionIconSource } from "@utils/ui"
 //styles
+import { Colors, Spacing, UI } from '@styles/index'
 import { styles } from "@styles/stylesheets/DetailsScreenStyles"
-import { Colors, UI, Spacing } from '@styles/index'
-import { useQueryClient } from "@tanstack/react-query"
 
 interface CareDetailsProps {
   navigation: any
@@ -41,25 +40,21 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
   ]
 
   const actions = [
-    { key: 'edit', icon: 'editSquare', onPress: () => navigation.navigate('CareEdit', { care }) },
-    { key: 'delete', icon: 'deleteSquare', onPress: () => showDeleteConfirmDialog(care, handleDeleteCareCard) },
+    { key: 'edit', icon: 'edit', onPress: () => navigation.navigate('CareEdit', { care }) },
+    { key: 'delete', icon: 'delete', onPress: () => showDeleteConfirmDialog(care, handleDeleteCareCard) },
   ]
 
   return (
     <View style={{ ...Spacing.scrollScreenDown, backgroundColor: Colors.multi.lightest[care.color] }}>
       <View style={styles.topBtnCon}>
-        { actions.map(action => <ActionButton key={action.key} title={action.key} onPress={action.onPress} size='small' />) }
+        { actions.map(action => <ActionButton key={action.key} icon={action.key} onPress={action.onPress} size='small' />) }
       </View>
 
       { isError && <ErrorImage /> }                                                              
       { isFetching && <Loader /> }
 
     { isSuccess &&
-        <ScrollView
-          contentContainerStyle={Spacing.scrollContent}
-          scrollEventThrottle={200}
-          decelerationRate="fast" 
-        >
+        <ScrollContainer>
           <View style={styles.headerContainer}>
             <Image source={getCareIcon(care.name)} style={{ ...UI.largeIcon }} />
             <Text style={styles.header}>{CARES[care.name] ?? care.name}</Text>
@@ -90,37 +85,35 @@ const CareDetailsScreen: FC<CareDetailsProps> = ({ navigation, route }) => {
             <PetList petArray={care.pets} size='small' />
 
             <View style={styles.btnContainer}>
-              {careStats.map(stat =>
+              { careStats.map(stat =>
                 <StatButton key={stat.header} header={stat.header} body={stat.body} stat={stat.stat} bgColor={Colors.multi.light[care.color]} size='medium' disabled={true} />
               )}
             </View>
           </View>
 
-          <BoxWithHeader 
-            title='History'
-            titleIconSource={getActionIconSource('chart')}
-            content={
-              trackers.map((tracker: Tracker, idx: number) =>
-                <React.Fragment key={`tracker-${idx}`}>
-                  {care.frequency === 'Daily' 
-                  ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={care.times} />
-                  : care.times === 1 && care.frequency !== 'Yearly'
-                  ? <FillChart key={`1X-${idx}`} tracker={tracker} frequency={care.frequency} times={care.times} />
-                  : ( care.frequency === 'Weekly' || care.frequency === 'Monthly' ) 
-                    ? <BarChart key={`${care.frequency}-${idx}`} tracker={tracker} frequency={care.frequency} times={care.times} />
-                    : <YearChart key={`Yearly-${idx}`} tracker={tracker} times={care.times} />
-                  }
-                </React.Fragment>
-              )
-            }
-          />
+          <BoxWithHeader title='History' iconName="chart">
+            { trackers.map((tracker: Tracker, idx: number) =>
+              <React.Fragment key={`tracker-${idx}`}>
+                {care.frequency === 'Daily' 
+                ? <DailyChart key={`Daily-${idx}`} tracker={tracker} times={care.times} />
+                : care.times === 1 && care.frequency !== 'Yearly'
+                ? <FillChart key={`1X-${idx}`} tracker={tracker} frequency={care.frequency} times={care.times} />
+                : ( care.frequency === 'Weekly' || care.frequency === 'Monthly' ) 
+                  ? <BarChart key={`${care.frequency}-${idx}`} tracker={tracker} frequency={care.frequency} times={care.times} />
+                  : <YearChart key={`Yearly-${idx}`} tracker={tracker} times={care.times} />
+                }
+              </React.Fragment>
+            )}
+          </BoxWithHeader>
+            
+          
 
-          <View style={{ ...UI.roundedCon}}>
+          <View style={UI.card()}>
             {actions.map(action => 
-              <BoxHeader key={action.key} title={action.key} titleIconSource={getActionIconSource(action.icon)} onPress={action.onPress} titleColor={action.key === 'delete' && Colors.red.dark} />
+              <TitleLabel key={action.key} title={action.key} iconName={action.icon} onPress={action.onPress} color={action.key === 'delete' && Colors.red.dark} />
             )}
           </View>
-        </ScrollView> 
+        </ScrollContainer> 
       } 
     </View>
   )

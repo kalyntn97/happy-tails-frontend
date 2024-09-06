@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { CARE_BASE_URL } from '../../services/urls'
-import { Care, CareFormData, Tracker } from './CareInterface'
+import { Care, CareFormData, Log, LogFormData, Tracker } from './CareInterface'
 
 const BASE_URL = CARE_BASE_URL
 
@@ -20,8 +20,20 @@ export const getCare = async (careId: string): Promise<Care>  => {
   return (await axios.get<Care>(`${BASE_URL}/${careId}`)).data
 }
 
-export const deleteCare = async (careId: string): Promise<Care> => {
-  return (await axios.delete<Care>(`${BASE_URL}/${careId}`)).data
+export const deleteCare = async (careId: string): Promise<string> => {
+  return (await axios.delete<string>(`${BASE_URL}/${careId}`)).data
+}
+
+export const createLog = async (formData: LogFormData): Promise<Log> => {
+  return (await axios.post<Log>(`${BASE_URL}/${formData.care}/logs`, formData)).data
+}
+
+export const updateLog = async (formData: LogFormData): Promise<Log> => {
+  return (await axios.patch<Log>(`${BASE_URL}/${formData.care}/logs/${formData.logId}`, formData)).data
+}
+
+export const deleteLog = async (logId: string, careId: string): Promise<Log> => {
+  return (await axios.delete<Log>(`${BASE_URL}/${careId}/logs/${logId}`)).data
 }
 
 export const checkDone = async (careId: string, trackerId: string, index: number): Promise<Tracker> => {

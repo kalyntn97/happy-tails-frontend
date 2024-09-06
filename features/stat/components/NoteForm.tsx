@@ -5,12 +5,13 @@ import { Image, StyleSheet, Text, View, TextInput } from 'react-native'
 import { getActionIconSource } from '@utils/ui'
 //styles
 import { Colors, UI, Spacing } from '@styles/index'
+import { Icon } from '@components/UIComponents'
 
 interface NoteFormProps {
   onAddNote: (notes: string) => void
 }
 
-const NoteForm: FC<NoteFormProps> = ({ onAddNote }) => {
+const NoteForm = ({ onAddNote }: NoteFormProps) => {
   const [notes, setNotes] = useState<string>(null)
 
   const onEdit = (text: string) => {
@@ -20,7 +21,7 @@ const NoteForm: FC<NoteFormProps> = ({ onAddNote }) => {
   return (
     <View style={styles.container}>
       <View style={styles.iconCon}>
-        <Image source={getActionIconSource('note')} style={styles.icon} />
+        <Icon name='noteColor' size='med' />
       </View>
       <TextInput
         style={styles.input}
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     ...Spacing.fullWH,
   },
   icon: {
-    ...UI.icon,
+    ...UI.icon(),
   },
   iconCon: {
     position: 'absolute',

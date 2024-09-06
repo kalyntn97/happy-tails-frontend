@@ -11,7 +11,7 @@ import { centerHeight, windowHeight } from "@utils/constants"
 import HomeFeed from "@home/components/HomeFeed"
 import FloatingButton from "@components/FloatingButton/FloatingButton"
 import ScrollCalendar from "@home/components/ScrollCalendar"
-import { MainButton, SubButton, TransparentButton } from "@components/ButtonComponent"
+import { MainButton, SubButton, TransparentButton } from "@components/ButtonComponents"
 //styles
 import { Buttons, Typography, Colors, UI, Spacing } from '@styles/index'
 
@@ -20,8 +20,6 @@ const HomeScreen = ({ navigation }: HomeTabScreenProps) => {
 
   const scrollViewRef = useRef<ScrollView>(null)
 
-  const { width, height } = useWindowDimensions()
-  
   const scrollToNext = (pageNum: number) => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollTo({ y: pageNum * windowHeight, animated: true })

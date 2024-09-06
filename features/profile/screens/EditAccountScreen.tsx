@@ -3,7 +3,7 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { FC, useState } from 'react'
 //components
 import AccountForm from '@profile/components/AccountForm'
-import { GoBackButton } from '@components/ButtonComponent'
+import { GoBackButton } from '@components/ButtonComponents'
 //styles
 import { UI, Spacing, Typography, Colors } from '@styles/index'
 
@@ -85,7 +85,7 @@ const EditAccountScreen: FC<EditAccountScreenProps> = ({ route, navigation }) =>
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.fullCon(),
   },
   updateForm: {
     width: '90%',
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   btnText: {
-    ...Typography.xSmallHeader,
+    ...Typography.smallHeader,
     margin: 0,
     padding: 5,
     alignSelf: 'center',
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   margin: 10
   },
   icon: {
-    ...UI.smallIcon
+    ...UI.icon()
   },
   deleteHeaderCon: {
     backgroundColor: Colors.white,

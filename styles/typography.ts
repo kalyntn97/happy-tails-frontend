@@ -1,13 +1,22 @@
 import { TextStyle } from "react-native"
 import Colors from "./colors"
+import { lightPalette } from "./ui"
 
 const base = {
-  color: Colors.black,
+  color: lightPalette().text,
+}
+
+export const textSizeMap = {
+  xLarge: { fontSize: 30, lineHeight: 35 },
+  large: { fontSize: 25, lineHeight: 30 },
+  med: { fontSize: 20, lineHeight: 25 },
+  small: { fontSize: 15, lineHeight: 20 },
+  xSmall: { fontSize: 12, lineHeight: 18 },
 }
 
 export const header: TextStyle = {
   ...base,
-  margin: 20,
+  marginVertical: 20,
   fontWeight: 'bold',
   letterSpacing: 1,
   textAlign: 'center',
@@ -15,81 +24,16 @@ export const header: TextStyle = {
 
 export const sub: TextStyle = {
   ...base,
-  margin: 10,
+  marginVertical: 10,
   fontWeight: 'normal',
   textAlign: 'center',
   fontStyle: 'italic',
   letterSpacing: 0.5,
 }
 
-export const xLarge: TextStyle = {
-  fontSize: 40,
-  lineHeight: 55,
-}
-
-export const large: TextStyle = {
-  fontSize: 30,
-  lineHeight: 30,
-}
-
-export const medium: TextStyle = {
-  fontSize: 25,
-  lineHeight: 35,
-}
-
-export const small: TextStyle = {
-  fontSize: 20,
-  lineHeight: 30,
-}
-
-export const xSmall: TextStyle = {
-  fontSize: 15,
-  lineHeight: 25,
-}
-
-export const xxSmall: TextStyle = {
-  fontSize: 12,
-  lineHeight: 18,
-}
-
-export const mainHeader = {
-  ...header,
-  ...xLarge,
-}
-
-export const subHeader = {
-  ...header,
-  ...large,
-}
-
-export const mediumHeader = {
-  ...header,
-  ...medium
-}
-
-export const smallHeader ={
-  ...header,
-  ...small,
-}
-
-export const xSmallHeader = {
-  ...header,
-  ...xSmall,
-}
-
-export const smallSubHeader: TextStyle = {
-  ...small,
-  ...sub,
-}
-
-export const xSmallSubHeader: TextStyle = {
-  ...xSmall,
-  ...sub,
-}
-
 export const body: TextStyle = {
+  ...base,
   marginVertical: 5,
-  color: Colors.black,
 }
 
 export const subBody: TextStyle = {
@@ -97,46 +41,62 @@ export const subBody: TextStyle = {
   color: Colors.shadow.darkest,
 }
 
+export const largeHeader = {
+  ...header,
+  ...textSizeMap.xLarge,
+}
+
+export const mainHeader = {
+  ...header,
+  ...textSizeMap.large,
+}
+
+export const subHeader = {
+  ...header,
+  ...textSizeMap.med,
+}
+
+export const smallHeader = {
+  ...header,
+  ...textSizeMap.small,
+}
+
+export const smallSubHeader: TextStyle = {
+  ...sub,
+  ...textSizeMap.small,
+}
+
+export const largeBody = {
+  ...body,
+  ...textSizeMap.med,
+}
+
 export const regBody = {
   ...body,
-  ...small,
+  ...textSizeMap.small,
 }
 
 export const smallBody = {
-  ...xSmall,
   ...body,
+  ...textSizeMap.xSmall,
 }
 
 export const smallSubBody: TextStyle = {
-  ...xSmall,
-  ...body,
   ...subBody,
-}
-
-export const xSmallBody = {
-  ...xxSmall,
-  ...body,
-}
-
-export const xSmallSubBody: TextStyle = {
-  ...xxSmall,
-  ...body,
-  ...subBody,
+  ...textSizeMap.xSmall,
 }
 
 export const focused: TextStyle = {
   fontWeight: 'bold',
-  color: Colors.shadow.darkest,
+  color: Colors.black,
 }
 
 export const unFocused: TextStyle = {
   fontWeight: 'normal',
-  color: Colors.shadow.reg,
+  color: Colors.shadow.dark,
 }
 
-export const errorMsg: TextStyle = {
-  ...focused,
+export const error: TextStyle = {
+  fontWeight: 'bold',
   color: Colors.red.dark,
-  fontSize: 15,
-  margin: 5,
 }

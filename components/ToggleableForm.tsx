@@ -1,20 +1,18 @@
-import { StyleSheet, TouchableOpacity, Text, View, Image, ImageStyle, Pressable } from "react-native"
-import { FC, ReactNode, useEffect, useState } from "react"
+import { ReactNode, useState } from "react"
+import { View, ViewStyle } from "react-native"
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { getActionIconSource } from "@utils/ui"
-import { TransparentButton } from "./ButtonComponent"
+import { Spacing } from '@styles/index'
+import { ButtonSize, TransparentButton } from "./ButtonComponents"
 
 interface FormProps {
   title: string
-  buttonColor?: string
-  buttonBgColor?: string
-  buttonSize?: string
-  content: ReactNode
+  children: ReactNode
+  buttonStyles?: ViewStyle
+  buttonSize?: ButtonSize
   onPress?: () => void
 }
 
-const ToggleableForm: React.FC<FormProps> = ({ title, content, onPress, buttonSize, buttonColor, buttonBgColor }) => {
+const ToggleableForm = ({ title, children, onPress, buttonSize, buttonStyles }: FormProps) => {
   const [visible, setVisible] = useState(false)
 
   const handlePress = () => {
@@ -23,35 +21,11 @@ const ToggleableForm: React.FC<FormProps> = ({ title, content, onPress, buttonSi
   }
   
   return (
-    <View style={styles.container}>
-      <TransparentButton title={title} onPress={handlePress} icon='down' color={buttonColor} bgColor={buttonBgColor} size={buttonSize} />
-      {visible && content}
+    <View style={Spacing.flexColumnStretch}>
+      <TransparentButton title={title} onPress={handlePress} icon='down' size={buttonSize} buttonStyles={buttonStyles} />
+      {visible && children}
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: '90%',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  mainBtn: {
-    ...Spacing.flexRow,
-    alignSelf: 'flex-start',
-    justifyContent: 'space-between',
-    width: '100%',
-    backgroundColor: Colors.pink.reg,
-  },
-  btnText: {
-    ...Typography.xSmallHeader,
-    margin: 0,
-    padding: 5,
-    alignSelf: 'center',
-  },
-  icon: {
-    ...UI.xSmallIcon
-  },
-})
- 
 export default ToggleableForm

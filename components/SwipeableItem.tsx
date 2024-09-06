@@ -1,62 +1,66 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { ReactNode, useRef } from 'react'
+import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
-import { IconButton } from './ButtonComponent'
-import { Spacing } from '@styles/index'
-import { getActionIconSource } from '@utils/ui'
+//components
+import { IconButton } from './ButtonComponents'
+import { Icon } from './UIComponents'
+//styles
+import { Colors, Spacing } from '@styles/index'
 
 type Props = {
-  swipeRightActions?: { [action: string]: () => void }
-  swipeLeftActions?: { [action: string]: () => void }
+  swipeRightActions?: { icon: string, title?: string, bgColor: string, onPress: () => void }[]
+  swipeLeftActions?: { icon: string, title?: string, bgColor: string, onPress: () => void }[]
   onPress?: () => void, 
   onLongPress?: () => void
-  toggle?: { onToggle: () => void, initial: boolean }
+  toggle?: { onToggle: () => void, isOn: boolean }
   title: string
   content: ReactNode
   disabled?: boolean
-  color: string, 
+  color: string,
+  containerStyles?: ViewStyle
   
 }
 
 const MIN_TASK_HEIGHT = 60
 const MAX_TASK_HEIGHT = 70
 
-const SwipeableItem = ({ color, title, content, swipeRightActions, swipeLeftActions, onPress, onLongPress, toggle, disabled }: Props) => {
+const SwipeableItem = ({ title, content, swipeRightActions, swipeLeftActions, onPress, onLongPress, toggle, disabled, color, containerStyles }: Props) => {
   const swipeableRef = useRef(null)
+
+  const TASK_HEIGHT = title.length < 30 ? MIN_TASK_HEIGHT : MAX_TASK_HEIGHT
 
   const closeSwipeable = () => {
     swipeableRef.current.close()
   }
-
   const rightSwipeActions = () => (
-    <View style={[styles.squareBtnContainer, { height: TASK_HEIGHT }]}>
-      { Object.keys(swipeRightActions).map(action => 
-        <IconButton key={action} type={action} size='medium' height={TASK_HEIGHT} onPress={() => {
-          swipeRightActions[action]()
+    <View style={[styles.btnContainer, { height: TASK_HEIGHT }]}>
+      { swipeRightActions.map(action => 
+        <IconButton key={action.icon} title={action.title ?? action.icon} icon={action.icon} type='action' size='med' buttonStyles={{ height: TASK_HEIGHT, width: 60, backgroundColor: Colors[action.bgColor].light, borderWidth: 0 }} textStyles={action.title === 'delete' ? { color: Colors.red.darkest, fontWeight: 'bold' } : {}} onPress={() => {
+          action.onPress()
           closeSwipeable()
         } } />
       )}
     </View>
   )
 
-  const TASK_HEIGHT = title.length < 30 ? MIN_TASK_HEIGHT : MAX_TASK_HEIGHT
 
   return (
     <Swipeable ref={swipeableRef} renderRightActions={rightSwipeActions}>
       <TouchableOpacity
         style={[
-          styles.task, 
-          { backgroundColor: color, height: TASK_HEIGHT }
+          styles.item, 
+          { backgroundColor: color, height: TASK_HEIGHT },
+          containerStyles,
         ]} 
         onPress={onPress}
         onLongPress={onLongPress}
         disabled={disabled}
       >
-        <View style={styles.taskContent}>{content}</View>
+        {content}
 
         { toggle && 
           <TouchableOpacity style={styles.bulletBtn} onPress={toggle.onToggle}>
-          { toggle.initial ? <Image source={getActionIconSource('check')} style={styles.check} />
+          { toggle.isOn ? <Icon name='checkColor' size='small' />
             : <Text style={styles.bulletBtnText}>○</Text> 
           }
           </TouchableOpacity> 
@@ -67,31 +71,28 @@ const SwipeableItem = ({ color, title, content, swipeRightActions, swipeLeftActi
 }
 
 const styles = StyleSheet.create({
-  task: {
-    ...Spacing.flexRow,
-    width: '100%',
+  item: {
+    ...Spacing.flexRowStretch,
+    ...Spacing.basePadding(15, 0),
     borderRadius: 15,
-    marginVertical: 5,
-    justifyContent: 'space-between'
+    marginVertical: 10,
   },
-  taskContent: {
+    btnContainer: {
     ...Spacing.flexRow,
-    justifyContent: 'space-around',
-    flex: 14,
-    paddingHorizontal: 10,
-  },
-  squareBtnContainer: {
-    ...Spacing.flexRow,
-    marginVertical: 5,
+    marginVertical: 10,
     marginLeft: 10
+  },
+  btn: {
+
   },
   check: {
     width: 30,
     height: 30,
   },
   bulletBtn: {
-    marginRight: 20,
-    flex: 1,
+    ...Spacing.centered,
+    width: 30,
+    marginLeft: 15,
   },
   bulletBtnText: {
     fontSize: 25,

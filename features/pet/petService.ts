@@ -1,6 +1,6 @@
 import axios from "axios"
 import { PET_BASE_URL } from "@services/urls"
-import { IdFormData, IllnessFormData, Pet, PetFormData, PhotoFormData, ServiceFormData } from "./PetInterface"
+import { IdFormData, HealthConditionFormData, Pet, PetFormData, PhotoFormData, ServiceFormData } from "./PetInterface"
 const BASE_URL = PET_BASE_URL
 
 export const getAllPets = async (): Promise<Pet[]> => {
@@ -9,6 +9,7 @@ export const getAllPets = async (): Promise<Pet[]> => {
 
 export const create = async (formData: PetFormData, photoData: PhotoFormData): Promise<Pet> => {
   const result = (await axios.post<Pet>(BASE_URL, formData)).data
+  console.log(result)
   if (photoData) {
     const url = await addPhoto(result._id, photoData)
     result.photo = url
@@ -43,7 +44,7 @@ export async function addId(formData: IdFormData, petId: string): Promise<string
   return (await axios.patch<string>(`${BASE_URL}/${petId}/ids`, formData)).data
 }
 
-export async function addIllness(formData: IllnessFormData, petId: string): Promise<string> {
+export async function addIllness(formData: HealthConditionFormData, petId: string): Promise<string> {
   return (await axios.patch<string>(`${BASE_URL}/${petId}/illnesses`, formData)).data
 }
 

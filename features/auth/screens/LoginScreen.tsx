@@ -6,7 +6,7 @@ import LottieView from 'lottie-react-native'
 import { useAuth } from '@auth/AuthContext'
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponent'
+import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponents'
 import { styles } from '@styles/stylesheets/FormStyles'
 import { ErrorMessage } from '@components/UIComponents'
 
@@ -56,7 +56,7 @@ const LoginScreen: FC = ({ navigation }) => {
 
 // const styles = StyleSheet.create({
 //   container: {
-//     ...Spacing.fullScreenDown,
+//     ...Spacing.fullCon(),
 //     ...Spacing.centered
 //   },
 //   catAnimation: {
@@ -71,7 +71,7 @@ const LoginScreen: FC = ({ navigation }) => {
 //     ...UI.form,
 //   },
 //   input: {
-//     ...UI.input,
+//     ...UI.input(),
 //     borderColor: Colors.pink.reg,
 //   },
 // })

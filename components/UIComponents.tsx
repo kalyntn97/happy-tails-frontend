@@ -1,124 +1,338 @@
-import { ActivityIndicator, DimensionValue, Image, Modal, Pressable, StyleSheetProperties, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
-import { Spacing, Colors, Typography, UI } from "@styles/index"
-import { ComponentProps, FC, MutableRefObject, ReactElement, ReactNode, forwardRef, useEffect, useState } from "react"
-import { getActionIconSource } from "@utils/ui"
-import { ImageSourcePropType } from "react-native"
-import { ToastConfig, ToastConfigParams, ToastOptions, ToastProps } from "react-native-toast-message"
 import RNDateTimePicker from "@react-native-community/datetimepicker"
-import { GoBackButton, SubButton } from "./ButtonComponent"
-import Animated, { FadeInDown, FadeOutDown, LayoutAnimationConfig, SlideInDown, SlideOutDown, ZoomInUp } from "react-native-reanimated"
+import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
+import { ActivityIndicator, DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import Animated, { SlideInDown, SlideInLeft, SlideOutDown, SlideOutLeft } from "react-native-reanimated"
+//utils & hooks
+import { useSelectPhoto } from "@hooks/sharedHooks"
+import { windowWidth } from "@utils/constants"
+import { IconType, getIconByType } from "@utils/ui"
+//components 
+import { CustomToast } from "@navigation/NavigationStyles"
+import { ActionButton, GoBackButton } from "./ButtonComponents"
+//styles
+import { Colors, Spacing, Typography, UI } from "@styles/index"
+import { textSizeMap } from "@styles/typography"
+import { Size, icon, iconSizeMap, lightPalette } from "@styles/ui"
 
-type BoxHeaderProps = {
-  title: string
-  titleIconSource?: ImageSourcePropType
-  onPress?: () => void
-  titleColor?: string
-  arrow?: string
-  mode?: 'light' | 'dark'
-  rightContent?: any
+interface IconProps {
+  type?: IconType
+  name: string
+  value?: any
+  size?: Size
+  styles?: ImageStyle
+  m?: number
 }
 
-interface BoxProps extends BoxHeaderProps {
-  content: any
+export const Icon = ({ type = 'action', name, value, size = 'small', styles, m }: IconProps) =>  {
+  const source = getIconByType(type, name, value)
+  return (
+    <Image source={source} style={[icon(size, m), styles]} />
+  )
 }
 
-export const BoxHeader: FC<BoxHeaderProps> = ({ title, onPress, titleColor, arrow, mode, titleIconSource, rightContent }) => (
-  <Pressable style={{
-    ...Spacing.flexRow,
-    borderBottomWidth: 1,
-    borderColor: 'lightgray',
-    width: '100%',
-    paddingVertical: 10,
-  }}
-    onPress={onPress}
-  >
-    { titleIconSource && <Image source={titleIconSource} style={{ ...UI.smallIcon }} /> }
-    <Text style={[
-      { ...Typography.xSmallHeader, margin: 0, marginLeft: titleIconSource ? 7 : 2, textAlign: 'left', textTransform: 'capitalize' }, 
-    titleColor && { color: titleColor },
-    mode === 'light' && { fontWeight: 'normal' },
-    ]}>
-      { title }
-    </Text>
-    <View style={{ ...Spacing.flexRow, marginLeft: 'auto' }}>
-      { rightContent && rightContent }
-      <Image source={arrow === 'down' ? getActionIconSource('down') : getActionIconSource('next')} style={{ ...UI.xSmallIcon, marginLeft: 10 }} />
+export const CircleIcon = ({ type, name, size = 'large', bgColor = Colors.shadow.light }: IconProps & { bgColor?: string }) => { 
+  const conWidth = Number(iconSizeMap[size].width) + (size === 'large' ? 30 : 15)
+  return (
+    <View style={[UI.roundedIconCon, { backgroundColor: bgColor, width: conWidth, height: conWidth }]}>
+      <Icon type={type} name={name} size={size} />
     </View>
+  )
+}
+
+export const PhotoUpload = memo(({ photo, size = 'large', placeholder, onSelect, styles }: { photo?: string, size?: Size, placeholder?: ImageSourcePropType, onSelect: (uri: string) => void, styles?: ViewStyle }) => {
+  const photoSource: ImageSourcePropType = photo ? { uri: photo } : (placeholder ?? require('assets/icons/ui-image.png'))
+
+  const addPhoto = async () => {
+    const selected = await useSelectPhoto()
+    onSelect(selected)
+  }
+
+  return (
+    <View style={[styles, UI.photo(size, 15, 0), { position: 'relative', overflow: 'hidden', backgroundColor: Colors.shadow.light, elevation: 2 }]}>
+      <Image source={photoSource} style={Spacing.fullWH as ImageStyle} />
+      <TouchableOpacity onPress={addPhoto} style={[Spacing.centered, { position: 'absolute', width: '100%', height: '30%', bottom: 0 }]}>
+        <View style={[Spacing.centered, { width: '90%', padding: 5, marginBottom: 5, borderRadius: 30, backgroundColor: Colors.transparent.light }]}>
+          <Text style={{ fontSize: size === 'med' ? 12 : 10 }}>{photo ? 'Edit' : 'Upload'} Photo</Text>
+          <Icon name='camera' size='xSmall' />
+        </View>
+      </TouchableOpacity>
+    </View>
+  )
+})
+
+type TitleLabelProps = {
+  onPress?: () => void
+  title?: string
+  iconType?: IconType
+  iconName?: string
+  rightAction?: ReactNode | any
+  size?: Size
+  rightLabel?: 'down' | 'next'
+  color?: string
+  titleStyles?: TextStyle
+  containerStyles?: ViewStyle
+  mode?: 'normal' | 'bold'
+  capitalize?: boolean
+}
+
+const headerSize = {
+  xSmall: Typography.smallSubHeader,
+  small: Typography.smallHeader,
+  med: Typography.subHeader,
+  large: Typography.mainHeader,
+  xLarge: Typography.largeHeader,
+}
+
+export const TitleLabel = memo(({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, containerStyles, rightLabel, mode = 'normal', capitalize = true }: TitleLabelProps) => { 
+  const sizes = useMemo(() => {
+    const titleSize: Size = size === 'small' || size === 'med' ? 'small' : size === 'large' ? 'med' : 'large'
+    const iconSize: Size = size === 'small' ? 'xSmall' : size === 'med' ? 'small' : size === 'large' ? 'med' : 'large'
+    return { titleSize, iconSize }
+  }, [size])
+  return (
+    <Pressable onPress={onPress} style={[UI.rowContent('space-between', 0), { position: 'relative' }, containerStyles]}>
+      { iconName && <Icon type={iconType} name={iconName} size={sizes.iconSize} styles={{ marginVertical: 0, marginRight: 10 }}/> }
+      { title && 
+        <Text style={[textSizeMap[sizes.titleSize],
+          { fontWeight: mode, color: color, margin: 0, textAlign: 'left', marginRight: 20, textTransform: capitalize ? 'capitalize' : 'none' },
+          titleStyles,
+        ]}>
+        { title }
+      </Text> }
+      <View style={[Spacing.flexColumn, { marginLeft: 'auto', flex: 1, alignItems: 'flex-end' }]}>
+        { rightAction ?? (rightLabel && <Icon name={rightLabel} size='xSmall' styles={{ marginLeft: 10 }} />) }
+      </View>
+    </Pressable>
+  )
+})
+
+export const FormHeader = ({ title, size = 'med', color = lightPalette().text, styles, capitalize = false }: { title: string, size?: Size, color?: string, styles?: TextStyle, captitalize?: boolean }) => {
+  // const defaultColor = size === 'small' || size === 'xSmall' ? lightPalette().unfocused : lightPalette().text
+  return (
+    <Text style={[headerSize[size], { color: color, textTransform: capitalize ? 'capitalize' : 'none' }, styles]}>{title}</Text>
+  )
+}
+
+export const FormLabel = ({ label, icon, type = 'action', size, capitalize = false }: { label: string, icon: string, type?: IconType, size?: TitleLabelProps['size'], capitalize?: boolean }) => (
+  <TitleLabel title={label} iconName={icon} iconType={type} mode="bold" size={size} capitalize={capitalize} />
+)
+
+export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { label: string, icon?: string, onPress: () => void, top?: number, right?: number }) => (
+  <Pressable onPress={onPress} style={[Spacing.flexRow, { position: 'absolute', right: right, top: top }]}>
+    <FormHeader title={label} size='xSmall' styles={{ marginRight: icon ? 10 : 0 }} />
+    { icon && <Icon name={icon} /> }
   </Pressable>
 )
 
-export const BoxWithHeader: FC<BoxProps> = ({ title, titleIconSource, onPress, content, titleColor, arrow }) => (
-  <View style={{ ...UI.roundedCon }}>
-    <BoxHeader title={title} onPress={onPress} titleColor={titleColor} arrow={arrow} titleIconSource={titleIconSource}/>
-    <View style={{
-      width: '100%'
-    }}>
-      { content }
-    </View>
-  </View>
-)
-
-type CircleIconProps = {
-  iconSource: ImageSourcePropType
-  size?: string
-  bgColor?: string
+export const getHeaderActions = (onReset: () => void, isPending: boolean, handleValidate: () => void): { icon?: string, title?: string | ReactNode, onPress: () => void }[] => {
+  return [
+    { icon: 'reset', onPress: onReset },
+    { title: isPending ? 
+        <Text style={Spacing.flexRow}><ActivityIndicator /> Submitting...</Text>
+        : 'Submit', 
+      onPress: handleValidate },
+  ]
 }
 
-export const CircleIcon = ({ iconSource, size, bgColor }: CircleIconProps) => (
-  <View style={{ backgroundColor: bgColor ?? Colors.shadow.light, ...UI.roundedIconCon }}>
-    <Image source={iconSource} style={{ ...UI.largeIcon }} />
-  </View>
-)
- 
-export const ErrorMessage = ({ error, top }: { error: string, top?: number }) => (
-  <Text style={{ ...Typography.errorMsg, marginTop: top ?? 0 }}>{error}</Text>
+export const HelperText = ({ text, styles }: { text: string, styles?: TextStyle }) => (
+  <Text style={[Typography.subBody, Typography.unFocused, { marginVertical: 5 }, styles]}>{text}</Text>
 )
 
-export const ErrorImage = ({ top }: { top?: number }) => (
-  <View style={[top && { marginTop: top }, { ...Spacing.centered }]}>
+export const ErrorMessage = ({ error, styles }: { error: string, styles?: TextStyle }) => (
+  <Text style={[Typography.error, { marginTop: 5 }, styles]}>{error}</Text>
+)
+
+export const FormError = ({ errors, errorKey, styles }: { errors: { [key: string]: string }, errorKey: string, styles?: TextStyle }) => (
+  errors && errorKey in errors && <ErrorMessage error={errors[errorKey]} styles={styles} />
+)
+
+export const ErrorImage = ({ top = 0 }: { top?: number }) => (
+  <View style={[Spacing.centered, { marginTop: top }]}>
     <Image source={require('assets/images/error.png')} style={{ maxWidth: 300, resizeMode: 'contain' }} />
   </View>
 )
-
-export const CatToast = ({ text1, text2, props }: { text1: string, text2: string, props: any }) => (
-  <View style={{ ...Spacing.flexRow, backgroundColor: Colors.white, borderRadius: 6, paddingHorizontal: 15, paddingVertical: 10, width: '90%', minHeight: 70, ...UI.boxShadow, shadowColor: props.style === 'success' ? Colors.green.dark : Colors.red.dark, ...UI.boxShadow }}>
-    <Image source={props.style === 'success' ? require('assets/icons/ui-cat-happy.png') : require('assets/icons/ui-cat-sad.png')} style={{ ...UI.icon}} />
-    <View style={{ ...Spacing.flexColumn, marginLeft: 10, alignItems: 'flex-start' }}>  
-      <Text style={{ textTransform: 'capitalize', fontWeight: 'bold', fontSize: 15, marginBottom: 5 }}>{props.style}!</Text>
-      <Text>{text1}</Text>
-      { text2 && <Text style={{ flex: 1 }}>{text2}</Text> }
-    </View>
-    <Pressable style={{ marginLeft: 'auto' }} onPress={props.onClose}>
-      <Image source={getActionIconSource('close')} style={{ ...UI.smallIcon}} />
-    </Pressable>
-  </View>
-)
-
-export const toastConfig = {
-  catToast: ({ text1, text2, props }: ToastConfigParams<any>) => ( <CatToast text1={text1} text2={text2} props={props} /> )
+interface BoxProps extends TitleLabelProps {
+  children: ReactNode
+  contentStyles?: ViewStyle
 }
 
-export const EmptyList = ({ type }: { type: string }) => (
-  <Text style={type === 'task' ? { ...Typography.smallSubHeader } : { ...Typography.xSmallSubHeader }}>No {type}s added.</Text>
-) 
+export const BoxWithHeader = memo(({ title, iconType = 'action', iconName, onPress, color = UI.lightPalette().text, rightAction, size = 'med', titleStyles, rightLabel = 'down', mode = 'bold', children, contentStyles, containerStyles }: BoxProps) => (
+  <View style={[UI.card(), containerStyles]}>
+    <TitleLabel size={size} onPress={onPress} title={title} iconType={iconType} iconName={iconName} color={color} rightAction={rightAction} titleStyles={titleStyles} rightLabel={rightLabel} mode={mode} />
+    <View style={[{ flex: 1, paddingVertical: 10 }, contentStyles]}>{children}</View>
+  </View>
+))
 
-export const TopRightHeader = ({ onPress }) => (
-  <Pressable onPress={onPress} style={{
-    ...Spacing.flexRow, position: 'absolute', right: -5, top: 0,
-  }}>
-    <Text style={{ ...Typography.xSmallHeader, marginRight: 10 }}>Add</Text>
-    <Image source={getActionIconSource('add')} style={{ ... UI.xSmallIcon }} />
-  </Pressable>
+interface TableProps extends TitleLabelProps{
+  table: { key: string, icon: string, value: any, label?: string }[], 
+  withTitle?: boolean, 
+  dependentRows?: { [key: string]: boolean },
+  tableStyles?: ViewStyle
+  errors?: { [key: string]: string }
+}
+
+export const TableForm = memo(({ table, withTitle = true, dependentRows, size = 'small', tableStyles, titleStyles, containerStyles, errors }: TableProps) => (
+  <View style={[UI.card(true, false, 15), { backgroundColor: Colors.white }, tableStyles]}>
+    { table.map((row, index) => {
+      let rowIsVisible = true
+      if (dependentRows && dependentRows.hasOwnProperty(row.key)) rowIsVisible = dependentRows[row.key]
+
+      return (
+        rowIsVisible && 
+          <TitleLabel key={row.key} title={withTitle ? row.label : null} iconName={row.icon} size={size} rightAction={
+            <View style={{ alignItems: 'flex-end' }}>
+              { row.value }
+              { errors && <FormError errorKey={row.key} errors={errors} /> }
+            </View>
+          } titleStyles={titleStyles} containerStyles={{ ...(index > 0 ? { borderTopWidth: 1, borderColor: lightPalette().border } : {}), minHeight: 50, zIndex: table.length - index, ...containerStyles }} />
+      )
+    })}
+  </View>
+))
+
+export const EmptyList = ({ type }: { type: string }) => (
+  <FormHeader title={`No ${type}s added.`} size={type === 'task' ? 'med' : 'small'} />
 )
 
-export const FormLabel = ({ label, icon, width, top = 20, bottom = 10 }: { label: string, icon: string, width?: string | number, top?: number, bottom?:number }) => (
-  <View style={{...Spacing.flexRow, width: width as DimensionValue, alignSelf: 'flex-start', marginTop: top, marginBottom: bottom }}>
-    <Image source={getActionIconSource(icon)} style={{ ...UI.xSmallIcon, marginRight: 10 }} />
-    <Text style={{ ...Typography.xSmallHeader, margin: 0 }}>{label}</Text>
+interface ScrollProps {
+  children: ReactNode
+  props?: ScrollViewProps
+  contentStyles?: ViewStyle
+  containerStyles?: ViewStyle
+  h?: number, b?: number, t?: number
+}
+
+export const ScrollHeader = forwardRef<ScrollView, ScrollProps>(({ children, h = 10, b = 15, t = 15, containerStyles, contentStyles, props }, ref) => (
+  <View style={[Spacing.flexRow, Spacing.basePadding(h, 0, b, t), containerStyles]}>
+    <ScrollView 
+      ref={ref}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={[Spacing.flexRow, contentStyles]}
+      alwaysBounceHorizontal={false}
+      { ...props }
+    >
+      { children }
+    </ScrollView>
+  </View>
+))
+
+export const ScrollContainer = ({ children, props, contentStyles }: ScrollProps) => (
+  <ScrollView
+    keyboardShouldPersistTaps='handled'
+    alwaysBounceVertical={false} 
+    showsVerticalScrollIndicator={false} 
+    style={{ width: '100%' }} 
+    contentContainerStyle={[{ flexGrow: 1 }, contentStyles ?? UI.form(10, 60)]}
+    { ...props }
+  >
+    { children }
+  </ScrollView>
+)
+
+export const ScrollScreen = ({ children, props, contentStyles, containerStyles, bgColor = UI.lightPalette().background }: ScrollProps & { containerStyles?: ViewStyle, bgColor?: string }) => (
+  <View style={[Spacing.fullCon(), { backgroundColor: bgColor }, containerStyles]}>
+    <ScrollContainer props={props} contentStyles={contentStyles}>{children}</ScrollContainer>
   </View>
 )
 
-export const BottomModal = ({ children, modalVisible, height, maxHeight, onDismiss, background = Colors.shadow.lightest, overlay = Colors.white }: { children: ReactNode, modalVisible: boolean, height: string | number, maxHeight?: string | number, onDismiss: () => void, background?: string, overlay?: string }) => {
+interface InputProps {
+  initial: string, 
+  placeholder?: string, 
+  onChange?: (input: string) => void,
+  onFocus?: (py: number) => void
+  onBlur?: () => void
+  props?: TextInputProps, 
+  maxLength?: number, 
+  error?: string, 
+  width?: DimensionValue
+  withBorder?: boolean
+  styles?: TextStyle
+  align?: 'left' | 'right'
+  bottom?: number
+}
+
+export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title', onChange, onFocus, onBlur, props, maxLength = 100, width, error, withBorder = true, styles, align = 'left', bottom = - 15 }: InputProps, ref: MutableRefObject<any>) => {
+  const [isFocused, setIsFocused] = useState(false)
+  const [value, setValue] = useState(initial)
+
+  const validatedStyles = useMemo(() => error ? UI.error : isFocused ? UI.focused : UI.unfocused, [error, isFocused])
+
+  const handlePress = (text: string) => {
+    const validText = text?.trim().length === 0 ? null : text
+    setValue(validText)
+    onChange(validText)
+    console.log(text)
+    setIsFocused(false)
+    Keyboard.dismiss()
+  }
+
+  const handleFocus = () => {
+    if (ref?.current && onFocus) {
+      ref.current.measure((_fx, _fy, _w, h, _px, py) => {
+        onFocus(py + h)
+      })
+    }
+    setIsFocused(true)
+  }
+
+  const handleBlur = () => {
+    handlePress(value)
+    if (onBlur) onBlur()
+  }
+
+  useEffect(() => {
+    setValue(initial)
+  }, [initial])
+
+  return (
+    <View style={[Spacing.flexColumn, { width: width, minWidth: 50, zIndex: isFocused ? 10 : 2, alignItems: align === 'left' ? 'flex-start' : 'flex-end' }]}>
+      <TextInput
+        ref={ref}
+        style={[withBorder ? UI.input() : { ...UI.input(false, 0, 0, 0), width: '100%', textAlign: align }, styles, validatedStyles]}
+        placeholder={placeholder}
+        placeholderTextColor={UI.lightPalette().unfocused}
+        value={value}
+        onChangeText={(text: string) => setValue(text)}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        maxLength={maxLength}
+        selectTextOnFocus={true}
+        { ...props }
+      />
+      <View style={[Spacing.flexRow, { position: 'absolute', bottom: bottom }]}>
+        { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: isFocused ? 30 : 0 }}/> }
+        <Text style={{ color: UI.lightPalette().unfocused, fontSize: 12 }}>
+          { isFocused && `${maxLength - (value ? value.length : 0)}/${maxLength}` }
+        </Text> 
+        
+      </View>
+    </View>
+  )
+}))
+
+export  const InlinePicker = ({ options, onSelect, selected, width = '80%' }: { options: string[], onSelect: (selected: String) => void, selected: string, width?: DimensionValue }) => (
+  <View style={[Spacing.flexRow, { justifyContent: 'space-between', width: width }]}>
+    {options.map(option =>
+      <TouchableOpacity key={option} onPress={() => onSelect(option)} style={{ opacity: selected === option ? 1 : 0.3 }}>
+        <Text>{option}</Text>
+      </TouchableOpacity>
+    )}
+  </View>
+)
+
+interface ModalProps {
+  children: ReactNode, 
+  modalVisible: boolean, 
+  height?: DimensionValue, 
+  maxHeight?: DimensionValue, 
+  onDismiss: () => void, 
+  background?: string, 
+  overlay?: string
+  animation?: 'horizontal' | 'vertical'
+}
+
+export const BottomModal = ({ children, modalVisible, height = 'fit-content' as DimensionValue, maxHeight = '93.5%', onDismiss, background = Colors.shadow.lightest, overlay = Colors.transparent.dark, animation = 'vertical'}: ModalProps) => {
   const [childrenVisible, setChildrenVisible] = useState(modalVisible)
 
   const dismissModal = () => {
@@ -130,76 +344,161 @@ export const BottomModal = ({ children, modalVisible, height, maxHeight, onDismi
 
   useEffect(() => {
     setChildrenVisible(modalVisible)
+    const keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', dismissModal)
+
+    return () => {
+      keyboardWillHideListener.remove()
+    }
   },[modalVisible])
 
   return (
     <Modal
       animationType='none' 
       visible={modalVisible}
-      onRequestClose={() => setChildrenVisible(false)}
+      onRequestClose={dismissModal}
       onDismiss={onDismiss}
       transparent={true}
     > 
       <Pressable onPress={e => {
         if (e.target === e.currentTarget) dismissModal()
-      }} style={{ ...UI.modalOverlay, backgroundColor: overlay}}>
-        { childrenVisible && 
-          <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={{ ...UI.bottomModal, height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, alignItems: 'center', backgroundColor: background }}>
-            <GoBackButton position="topLeft" onPress={dismissModal} left={10} top={10} />
-            { children }
-          </Animated.View> 
+      }} style={[UI.modalOverlay, { backgroundColor: overlay}]}>
+        { childrenVisible &&
+          <KeyboardAvoidingView
+            style={{ marginTop: 'auto' }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            <Animated.ScrollView 
+              entering={animation === 'vertical' ? SlideInDown : SlideInLeft} 
+              exiting={animation === 'vertical' ? SlideOutDown : SlideOutLeft} 
+              style={[UI.bottomModal, { width: windowWidth, height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, backgroundColor: background }]}
+              contentContainerStyle={[UI.form(10, 60, 40), { flexGrow: 1 }]}
+              alwaysBounceVertical={false}
+              keyboardShouldPersistTaps='handled'
+            >
+              <GoBackButton onPress={dismissModal} />
+              { children }
+            </Animated.ScrollView> 
+          </KeyboardAvoidingView>
         }
       </Pressable>
+
+      <CustomToast />
     </Modal>
   )
 }
 
-export const FormInput = forwardRef(({ value, placeholder, onChange, styles, props, maxLength = 50 }: { value: string, placeholder: string, onChange: (input: string) => void, styles: TextStyle, props: TextInputProps, maxLength?: number }, ref: MutableRefObject<any>) => {
-  const [isFocused, setIsFocused] = useState(false)
-  const focusedColor = isFocused ? Colors.pink.darkest : Colors.black
-  
-  return (
-    <TextInput
-      ref={ref}
-      style={[styles ?? UI.input, { color: focusedColor, borderColor: focusedColor }]}
-      placeholder={placeholder ?? 'Title'}
-      placeholderTextColor={UI.lightPalette.unfocused}
-      value={value}
-      onChangeText={onChange}
-      onFocus={() => setIsFocused(true)}
-      onBlur={() => setIsFocused(false)}
-      maxLength={maxLength}
-      selectTextOnFocus={true}
-      { ...props }
-    />
-  )
-})
+interface ModalInputProps {
+  label?: string | ReactElement, 
+  onReset?: () => void, 
+  onDismiss?: () => void,
+  onSubmit?: () => void,
+  buttonStyles?: ViewStyle, 
+  buttonTextStyles?: TextStyle, 
+  buttonTextProps?: any, 
+  customLabel?: ReactNode
+  children?: ReactNode, 
+  height?: DimensionValue, 
+  maxHeight?: DimensionValue, 
+  background?: string, 
+  overlay?: string
+  animation?: 'horizontal' | 'vertical'
+}
 
-export const ModalInput = ({ children, label, onReset, height = 'fit-content', maxHeight, color, overlay, background }: { children: ReactNode, label: string | ReactElement, onReset: () => void, height?: number | string, maxHeight?: number | string, color?: number, overlay?: string, background?: string }) => {
+export const ModalInput = ({ children, label, onReset, onDismiss, onSubmit, height, maxHeight, overlay, background, buttonStyles, buttonTextStyles, buttonTextProps, customLabel, animation }: ModalInputProps) => {
   const [modalVisible, setModalVisible] = useState(false)
-  const focusedColor = Colors.multi.dark[color] ?? UI.lightPalette.focused
-  const focusedStyles = { borderColor: focusedColor, color: focusedColor }
-  const unfocusedStyles = { borderColor: UI.lightPalette.border, color: UI.lightPalette.text }
 
-  const dismissModal = () => setModalVisible(false)
+  const dismissModal = () => {
+    setModalVisible(false)
+    onDismiss && onDismiss()
+  }
 
   return (
     <>
-      <Pressable onPress={() => setModalVisible(!modalVisible)}>
-        <Text style={[UI.input, modalVisible ? focusedStyles : unfocusedStyles]}>{label}</Text>
-      </Pressable>
-
-      <BottomModal modalVisible={modalVisible} onDismiss={dismissModal} height={height} maxHeight={maxHeight} overlay={overlay} background={background}>
+      <Pressable onPress={() => setModalVisible(!modalVisible)} style={buttonStyles}>
+        { customLabel 
+          ? customLabel :
+          <Text {...buttonTextProps} style={buttonTextStyles}>{label}</Text>
+        }
+      </Pressable> 
+      
+      <BottomModal modalVisible={modalVisible} onDismiss={dismissModal} height={height} maxHeight={maxHeight} overlay={overlay} background={background} animation={animation}>
+        <View style={[Spacing.flexRow, { maxWidth: '80%', justifyContent: 'space-between', position: 'absolute', right: 10, top: 10, }]}>
+          { onReset && <ActionButton icon='reset' onPress={onReset} buttonStyles={{ marginRight: onSubmit ? 30 : 0 }} /> }
+          { onSubmit && <ActionButton title='Save' size='xSmall' onPress={() => {
+            onSubmit()
+            dismissModal()
+          }} /> }
+        </View>
         { children }
-        <SubButton title='Reset' onPress={onReset} color={UI.lightPalette.unfocused} bottom={20} />
       </BottomModal>
     </>
   )
 }
 
-export const DateInput = ({ date, onChangeDate, color }: { date: Date, onChangeDate: (selected: Date) => void, color?: number }) => (
-  <ModalInput label={date.toDateString()} onReset={() => onChangeDate(new Date())} color={color}>
-    <RNDateTimePicker display="inline" themeVariant="light" value={new Date(date)} minimumDate={new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate)} accentColor={Colors.multi.dark[color]} />
+interface DateInputProps extends ModalInputProps {
+  date: Date | string, 
+  placeholder?: string, 
+  onChangeDate: (selected: string) => void, 
+  color?: number, 
+  header?: string
+}
+
+export const DateInput = ({ date, placeholder = 'No date selected.', onChangeDate, color, buttonStyles, buttonTextStyles, header }: DateInputProps) => (
+  <ModalInput label={date ? new Date(date).toLocaleDateString() : placeholder} onReset={() => onChangeDate(new Date().toISOString())} buttonStyles={buttonStyles} buttonTextStyles={buttonTextStyles}>
+    { header && 
+      <FormHeader title={date ? `${header}: ${new Date(date).toLocaleDateString()}` : header} /> 
+    }
+    <RNDateTimePicker display="inline" themeVariant="light" value={date ? new Date(date) : new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate.toISOString())} accentColor={Colors.multi.dark[color]} />
   </ModalInput>
 )
 
+interface NoteInputProps extends ModalInputProps {
+  notes: string, 
+  maxLength?: number, 
+  onChange: (text: string) => void, 
+  inputStyles?: TextStyle, 
+  placeholder?: string, 
+  header?: string, 
+  subHeading?: ReactNode
+}
+
+export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit, buttonStyles, buttonTextStyles, inputStyles, placeholder, header, subHeading, customLabel, height = '15%', maxHeight, overlay = Colors.white }: NoteInputProps) => {
+  const [notes, setNotes] = useState(initial)
+  const [isFocused, setIsFocused] = useState(false)
+
+  const validatedStyles = useMemo(() => isFocused ? UI.focused : UI.unfocused, [isFocused])
+
+  const handlePress = (text: string) => {
+    const validText = text && text.trim().length === 0 ? null : text
+    setNotes(validText)
+    onChange(validText)
+    setIsFocused(false)
+    Keyboard.dismiss()
+  }
+
+  return (
+    <ModalInput customLabel={customLabel} label={notes?.length ? notes : 'No notes added.'} onSubmit={onSubmit} onReset={() => handlePress(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} overlay={overlay}>
+      <FormHeader title={header ?? 'Add Notes'} />
+      { subHeading }
+
+      <View style={[Spacing.flexRowStretch, UI.input(), { width: '90%', minHeight: height, maxHeight: maxHeight }, validatedStyles, inputStyles]}>
+        <TextInput
+          style={{ height: '100%', flex: 1, marginRight: 10 }}
+          placeholder={placeholder ?? 'Enter notes'}
+          placeholderTextColor={UI.lightPalette().unfocused}
+          value={notes}
+          onChangeText={setNotes}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => handlePress(notes)}
+          maxLength={maxLength}
+          selectTextOnFocus={true}
+          multiline={true}
+          numberOfLines={6}
+          autoFocus={true}
+        />
+        <Icon name='edit' size='xSmall' />
+      </View>
+
+    </ModalInput>
+  )
+}

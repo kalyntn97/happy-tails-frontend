@@ -1,23 +1,23 @@
 //npm
 import { useState } from "react"
-import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native"
+import { Image, Text, TouchableOpacity, View } from "react-native"
 //types & helpers
 import { Visit } from "@health/HealthInterface"
-import { countDaysBetween } from "@utils/datetime"
-import { useGetHealthById } from "@health/healthQueries"
 import { HEALTHS } from "@health/healthHelpers"
+import { useGetHealthById } from "@health/healthQueries"
+import { countDaysBetween } from "@utils/datetime"
 //queries & hooks
-import { useDeleteHealthCard, useShallowPetColor, useShallowPets } from "@hooks/sharedHooks"
+import { useDeleteHealthCard, useShallowPets } from "@hooks/sharedHooks"
 import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 //components
+import { StatButton, TransparentButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
 import PetInfo from "@components/PetInfo/PetInfo"
+import { ScrollScreen, TitleLabel } from "@components/UIComponents"
 import NoteInput from "@health/components/NoteInput"
-import { BoxHeader } from "@components/UIComponents"
-import { StatButton, TransparentButton } from "@components/ButtonComponent"
 //styles
+import { Colors, Typography, UI } from "@styles/index"
 import { styles } from "@styles/stylesheets/DetailsScreenStyles"
-import { Colors, UI, Typography } from "@styles/index"
 
 
 interface HealthDetailsProps {
@@ -66,14 +66,7 @@ const HealthDetailsScreen = ({ navigation, route }) => {
   )
 
   return (
-    <ScrollView
-      style={[
-        isSuccess && { backgroundColor: Colors.multi.lightest[petIdToColor(health.pet._id)] },
-      ]}
-      contentContainerStyle={styles.scrollContent}
-      scrollEventThrottle={200}
-      decelerationRate="fast" 
-    >
+    <ScrollScreen bgColor={isSuccess && Colors.multi.lightest[petIdToColor(health.pet._id)]}>
       { isLoading && <Loader /> }
       { isError && <Text>Error fetching data... </Text> }
       { isSuccess &&
@@ -101,18 +94,18 @@ const HealthDetailsScreen = ({ navigation, route }) => {
               </TouchableOpacity> */}
             </View>
           
-            <View style={{...UI.rowCon}}>
+            <View style={UI.rowContent()}>
               <StatButton item={{ header: 'done', stat: daysFromDone, body: 'days ago' }} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
               <StatButton item={{ header: daysToDue >= 0 ? 'due in' : 'past due', stat: Math.abs(daysToDue), body: 'days' }} color={daysToDue < 0 && Colors.red.reg} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
               <StatButton item={{ header: 'total', stat: health.lastDone.length, body: 'visits' }} bgColor={Colors.multi.light[petIdToColor(health.pet._id)]} />
             </View>
-            <View style={{...UI.roundedCon}}>
-              <BoxHeader title='Update' titleIconSource={getActionIconSource('editSquare')} onPress={() => navigation.navigate('EditHealth', { health: health })} />
-              <BoxHeader title="Delete" titleIconSource={getActionIconSource('deleteSquare')} onPress={() => showDeleteConfirmDialog(health, handleDeleteHealthCard)} titleColor={Colors.red.reg} />
+            <View style={UI.card()}>
+              <TitleLabel title='Update' iconName='editSquare' onPress={() => navigation.navigate('EditHealth', { health: health })} />
+              <TitleLabel title="Delete" iconName='deleteSquare' onPress={() => showDeleteConfirmDialog(health, handleDeleteHealthCard)} color={Colors.red.reg} />
             </View>
           </View>
-          <View style={{...UI.roundedCon}}>
-            <BoxHeader title='All logs' titleIconSource={getActionIconSource('noteSquare')}/>
+          <View style={UI.card()}>
+            <TitleLabel title='All logs' iconName='noteSquare' />
             {health.lastDone.length > 1 && 
               <TouchableOpacity style={styles.showButton} onPress={() => setShowAllVisits(!showAllVisits)}>
                 <Text style={{...Typography.xSmallSubHeader}}>{showAllVisits ? 'Hide ': 'Show all'} ({health.lastDone.length + 1})</Text>
@@ -142,7 +135,7 @@ const HealthDetailsScreen = ({ navigation, route }) => {
 
         </> 
       }
-    </ScrollView> 
+    </ScrollScreen> 
   )
 }
  

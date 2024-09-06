@@ -1,17 +1,18 @@
 //npm
 import { FC } from 'react'
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Image, Text, View } from 'react-native'
 //types & utils
 import { Health } from '@health/HealthInterface'
-import { getActionIconSource, getHealthIconSource } from '@utils/ui'
-import { useShallowPets } from '@hooks/sharedHooks'
 import { HEALTHS, VACCINES } from '@health/healthHelpers'
+import { useShallowPets } from '@hooks/sharedHooks'
+import { getActionIconSource, getHealthIconSource } from '@utils/ui'
 //components
+import { CloseButton, TransparentButton } from '@components/ButtonComponents'
 import PetInfo from '@components/PetInfo/PetInfo'
-import { CloseButton, TransparentButton } from '@components/ButtonComponent'
 //styles
+import { Colors, UI, Spacing } from "@styles/index"
 import { styles } from '@styles/stylesheets/ModalCardStyles'
-import { Colors, Spacing, Typography, UI } from "@styles/index"
+import { Icon } from '@components/UIComponents'
 
 interface HealthCardProps {
   health: Health
@@ -39,7 +40,7 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
 
   return (
     <View style={[styles.container, { backgroundColor: petColor }]}>
-      <CloseButton onPress={() => onNavigate()} size='small' position="topRight" />
+      <CloseButton onPress={() => onNavigate()} />
       <View style={styles.header}>
         <Image source={iconSource} style={styles.icon } />
         <Text style={styles.title}>
@@ -58,7 +59,7 @@ const HealthCard: FC<HealthCardProps> = ({ health, navigation, onNavigate, activ
           <PetInfo pet={health.pet} size='small' />
         </View>
         <View style={Spacing.flexRow}>
-          <Image source={getActionIconSource('repeat')} style={{ ...UI.smallIcon }} />
+          <Icon name='repeat' />
           <Text style={styles.freq}>Every {health.times} {health.frequency}</Text>
         </View>
       </View>

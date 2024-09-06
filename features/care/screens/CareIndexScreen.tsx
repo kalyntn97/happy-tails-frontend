@@ -1,23 +1,22 @@
 //npm modules
 import { useEffect, useRef, useState } from "react"
-import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView, Image } from "react-native"
+import { Image, ScrollView, SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 //components
-import PlaceHolder from "@components/PlaceHolder"
+import { RoundButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
-import { ActionButton, IconButton, RoundButton } from "@components/ButtonComponent"
+import PetList from "@components/PetInfo/PetList"
+import PlaceHolder from "@components/PlaceHolder"
+import { ErrorImage } from "@components/UIComponents"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import { CARES, getCareIcon } from "@care/careHelpers"
-import { getActionIconSource, getCareIconSource } from "@utils/ui"
+import { getActionIconSource } from "@utils/ui"
 //queries
-import { profileKeyFactory, useGetProfile } from "@profile/profileQueries"
+import { useGetProfile } from "@profile/profileQueries"
 //styles
-import { Buttons, Spacing, Colors, UI } from '@styles/index'
-import { EmptyList, ErrorImage } from "@components/UIComponents"
-import { useQueryClient } from "@tanstack/react-query"
-import { ProfileData } from "@profile/ProfileInterface"
-import PetList from "@components/PetInfo/PetList"
+import { Buttons, Colors, Spacing, UI } from '@styles/index'
+
 
 type CareIndexProps = {
   navigation: any
@@ -175,7 +174,7 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.fullCon(),
   },
   subBtn: {
     ...Buttons.xxSmallRoundedSolid,
@@ -211,7 +210,7 @@ const styles = StyleSheet.create({
     flex: 6,
   },
   itemIcon: {
-    ...UI.icon,
+    ...UI.icon(),
     marginHorizontal: 10,
   },
   itemBtn: {
@@ -222,7 +221,7 @@ const styles = StyleSheet.create({
     width: '40%',
   },
   rightIcon: {
-    ...UI.xSmallIcon, 
+    ...UI.icon('xSmall'), 
     marginRight: 15,
   }
 })

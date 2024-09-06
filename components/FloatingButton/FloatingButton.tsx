@@ -1,21 +1,24 @@
 // npm
-import React, { useEffect, useState } from "react"
-import { StyleSheet, View, Text, useWindowDimensions, DeviceEventEmitter, Alert, TouchableWithoutFeedback } from "react-native"
-import { Gesture, GestureDetector, PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler"
+import React, { useEffect, useMemo, useState } from "react"
+import { DeviceEventEmitter, StyleSheet, TouchableWithoutFeedback, View, useWindowDimensions } from "react-native"
+import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from "react-native-reanimated"
 import SubFloatingButton from "./SubFloatingButton"
 // styles & constants
-import { Button, ButtonStyles, Animation, ChildrenAnimation } from "./constants"
+import { Animation, Button, ButtonStyles, ChildrenAnimation, snapThreshold } from "./constants"
 
-const snapThreshold = ButtonStyles.width + ButtonStyles.margin * 2
+const subButtons = [
+  { key: 'pets', label: 'Add a Pet', index: 2, onPress: (navigation) => navigation.navigate('PetCreate') },
+  { key: 'vet', label: 'Add a Vet Visit', index: 1, onPress: (navigation) => navigation.navigate('HealthCreate') },
+  { key: 'task', label: 'Add a Task', index: 0, onPress: (navigation) => navigation.navigate('CareCreate') },
+]
 
-const FloatingButton = ({ navigation }) => {
+const FloatingButton = () => {
   const [opened, setOpened] = useState(false)
 
   const { width, height } = useWindowDimensions()
 
   const subBtn_tap_event = 'subBtn_tap_event'
-
   // initial position
   const positionX = useSharedValue(0)
   const positionY = useSharedValue(0)
@@ -24,17 +27,17 @@ const FloatingButton = ({ navigation }) => {
   // plus sign of button
   const rotation = useSharedValue(ChildrenAnimation.rotation_close)
   const plusTranslateY = useSharedValue(ChildrenAnimation.plus_translate_y_close)
-
+  // children
   const childrenYPosition = useSharedValue(ChildrenAnimation.children_position_y_close)
   const childrenOpacity = useSharedValue(ChildrenAnimation.children_opacity_close)
 
   const _open = () => {
     const children_position_Y_open = positionY.value > -height / 2 ? 1 : (ButtonStyles.width * 4 + 40)
-    setOpened(true)
     childrenOpacity.value = withTiming(Animation.children_opacity_open, { duration: 300})
     childrenYPosition.value = withTiming(children_position_Y_open, { duration: 200})
     rotation.value = withSpring(Animation.rotation_open)
     plusTranslateY.value = withSpring(Animation.plus_translate_Y_open)
+    setOpened(true)
   }
 
   const _close = () => {
@@ -47,9 +50,10 @@ const FloatingButton = ({ navigation }) => {
     }, 300)
   }
   // tap animation 
-  const tap = Gesture.Tap().onEnd(e => {
-    opened ? runOnJS(_close)() : runOnJS(_open)() 
-  })
+  const tap = Gesture.Tap()
+    .onEnd(e => {
+      opened ? runOnJS(_close)() : runOnJS(_open)() 
+    })
   // drag animation
   const pan = Gesture.Pan()
     .onStart(() => { 
@@ -98,12 +102,6 @@ const FloatingButton = ({ navigation }) => {
     }
   })
 
-  const subButtons = [
-    { key: 'pets', label: 'Manage Pets', index: 2, onPress: () => navigation.navigate('Pets', { screen: 'Index' }) },
-    { key: 'vet', label: 'Add a Vet Visit', index: 1, onPress: () => navigation.navigate('HealthCreate') },
-    { key: 'task', label: 'Add a Task', index: 0, onPress: () => navigation.navigate('CareCreate') },
-  ]
-
   useEffect(() => {
     let listener = DeviceEventEmitter.addListener(subBtn_tap_event, () => _close())
     return () => listener.remove()
@@ -119,9 +117,9 @@ const FloatingButton = ({ navigation }) => {
       <GestureDetector gesture={Gesture.Simultaneous(pan, tap)}>
         <Animated.View style={[styles.buttonContainer, animatedRootStyles]}>
           
-          {opened &&
+          { opened &&
             <Animated.View style={[styles.children, animatedChildrenStyles]}>
-              {subButtons.map(subButton => 
+              {subButtons.map(subButton =>
                 <SubFloatingButton key={subButton.key} label={subButton.label} index={subButton.index} x={positionX.value} onPress={subButton.onPress} />
               )}
             </Animated.View>

@@ -2,7 +2,7 @@
 import { FC, useEffect, useState } from "react"
 import {  TextInput, TouchableOpacity, Image, Text, View } from "react-native"
 //components
-import { IconButton } from "@components/ButtonComponent"
+import { IconButton } from "@components/ButtonComponents"
 import { AlertForm, getActionIconSource } from "@utils/ui"
 //types & queries
 import { Visit } from "@health/HealthInterface"
@@ -49,9 +49,9 @@ const NoteInput: FC<NoteInputProps> = ({ healthId, visit, due }) => {
       {showInput ?
         <>
           <View style={styles.smallBtnCon}>
-            <IconButton onPress={toggleShowInput} type='undo' size='small' />
-            <IconButton type='delete' size='small' />
-            <IconButton onPress={onSubmit} type='save' size='small' />
+            <IconButton onPress={toggleShowInput} type='action' title='undo' size='small' />
+            <IconButton type='action' title='delete' size='small' />
+            <IconButton onPress={onSubmit} type='action' title='save' size='small' />
           </View>
           <TextInput 
             style={styles.notesInput}

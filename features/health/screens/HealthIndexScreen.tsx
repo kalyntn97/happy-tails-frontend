@@ -4,10 +4,10 @@ import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView, Imag
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import LottieView from "lottie-react-native"
 //components
-import { RoundButton } from "@components/ButtonComponent"
+import { RoundButton } from "@components/ButtonComponents"
 import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
-import { ErrorImage, TopRightHeader } from "@components/UIComponents"
+import { ErrorImage, ScrollScreen, TopRightHeader } from "@components/UIComponents"
 //types & helpers
 import PetInfo from "@components/PetInfo/PetInfo"
 import { Health } from "@health/HealthInterface"
@@ -44,10 +44,10 @@ const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
         <Image source={iconSource} style={styles.itemIcon} />
         <Text>{HEALTHS[health.name] ?? health.name}</Text>
         <View style={{ flex: 1 }}>
-          <PetInfo pet={health.pet} size='mini' />
+          <PetInfo pet={health.pet} size='xSmall' />
         </View>
       </View>
-      <Image source={getActionIconSource('nextRound')} style={{...UI.smallIcon, marginRight: 10 }} />
+      <Image source={getActionIconSource('nextRound')} style={{...UI.icon(), marginRight: 10 }} />
     </TouchableOpacity>
   )
 }
@@ -92,11 +92,7 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
   }
 
   const HealthListHeader = () => (
-    <ScrollView 
-      horizontal
-      contentContainerStyle={styles.listHeader}
-      showsHorizontalScrollIndicator={false}
-    > 
+    <ScrollView horizontal> 
       <TouchableOpacity style={[styles.btnCon, filtered.length < PET_BASICS.length && { opacity: 0.3 }]} onPress={() => setFiltered(prev => prev.length === PET_BASICS.length ? [] : PET_IDS)}>
         {/* <Text style={styles.headerCount}>{section.data.length}</Text> */}
         <Image source={require('@assets/icons/pets.png')} style={styles.allBtnIcon} />
@@ -151,7 +147,7 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...Spacing.fullScreenDown,
+    ...Spacing.fullCon(),
     position: 'relative',
   },
   btnCon: {
@@ -167,7 +163,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   allBtnText: {
-    ...Typography.xSmallHeader,
+    ...Typography.smallHeader,
     margin: 0,
   },
   headerCon: {
@@ -175,13 +171,11 @@ const styles = StyleSheet.create({
     height: 120,
     alignItems: 'center',
   },
-  listHeader: {
-  },
   list : {
     width: '100%',    
   },
   headerIcon: {
-    ...UI.xxSmallPhoto,
+    ...UI.photo('xSmall'),
   },
   headerCount: {
     color: Colors.red.reg,
@@ -205,7 +199,7 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
   },
   itemIcon: {
-    ...UI.icon,
+    ...UI.icon(),
     marginHorizontal: 10,
   },
   itemBtn: {

@@ -1,40 +1,42 @@
-//npm
-import { StyleSheet, Text, View, TextInput, Image } from 'react-native'
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 //helpers
-import { STATS, getUnitKey, statConverter, weightConverter } from '../statHelpers'
-//styles
-import { UI, Spacing, Colors, Typography } from '@styles/index'
-import Dropdown from '@components/Dropdown/Dropdown'
-import { getStatIconSource } from '@utils/ui'
-import { useDisplayUnits } from '@store/store'
+import { useGetDisplayUnits, useSetActions } from '@store/store'
+import { STATS, getUnitKey, statConverter } from '../statHelpers'
+//components
+import { CircleIcon, FormHeader } from '@components/UIComponents'
 import NoteForm from './NoteForm'
-import { CircleIcon } from '@components/UIComponents'
-
-
+//styles
+import { StackScreenNavigationProp } from '@navigation/types'
+import { useNavigation } from '@react-navigation/native'
+import { Colors, Spacing, Typography, UI } from '@styles/index'
+import { SubButton } from '@components/ButtonComponents'
 
 interface InputFormProps {
   name: string
   initialValues?: { name: string, value: number, notes: string, date: string, unit: string }
-  onSelect: (item: { name: string, value: number, unit: string }) => void
+  onSelect: (item: { name: string, value: number, notes: string, unit: string }) => void
 }
 
-const InputForm: FC<InputFormProps> = ({ name, initialValues, onSelect }) => {
+const InputForm = ({ name, initialValues, onSelect }: InputFormProps) => {
   const [value, setValue] = useState<string>(initialValues?.value.toString() ?? null)
   const [notes, setNotes] = useState<string>(initialValues?.notes ?? null)
 
-  const displayUnits = useDisplayUnits()
-  const unit = displayUnits[getUnitKey(name)]
+  const navigation = useNavigation<StackScreenNavigationProp>()
+
+  const unitKey = getUnitKey(name)
+  const unit = useGetDisplayUnits(unitKey)
   
   const convertToDefaultUnit = (value: any) => {
     const converted = unit === STATS[name].unit ? value : statConverter(name, value, unit)
-    onSelect({ name: name, value: Number(converted), unit: STATS[name].unit })
+    onSelect({ name: name, value: Number(converted), notes, unit: STATS[name].unit })
   }
 
   return (
-    <View style={styles.container}>
-      <CircleIcon iconSource={getStatIconSource(name)} />
-      <Text style={{ ...Typography.mediumHeader }}>{STATS[name].name}</Text>
+    <View style={Spacing.fullCon('col', true)}>
+      <CircleIcon type='stat' name={name} />
+      <FormHeader title={STATS[name].name} size="large" />
+
       <View style={styles.inputCon}>
         <TextInput 
           style={styles.input}
@@ -52,17 +54,19 @@ const InputForm: FC<InputFormProps> = ({ name, initialValues, onSelect }) => {
         </View>
       </View>
 
-      <NoteForm onAddNote={setNotes} />
+      <SubButton title='Helper' onPress={() => navigation.navigate('Settings')} size='xSmall' color={UI.lightPalette().focused} />
+      <SubButton title='Change unit' onPress={() => navigation.navigate('Settings')} size='xSmall' color={UI.lightPalette().unfocused} />
+
+      <NoteForm onAddNote={(text: string) => {
+        setNotes(text)
+        if (text) onSelect({ name, value: Number(value), notes: text, unit })
+      }} />
     </View>
   )
 }
 
 
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullScreenDown,
-    ...Spacing.centered,
-  },
   input: {
     width: 100,
   },
@@ -71,7 +75,7 @@ const styles = StyleSheet.create({
     color: Colors.white
   },
   unitCon: {
-    backgroundColor: Colors.shadow.reg,
+    backgroundColor: Colors.shadow.dark,
     height: 40,
     width: 40,
     ...Spacing.centered,
@@ -82,12 +86,12 @@ const styles = StyleSheet.create({
     ...Spacing.flexRow,
     justifyContent: 'space-between',
     borderWidth: 2,
-    borderColor: Colors.shadow.reg,
+    borderColor: Colors.shadow.dark,
     borderRadius: 8,
     height: 40,
     width: 140,
     padding: 10,
-    marginTop: 10,
+    marginVertical: 10,
   },
 })
 
