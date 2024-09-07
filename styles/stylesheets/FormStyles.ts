@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
     ...Spacing.flexRowStretch,
     flexWrap: 'wrap',
     alignSelf: 'flex-start',
+    marginTop: 10,
     marginBottom: 15,
     zIndex: 1,
   },

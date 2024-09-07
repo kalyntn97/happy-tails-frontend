@@ -1,6 +1,8 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 import * as profileService from "./profileService"
-import { PhotoData, Profile, ProfileFormData } from "./ProfileInterface"
+import { PhotoData, Profile, ProfileData, ProfileFormData } from "./ProfileInterface"
+import { showToast } from "@utils/misc"
+import { HomeTabParamList, StackScreenNavigationProp, TabScreenNavigationProp } from "@navigation/types"
 
 export const profileKeyFactory = {
   profile: ['profile'],
@@ -13,14 +15,19 @@ export const useGetProfile = (isEnabled?: boolean) => {
   })
 }
 
-export const useUpdateProfile = () => {
+export const useUpdateProfile = (navigation: TabScreenNavigationProp<'Profile'>) => {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: ({ name, bio, photoData }: ProfileFormData) => profileService.update(name, bio, photoData),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...profileKeyFactory.profile] })
-    }
+    onSuccess: (data: Profile) => {
+      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+        return {...oldData, profile: data }
+      })
+      showToast({ text1: 'Profile updated.', style: 'success' })
+      navigation.navigate('Home', { screen: 'Profile' })
+    },
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 

@@ -262,7 +262,6 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
     const validText = text?.trim().length === 0 ? null : text
     setValue(validText)
     onChange(validText)
-    console.log(text)
     setIsFocused(false)
     Keyboard.dismiss()
   }
@@ -286,10 +285,10 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
   }, [initial])
 
   return (
-    <View style={[Spacing.flexColumn, { width: width, minWidth: 50, zIndex: isFocused ? 10 : 2, alignItems: align === 'left' ? 'flex-start' : 'flex-end' }]}>
+    <View style={[Spacing.flexColumn, { width: width, minWidth: 50, zIndex: isFocused ? 10 : 2, alignItems: withBorder ? (align === 'left' ? 'flex-start' : 'flex-end') : 'center' }]}>
       <TextInput
         ref={ref}
-        style={[withBorder ? UI.input() : { ...UI.input(false, 0, 0, 0), width: '100%', textAlign: align }, styles, validatedStyles]}
+        style={[withBorder ? UI.input() : { ...UI.input(false, 0, 0, 0), textAlign: align }, { width: '100%' }, validatedStyles, styles]}
         placeholder={placeholder}
         placeholderTextColor={UI.lightPalette().unfocused}
         value={value}

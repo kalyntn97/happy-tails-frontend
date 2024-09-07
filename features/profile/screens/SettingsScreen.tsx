@@ -11,10 +11,12 @@ import { FOOD_UNITS, WEIGHT_UNITS } from "@stat/statHelpers"
 import { Colors, Spacing, Typography, UI } from '@styles/index'
 import { StackScreenNavigationProp } from "@navigation/types"
 import { useEffect, useRef } from "react"
+import { Profile } from "@profile/ProfileInterface"
 
 interface AccountProps {
   navigation: StackScreenNavigationProp
   route: { params: { sectionIndex?: number, itemIndex?: number, sectionTitle?: string } }
+  profile: Profile
 }
 
 export const settingTitles = {
@@ -25,7 +27,7 @@ export const settingTitles = {
   food: 'Change display unit: Food', 
 }
 
-const SettingsScreen = ({ navigation, route }: AccountProps) => {
+const SettingsScreen = ({ navigation, route, profile }: AccountProps) => {
   const listRef = useRef<SectionList>(null)
 
   const displayUnits = useDisplayUnits()

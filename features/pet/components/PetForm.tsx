@@ -172,7 +172,7 @@ const PetForm = ({ onSubmit, initialValues, navigation, isPending }: PetFormProp
     navigation.setOptions({
       header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[color]} />
     })
-  }, [headerActions, status, color])
+  }, [headerActions, color])
 
   return ( 
     <ScrollScreen bgColor={Colors.multi.lightest[color]}>

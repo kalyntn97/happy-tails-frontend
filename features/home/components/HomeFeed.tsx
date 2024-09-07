@@ -43,8 +43,8 @@ const FeedFilter = ({ feeds, onSelect }: { feeds: Feed[], onSelect: (filter: Fee
   }
 
   const buttons: { key: Feed, title: string, icon: string}[] = [
-    { key: 'care', title: 'care', icon: 'care' },
-    { key: 'health', title: 'health', icon: 'health' },
+    { key: 'care', title: 'care', icon: 'careColor' },
+    { key: 'health', title: 'health', icon: 'healthColor' },
   ]
 
   const buttonStyles = useCallback((feed: Feed, index: number) => {

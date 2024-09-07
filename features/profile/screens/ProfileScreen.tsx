@@ -13,8 +13,20 @@ import { useSelectPhoto } from "@hooks/sharedHooks"
 import { AlertForm } from "@utils/ui"
 //styles
 import { Colors, Spacing, Typography, UI } from '@styles/index'
+import { TabScreenNavigationProp } from "@navigation/types"
 
-const ProfileScreen = ({ navigation, route }) => {
+const randomProfilePhotos = [
+  require('@assets/icons/profile-1.png'),
+  require('@assets/icons/profile-2.png'),
+  require('@assets/icons/profile-3.png'),
+  require('@assets/icons/profile-4.png'),
+]
+
+type Props = {
+  navigation: TabScreenNavigationProp<'Profile'>
+}
+
+const ProfileScreen = ({ navigation }: Props) => {
   const { data, isFetching, isError } = useGetProfile()
   const profile = data.profile
 
@@ -24,12 +36,7 @@ const ProfileScreen = ({ navigation, route }) => {
   // const healthCounter = healthCounts()
   const addBannerMutation = useAddBanner()
   //set a random profile photo if user does not have one
-  const randomProfilePhotos = [
-    require('@assets/icons/profile-1.png'),
-    require('@assets/icons/profile-2.png'),
-    require('@assets/icons/profile-3.png'),
-    require('@assets/icons/profile-4.png'),
-  ]
+ 
   const randomIdx = Math.floor(Math.random() * randomProfilePhotos.length)
 
   const addBanner = async () => {
@@ -79,18 +86,19 @@ const ProfileScreen = ({ navigation, route }) => {
           </View> */}
         </View>
 
-        <View style={styles.bodyCon}>
-          <BoxWithHeader title='All Pets' iconName="home" onPress={() => navigation.navigate('Pets', { screen: 'Index' })}>
-            <PetList petArray={data.pets} size='compact' />
-          </BoxWithHeader>
-          
-          <View style={UI.card()}>
-            <TitleLabel title="All pet care tasks" iconName="care" onPress={() => navigation.navigate('Home', { screen: 'CareIndex' })} />
-            <TitleLabel title="All vet visits" iconName="health" onPress={() => navigation.navigate('Home', { screen: 'HealthIndex' })} />
-            <TitleLabel title="Update profile" iconName="editSquare" onPress={() => navigation.navigate('Edit', { profile : profile })} />
-            <TitleLabel title="Settings" iconName="settings" onPress={() => navigation.navigate('Settings', { profile : profile })} />
-          </View>
+        <TitleLabel title='All pets' iconName='pet' mode='bold' containerStyles={{ paddingHorizontal: 10 }} />  
+        <View style={[UI.card(), { width: '95%' }]}>
+          <PetList petArray={data.pets} size='small' />
         </View>
+
+        <TitleLabel title='Actions' iconName='action' mode='bold' containerStyles={{ paddingHorizontal: 10 }} />  
+        <View style={UI.card()}>
+          <TitleLabel title="All pet care tasks" iconName="care" iconType='action' onPress={() => navigation.navigate('CareIndex')} />
+          <TitleLabel title="All vet visits" iconName="health" onPress={() => navigation.navigate('HealthIndex')} />
+          <TitleLabel title="Update profile" iconName="edit" onPress={() => navigation.navigate('ProfileEdit', { profile : profile })} />
+          <TitleLabel title="Settings" iconName="settings" onPress={() => navigation.navigate('Settings', { profile : profile })} />
+        </View>
+
       </View>
     
     </ScrollScreen>
