@@ -6,10 +6,11 @@ import HomeScreen from "@home/HomeScreen"
 //style
 import { Colors } from "@styles/index"
 import { dynamicStackOptions } from "./NavigationStyles"
+import { DefaultParamList } from "./types"
 
 
 const PublicApp = () => {
-  const Stack = createNativeStackNavigator()
+  const Stack = createNativeStackNavigator<DefaultParamList>()
 
   return (
     <Stack.Navigator screenOptions={{ ...dynamicStackOptions('modal', true, false), contentStyle: { backgroundColor: Colors.white} }}>

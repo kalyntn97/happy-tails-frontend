@@ -1,77 +1,75 @@
-//npm modules
-import React, { useState } from 'react'
-import { View, StyleSheet, TextInput, Pressable, Text, Alert, SafeAreaView } from 'react-native'
-import LottieView from 'lottie-react-native'
+import { ActivityIndicator } from 'react-native'
 //context
 import { useAuth } from '@auth/AuthContext'
 //components
-import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponents'
-//styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { styles } from '@styles/stylesheets/FormStyles'
+import { MainButton, SubButton } from '@components/ButtonComponents'
+import { FormHeader, FormInput, ScrollScreen } from '@components/UIComponents'
+//utils & hooks
+import { AuthFormData } from '@auth/AuthInterface'
+import useForm from '@hooks/useForm'
+import { StackScreenNavigationProp } from '@navigation/types'
+import { showToast } from '@utils/misc'
 
+type Props = {
+  navigation: StackScreenNavigationProp
+}
 
-const RegisterScreen = ({ navigation }) => {
-  const [name, setName] = useState<string>('')
-  const [username, setUserName] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const [passwordConf, setPasswordConf] = useState<string>('')
+interface InitialState extends AuthFormData {
+  name: string
+  passwordConf: string
+}
+
+const RegisterScreen = ({ navigation }: Props) => {
+  const initialState: InitialState = {
+    name: null,
+    username: null,
+    password: null,
+    passwordConf: null,
+    errors: {},
+    isPending: false,
+  }
+
+  const { values, onChange, onValidate } = useForm(register, initialState)
+  const { name, username, password, passwordConf, errors, isPending }: InitialState = values
+
   const { onRegister } = useAuth()
 
-  const register = async () => {
-    if (password === passwordConf) {
-      const { status, error } = await onRegister!(name, username, password)
-      
-      navigation.navigate('Home', { screen: 'Welcome' })
+  function handleValidate() {
+    onValidate({ name, username, password })
+  }
 
-      return Alert.alert(
-        'Alert',
-        status ?? error,
-        [{ text: 'OK' }]
-      )
+  async function register() {
+    if (password === passwordConf) {
+      onChange('isPending', true)
+      const { status, error } = await onRegister!(name, username, password)
+      onChange('isPending', false)
+      showToast({ text1: status ?? error, style: error ? 'error' : 'success' })
+      navigation.navigate('Home', { screen: 'Feed' })
     } else {
-      alert('Passwords do not match!')
+      showToast({ text1: 'Passwords do not match', style: 'error' })
     }
   }
 
   return ( 
-    <SafeAreaView style={styles.container}>
-      <LottieView source={require('@assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
-      <Text style={styles.header}>Create Account</Text>
-      <TextInput 
-        style={styles.input} 
-        placeholder='Name'
-        placeholderTextColor={Colors.shadow.reg}
-        onChangeText={(text: string) => setName(text)} 
-        value={name} 
-      />
-      <TextInput 
-        style={styles.input} 
-        placeholder='Username'
-        placeholderTextColor={Colors.shadow.reg}
-        onChangeText={(text: string) => setUserName(text)} 
-        value={username} 
-        autoCapitalize='none'
-      />
-      <TextInput 
-        style={styles.input} 
-        placeholder='Password'
-        placeholderTextColor={Colors.shadow.reg}
-        onChangeText={(text: string) => setPassword(text)} 
-        value={password} 
-        secureTextEntry={true}
-      />
-      <TextInput 
-        style={styles.input} 
-        placeholder='Confirm Password'
-        placeholderTextColor={Colors.shadow.reg}
-        onChangeText={(text: string) => setPasswordConf(text)} 
-        value={passwordConf} 
-        secureTextEntry={true}
-      />
-      <MainButton title='Submit' onPress={register} top={40} bottom={0} />
-      <SubButton title='Sign in' onPress={() => navigation.navigate('Login')} top={0} bottom={0} />
-    </SafeAreaView>
+    <ScrollScreen>
+      {/* <LottieView source={require('@assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} /> */}
+      <FormHeader title='Create account' size='large' styles={{ marginTop: 0, marginBottom: 20 }} />
+      
+      <FormHeader title='Name' size='small' styles={{ marginVertical: 10 }} />
+      <FormInput initial={username} placeholder='Enter name' onChange={(text: string) => onChange('username', text)} error={errors?.username} width='60%' />
+
+      <FormHeader title='Username' size='small' styles={{ marginTop: 30, marginBottom: 10 }} />
+      <FormInput initial={username} placeholder='Enter username' onChange={(text: string) => onChange('username', text)} error={errors?.username} width='60%' />
+
+      <FormHeader title='Password' size='small' styles={{ marginTop: 30, marginBottom: 10 }} />
+      <FormInput initial={username} placeholder='Enter password' onChange={(text: string) => onChange('password', text)} error={errors?.password} width='60%' type='password' />
+
+      <FormHeader title='Confirm Password' size='small' styles={{ marginTop: 30, marginBottom: 10 }} />
+      <FormInput initial={username} placeholder='Confirm password' onChange={(text: string) => onChange('password', text)} error={errors?.password} width='60%' type='password' />
+
+      <MainButton title={isPending ? <ActivityIndicator /> : 'Submit'} onPress={handleValidate} buttonStyles={{ marginTop: 60 }} />
+      <SubButton title='Sign in' onPress={() => navigation.navigate('Login')} />
+    </ScrollScreen>
   )
 }
 

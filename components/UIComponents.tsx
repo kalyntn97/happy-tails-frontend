@@ -106,7 +106,7 @@ export const TitleLabel = memo(({ title, iconType = 'action', iconName, onPress,
   )
 })
 
-export const FormHeader = ({ title, size = 'med', color = lightPalette().text, styles, capitalize = false }: { title: string, size?: Size, color?: string, styles?: TextStyle, captitalize?: boolean }) => {
+export const FormHeader = ({ title, size = 'med', color = lightPalette().text, styles, capitalize = false }: { title: string, size?: Size, color?: string, styles?: TextStyle, capitalize?: boolean }) => {
   // const defaultColor = size === 'small' || size === 'xSmall' ? lightPalette().unfocused : lightPalette().text
   return (
     <Text style={[headerSize[size], { color: color, textTransform: capitalize ? 'capitalize' : 'none' }, styles]}>{title}</Text>
@@ -250,11 +250,13 @@ interface InputProps {
   styles?: TextStyle
   align?: 'left' | 'right'
   bottom?: number
+  type?: 'none' | 'password'
 }
 
-export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title', onChange, onFocus, onBlur, props, maxLength = 100, width, error, withBorder = true, styles, align = 'left', bottom = - 15 }: InputProps, ref: MutableRefObject<any>) => {
+export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title', onChange, onFocus, onBlur, props, maxLength = 100, width, error, withBorder = true, styles, align = 'left', bottom, type = 'none' }: InputProps, ref: MutableRefObject<any>) => {
   const [isFocused, setIsFocused] = useState(false)
   const [value, setValue] = useState(initial)
+  const [isSecure, setIsSecure] = useState(type === 'password' ? true : false)
 
   const validatedStyles = useMemo(() => error ? UI.error : isFocused ? UI.focused : UI.unfocused, [error, isFocused])
 
@@ -286,20 +288,26 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
 
   return (
     <View style={[Spacing.flexColumn, { width: width, minWidth: 50, zIndex: isFocused ? 10 : 2, alignItems: withBorder ? (align === 'left' ? 'flex-start' : 'flex-end') : 'center' }]}>
-      <TextInput
-        ref={ref}
-        style={[withBorder ? UI.input() : { ...UI.input(false, 0, 0, 0), textAlign: align }, { width: '100%' }, validatedStyles, styles]}
-        placeholder={placeholder}
-        placeholderTextColor={UI.lightPalette().unfocused}
-        value={value}
-        onChangeText={(text: string) => setValue(text)}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        maxLength={maxLength}
-        selectTextOnFocus={true}
-        { ...props }
-      />
-      <View style={[Spacing.flexRow, { position: 'absolute', bottom: bottom }]}>
+      <View
+        style={[Spacing.flexRow, withBorder ? UI.input() : { ...UI.input(false, 0, 0, 0), textAlign: align }, { width: '100%', height: 50 }, validatedStyles, styles]}
+      >
+        <TextInput
+          ref={ref}
+          style={{ flex: 1 }}
+          placeholder={placeholder}
+          placeholderTextColor={UI.lightPalette().unfocused}
+          value={value}
+          onChangeText={(text: string) => setValue(text)}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          maxLength={maxLength}
+          selectTextOnFocus={true}
+          secureTextEntry={ isSecure ? true : false }
+          { ...props }
+        />
+        { type === 'password' && <ActionButton icon={isSecure ? 'hide' : 'show'} onPress={() => setIsSecure(!isSecure)} size='xSmall' /> }
+      </View>
+      <View style={[Spacing.flexRow, { position: 'absolute', bottom: bottom ?? (withBorder ? -20 : -15) }]}>
         { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: isFocused ? 30 : 0 }}/> }
         <Text style={{ color: UI.lightPalette().unfocused, fontSize: 12 }}>
           { isFocused && `${maxLength - (value ? value.length : 0)}/${maxLength}` }

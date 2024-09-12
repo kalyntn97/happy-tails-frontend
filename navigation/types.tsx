@@ -8,7 +8,7 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { CompositeNavigationProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-type DefaultParamList = {
+export type DefaultParamList = {
   [key: string]: undefined
 }
 
