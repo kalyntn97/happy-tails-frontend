@@ -32,17 +32,16 @@ const HomeScreen = ({ navigation }: Props) => {
   }
 
   return ( 
-    <SafeAreaView>
+    <View style={{ minHeight: height }}>
       <StatusBar barStyle="dark-content" />
       { authState.authenticated ? 
-        <View style={[styles.screen, { height: centerHeight }]}>
+        <SafeAreaView style={{ backgroundColor: Colors.shadow.lightest, height: '100%' }}>
           <ScrollCalendar />
           <View style={styles.body}>
             <HomeFeed navigation={navigation} />
           </View>
-          
           <FloatingButton />
-        </View>
+        </SafeAreaView>
       : <ScrollView
           ref={scrollViewRef}
           pagingEnabled
@@ -68,7 +67,7 @@ const HomeScreen = ({ navigation }: Props) => {
             </TouchableOpacity>
           </View>
       </ScrollView> }
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -76,7 +75,6 @@ const styles = StyleSheet.create({
   screen: {
     width: '100%',
     alignItems: 'center',
-    backgroundColor: Colors.shadow.lightest,
   },
   header: {
     width: '100%',
@@ -88,10 +86,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     backgroundColor: Colors.white,
-  },
-  headers:{
-    width: '80%',
-    marginHorizontal: 10,
   },
   mainHeader: {
     fontSize: 45,

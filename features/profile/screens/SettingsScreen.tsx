@@ -1,17 +1,17 @@
-//npm modules
-import { Alert, SectionList, StyleSheet, Text, View } from "react-native"
+import { useEffect, useRef } from "react"
+import { Alert, SectionList, Text } from "react-native"
 //component
-import { FormHeader, FormLabel, ScrollScreen, TitleLabel } from "@components/UIComponents"
+import { FormHeader, FormLabel, TitleLabel } from "@components/UIComponents"
 //context
 import { useAuth } from "@auth/AuthContext"
 import { useDisplayUnits, useSetActions } from "@store/store"
-//helpers
-import { FOOD_UNITS, WEIGHT_UNITS } from "@stat/statHelpers"
-//styles
-import { Colors, Spacing, Typography, UI } from '@styles/index'
-import { StackScreenNavigationProp } from "@navigation/types"
-import { useEffect, useRef } from "react"
+//helpers & utils
 import { Profile } from "@profile/ProfileInterface"
+import { StackScreenNavigationProp } from "@navigation/types"
+import { FOOD_UNITS, WEIGHT_UNITS } from "@stat/statHelpers"
+import { showToast } from "@utils/misc"
+//styles
+import { Colors, UI } from '@styles/index'
 
 interface AccountProps {
   navigation: StackScreenNavigationProp
@@ -38,11 +38,7 @@ const SettingsScreen = ({ navigation, route, profile }: AccountProps) => {
 
   const logout = async () => {
     const { status, error } = await onLogout!()
-    return Alert.alert(
-      'Alert',
-      status ?? error,
-      [{ text: 'OK' }]
-    )
+    showToast({ text1: status ?? error, style: error ? 'error' : 'success' })
   }
 
   const showLogoutConfirmDialog = () => {
@@ -50,7 +46,7 @@ const SettingsScreen = ({ navigation, route, profile }: AccountProps) => {
       'Are you sure?',
       'Log out of your account?', 
       [
-        { text: 'Yes', onPress: () => { logout() }},
+        { text: 'Yes', onPress: logout },
         { text: 'No' }
       ]
     )

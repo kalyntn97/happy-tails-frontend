@@ -39,14 +39,16 @@ const RegisterScreen = ({ navigation }: Props) => {
   }
 
   async function register() {
-    if (password === passwordConf) {
+    if (password === passwordConf) { 
+      const updatedErrors = delete errors.passwordConf
+      onChange('errors', { ...errors, updatedErrors })
       onChange('isPending', true)
       const { status, error } = await onRegister!(name, username, password)
       onChange('isPending', false)
       showToast({ text1: status ?? error, style: error ? 'error' : 'success' })
       navigation.navigate('Home', { screen: 'Feed' })
     } else {
-      showToast({ text1: 'Passwords do not match', style: 'error' })
+      onChange('errors', { ...errors, ['passwordConf']: 'Passwords do not match' })
     }
   }
 
@@ -56,16 +58,16 @@ const RegisterScreen = ({ navigation }: Props) => {
       <FormHeader title='Create account' size='large' styles={{ marginTop: 0, marginBottom: 20 }} />
       
       <FormHeader title='Name' size='small' styles={{ marginVertical: 10 }} />
-      <FormInput initial={username} placeholder='Enter name' onChange={(text: string) => onChange('username', text)} error={errors?.username} width='60%' />
+      <FormInput initial={name} placeholder='Enter name' onChange={(text: string) => onChange('name', text)} error={errors?.name} width='60%' />
 
       <FormHeader title='Username' size='small' styles={{ marginTop: 30, marginBottom: 10 }} />
       <FormInput initial={username} placeholder='Enter username' onChange={(text: string) => onChange('username', text)} error={errors?.username} width='60%' />
 
       <FormHeader title='Password' size='small' styles={{ marginTop: 30, marginBottom: 10 }} />
-      <FormInput initial={username} placeholder='Enter password' onChange={(text: string) => onChange('password', text)} error={errors?.password} width='60%' type='password' />
+      <FormInput initial={password} placeholder='Enter password' onChange={(text: string) => onChange('password', text)} error={errors?.password} width='60%' type='password' />
 
       <FormHeader title='Confirm Password' size='small' styles={{ marginTop: 30, marginBottom: 10 }} />
-      <FormInput initial={username} placeholder='Confirm password' onChange={(text: string) => onChange('password', text)} error={errors?.password} width='60%' type='password' />
+      <FormInput initial={passwordConf} placeholder='Confirm password' onChange={(text: string) => onChange('passwordConf', text)} error={errors?.passwordConf} width='60%' type='password' />
 
       <MainButton title={isPending ? <ActivityIndicator /> : 'Submit'} onPress={handleValidate} buttonStyles={{ marginTop: 60 }} />
       <SubButton title='Sign in' onPress={() => navigation.navigate('Login')} />
