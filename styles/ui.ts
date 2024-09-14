@@ -1,9 +1,13 @@
-import { ImageStyle, TextStyle, ViewStyle } from "react-native"
+import { ImageStyle, ScrollViewProps, TextProps, TextStyle, ViewStyle } from "react-native"
 import Colors from "./colors"
 import { basePadding, centered, flexColumnStretch, flexRowStretch, fullWH } from "./spacing"
 
 export type AccentColor = 'shadow' | 'pink' | 'yellow' | 'purple' | 'green' | 'blue' | 'red'
 export type Size = 'tiny' | 'xxSmall' | 'xSmall' | 'small' | 'med' | 'large' | 'xLarge'
+
+export const verticalScrollProps: ScrollViewProps = { showsVerticalScrollIndicator: false, alwaysBounceVertical: false }
+export const horizontalScrollProps: ScrollViewProps = { showsHorizontalScrollIndicator: false, alwaysBounceHorizontal: false }
+export const wrappedTextProps: TextProps = { numberOfLines: 2, ellipsizeMode: 'tail' }
 
 export const lightPalette = (accent: AccentColor = 'pink') => ({
   text: Colors.black,

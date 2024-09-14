@@ -12,7 +12,7 @@ import { ActionButton, GoBackButton } from "./ButtonComponents"
 //styles
 import { Colors, Spacing, Typography, UI } from "@styles/index"
 import { textSizeMap } from "@styles/typography"
-import { Size, icon, iconSizeMap, lightPalette } from "@styles/ui"
+import { Size, horizontalScrollProps, icon, iconSizeMap, lightPalette, verticalScrollProps, wrappedTextProps } from "@styles/ui"
 
 interface IconProps {
   type?: IconType
@@ -209,7 +209,7 @@ export const ScrollHeader = forwardRef<ScrollView, ScrollProps>(({ children, h =
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={[Spacing.flexRow, contentStyles]}
-      alwaysBounceHorizontal={false}
+      { ...horizontalScrollProps }
       { ...props }
     >
       { children }
@@ -220,10 +220,9 @@ export const ScrollHeader = forwardRef<ScrollView, ScrollProps>(({ children, h =
 export const ScrollContainer = ({ children, props, contentStyles }: ScrollProps) => (
   <ScrollView
     keyboardShouldPersistTaps='handled'
-    alwaysBounceVertical={false} 
-    showsVerticalScrollIndicator={false} 
     style={{ width: '100%' }} 
     contentContainerStyle={[{ flexGrow: 1 }, contentStyles ?? UI.form(10, 60)]}
+    { ...verticalScrollProps }
     { ...props }
   >
     { children }
@@ -379,7 +378,7 @@ export const BottomModal = ({ children, modalVisible, height = 'fit-content' as 
               exiting={animation === 'vertical' ? SlideOutDown : SlideOutLeft} 
               style={[UI.bottomModal, { width: windowWidth, height: height as DimensionValue, maxHeight: maxHeight as DimensionValue, backgroundColor: background }]}
               contentContainerStyle={[UI.form(10, 60, 40), { flexGrow: 1 }]}
-              alwaysBounceVertical={false}
+              { ...verticalScrollProps }
               keyboardShouldPersistTaps='handled'
             >
               <GoBackButton onPress={dismissModal} />
@@ -484,7 +483,7 @@ export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit,
   }
 
   return (
-    <ModalInput customLabel={customLabel} label={notes?.length ? notes : 'No notes added.'} onSubmit={onSubmit} onReset={() => handlePress(null)} buttonStyles={buttonStyles} buttonTextProps={{ numberOfLines: 2, ellipsizeMode: 'tail' }} buttonTextStyles={buttonTextStyles} overlay={overlay}>
+    <ModalInput customLabel={customLabel} label={notes?.length ? notes : 'No notes added.'} onSubmit={onSubmit} onReset={() => handlePress(null)} buttonStyles={buttonStyles} buttonTextProps={wrappedTextProps} buttonTextStyles={buttonTextStyles} overlay={overlay}>
       <FormHeader title={header ?? 'Add Notes'} />
       { subHeading }
 

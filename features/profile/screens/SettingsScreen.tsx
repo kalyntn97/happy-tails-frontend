@@ -12,6 +12,7 @@ import { FOOD_UNITS, WEIGHT_UNITS } from "@stat/statHelpers"
 import { showToast } from "@utils/misc"
 //styles
 import { Colors, UI } from '@styles/index'
+import { verticalScrollProps } from "@styles/ui"
 
 interface AccountProps {
   navigation: StackScreenNavigationProp
@@ -102,7 +103,7 @@ const SettingsScreen = ({ navigation, route, profile }: AccountProps) => {
           )
         } else return null
       }}
-      alwaysBounceVertical={false}
+      { ...verticalScrollProps }
     />
   )
 }

@@ -22,6 +22,7 @@ import { PetBasic } from '@pet/PetInterface'
 import { getLocaleDateString } from '@utils/datetime'
 //styles
 import { Colors, Spacing, Typography } from '@styles/index'
+import { verticalScrollProps } from '@styles/ui'
 
 type ListItem = { type: Feed, item: any }
 interface DraggableListProps {
@@ -195,7 +196,7 @@ const DraggableList= ({ initialData }: DraggableListProps) => {
         onDragEnd={({ data }) => setData(data)}
         keyExtractor={listItem => listItem.item._id}
         renderItem={renderItem}
-        alwaysBounceVertical={false}
+        { ...verticalScrollProps }
         // containerStyle={{ minHeight: centerHeight }}
       />
     </View>
