@@ -4,8 +4,8 @@ import { Profile, ProfileData } from './ProfileInterface'
 
 const BASE_URL = PROFILE_BASE_URL
 
-export async function getProfile() {
-  return (await axios.get<ProfileData>(BASE_URL)).data
+export async function getProfile(year: number) {
+  return (await axios.get<ProfileData>(`${BASE_URL}/${year}`)).data
 }
 
 export async function addPhoto(photoData: any): Promise<string> {

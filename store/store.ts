@@ -7,20 +7,20 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 const createSettingSlice: StateCreator<SettingSlice> = (set, get) => ({
   healthInterval: 30,
   activeDate: { 
-    date: getDateInfo('today').date - 1, 
-    week: getDateInfo('today').week - 1, 
-    month: getDateInfo('today').month - 1, 
+    date: getDateInfo('today').date, 
+    week: getDateInfo('today').week, 
+    month: getDateInfo('today').month, 
     year: getDateInfo('today').year 
   },
   getActiveDate: () => {
-    const date = new Date(get().activeDate.year, get().activeDate.month, get().activeDate.date + 1)
+    const date = new Date(get().activeDate.year, get().activeDate.month - 1, get().activeDate.date)
     date.setHours(0, 0, 0, 0)
     return date
   },
   currentIsActive: {
-    get date() { return get().activeDate.date + 1 === getDateInfo('today').date },
-    get week() { return get().activeDate.week + 1 === getDateInfo('today').week },
-    get month() { return get().activeDate.month + 1 === getDateInfo('today').month },
+    get date() { return get().activeDate.date === getDateInfo('today').date },
+    get week() { return get().activeDate.week === getDateInfo('today').week },
+    get month() { return get().activeDate.month === getDateInfo('today').month },
     get year() { return get().activeDate.year === getDateInfo('today').year },
   },
   activeTaskCounts: {

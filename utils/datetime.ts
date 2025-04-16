@@ -13,6 +13,7 @@ export const getDateInfo = (input: string) => {
   const date = inputDate.getDate()
   const month = inputDate.getMonth() + 1 //0-index 
   const year = inputDate.getFullYear()
+  const dayIndex = inputDate.getDay()
   const day = getDayOfWeek(inputDate)
   const monthName = getMonth(month)
 
@@ -26,7 +27,7 @@ export const getDateInfo = (input: string) => {
   const weeksPassed = Math.floor(daysPassed / 7)
   const week = weeksPassed + 1
   
-  return { inputDate, date, month, monthName, year, day, week, firstDayOfMonth, lastDayOfMonth, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
+  return { inputDate, date, month, monthName, year, day, dayIndex, week, firstDayOfMonth, lastDayOfMonth, daysInMonth, weeksInMonth, daysPassed, weeksPassed }
 }
 
 export const getDateConstructor = (string: string, withTimes: boolean = false) => {

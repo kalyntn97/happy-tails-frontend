@@ -3,20 +3,60 @@ import { useWindowDimensions, StyleSheet, Text, View } from "react-native"
 //types & helpers
 import * as careHelpers from '@care/careHelpers'
 //utils
-import { getDateInfo } from "@utils/datetime"
+import { compareDates, getDateInfo } from "@utils/datetime"
 import { getColor, getColorArray } from "@utils/ui"
 //styles
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
+import { Care, Log } from "@care/CareInterface"
+import { numArray } from "@utils/misc"
+import { HScrollContainer, VScrollContainer } from "@components/UIComponents"
 
 interface DailyChartProps {
-  // tracker: Tracker
-  tracker: any
-  times: number
+  logs: Log[]
+  startDate: string
+  timesPerDay: number
 }
 
-const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
-  const { trackerMonthName, trackerYear, isCurrent } = careHelpers.getTrackerInfo(tracker.name)
-  const { date: currDate } = getDateInfo('today')
+interface DailyHistoryProps {
+  care: Care
+}
+
+const CalendarHeader = ({ chartWidth, squareWidth }: { chartWidth: number, squareWidth: number }) => {
+  const header = []
+  const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+  for (let i = 0; i < days.length; i++) {
+    header.push(
+      <Text style={[styles.headerText, { width: squareWidth }]} key={i}>
+        {days[i]}
+      </Text>
+    )
+  }
+
+  return (
+    <View style={[styles.header, { width: chartWidth, height: 15 }]}>
+      {header}
+    </View>
+  )
+}
+
+const CalendarFiller = ({ dayIndex, squareWidth }: { dayIndex: number, squareWidth: number }) => {
+  const fillers = []
+  for (let i = 0; i < dayIndex; i++) {
+    fillers.push(
+      <View style={{ width: squareWidth, height: squareWidth }} key={i}></View>
+    )
+  }
+
+  return (
+    <>{fillers}</>
+  )
+}
+
+const DailyChart = ({ startDate, logs, timesPerDay }: DailyChartProps) => {
+  const { date: currentDate, monthName: currentMonthName, year: currentYear } = getDateInfo('today')
+  const { monthName, year, dayIndex, daysInMonth } = getDateInfo(startDate)
+
+  const isCurrentMonth = currentMonthName === monthName && currentYear === year
 
   const colorArray = getColorArray()
 
@@ -24,64 +64,51 @@ const DailyChart: React.FC<DailyChartProps> = ({ tracker, times }) => {
   const chartWidth = windowWidth * 0.9 * 0.9
   const squareWidth = chartWidth / 7
 
-  const CalendarHeader = () => {
-    const header = []
-    const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-    for (let i = 0; i < days.length; i++) {
-      header.push(
-        <Text style={[styles.headerText, { width: squareWidth }]} key={i}>
-          {days[i]}
-        </Text>
-      )
-    }
-
-    return (
-      <View style={[styles.header, { width: chartWidth, height: 15 }]}>
-        {header}
-      </View>
-    )
-  }
-
-  const CalendarFiller = () => {
-    const fillers = []
-    for (let i = 0; i < tracker.firstDay; i++) {
-      fillers.push(
-        <View style={{ width: squareWidth, height: squareWidth }} key={i}></View>
-      )
-    }
-
-    return (
-      <>{fillers}</>
-    )
-  }
+  const loggedDates = logs?.length ? logs.map(log => ({ date: getDateInfo(log.date).date, value: log.value })) : []
 
   return (  
     <View style={[styles.container, { width: chartWidth, height: chartWidth + 45 }]}>
       <View style={styles.chartName}>
-        <Text style={styles.year}>{trackerYear}</Text>
-        <Text style={styles.month}>{trackerMonthName}</Text>
+        <Text style={styles.year}>{year}</Text>
+        <Text style={styles.month}>{monthName}</Text>
       </View>
-      <CalendarHeader />
+      <CalendarHeader chartWidth={chartWidth} squareWidth={squareWidth} />
       <View style={[styles.calendar, { width: chartWidth, height: 'auto' }]}>
-        <CalendarFiller />
-        {tracker.done.map((value, idx) => 
-          <View key={idx} 
-            style={[
-              styles.dayContainer, { 
-                backgroundColor: getColor(times, value, colorArray),
-                width: squareWidth,
-                height: squareWidth,
-                borderColor: (currDate === idx + 1 && isCurrent) ? Colors.pink.dark : Colors.white
-              }
-            ]}>
-              <Text style={styles.day}>{idx + 1}</Text>
-              {value.value === times && 
-                <Text style={styles.dot}>✔︎</Text>
-              }
-          </View>  
-        )}
+        <CalendarFiller dayIndex={dayIndex} squareWidth={squareWidth} />
+        { numArray(daysInMonth).map(value => {
+          const loggedValue = loggedDates.find(l => l.date === value).value
+          const isCompleted = loggedValue === timesPerDay
+          const isCurrentDate = isCurrentMonth && value === currentDate
+
+          return (
+            <View key={value} 
+              style={[
+                styles.dayContainer, { 
+                  backgroundColor: getColor(timesPerDay, loggedValue, colorArray),
+                  width: squareWidth,
+                  height: squareWidth,
+                  borderColor: isCurrentDate ? Colors.pink.dark : Colors.white
+                }
+              ]}>
+                <Text style={styles.day}>{value}</Text>
+                { isCompleted && 
+                  <Text style={styles.dot}>✔︎</Text>
+                }
+            </View> 
+          ) 
+        }) }
       </View>
     </View>
+  )
+}
+
+export const DailyHistory = ({ care }: DailyHistoryProps) => {
+  
+
+  return (
+    <HScrollContainer>
+      <Text>placeholder</Text>
+    </HScrollContainer>
   )
 }
 

@@ -9,7 +9,7 @@ import { STATS } from "@stat/statHelpers"
 import { ActionButton, TransparentButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
 import PetInfo from "@components/PetInfo/PetInfo"
-import { BottomModal, ErrorImage, FormHeader, Icon, ScrollScreen, TitleLabel } from "@components/UIComponents"
+import { BottomModal, ErrorImage, FormHeader, Icon, ItemActions, ScrollScreen, TitleLabel } from "@components/UIComponents"
 import { Header } from "@navigation/NavigationStyles"
 import { IconType } from "@utils/ui"
 //store & queries
@@ -104,19 +104,11 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
     },
   }), [info, logs, petId])
 
-  const actions = useMemo(() => ([
+  const bottomActions = useMemo(() => ([
     { key: 'log', title: 'Log pet stats', icon: 'add', onPress: () => navigation.navigate('CreateStat', { pet: { _id: pet._id, name: pet.name } }) },
     { key: 'edit', title: 'Update pet info', icon: 'edit', onPress: () => navigation.navigate('PetEdit', { pet: pet }) },
     { key: 'delete', title: isPending ? 'Deleting...' : 'Delete pet profile', icon: 'delete', onPress: () => handleDeletePet(pet) },
   ]), [pet, navigation, handleDeletePet, isPending])
-
-  const renderActions = ( 
-    actions.map((action, index) => {
-      const focusedStyles = action.key === 'delete' && Typography.error
-
-      return <TitleLabel key={action.key} title={action.title} iconName={action.icon} onPress={action.onPress} titleStyles={focusedStyles} containerStyles={index < actions.length - 1 && UI.tableRow()} size="small" />
-    })
-  )
 
   const renderFilteredList = (type: 'info' | 'logs') => (
     filteredList[type].titles.length > 0 ? filteredList[type].titles.map((label, index) => 
@@ -131,7 +123,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
   const sections = [
     { key: 'info', title: 'Important', iconName: 'info', renderList: renderFilteredList('info') },
     { key: 'logs', title: 'Logs', iconName: 'chart', renderList: renderFilteredList('logs') },
-    { key: 'actions', title: 'Actions', iconName: 'action', rightAction: false, renderList: renderActions },
+    { key: 'actions', title: 'Actions', iconName: 'action', rightAction: false, renderList: <ItemActions actions={bottomActions} /> },
   ]
   
   useEffect(() => { 
@@ -159,16 +151,20 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
 
         { sections.map(section => 
           <View key={section.key} style={Spacing.flexColumnStretch}>
-            <TitleLabel size='small' title={section.title} iconName={section.iconName} mode='bold' rightAction={section.rightAction !== false &&
-              <View style={Spacing.flexRow}>
-                <ActionButton icon='reset' buttonStyles={{ marginRight: 30 }} onPress={() => resetItems(section.key as SectionType)} />
+            <TitleLabel size='small' title={section.title} iconName={section.iconName} mode='bold' 
+              containerStyles={{ marginTop: 15, marginBottom: 0 }}
+              rightAction={ section.rightAction !== false &&
+                <View style={Spacing.flexRow}>
+                  <ActionButton icon='reset' buttonStyles={{ marginRight: 30 }} onPress={() => resetItems(section.key as SectionType)} />
 
-                <ActionButton icon="filter" onPress={() => {
-                  setModalVisible(true)
-                  setOption(section.key as SectionType)
-                }} /> 
-              </View>
-            } containerStyles={{ marginTop: 15, marginBottom: 0 }}/>
+                  <ActionButton icon="filter" onPress={() => {
+                    setModalVisible(true)
+                    setOption(section.key as SectionType)
+                  }} /> 
+                </View>
+              } 
+            />
+
             <View style={styles.sectionCon}>
               { section.renderList }
             </View>

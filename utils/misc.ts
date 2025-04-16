@@ -12,6 +12,12 @@ export const keyFromName = (data: {[key: string]: string}) => {
   return map
 } 
 
+export const numArray = (length: number) => {
+  return Array.from({ length: length }, (_, index) => index + 1)
+}
+
+export const isObjectInArray = (obj: any, array: any[]) => array.some(item => JSON.stringify(item) === JSON.stringify(obj))
+
 export const alertError = (error: Error) => {
   return AlertForm({ body: `Error: ${error}`, button: 'Retry' })
 }
@@ -31,7 +37,7 @@ export const showToast = ({ text1, style, text2, duration }: { text1: string, st
 
 export const showRequireSelectionToast = () => showToast({ text1: 'At least 1 selection is required.', style: 'info' })
 
-export const sortByFrequency = (array) => {
+export const sortByFrequency = (array: any[]) => {
   const sorted = [...FREQUENCY_TYPES, 'oneTime'].reduce((result, frequency) => {
     result[frequency] = []
     return result

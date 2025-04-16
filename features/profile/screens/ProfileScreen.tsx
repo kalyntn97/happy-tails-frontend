@@ -38,7 +38,7 @@ const ProfileScreen = ({ navigation }: Props) => {
   //set a random profile photo if user does not have one
  
   const randomIdx = Math.floor(Math.random() * randomProfilePhotos.length)
-
+  
   const addBanner = async () => {
     const photoUri = await useSelectPhoto()
     const photoData = photoUri ? { uri: photoUri, name: `${profile._id}_banner`, type: 'image/jpeg' } : null
@@ -54,7 +54,7 @@ const ProfileScreen = ({ navigation }: Props) => {
       })
     }
   }
-
+  
   if (isFetching) return <Loader />
   if (isError) return <ErrorImage />
 
@@ -70,7 +70,7 @@ const ProfileScreen = ({ navigation }: Props) => {
       <View style={styles.profileCon}>
         <View style={Spacing.flexColumnStretch}>
           <View style={styles.profileHeader}>
-            <Image source={{ uri: profile.photo ?? randomProfilePhotos[randomIdx] }} style={styles.profilePhoto }/>
+            <Image source={ profile.photo ? { uri: profile.photo } : randomProfilePhotos[randomIdx] } style={styles.profilePhoto }/>
             <Text style={styles.header}>{profile.name}</Text>
             <Text style={styles.subHeader}>@{profile.username}</Text>
           </View>
@@ -88,6 +88,7 @@ const ProfileScreen = ({ navigation }: Props) => {
 
         <TitleLabel title='All pets' iconName='pet' mode='bold' containerStyles={{ paddingHorizontal: 10 }} />  
         <View style={[UI.card(), { width: '95%' }]}>
+          { data.pets.length === 0 && <Text style={Typography.body}>No pets found</Text> }
           <PetList petArray={data.pets} size='small' />
         </View>
 

@@ -13,7 +13,7 @@ export interface CareFormData {
 }
 export interface Care extends CareFormData {
   _id: string
-  logs: Log[]
+  logs: string[] | Log[]
 }
 
 export interface LogFormData {
@@ -27,22 +27,3 @@ export interface Log extends LogFormData {
   _id: string
 }
 
-export interface Tracker {
-  _id: string
-  name: string
-  total: number
-  done: Done[]
-  skipped: number
-  left: number
-}
-
-export interface TrackerFormData {
-  careId: string
-  trackerId: string
-  index: number
-}
-
-type Done = {
-  value: number
-  notes: string
-} 

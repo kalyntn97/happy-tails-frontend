@@ -4,10 +4,10 @@ import { Pressable, StyleSheet, Text, TextStyle, View } from 'react-native'
 //utils
 import { windowWidth } from '@utils/constants'
 import { daysOfWeek, getOrdinalSuffix, months } from '@utils/datetime'
-import { showRequireSelectionToast, showToast } from '@utils/misc'
+import { isObjectInArray, numArray, showRequireSelectionToast, showToast } from '@utils/misc'
 import { Frequency } from '@utils/types'
 //components
-import { Icon, ModalInput, ScrollContainer, TitleLabel } from '@components/UIComponents'
+import { Icon, ModalInput, VScrollContainer, TitleLabel } from '@components/UIComponents'
 import { ActionButton, ToggleButton, TransparentButton } from '../ButtonComponents'
 import ScrollSelector from '../ScrollSelector'
 //styles
@@ -33,11 +33,6 @@ const ROUNDED: number = 30
 const CIRCLE_BUTTON_MARGIN: number = 5
 const CIRCLE_BUTTON_WIDTH: number = (windowWidth * 0.9 - CIRCLE_BUTTON_MARGIN * 2 * 7) / 8
 const monthNames = months.map(m => m.slice(0, 3))
-
-const numArray = (length: number) => {
-  return Array.from({ length: length }, (_, index) => index + 1)
-}
-const isObjectInArray = (obj: any, array: any[]) => array.some(item => JSON.stringify(item) === JSON.stringify(obj))
 
 const frequencyMap: Record<string, { label: string, intervalArray: number[], timesPerIntervalArray?: any[]}> = {
   days: { label: 'Daily', intervalArray: numArray(60), timesPerIntervalArray: numArray(10) },
@@ -215,7 +210,7 @@ const FrequencyPicker = ({ frequency, onSelectFrequency, onSelectEndDate, onRese
     > 
       <View style={Spacing.fullCon()}>
         <Text style={Typography.subHeader}>{repeatLabel}</Text>
-        <ScrollContainer>
+        <VScrollContainer>
           <TypeSelector type={type} onSelect={onChangeType} color={color} />
 
           <View style={styles.rowCon}>
@@ -229,7 +224,7 @@ const FrequencyPicker = ({ frequency, onSelectFrequency, onSelectEndDate, onRese
           <IntervalSelector type={type} interval={interval} intervalLabel={intervalLabel} onSelect={(selected: Frequency['interval']) => onSelectFrequency('interval', selected)} />
 
           { onSelectEndDate && <EndDateSelector endDate={endDate} ending={ending} onSelect={(key: 'ending' | 'endDate', selected: string | boolean) => onSelectEndDate(key, selected)} color={color} /> }
-        </ScrollContainer>
+        </VScrollContainer>
       </View>
     </ModalInput>
   )

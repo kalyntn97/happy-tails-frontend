@@ -18,11 +18,11 @@ export const petKeyFactory = {
 
 export const useGetPetById = (petId: string, isEnabled: boolean) => {
   const queryClient = useQueryClient()
-
+  
   return useQuery({
     queryKey: [...petKeyFactory.petById(petId)],
     queryFn: () => petService.getPetById(petId),
-    initialData: () => queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).pets.find((pet: Pet) => pet._id === petId),
+    initialData: () => queryClient.getQueryData<ProfileData>(profileKeyFactory.profile()).pets.find((pet: Pet) => pet._id === petId),
     enabled: isEnabled,
   })
 } 
@@ -33,7 +33,7 @@ export const useAddPet = (navigation: any) => {
   return useMutation({
     mutationFn: ({ formData, photoData } : PetMutationFormData) => petService.create(formData, photoData),
     onSuccess: (data: Pet) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
         return {...oldData, pets: [...oldData.pets, data]}
       })
       showToast({ text1: 'Pet added.', style: 'success' })
@@ -49,7 +49,7 @@ export const useUpdatePet = (navigation: any) => {
   return useMutation({
     mutationFn: ({ formData, photoData } : PetMutationFormData) => petService.update(formData, photoData),
     onSuccess: (data: Pet) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
         return {...oldData, pets: oldData.pets.map(pet => pet._id === data._id ? data : pet) }
       })
       queryClient.prefetchQuery({ queryKey: petKeyFactory.petById(data._id) })
@@ -66,7 +66,7 @@ export const useDeletePet = (navigation: any) => {
   const deletePetMutation = useMutation({
     mutationFn: (petId: string) => petService.deletePet(petId),
     onSuccess: (data: string) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
         return {...oldData, pets: oldData.pets.filter(pet => pet._id !== data) }
       })
       navigation.navigate('Home', { screen: 'Pets' })

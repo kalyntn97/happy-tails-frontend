@@ -7,7 +7,7 @@ import * as careHelpers from '@care/careHelpers'
 import * as healthHelpers from '@health/healthHelpers'
 import * as petHelpers from '@pet/petHelpers'
 //components
-import { ErrorMessage, Icon, ScrollContainer } from "@components/UIComponents"
+import { ErrorMessage, Icon, VScrollContainer } from "@components/UIComponents"
 //styles
 import { Colors, Spacing, Typography, UI } from '@styles/index'
 import { lightPalette } from "@styles/ui"
@@ -163,7 +163,7 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
 
           { visible && 
             <View style={modalStyles}>
-              <ScrollContainer props={{ ...scrollProps }}>
+              <VScrollContainer props={{ ...scrollProps }}>
                 { searchResults.length > 1 ? searchResults.map(result =>
                     <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
                       <Text style={{ color: lightPalette().text }}>
@@ -172,7 +172,7 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
                     </TouchableOpacity>
                 )
                 : <Text>No {searchLabel ?? 'item'} found.</Text> }
-              </ScrollContainer>
+              </VScrollContainer>
             </View> 
           }
         </>

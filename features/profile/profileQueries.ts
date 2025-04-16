@@ -3,15 +3,19 @@ import * as profileService from "./profileService"
 import { PhotoData, Profile, ProfileData, ProfileFormData } from "./ProfileInterface"
 import { showToast } from "@utils/misc"
 import { HomeTabParamList, StackScreenNavigationProp, TabScreenNavigationProp } from "@navigation/types"
+import { useActiveDate } from "@store/store"
 
 export const profileKeyFactory = {
-  profile: ['profile'],
+  profile: (year?: number) => ['profile', year],
 }
 
-export const useGetProfile = (isEnabled?: boolean) => {
+export const useGetProfile = (year?: number) => {
+  const { year: activeYear } = useActiveDate()
+  const inputYear = year ?? activeYear
+  
   return useQuery({
-    queryKey: [...profileKeyFactory.profile],
-    queryFn: profileService.getProfile,
+    queryKey: [...profileKeyFactory.profile(inputYear)],
+    queryFn: () => profileService.getProfile(inputYear),
   })
 }
 
@@ -21,7 +25,7 @@ export const useUpdateProfile = (navigation: TabScreenNavigationProp<'Profile'>)
   return useMutation({
     mutationFn: ({ name, bio, photoData }: ProfileFormData) => profileService.update(name, bio, photoData),
     onSuccess: (data: Profile) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
         return {...oldData, profile: data }
       })
       showToast({ text1: 'Profile updated.', style: 'success' })
@@ -37,7 +41,7 @@ export const useAddBanner = () => {
   return useMutation({
     mutationFn: (photoData: PhotoData) => profileService.addBanner(photoData),
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...profileKeyFactory.profile] })
+      return queryClient.invalidateQueries({ queryKey: [...profileKeyFactory.profile()] })
     }
   })
 }

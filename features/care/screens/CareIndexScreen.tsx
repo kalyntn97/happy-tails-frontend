@@ -7,7 +7,7 @@ import { AnimatedButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
 import PetList from "@components/PetInfo/PetList"
 import PlaceHolder from "@components/PlaceHolder"
-import { ErrorImage, Icon, ScrollHeader } from "@components/UIComponents"
+import { ErrorImage, Icon, HScrollContainer } from "@components/UIComponents"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import { CARES, getCareIcon } from "@care/careHelpers"
@@ -18,6 +18,7 @@ import { Header } from "@navigation/NavigationStyles"
 import { Buttons, Colors, Spacing, UI } from '@styles/index'
 import { FREQUENCY_TYPES } from "@utils/constants"
 import { verticalScrollProps, wrappedTextProps } from "@styles/ui"
+import { sortByFrequency } from "@utils/misc"
 
 
 type CareIndexProps = {
@@ -69,14 +70,15 @@ const CareItem = ({ care, navigation }) => {
 }
 
 const CareIndexScreen = ({ navigation, route }: CareIndexProps) => {
-  const { data, isSuccess, isFetching, isError } = useGetProfile()
-  const cares = data.cares
-  
   const [filtered, setFiltered] = useState<string>(null)
 
-  const careIndex: CareSection[] = FREQUENCY_TYPES.map(sectionTitle => ({
+  const { data, isSuccess, isFetching, isError } = useGetProfile()
+  const cares = data.cares
+  const sortedCares = sortByFrequency(cares)
+  
+  const careIndex: CareSection[] = Object.keys(sortedCares).map(sectionTitle => ({
     title: sectionTitle,
-    data: cares.filter(care => care.frequency.type === sectionTitle) || []
+    data: sortedCares[sectionTitle] || []
   }))
   
   // another method that uses for.. of loop and IIFE
@@ -110,7 +112,7 @@ const CareIndexScreen = ({ navigation, route }: CareIndexProps) => {
   }
 
   const CareListHeader = () => (
-    <ScrollHeader contentStyles={{ paddingVertical: 5, paddingHorizontal: 10 }} h={0} b={10} t={0}>
+    <HScrollContainer contentStyles={{ paddingVertical: 5, paddingHorizontal: 10 }} h={0} b={10} t={0}>
       <HeaderButton bgColor={filtered === null ? Colors.multi.dark[0] : Colors.multi.light[0]} onPress={handlePressAll} title='All' count={cares.length} active={filtered === null} />
       {careIndex.map((section: CareSection, idx: number) => 
         <HeaderButton key={`title-${idx}`}
@@ -120,7 +122,7 @@ const CareIndexScreen = ({ navigation, route }: CareIndexProps) => {
           active={filtered === section.title}
         />
       )}
-    </ScrollHeader>
+    </HScrollContainer>
   )
 
   useEffect(() => {

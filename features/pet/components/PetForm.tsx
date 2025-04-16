@@ -172,14 +172,14 @@ const PetForm = ({ onSubmit, initialValues, navigation, isPending }: PetFormProp
     navigation.setOptions({
       header: () => <Header showGoBackButton={true} rightActions={headerActions} navigation={navigation} mode='modal' bgColor={Colors.multi.lightest[color]} />
     })
-  }, [headerActions, color])
+  }, [headerActions, status, color])
 
   return ( 
     <ScrollScreen bgColor={Colors.multi.lightest[color]}>
       <View style={styles.headerCon}>
         <PhotoUpload photo={photo} placeholder={placeholderPhoto} onSelect={(uri: string) => onChange('photo', uri)} />
         <View style={styles.titleCon}>
-          <FormInput initial={name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} />
+          <FormInput initial={initialState.name} placeholder="New Pet Name" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={50} props={{ autoCapitalize: 'words', multiline: true, selectTextOnFocus: true }} error={errors?.name} withBorder={false} />
         </View>
       </View>
       

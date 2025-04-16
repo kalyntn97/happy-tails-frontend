@@ -12,6 +12,7 @@ import { profileKeyFactory } from "@profile/profileQueries"
 //helpers
 import { countDaysBetween, daysOfWeek, getDateConstructor, getDateInfo } from "@utils/datetime"
 import { shouldRenderCareTask } from "../features/home/helpers"
+import { useActiveDate } from "@store/store"
 
 export const showDeleteConfirmation = (onConfirm: (...args: any[]) => void, text2: string = 'This action cannot be undone.', text1: string = 'Are you sure?') => Alert.alert(
   text1,
@@ -27,13 +28,14 @@ export const useDeleteCareCard = (navigation: any) => {
   const deleteCareMutation = useDeleteCare(navigation)
 
   const deleteCareCard = (careId: string) => deleteCareMutation.mutate(careId)
+  const isPending = deleteCareMutation.isPending
 
   const handleDeleteCare = (care: Care) => showDeleteConfirmation(
     () => deleteCareCard(care._id), 
     `Remove ${care.name} tracker?`
   )
 
-  return handleDeleteCare
+  return { handleDeleteCare, isPending }
 }
 
 export const useDeleteHealthCard = (navigation: any) => {
@@ -50,9 +52,10 @@ export const useDeleteHealthCard = (navigation: any) => {
 
 export const useShallowPets = () => {
   const queryClient = useQueryClient()
-
-  const pets = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile)?.pets
-
+  const { year } = useActiveDate()
+  
+  const pets = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile(year))?.pets
+  
   const PET_BASICS = pets?.map(pet => ({ _id: pet._id, name: pet.name, photo: pet.photo, species: pet.species, color: pet.color, gender: pet.gender }))
   const PET_NAMES = PET_BASICS.map(pet => pet.name)
   const PET_IDS = PET_BASICS.map(pet => pet._id)
@@ -89,7 +92,7 @@ export const useSelectPhoto = async () => {
 
 export const useCaresByPet = (petId: string): Care[] => {
   const queryClient = useQueryClient()
-  const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
+  const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile()).cares
   
   const caresByPet = () => {
     const filtered = Object.values(cares).flat().filter(care => {
@@ -104,7 +107,7 @@ export const useCaresByPet = (petId: string): Care[] => {
 
 export const useCaresByFrequency = (frequency: string): Care[] => {
   const queryClient = useQueryClient()
-  const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
+  const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile()).cares
   
   const caresByFrequency = () => {
     return cares[frequency] ?? []
@@ -115,7 +118,7 @@ export const useCaresByFrequency = (frequency: string): Care[] => {
 
 export const useAllCares = (): Care[] => {
   const queryClient = useQueryClient()
-  const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
+  const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile()).cares
   
   const allCares = () => {
     return Object.values(cares).flat()
@@ -126,7 +129,7 @@ export const useAllCares = (): Care[] => {
 
 export const useHealthDueByPet = (petId: string): { minDays: number, healthId: string } => {
   const queryClient = useQueryClient()
-  const healths = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).healths
+  const healths = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile()).healths
 
   const healthDueByPet = () => {
     let minDays = Infinity
@@ -151,14 +154,14 @@ export const useTaskCounts = () => {
   
   //* num of tasks due today
   const careCounts = (selectedDate: Date) => {
-    const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
+    const cares = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile()).cares
     const filtered = Object.values(cares).flat().filter((care: Care) => shouldRenderCareTask(care, selectedDate) && care.frequency === 'Daily')
     return filtered.length
   }
   //* num of days until the next vet visit
   const healthCounts = () => {
     let minDays = Infinity
-    const petIds = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).profile.pets.map(pet => pet._id)
+    const petIds = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile()).profile.pets.map(pet => pet._id)
     petIds.forEach(petId => {
       const healthDueByPet = useHealthDueByPet(petId)
       const days = healthDueByPet()

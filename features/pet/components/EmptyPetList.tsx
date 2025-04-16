@@ -8,11 +8,11 @@ const EmptyPetList = ({ navigation }) => {
   return (
     <View style={Spacing.flexColumn}>
       <Text style={{ ...Typography.subHeader, color: Colors.shadow.darkest }}>No pets added.</Text>
-      <MainButton title='Create a Pet' onPress={() => navigation.navigate('Create')} color={Colors.white} bgColor={Colors.pink.dark} />
+      <MainButton title='Create a Pet' onPress={() => navigation.navigate('PetCreate')} color={Colors.white} bgColor={Colors.pink.dark} />
       <Text style={styles.subHeader}>Start from scratch. Unlimited number of pets.</Text>
       <LottieView source={require('@assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
-      <TransparentButton title='Add an Existing Pet' color={Colors.pink.darkest} bdColor={Colors.pink.darkest} top={-50} />
-      <Text style={styles.subHeader}>Use a code to add from an existing household, created by a family member or friend.</Text>
+      <TransparentButton title='Add an Existing Pet' color={Colors.pink.darkest} bdColor={Colors.pink.darkest} buttonStyles={{ marginTop: -50 }} />
+      <Text style={styles.subHeader}>Use a code to add an existed pet, created by a family member or friend.</Text>
     </View>
   )
 }

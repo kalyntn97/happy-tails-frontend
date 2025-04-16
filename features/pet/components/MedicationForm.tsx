@@ -4,7 +4,7 @@ import { ActivityIndicator, Text, View } from 'react-native'
 import { ActionButton, MainButton, ToggleButton } from '@components/ButtonComponents'
 import FrequencyPicker, { getRepeatLabels } from '@components/Pickers/FrequencyPicker'
 import PetPicker from '@components/Pickers/PetPicker'
-import { DateInput, ErrorMessage, FormError, FormHeader, FormInput, HelperText, Icon, ModalInput, NoteInput, ScrollContainer, TableForm, TitleLabel } from '@components/UIComponents'
+import { DateInput, ErrorMessage, FormError, FormHeader, FormInput, HelperText, Icon, ModalInput, NoteInput, VScrollContainer, TableForm, TitleLabel } from '@components/UIComponents'
 //helpers & types
 import useForm from '@hooks/useForm'
 import { Dosage, Medication, MedicationFormData, Refill } from '@pet/PetInterface'
@@ -205,7 +205,7 @@ const MedicationForm = ({ initialValues, onSubmit, isPending }: MedicationFormPr
   }, [headerActions])
 
   return (
-    <ScrollContainer props={{ keyboardShouldPersistTaps: 'never' }}>
+    <VScrollContainer props={{ keyboardShouldPersistTaps: 'never' }}>
       <View style={styles.headerCon}>
         <Icon type='pet' name='medication' size='large' />
         <View style={styles.titleCon}>
@@ -214,7 +214,7 @@ const MedicationForm = ({ initialValues, onSubmit, isPending }: MedicationFormPr
       </View>
 
       <TableForm table={mainTable} errors={errors} />
-    </ScrollContainer>
+    </VScrollContainer>
   )
 }
 

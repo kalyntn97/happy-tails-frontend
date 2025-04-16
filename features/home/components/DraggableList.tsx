@@ -23,6 +23,7 @@ import { getLocaleDateString } from '@utils/datetime'
 //styles
 import { Colors, Spacing, Typography } from '@styles/index'
 import { verticalScrollProps } from '@styles/ui'
+import { HomeTabParamList, StackScreenNavigationProp } from '@navigation/types'
 
 type ListItem = { type: Feed, item: any }
 interface DraggableListProps {
@@ -36,8 +37,8 @@ interface ItemProps {
 }
 
 const getCareActions = (item: Care) => {
-  const navigation = useNavigation()
-  const handleDeleteCare = useDeleteCareCard(navigation)
+  const navigation = useNavigation<StackScreenNavigationProp>()
+  const { handleDeleteCare } = useDeleteCareCard(navigation)
 
   return ([
     { icon: 'edit', bgColor: 'yellow', onPress: () => navigation.navigate('CareEdit', { care: item }) },
@@ -47,7 +48,7 @@ const getCareActions = (item: Care) => {
 }
 
 const getHealthActions = (item: Health) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation<StackScreenNavigationProp>()
   const handleDeleteHealth = useDeleteHealthCard(navigation)
 
   return ([
@@ -113,7 +114,7 @@ const CareItem = ({ item, onPress, onLongPress, disabled }: { item: Care } & Ite
   const deleteLogMutation = useDeleteLog()
   const updateLogMutation = useUpdateLog()
 
-  const log = item.logs.find((log: Log) => getLocaleDateString(log.date) === activeDate.toLocaleDateString())
+  const log = item.logs.find((log: Log) => getLocaleDateString(log.date) === activeDate.toLocaleDateString()) as Log
 
   const shouldIncrement = item.frequency.type === 'days' && item.frequency.timesPerInterval[0] > 1 && log
 

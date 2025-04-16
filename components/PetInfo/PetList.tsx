@@ -7,7 +7,7 @@ import PetInfo from "./PetInfo"
 //styles
 import { Spacing } from '@styles/index'
 import { Size } from "@styles/ui"
-import { ScrollHeader } from "@components/UIComponents"
+import { HScrollContainer } from "@components/UIComponents"
 
 interface PetListProps {
   petArray: Pet[] | PetBasic[]
@@ -39,7 +39,7 @@ const PetList = memo(({ petArray, size, containerStyles, type = 'wrap', width = 
   const listStyles = useMemo(() => [Spacing.flexRow, type === 'wrap' ? { flexWrap: 'wrap' } : {}, { width: width }, containerStyles], [type, size, width])
 
   return (  
-    <View style={listStyles as ViewStyle}>
+    <View style={listStyles as unknown as ViewStyle}>
       { type === 'scroll' ?
         <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
           { renderPetList(petArray, size) }

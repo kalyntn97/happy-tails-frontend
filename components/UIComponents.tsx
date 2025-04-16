@@ -13,6 +13,7 @@ import { ActionButton, GoBackButton } from "./ButtonComponents"
 import { Colors, Spacing, Typography, UI } from "@styles/index"
 import { textSizeMap } from "@styles/typography"
 import { Size, horizontalScrollProps, icon, iconSizeMap, lightPalette, verticalScrollProps, wrappedTextProps } from "@styles/ui"
+import React from 'react'
 
 interface IconProps {
   type?: IconType
@@ -105,6 +106,15 @@ export const TitleLabel = memo(({ title, iconType = 'action', iconName, onPress,
     </Pressable>
   )
 })
+
+
+export const ItemActions = ({ actions }: { actions: { key: string, title?: string, icon?: string, onPress: () => void }[] }) => ( 
+  actions.map((action, index) => {
+    const focusedStyles = action.key === 'delete' && Typography.error
+
+    return <TitleLabel key={action.key} title={action.title} iconName={action.icon} onPress={action.onPress} titleStyles={focusedStyles} containerStyles={index < actions.length - 1 && UI.tableRow()} size="small" />
+  })
+)
 
 export const FormHeader = ({ title, size = 'med', color = lightPalette().text, styles, capitalize = false }: { title: string, size?: Size, color?: string, styles?: TextStyle, capitalize?: boolean }) => {
   // const defaultColor = size === 'small' || size === 'xSmall' ? lightPalette().unfocused : lightPalette().text
@@ -202,7 +212,7 @@ interface ScrollProps {
   h?: number, b?: number, t?: number
 }
 
-export const ScrollHeader = forwardRef<ScrollView, ScrollProps>(({ children, h = 10, b = 15, t = 15, containerStyles, contentStyles, props }, ref) => (
+export const HScrollContainer = forwardRef<ScrollView, ScrollProps>(({ children, h = 10, b = 15, t = 15, containerStyles, contentStyles, props }, ref) => (
   <View style={[Spacing.flexRow, Spacing.basePadding(h, 0, b, t), containerStyles]}>
     <ScrollView 
       ref={ref}
@@ -217,7 +227,7 @@ export const ScrollHeader = forwardRef<ScrollView, ScrollProps>(({ children, h =
   </View>
 ))
 
-export const ScrollContainer = ({ children, props, contentStyles }: ScrollProps) => (
+export const VScrollContainer = ({ children, props, contentStyles }: ScrollProps) => (
   <ScrollView
     keyboardShouldPersistTaps='handled'
     style={{ width: '100%' }} 
@@ -231,7 +241,7 @@ export const ScrollContainer = ({ children, props, contentStyles }: ScrollProps)
 
 export const ScrollScreen = ({ children, props, contentStyles, containerStyles, bgColor = UI.lightPalette().background }: ScrollProps & { containerStyles?: ViewStyle, bgColor?: string }) => (
   <View style={[Spacing.fullCon(), { backgroundColor: bgColor }, containerStyles]}>
-    <ScrollContainer props={props} contentStyles={contentStyles}>{children}</ScrollContainer>
+    <VScrollContainer props={props} contentStyles={contentStyles}>{children}</VScrollContainer>
   </View>
 )
 
@@ -286,13 +296,11 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
   }, [initial])
 
   return (
-    <View style={[Spacing.flexColumn, { width: width, minWidth: 50, zIndex: isFocused ? 10 : 2, alignItems: withBorder ? (align === 'left' ? 'flex-start' : 'flex-end') : 'center' }]}>
-      <View
-        style={[Spacing.flexRow, withBorder ? UI.input() : { ...UI.input(false, 0, 0, 0), textAlign: align }, { width: '100%', height: 50 }, validatedStyles, styles]}
-      >
+    <View style={[Spacing.flexColumn, { width: width, minWidth: 50, zIndex: isFocused ? 10 : 2, alignItems: withBorder ? (align === 'left' ? 'flex-start' : 'flex-end') : 'flex-start' }]}>
+      <View style={[Spacing.flexRow, withBorder ? UI.input() : UI.input(false, 0, 0, 0), { width: '100%', height: 50 }, validatedStyles]}>
         <TextInput
           ref={ref}
-          style={{ flex: 1 }}
+          style={[{ flex: 1, height: '100%' }, !withBorder && { textAlign: align }, validatedStyles, styles]}
           placeholder={placeholder}
           placeholderTextColor={UI.lightPalette().unfocused}
           value={value}
@@ -311,7 +319,6 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
         <Text style={{ color: UI.lightPalette().unfocused, fontSize: 12 }}>
           { isFocused && `${maxLength - (value ? value.length : 0)}/${maxLength}` }
         </Text> 
-        
       </View>
     </View>
   )
