@@ -91,6 +91,7 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
       setSelected(item)
     }
     dataArray ? onSelect(dataArray.find(i => i.name === item)) : onSelect(item)
+    //* reset the search input
     if (shouldReset) withSearch ? setSearchInput(initial) : setSelected(initial)
     setVisible(false)
   }
@@ -125,21 +126,22 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
     }
   }, [dataType, initial])
 
-  const dropdownBtnStyles = useMemo(() => ([ 
-    styles.dropDownBtn, 
+  const dropdownBtnStyles = useMemo(() => ([
+    styles.dropDownBtn,
     withBorder ? UI.input() : UI.input(false, 0, 0, 0),
     (focused || visible) && UI.focused,
     buttonStyles,
-  ]) as ViewStyle, [focused, visible, buttonStyles, withBorder])
+  ]) as unknown as ViewStyle, [focused, visible, buttonStyles, withBorder])
 
-  const modalStyles = useMemo(() => ([ 
-    styles.modalCon, 
-    { left: dropdownLeft,
+  const modalStyles = useMemo(() => ([
+    styles.modalCon,
+    {
+      left: dropdownLeft,
       maxHeight: withSearch ? dropdownTop * 4 : '50%',
       width: `${contentWidth ?? (withSearch ? 100 : width - (width > 50 ? 20 : 10))}%`,
     },
     contentPosition === 'bottom' ? { top: dropdownTop } : { bottom: dropdownTop },
-  ]) as ViewStyle, [dropdownLeft, dropdownTop, contentPosition, contentWidth, width])
+  ]) as unknown as ViewStyle, [dropdownLeft, dropdownTop, contentPosition, contentWidth, width])
 
   return (
     <View style={[styles.container, { width: `${width}%` as DimensionValue, zIndex: focused ? 100 : 2 }]}>

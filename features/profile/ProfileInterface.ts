@@ -27,11 +27,12 @@ export interface Profile {
 export interface ProfileFormData {
   name: string
   bio: string
-  photoData: PhotoData | null
+  photo?: string
 }
 
-export type PhotoData = {
-  uri: string
-  name: string
-  type: string 
+export type PhotoFormData = { uri: string, name: string, type: string }
+
+export interface ProfileMutationFormData {
+  formData: ProfileFormData
+  photoData: PhotoFormData | null
 }

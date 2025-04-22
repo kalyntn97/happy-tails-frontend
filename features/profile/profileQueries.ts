@@ -1,9 +1,9 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
-import * as profileService from "./profileService"
-import { PhotoData, Profile, ProfileData, ProfileFormData } from "./ProfileInterface"
-import { showToast } from "@utils/misc"
-import { HomeTabParamList, StackScreenNavigationProp, TabScreenNavigationProp } from "@navigation/types"
+import { TabScreenNavigationProp } from "@navigation/types"
 import { useActiveDate } from "@store/store"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { showToast } from "@utils/misc"
+import { PhotoData, Profile, ProfileData, ProfileMutationFormData } from "./ProfileInterface"
+import * as profileService from "./profileService"
 
 export const profileKeyFactory = {
   profile: (year?: number) => ['profile', year],
@@ -23,7 +23,7 @@ export const useUpdateProfile = (navigation: TabScreenNavigationProp<'Profile'>)
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ name, bio, photoData }: ProfileFormData) => profileService.update(name, bio, photoData),
+    mutationFn: ({ formData, photoData }: ProfileMutationFormData) => profileService.update(formData, photoData),
     onSuccess: (data: Profile) => {
       queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
         return {...oldData, profile: data }

@@ -7,13 +7,13 @@ import { useAddBanner, useGetProfile } from "@profile/profileQueries"
 //components
 import Loader from "@components/Loader"
 import PetList from "@components/PetInfo/PetList"
-import { BoxWithHeader, ErrorImage, ScrollScreen, TitleLabel } from "@components/UIComponents"
+import { ErrorImage, ScrollScreen, TitleLabel } from "@components/UIComponents"
 //hooks & utils
 import { useSelectPhoto } from "@hooks/sharedHooks"
 import { AlertForm } from "@utils/ui"
 //styles
-import { Colors, Spacing, Typography, UI } from '@styles/index'
 import { TabScreenNavigationProp } from "@navigation/types"
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 const randomProfilePhotos = [
   require('@assets/icons/profile-1.png'),
@@ -119,11 +119,13 @@ const styles = StyleSheet.create({
     left: 0,
     backgroundColor: Colors.pink.light,
     overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   banner: {
-    maxWidth: '100%',
-    height: '60%',
-    overflow: 'visible',
+    width: '100%',
+    aspectRatio: 1,
+    overflow: 'hidden',
     zIndex: 2,
     opacity: 0.8,
   },
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
   },
   subHeader: {
-    ...Typography.xSmallSubHeader,
+    ...Typography.smallSubHeader,
     color: 'gray',
     marginTop: 0,
     marginBottom: 10,

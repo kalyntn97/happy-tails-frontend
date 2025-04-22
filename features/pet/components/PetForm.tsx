@@ -1,6 +1,6 @@
 //npm modules
 import { useEffect, useMemo } from "react"
-import { ActivityIndicator, DimensionValue, Text, TouchableOpacity, View } from "react-native"
+import { Text, View } from "react-native"
 //components
 import { ToggleButton } from '@components/ButtonComponents'
 import Dropdown from "@components/Dropdown/Dropdown"

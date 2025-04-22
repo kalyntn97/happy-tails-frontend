@@ -297,7 +297,7 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
 
   return (
     <View style={[Spacing.flexColumn, { width: width, minWidth: 50, zIndex: isFocused ? 10 : 2, alignItems: withBorder ? (align === 'left' ? 'flex-start' : 'flex-end') : 'flex-start' }]}>
-      <View style={[Spacing.flexRow, withBorder ? UI.input() : UI.input(false, 0, 0, 0), { width: '100%', height: 50 }, validatedStyles]}>
+      <View style={[Spacing.flexRow, withBorder ? UI.input() : UI.input(false, 0, 0, 0), { width: '100%', height: 50 }, validatedStyles, styles]}>
         <TextInput
           ref={ref}
           style={[{ flex: 1, height: '100%' }, !withBorder && { textAlign: align }, validatedStyles, styles]}
