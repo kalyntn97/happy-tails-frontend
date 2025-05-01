@@ -1,5 +1,7 @@
+import React from 'react'
 import RNDateTimePicker from "@react-native-community/datetimepicker"
-import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useMemo, useState } from "react"
+import { Calendar } from "react-native-calendars"
+import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from "react"
 import { ActivityIndicator, DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import Animated, { SlideInDown, SlideInLeft, SlideOutDown, SlideOutLeft } from "react-native-reanimated"
 //utils & hooks
@@ -13,7 +15,7 @@ import { ActionButton, GoBackButton } from "./ButtonComponents"
 import { Colors, Spacing, Typography, UI } from "@styles/index"
 import { textSizeMap } from "@styles/typography"
 import { Size, horizontalScrollProps, icon, iconSizeMap, lightPalette, verticalScrollProps, wrappedTextProps } from "@styles/ui"
-import React from 'react'
+import { convertToDateString } from '@utils/datetime'
 
 interface IconProps {
   type?: IconType
@@ -134,13 +136,16 @@ export const TopRightHeader = ({ label, icon, onPress, top = 0, right = -5 }: { 
   </Pressable>
 )
 
-export const getHeaderActions = (onReset: () => void, isPending: boolean, handleValidate: () => void): { icon?: string, title?: string | ReactNode, onPress: () => void }[] => {
+export const getHeaderActions = (onReset: () => void, isPending: boolean, handleValidate: () => void, disabled: boolean = false): { icon?: string, title?: string | ReactNode, onPress: () => void, disabled?: boolean }[] => {
   return [
     { icon: 'reset', onPress: onReset },
-    { title: isPending ? 
+    { 
+      title: isPending ? 
         <Text style={Spacing.flexRow}><ActivityIndicator /> Submitting...</Text>
         : 'Submit', 
-      onPress: handleValidate },
+      onPress: handleValidate,
+      disabled: disabled,
+    },
   ]
 }
 
@@ -266,7 +271,11 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
   const [isFocused, setIsFocused] = useState(false)
   const [value, setValue] = useState(initial)
   const [isSecure, setIsSecure] = useState(type === 'password' ? true : false)
-
+  useImperativeHandle(ref, () => ({
+    blur: () => {
+      ref.current.blur();
+    }
+  }))
   const validatedStyles = useMemo(() => error ? UI.error : isFocused ? UI.focused : UI.unfocused, [error, isFocused])
 
   const handlePress = (text: string) => {
@@ -449,21 +458,33 @@ export const ModalInput = ({ children, label, onReset, onDismiss, onSubmit, heig
 }
 
 interface DateInputProps extends ModalInputProps {
-  date: Date | string, 
+  date: Date | string,
+  initial?: Date | string, 
   placeholder?: string, 
   onChangeDate: (selected: string) => void, 
   color?: number, 
   header?: string
 }
 
-export const DateInput = ({ date, placeholder = 'No date selected.', onChangeDate, color, buttonStyles, buttonTextStyles, header }: DateInputProps) => (
-  <ModalInput label={date ? new Date(date).toLocaleDateString() : placeholder} onReset={() => onChangeDate(new Date().toISOString())} buttonStyles={buttonStyles} buttonTextStyles={buttonTextStyles}>
+//* takes a date string in ISO format and returns a string in ISO format while displaying it as local date string
+export const DateInput = ({ date, initial, placeholder = 'No date selected.', onChangeDate, color, buttonStyles, buttonTextStyles, header }: DateInputProps) => (
+  <ModalInput label={ date ? new Date(date as string).toLocaleDateString() : placeholder} onReset={() => onChangeDate((initial ? new Date(initial).toISOString() : null))} buttonStyles={buttonStyles} buttonTextStyles={buttonTextStyles} height='60%'>
     { header && 
-      <FormHeader title={date ? `${header}: ${new Date(date).toLocaleDateString()}` : header} /> 
+      <FormHeader title={`${header}: ${date ? new Date(date).toLocaleDateString() : placeholder}`} /> 
     }
-    <RNDateTimePicker display="inline" themeVariant="light" value={date ? new Date(date) : new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate.toISOString())} accentColor={Colors.multi.dark[color]} />
+    <RNDateTimePicker  display={Platform.OS === 'ios' ? 'inline' : 'default'} themeVariant="light" value={date ? new Date(date) : new Date()} onChange={(_, selectedDate) => onChangeDate(selectedDate.toISOString())} accentColor={Colors.multi.dark[color]} />
+    {/* <Calendar
+      current={date ? convertToDateString(date as string) : convertToDateString(new Date().toISOString())}
+      onDayPress={(date) => {
+        onChangeDate(new Date(date.year, date.month - 1, date.day).toISOString())
+      }}
+      markedDates={{
+        [convertToDateString(date as string)]: {selected: true, disableTouchEvent: true, selectedColor: Colors.multi.dark[color]}
+      }}
+    /> */}
   </ModalInput>
 )
+
 
 interface NoteInputProps extends ModalInputProps {
   notes: string, 
@@ -494,9 +515,9 @@ export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit,
       <FormHeader title={header ?? 'Add Notes'} />
       { subHeading }
 
-      <View style={[Spacing.flexRowStretch, UI.input(), { width: '90%', minHeight: height, maxHeight: maxHeight }, validatedStyles, inputStyles]}>
+      <View style={[Spacing.flexRowStretch, UI.input(), { width: '100%', minHeight: height, maxHeight: maxHeight }, validatedStyles, inputStyles]}>
         <TextInput
-          style={{ height: '100%', flex: 1, marginRight: 10 }}
+          style={{ height: '90%', flex: 1, marginRight: 10 }}
           placeholder={placeholder ?? 'Enter notes'}
           placeholderTextColor={UI.lightPalette().unfocused}
           value={notes}

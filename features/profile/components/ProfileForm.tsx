@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { View } from 'react-native'
 //components & hooks
 import { FormInput, FormLabel, getHeaderActions, PhotoUpload, ScrollScreen } from '@components/UIComponents'
@@ -30,6 +30,7 @@ const ProfileForm = ({ onSubmit, initialValues, isPending, navigation }: Profile
   
   const { values, onChange, onValidate, onReset } = useForm(handleSubmit, initialState)
   const { name, bio, photo, errors }: InitialState = values
+  const inputRef = useRef(null)
 
   function handleValidate() {
     onValidate({ name })
@@ -58,7 +59,7 @@ const ProfileForm = ({ onSubmit, initialValues, isPending, navigation }: Profile
       </View>
 
       <FormLabel label="More Info" icon="tag"/>
-      <FormInput initial={bio} placeholder="Enter bio" onChange={(text: string) => onChange('bio', text)} maxLength={200} props={{ multiline: true, selectTextOnFocus: true }} error={errors?.bio} styles={{ height: 80 }} width='90%' />
+      <FormInput ref={inputRef} initial={bio} placeholder="Enter bio" onChange={(text: string) => onChange('bio', text)} maxLength={200} props={{ multiline: true, selectTextOnFocus: true }} error={errors?.bio} styles={{ height: 80 }} width='90%' />
     </ScrollScreen>
   )
 }

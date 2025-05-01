@@ -16,11 +16,6 @@ interface EditProfileProps {
   route: {params: { profile: Profile }}
 }
 
-interface InitialState extends ProfileFormData {
-  photoData: { uri: string, name: string, type: 'image/jpeg' } | null
-  errors: any
-}
-
 const EditProfileScreen = ({ navigation, route }: EditProfileProps) => {
   const { profile } = route.params
   const updateProfileMutation = useUpdateProfile(navigation)

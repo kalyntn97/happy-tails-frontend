@@ -147,20 +147,22 @@ const CareIndexScreen = ({ navigation, route }: CareIndexProps) => {
   return (
     <View style={Spacing.fullCon()}>
       {/* <RoundButton onPress={() => navigation.navigate('CareCreate')} type='add' position="topRight"  /> */}
-      <CareListHeader />
       { isSuccess && (
         cares.length > 0 ?
-          <SectionList
-            ref={sectionListRef}
-            sections={careIndex}
-            keyExtractor={(item, index) => item + index}
-            renderItem={({ item }) => (
-              (filtered === item.frequency.type || filtered === null) && <CareItem key={item._id} care={item} navigation={navigation} />
-            )}
-            getItemLayout={getItemLayout}
-            { ...verticalScrollProps }
-            style={{ width: '100%' }}
-          />
+          <>
+            <CareListHeader />
+            <SectionList
+              ref={sectionListRef}
+              sections={careIndex}
+              keyExtractor={(item, index) => item + index}
+              renderItem={({ item }) => (
+                (filtered === item.frequency.type || filtered === null) && <CareItem key={item._id} care={item} navigation={navigation} />
+              )}
+              getItemLayout={getItemLayout}
+              { ...verticalScrollProps }
+              style={{ width: '100%' }}
+            />
+          </>
         : <PlaceHolder type='care' />
       )}
     </View> 

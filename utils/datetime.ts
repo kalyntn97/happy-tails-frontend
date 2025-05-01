@@ -179,3 +179,10 @@ export function getCurrentTimeString(string: string = 'now') {
 export function convertToTimeString({ hours, minutes, amOrPm }: Time) {
   return `${hours}:${minutes} ${amOrPm}`
 }
+
+export function convertToDateString(dateString: string) {
+  const { date, month, year } = getDateInfo(dateString)
+  const formattedDate = String(date).padStart(2, '0')
+  const formattedMonth = String(month).padStart(2, '0')
+  return `${year}-${formattedMonth}-${formattedDate}`
+}

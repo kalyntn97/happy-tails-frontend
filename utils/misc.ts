@@ -31,8 +31,8 @@ export const closeToast = () => {
   Toast.hide()
 }
 
-export const showToast = ({ text1, style, text2, duration }: { text1: string, style: string, text2?: string, duration?: number }) => {
-  Toast.show({ type: 'catToast', text1: text1, text2: text2, visibilityTime: duration ?? 3000, props: { style: style, onClose: closeToast }, position: 'bottom', bottomOffset: 50 })
+export const showToast = ({ text1, style, text2, duration, position = 'bottom'}: { text1: string, style: string, text2?: string, duration?: number, position?: 'bottom' | 'top'}) => {
+  Toast.show({ type: 'catToast', text1: text1, text2: text2, visibilityTime: duration ?? 3000, props: { style: style, onClose: closeToast }, position: position, bottomOffset: 50 })
 }
 
 export const showRequireSelectionToast = () => showToast({ text1: 'At least 1 selection is required.', style: 'info' })

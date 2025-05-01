@@ -6,7 +6,7 @@ import { ActionButton, CloseButton } from '@components/ButtonComponents'
 import PlaceHolder from '@components/PlaceHolder'
 import { ErrorImage, ScrollScreen, TitleLabel, TopRightHeader } from '@components/UIComponents'
 //utils & types
-import { DetailType, Pet, Service } from '@pet/PetInterface'
+import { DetailType, Id, Pet, Service } from '@pet/PetInterface'
 import { PET_DETAILS } from '@pet/petHelpers'
 import { petKeyFactory, useDeletePetDetail } from '@pet/petQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'

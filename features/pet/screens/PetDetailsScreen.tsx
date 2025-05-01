@@ -10,7 +10,7 @@ import { ActionButton, TransparentButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
 import PetInfo from "@components/PetInfo/PetInfo"
 import { BottomModal, ErrorImage, FormHeader, Icon, ItemActions, ScrollScreen, TitleLabel } from "@components/UIComponents"
-import { Header } from "@navigation/NavigationStyles"
+import { CustomToast, Header } from "@navigation/NavigationStyles"
 import { IconType } from "@utils/ui"
 //store & queries
 import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
@@ -55,11 +55,9 @@ const headerActions = (navigation: any, pet: Pet) => ([
 ])
 
 const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
-  const queryClient = useQueryClient()
   const { petId } = route.params
-  const petCache: Pet | undefined = queryClient.getQueryData(petKeyFactory.petById(petId))
 
-  const {data: pet, isSuccess, isFetching, isError} = useGetPetById(petId, !petCache)
+  const {data: pet, isSuccess, isFetching, isError} = useGetPetById(petId)
   const { handleDeletePet, isPending } = useDeletePet(navigation)
   
   const infoSetting = useGetPetSettings(petId, 'info')
@@ -140,6 +138,8 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
 
   return (    
     <ScrollScreen bgColor={Colors.multi.lightest[pet.color]}>  
+      <CustomToast />
+
       { isFetching && <Loader /> }
       { isError && <ErrorImage /> }
       
@@ -172,7 +172,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
         )}
       </> }
       
-      <BottomModal height='100%' modalVisible={modalVisible} onDismiss={() => setModalVisible(false)}>
+      <BottomModal height='98%' modalVisible={modalVisible} onDismiss={() => setModalVisible(false)}>
         <View style={Spacing.flexRow}>
           <FormHeader title={option === 'info' ? 'Show Pet Details' : 'Show Pet Logs'} />
           <Icon name="filter" />
@@ -181,7 +181,6 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
           { items.map((item: string, index: number) => <Item key={`${item}-${index}`} label={item} type={option} logs={logs} info={info} onPress={() => toggleItem(item)} />) }
         </View>
       </BottomModal>
-      
     </ScrollScreen>
   )
 }

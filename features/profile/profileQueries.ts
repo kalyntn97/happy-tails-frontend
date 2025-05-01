@@ -2,7 +2,7 @@ import { TabScreenNavigationProp } from "@navigation/types"
 import { useActiveDate } from "@store/store"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { showToast } from "@utils/misc"
-import { PhotoData, Profile, ProfileData, ProfileMutationFormData } from "./ProfileInterface"
+import { PhotoFormData, Profile, ProfileData, ProfileMutationFormData } from "./ProfileInterface"
 import * as profileService from "./profileService"
 
 export const profileKeyFactory = {
@@ -21,11 +21,12 @@ export const useGetProfile = (year?: number) => {
 
 export const useUpdateProfile = (navigation: TabScreenNavigationProp<'Profile'>) => {
   const queryClient = useQueryClient()
+  const { year } = useActiveDate()
 
   return useMutation({
     mutationFn: ({ formData, photoData }: ProfileMutationFormData) => profileService.update(formData, photoData),
     onSuccess: (data: Profile) => {
-      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
+      queryClient.setQueryData(profileKeyFactory.profile(year), (oldData: ProfileData) => {
         return {...oldData, profile: data }
       })
       showToast({ text1: 'Profile updated.', style: 'success' })
@@ -39,7 +40,7 @@ export const useAddBanner = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (photoData: PhotoData) => profileService.addBanner(photoData),
+    mutationFn: (photoData: PhotoFormData) => profileService.addBanner(photoData),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [...profileKeyFactory.profile()] })
     }

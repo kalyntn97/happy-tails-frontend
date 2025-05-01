@@ -70,7 +70,7 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
       <View style={styles.headerCon}>
         <Icon type='pet' name={type && type !== 'Other' ? type : 'id'} size='large' />
         <View style={styles.titleCon}>
-          <FormInput initial={name} placeholder="New Identification No" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={20} props={{ selectTextOnFocus: true, keyboardType: 'numbers-and-punctuation' }} error={errors?.no} withBorder={false} width='100%' bottom={0} />
+          <FormInput initial={no} placeholder="New Identification No" onChange={(text: string) => onChange('no', text)} styles={styles.title} maxLength={20} props={{ selectTextOnFocus: true, keyboardType: 'numbers-and-punctuation' }} error={errors?.no} withBorder={false} width='100%' bottom={0} />
         </View>
       </View>
 
