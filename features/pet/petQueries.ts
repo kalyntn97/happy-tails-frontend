@@ -20,9 +20,8 @@ export const petKeyFactory = {
 export const useGetPetById = (petId: string) => {
   const queryClient = useQueryClient()
   const { year } = useActiveDate()
-
   return useQuery({
-    queryKey: [...petKeyFactory.petById(petId)],
+    queryKey: petKeyFactory.petById(petId),
     queryFn: () => petService.getPetById(petId),
     initialData: () => queryClient.getQueryData<ProfileData>(profileKeyFactory.profile(year)).pets.find((pet: Pet) => pet._id === petId),
   })
@@ -96,10 +95,10 @@ export const useAddPetDetail = (petId: string) => {
 
   const addPetDetail = (type: string, formData: any) => {
     const typeToService = {
-      ids: () => petService.addId(formData, petId),
-      services: () => petService.addService(formData, petId),
-      illnesses: () => petService.addIllness(formData, petId),
-      meds: () => petService.addMedication(formData, petId),
+      id: () => petService.addId(formData, petId),
+      service: () => petService.addService(formData, petId),
+      illness: () => petService.addIllness(formData, petId),
+      medication: () => petService.addMedication(formData, petId),
     }
     return typeToService[type]()
   }
@@ -111,18 +110,19 @@ export const useAddPetDetail = (petId: string) => {
         data.pets.map(pet => {
           queryClient.setQueryData(petKeyFactory.petById(pet), (oldData: Pet) => 
             produce(oldData, draft => {
-              if (draft[data.type]) draft[data.type] = draft[data.type].push(data.item)
+              if (draft[data.type]) draft[data.type].push(data.item)
+              return draft
             })
             // return { ...oldData, [data.type]: [...oldData[data.type], data.item] }
           )
         })
       } else queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) =>
         produce(oldData, draft => {
-          if (draft[data.type]) draft[data.type] = draft[data.type].push(data.item)
+          if (draft[data.type]) draft[data.type].push(data.item)
         })
-        // return { ...oldData, [data.type]: [...oldData[data.type], data.item] }
       )
-      navigation.navigate('PetMoreDetails', { petId, show: data.type })
+      navigation.pop(1)
+      navigation.replace('PetMoreDetails', { petId, show: data.type })
       showToast({ text1: 'Detail added.', style: 'success' })
     }, 
     onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
@@ -137,7 +137,7 @@ export const useDeletePetDetail = (petId: string, navigation: any) => {
       id: () => petService.deleteId(petId, detailId),
       service: () => petService.deleteService(petId, detailId),
       illness: () => petService.deleteIllness(petId, detailId),
-      med: () => petService.deleteMedication(petId, detailId),
+      medication: () => petService.deleteMedication(petId, detailId),
     }
     return typeToService[type]()
   }
@@ -146,9 +146,9 @@ export const useDeletePetDetail = (petId: string, navigation: any) => {
     mutationFn: ({ type, detailId }: { type: DetailType, detailId: string }) => deletePetDetailByType(type, detailId),
     onSuccess: (data: { itemId: string, type: DetailType }) => {
       queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) => {
-        return { ...oldData, [data.type]: oldData[data.type].filter((item: Detail) => item._id !== data.itemId) }
+        return { ...oldData, [data.type]: oldData[`${data.type}s`].filter((item: Detail) => item._id !== data.itemId) }
       })
-      navigation.navigate('MoreDetails', { petId, show: data.type })
+      navigation.replace('PetMoreDetails', { petId, show: data.type })
       showToast({ text1: 'Detail deleted.', style: 'success' })
     },
     onError: () => showToast({ text1: 'An error occurred.', style: 'error' })

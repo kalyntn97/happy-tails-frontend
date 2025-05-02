@@ -139,7 +139,7 @@ export interface BirdListResponse {
   commonFeederBirds: Array<{commonNameEnglish: string}>
 }
 
-export type DetailType = 'id' | 'service' | 'illnessw' | 'medication' | 'condition'
+export type DetailType = 'id' | 'service' | 'illness' | 'medication' | 'condition'
 
 export type Detail = Id | Service | Illness | Medication
 

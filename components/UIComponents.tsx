@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 import { Calendar } from "react-native-calendars"
 import { MutableRefObject, ReactElement, ReactNode, forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from "react"
-import { ActivityIndicator, DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { ActivityIndicator, DimensionValue, Image, ImageSourcePropType, ImageStyle, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, ScrollViewProps, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native"
 import Animated, { SlideInDown, SlideInLeft, SlideOutDown, SlideOutLeft } from "react-native-reanimated"
 //utils & hooks
 import { useSelectPhoto } from "@hooks/sharedHooks"
@@ -264,10 +264,9 @@ interface InputProps {
   styles?: TextStyle
   align?: 'left' | 'right'
   bottom?: number
-  type?: 'none' | 'password'
 }
 
-export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title', onChange, onFocus, onBlur, props, maxLength = 100, width, error, withBorder = true, styles, align = 'left', bottom, type = 'none' }: InputProps, ref: MutableRefObject<any>) => {
+export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title', onChange, onFocus, onBlur, props, maxLength, width, error, withBorder = true, styles, align = 'left', bottom, type = 'text' }: InputProps, ref: MutableRefObject<any>) => {
   const [isFocused, setIsFocused] = useState(false)
   const [value, setValue] = useState(initial)
   const [isSecure, setIsSecure] = useState(type === 'password' ? true : false)
@@ -316,17 +315,17 @@ export const FormInput = memo(forwardRef(({ initial, placeholder = 'Enter title'
           onChangeText={(text: string) => setValue(text)}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          maxLength={maxLength}
+          maxLength={maxLength ?? 100}
           selectTextOnFocus={true}
           secureTextEntry={ isSecure ? true : false }
           { ...props }
         />
         { type === 'password' && <ActionButton icon={isSecure ? 'hide' : 'show'} onPress={() => setIsSecure(!isSecure)} size='xSmall' /> }
       </View>
-      <View style={[Spacing.flexRow, { position: 'absolute', bottom: bottom ?? (withBorder ? -20 : -15) }]}>
+      <View style={[Spacing.flexRow, { position: 'absolute', bottom: bottom ?? (withBorder ? -20 : -10), left: align === 'left' ? 0 : 'auto', right: align === 'right' ? 0 : 'auto'}]}>
         { error && <ErrorMessage error={error} styles={{ margin: 0, marginRight: isFocused ? 30 : 0 }}/> }
         <Text style={{ color: UI.lightPalette().unfocused, fontSize: 12 }}>
-          { isFocused && `${maxLength - (value ? value.length : 0)}/${maxLength}` }
+          { isFocused && maxLength && `${maxLength - (value ? value.length : 0)}/${maxLength}` }
         </Text> 
       </View>
     </View>
@@ -356,7 +355,6 @@ interface ModalProps {
 
 export const BottomModal = ({ children, modalVisible, height = 'fit-content' as DimensionValue, maxHeight = '93.5%', onDismiss, background = Colors.shadow.lightest, overlay = Colors.transparent.dark, animation = 'vertical'}: ModalProps) => {
   const [childrenVisible, setChildrenVisible] = useState(modalVisible)
-
   const dismissModal = () => {
     setChildrenVisible(false)
     setTimeout(() => {
@@ -366,10 +364,10 @@ export const BottomModal = ({ children, modalVisible, height = 'fit-content' as 
 
   useEffect(() => {
     setChildrenVisible(modalVisible)
-    const keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', dismissModal)
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => dismissModal())
 
     return () => {
-      keyboardWillHideListener.remove()
+      keyboardDidHideListener.remove()
     }
   },[modalVisible])
 
@@ -488,6 +486,7 @@ export const DateInput = ({ date, initial, placeholder = 'No date selected.', on
 
 interface NoteInputProps extends ModalInputProps {
   notes: string, 
+  initial?: string,
   maxLength?: number, 
   onChange: (text: string) => void, 
   inputStyles?: TextStyle, 
@@ -496,13 +495,14 @@ interface NoteInputProps extends ModalInputProps {
   subHeading?: ReactNode
 }
 
-export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit, buttonStyles, buttonTextStyles, inputStyles, placeholder, header, subHeading, customLabel, height = '15%', maxHeight, overlay = Colors.white }: NoteInputProps) => {
-  const [notes, setNotes] = useState(initial)
+export const NoteInput = ({ notes: noteValue, initial, maxLength = 300, onChange, onSubmit, buttonStyles, buttonTextStyles, inputStyles, placeholder, header, subHeading, customLabel, height = '20%', maxHeight, overlay = Colors.white }: NoteInputProps) => {
+  const [notes, setNotes] = useState(noteValue)
   const [isFocused, setIsFocused] = useState(false)
-
+  
+  const inputRef = useRef<TextInput>(null)
   const validatedStyles = useMemo(() => isFocused ? UI.focused : UI.unfocused, [isFocused])
 
-  const handlePress = (text: string) => {
+  const handleBlur = (text: string) => {
     const validText = text && text.trim().length === 0 ? null : text
     setNotes(validText)
     onChange(validText)
@@ -511,26 +511,26 @@ export const NoteInput = ({ notes: initial, maxLength = 100, onChange, onSubmit,
   }
 
   return (
-    <ModalInput customLabel={customLabel} label={notes?.length ? notes : 'No notes added.'} onSubmit={onSubmit} onReset={() => handlePress(null)} buttonStyles={buttonStyles} buttonTextProps={wrappedTextProps} buttonTextStyles={buttonTextStyles} overlay={overlay}>
+    <ModalInput customLabel={customLabel} label={notes?.length ? notes : 'No notes added.'} onSubmit={onSubmit} onReset={() => setNotes(initial)} buttonStyles={buttonStyles} buttonTextProps={wrappedTextProps} buttonTextStyles={buttonTextStyles} overlay={overlay} height='80%' maxHeight={maxHeight}>
       <FormHeader title={header ?? 'Add Notes'} />
       { subHeading }
-
-      <View style={[Spacing.flexRowStretch, UI.input(), { width: '100%', minHeight: height, maxHeight: maxHeight }, validatedStyles, inputStyles]}>
+      <View style={[Spacing.flexRowStretch, UI.input(), { width: '100%', minHeight: height, maxHeight: '60%' }, validatedStyles, inputStyles]}>
         <TextInput
+          ref={inputRef}
           style={{ height: '90%', flex: 1, marginRight: 10 }}
           placeholder={placeholder ?? 'Enter notes'}
           placeholderTextColor={UI.lightPalette().unfocused}
           value={notes}
           onChangeText={setNotes}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => handlePress(notes)}
+          onBlur={() => handleBlur(notes)}
           maxLength={maxLength}
           selectTextOnFocus={true}
           multiline={true}
           numberOfLines={6}
           autoFocus={true}
         />
-        <Icon name='edit' size='xSmall' />
+        <ActionButton title='Clear' size='xSmall' onPress={() => setNotes('')} />
       </View>
 
     </ModalInput>

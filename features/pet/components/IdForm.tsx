@@ -13,7 +13,7 @@ import { styles } from '@styles/stylesheets/FormStyles'
 
 interface IdFormProps {
   initialValues?: IdFormData
-  onSubmit: (type: 'ids', idFormData: IdFormData) => void
+  onSubmit: (type: 'id', idFormData: IdFormData) => void
   isPending: boolean
 }
 
@@ -37,7 +37,7 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
   const navigation = useNavigation()
   
   function handleSubmit() {
-    onSubmit('ids', { name, type, no, notes })
+    onSubmit('id', { name, type, no, notes })
   }
 
   function handleValidate() {
@@ -55,7 +55,7 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
       <FormInput initial={name} onChange={(text: string) => onChange('name', text)} placeholder='Enter Registry Name' withBorder={false} align='right' /> 
     },
     { key: 'notes', icon: 'note', value: 
-      <NoteInput notes={notes} onChange={(text: string) => onChange('notes', text)} />
+      <NoteInput notes={notes} initial={initialValues?.notes} onChange={(text: string) => onChange('notes', text)} />
     },
   ]
 

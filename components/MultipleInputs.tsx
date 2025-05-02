@@ -1,6 +1,6 @@
 //npm
 import { FC, useEffect, useState } from 'react'
-import { InputModeOptions, Pressable, Text, TextInput, View } from 'react-native'
+import { DimensionValue, InputModeOptions, Pressable, Text, TextInput, View } from 'react-native'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 //components
 import { ActionButton } from '@components/ButtonComponents'
@@ -16,9 +16,10 @@ type MultipleInputsProps = {
   type: 'date' | 'text'
   onEdit: React.Dispatch<React.SetStateAction<any[]>>
   width?: number
+  inputWidth?: DimensionValue
 }
 
-const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMode = 'text', type, onEdit, width = windowWidth * 0.8 }) => {
+const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMode = 'text', type, onEdit, width = windowWidth * 0.8, inputWidth = 'fit-content' }) => {
   const [inputs, setInputs] = useState<any[]>(initials ?? [])
   const handleAddInput = () => {
     setInputs(prev => {
@@ -57,10 +58,12 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMod
                 <RNDateTimePicker themeVariant='light' value={new Date(input) ?? new Date()} maximumDate={new Date()} accentColor={Colors.pink.dark} onChange={(_, selectedDate) => handleUpdateInput(selectedDate, index)} />
               : type === 'text' ?
                 <FormInput 
-                  value={input}
+                  initial={input}
                   placeholder={`Enter ${inputName}`}
                   onChange={(text: string) => handleUpdateInput(text, index)}
                   props={{ inputMode: inputMode }}
+                  width={inputWidth as DimensionValue}
+                  error={input.length === 0 ? 'Cannot be empty' : null}
                 />
               : null }
             </View>
@@ -69,7 +72,7 @@ const MultipleInputs: FC<MultipleInputsProps> = ({ initials, inputName, inputMod
       }
       <View style={{ ...Spacing.flexRow, marginVertical: 10 }}>
         <ActionButton icon={'increase'} size='small' onPress={handleAddInput} />
-        <Text>add {inputName}</Text>
+        <Text style={{ textTransform: 'lowercase', marginHorizontal: 10 }}>add {inputName}</Text>
       </View>
     </View>
   )

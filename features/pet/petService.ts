@@ -48,8 +48,8 @@ export async function addIllness(formData: HealthConditionFormData, petId: strin
   return (await axios.patch<string>(`${BASE_URL}/${petId}/illnesses`, formData)).data
 }
 
-export async function addService(formData: ServiceFormData, petId: string): Promise<string> {
-  return (await axios.patch<string>(`${BASE_URL}/${petId}/services`, formData)).data
+export async function addService(formData: ServiceFormData): Promise<string> {
+  return (await axios.post<string>(`${BASE_URL}/services`, formData)).data
 }
 
 export async function addMedication(formData: ServiceFormData, petId: string): Promise<string> {

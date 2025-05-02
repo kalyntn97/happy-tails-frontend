@@ -24,10 +24,9 @@ const EditMorePetDetailsScreen = ({ route }: EditMorePetDetailsScreenProps) => {
 
   return (
     <ScrollScreen>
-      { type === 'id' && <IdForm onSubmit={handleSubmit} /> }  
-      { type === 'medication' && <MedicationForm onSubmit={handleSubmit} /> }
-      { type === 'service' && <ServiceForm onSubmit={handleSubmit} /> }
-      { type === 'condition' && <HealthConditionForm onSubmit={handleSubmit} /> }
+      { type === 'id' && <IdForm onSubmit={handleSubmit} isPending={addDetailMutation.isPending} /> }  
+      { type === 'medication' && <MedicationForm onSubmit={handleSubmit} isPending={addDetailMutation.isPending} /> }
+      { type === 'service' && <ServiceForm onSubmit={handleSubmit} isPending={addDetailMutation.isPending} /> }
       { type === 'condition' && <HealthConditionForm onSubmit={handleSubmit} /> }
       { type === 'allergy' && <AllergyForm onSubmit={handleSubmit} /> }
     </ScrollScreen>
