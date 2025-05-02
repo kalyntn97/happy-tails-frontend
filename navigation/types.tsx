@@ -8,13 +8,18 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { CompositeNavigationProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-type DefaultParamList = {
-  [key: string]: undefined;
+export type DefaultParamList = {
+  [key: string]: undefined
 }
 
-export type HomeTabParamList = DefaultParamList
+export type HomeTabParamList = {
+  Feed: undefined
+  Pets: undefined
+  Profile: undefined
+}
 
 export type RootStackParamList = DefaultParamList & {
+  Home: { screen: keyof HomeTabParamList }
   CareEdit: { care: Care },
   CareDetails: { care: Care },
   HealthEdit: { health: Health },
@@ -26,6 +31,8 @@ export type RootStackParamList = DefaultParamList & {
   CreateStat: { pet: { _id: string, name: string } },
   StatDetails: { stat: string },
   ProfileEdit: { profile: Profile },
+  Account: { form: 'update' | 'delete' },
+  Settings: { profile: Profile, sectionIndex?: number, itemIndex?: number, sectionTitle?: string },
 }
 
 export type StackScreenNavigationProp<T extends keyof RootStackParamList = keyof RootStackParamList> = NativeStackNavigationProp<RootStackParamList, T>

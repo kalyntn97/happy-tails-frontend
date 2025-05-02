@@ -8,6 +8,14 @@ export interface User {
   profile: string
   token: string
 }
+
+export interface AuthFormData {
+  username: string
+  password: string
+  errors: { [key: string]: string }
+  isPending: boolean
+}
+
 //AuthContext Interfaces
 export interface State {
   authState: { token: string | null, authenticated: boolean | null }

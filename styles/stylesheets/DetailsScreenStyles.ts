@@ -3,43 +3,33 @@ import { StyleSheet } from "react-native"
 import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
 
 export const styles = StyleSheet.create({
-  topBtnCon: {
-    ...Spacing.flexRow,
-    marginLeft: 'auto', 
-    paddingTop: 50,
-    marginRight: 10,
-    paddingBottom: 10,
-    width: '20%', 
-    justifyContent: 'space-between', 
-  },
-  headerContainer: {
+  headerCon: {
     ...Spacing.flexColumnStretch,
     marginBottom: 20,
   },
+  headerTopCon: {
+    ...Spacing.flexRowStretch,
+  },
   header: {
     ...Typography.subHeader,
-    marginVertical: 10,
-    color: Colors.shadow.darkest,
+    flex: 1,
+    textAlign: 'left',
   },
-  petCon: {
-    marginBottom: 15,
-    height: 100
+  headerIcon: {
+    ...UI.icon('large'),
+    marginRight: 15,
   },
-  itemInfo: {
+  rowCon: {
     ...Spacing.flexRowStretch,
-    justifyContent: 'space-between',
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-  itemIcon: {
-    ...UI.icon(),
+    alignSelf: 'flex-start',
   },
   subHeader: {
     ...Typography.smallSubHeader,
     letterSpacing: 0,
+    marginLeft: 5,
   },
-  rowCon: {
-    ...Spacing.flexRow,
+  sectionCon: {
+    ...UI.card(),
   },
   btnContainer: {
     ...Spacing.flexRowStretch,

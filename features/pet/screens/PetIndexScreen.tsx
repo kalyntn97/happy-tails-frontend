@@ -5,7 +5,7 @@ import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native
 //components
 import { ActionButton, PhotoButton, RoundButton } from '@components/ButtonComponents'
 import Loader from '@components/Loader'
-import { ErrorImage, ScrollHeader } from '@components/UIComponents'
+import { ErrorImage, HScrollContainer } from '@components/UIComponents'
 import EmptyPetList from '@pet/components/EmptyPetList'
 import PetCard from '@pet/components/PetCard'
 //store & queries & types
@@ -15,6 +15,7 @@ import { useGetProfile } from '@profile/profileQueries'
 import { getPetIconSource } from '@utils/ui'
 //styles
 import { Spacing, Typography, UI } from '@styles/index'
+import React from 'react'
 
 const navButtonSize = 'small'
 const navSize = 'xSmall'
@@ -86,11 +87,11 @@ const PetIndexScreen = ({ navigation }: { navigation: StackScreenNavigationProp 
       { isSuccess && pets.length > 0 ? <>
         <View style={styles.petNav}>
           <ActionButton icon='prevRound' onPress={handleClickPrev} size={navButtonSize} disabled={currCard === 0} />
-          <ScrollHeader h={0} b={0} t={0} containerStyles={{ flex: 1 }} ref={navRef}>
+          <HScrollContainer h={0} b={0} t={0} containerStyles={{ flex: 1 }} ref={navRef}>
             { pets.map((pet, index) => 
               <PhotoButton key={`photo-${pet._id}`} photo={pet.photo} placeholder={getPetIconSource('AnimalProfile')} size={navSize} onPress={() => handleClickPhoto(index)} buttonStyles={{ marginHorizontal: navMargin, opacity: currCard === index ? 1 : 0.5 }} />
             ) }
-          </ScrollHeader>
+          </HScrollContainer>
           <ActionButton icon='nextRound' onPress={handleClickNext} size={navButtonSize} disabled={currCard === petCount - 1} />
         </View>
       

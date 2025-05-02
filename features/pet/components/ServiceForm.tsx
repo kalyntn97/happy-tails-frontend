@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useEffect } from 'react'
-import { View } from 'react-native'
+import { InputModeOptions, View } from 'react-native'
 //helpers &  utils
 import { useShallowPets } from '@hooks/sharedHooks'
 import useForm from '@hooks/useForm'
@@ -8,10 +8,12 @@ import { ServiceFormData } from '@pet/PetInterface'
 //components
 import Dropdown from '@components/Dropdown/Dropdown'
 import PetPicker from '@components/Pickers/PetPicker'
-import { FormError, FormInput, getHeaderActions, Icon, NoteInput, ScrollScreen, TableForm } from '@components/UIComponents'
+import { FormError, FormHeader, FormInput, getHeaderActions, Icon, ModalInput, NoteInput, ScrollScreen, TableForm } from '@components/UIComponents'
 import { Header } from '@navigation/NavigationStyles'
 //styles
 import { styles } from '@styles/stylesheets/FormStyles'
+import MultipleInputs from '@components/MultipleInputs'
+import { windowWidth } from '@utils/constants'
 
 interface ServiceFormProps {
   initialValues?: ServiceFormData
@@ -21,6 +23,30 @@ interface ServiceFormProps {
 
 interface InitialState extends ServiceFormData {
   errors: any
+}
+
+interface MultipleInputModalProps {
+  initials: string[]
+  label: string
+  inputLabel: string
+  onUpdate: (initials: string[]) => void
+  inputMode?: InputModeOptions
+}
+
+const MultipleInputsModal = ({ label, initials, onUpdate, inputMode = 'text', inputLabel }: MultipleInputModalProps) => {
+  return (
+    <ModalInput label={label} height='93%'>
+      <FormHeader title={`Update ${inputLabel}`} />
+      <MultipleInputs
+        initials={initials}
+        type='text'
+        inputMode={inputMode}
+        inputName={inputLabel}
+        onEdit={onUpdate}
+        inputWidth={windowWidth * 0.7}
+      />
+    </ModalInput>
+  )
 }
 
 const ServiceForm = ({ initialValues, onSubmit, isPending }: ServiceFormProps) => {
@@ -60,16 +86,13 @@ const ServiceForm = ({ initialValues, onSubmit, isPending }: ServiceFormProps) =
       </>
     },
     { key: 'addresses', icon: 'address', value: 
-      <FormInput initial={addresses[addresses.length - 1]} onChange={(text: string) => onChange('addresses', [...addresses, text])} placeholder='Enter address' withBorder={false} align='right' props={{ multiline: true }} />
+      <MultipleInputsModal initials={addresses} label={addresses.length > 0 ? 'Update addresses.' : 'No address added.'} inputLabel='Address' onUpdate={(addresses: string[]) => onChange('addresses', addresses)} />
     },
-    { key: 'emails', icon: 'email', value: 
-      <FormInput initial={emails[emails.length - 1]} onChange={(text: string) => onChange('emails', [...emails, text])} placeholder='Enter email' withBorder={false} align='right' props={{ inputMode: 'email' }} />
+    { key: 'emails', icon: 'email', value:
+      <MultipleInputsModal initials={emails} label={emails.length > 0 ? 'Update emails.' : 'No email added.'} inputLabel='Email' onUpdate={(emails: string[]) => onChange('emails', emails)} inputMode='email' />
     },
     { key: 'phones', icon: 'phone', value:
-      <>
-        <FormInput initial={phones[phones.length - 1]} onChange={(text: string) => onChange('phones', [...phones, text])} placeholder='Enter phone' withBorder={false} align='right' props={{ inputMode: 'tel' }} />
-        <FormError errorKey='phones' errors={errors} />
-      </>
+      <MultipleInputsModal initials={phones} label={phones.length > 0 ? 'Update phones.' : 'No phone added.'} inputLabel='Phone' onUpdate={(phones: string[]) => onChange('phones', phones)} inputMode='tel' />
     },
     { key: 'notes', icon: 'note', value: 
       <NoteInput notes={notes} onChange={(text: string) => onChange('notes', text)} />

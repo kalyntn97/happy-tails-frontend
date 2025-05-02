@@ -1,21 +1,24 @@
 //npm modules
 import { useEffect, useRef, useState } from "react"
-import { Image, ScrollView, SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Image, SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 //components
-import { RoundButton } from "@components/ButtonComponents"
+import { AnimatedButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
 import PetList from "@components/PetInfo/PetList"
 import PlaceHolder from "@components/PlaceHolder"
-import { ErrorImage } from "@components/UIComponents"
+import { ErrorImage, Icon, HScrollContainer } from "@components/UIComponents"
 //types & helpers
 import { Care } from "@care/CareInterface"
 import { CARES, getCareIcon } from "@care/careHelpers"
-import { getActionIconSource } from "@utils/ui"
 //queries
 import { useGetProfile } from "@profile/profileQueries"
 //styles
+import { Header } from "@navigation/NavigationStyles"
 import { Buttons, Colors, Spacing, UI } from '@styles/index'
+import { FREQUENCY_TYPES } from "@utils/constants"
+import { verticalScrollProps, wrappedTextProps } from "@styles/ui"
+import { sortByFrequency } from "@utils/misc"
 
 
 type CareIndexProps = {
@@ -28,56 +31,56 @@ type CareSection = {
   data: Care[] 
 }
 
-const SORT_ORDER = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'Others']
-
 const MIN_TASK_HEIGHT = 60
 const MAX_TASK_HEIGHT = 70
 
-const HeaderButton = ({ bgColor, opacity, onPress, title, count }: { bgColor: string, opacity: number, onPress: () => void, title: string, count: number }) => (
+const HeaderButton = ({ bgColor, onPress, title, count, active }: { bgColor: string, onPress: () => void, title: string, count: number, active: boolean }) => (
   <TouchableOpacity style={[
-    styles.subBtn, { backgroundColor: bgColor, opacity: opacity }
+    styles.subBtn, { backgroundColor: bgColor }
     ]} onPress={onPress}
   >
     <Text style={{ fontSize: 12}}>{title}</Text>
-    <Text style={styles.headerCount}>{count}</Text>
+    <Text style={[styles.headerCount, { color: active ? Colors.red.darkest : Colors.red.reg }]}>{count}</Text>
   </TouchableOpacity>
 )
 
 const CareItem = ({ care, navigation }) => {
   const iconSource = getCareIcon(care.name)
-  const taskColor = SORT_ORDER.findIndex(f => f === care.frequency)
+  const taskColor = FREQUENCY_TYPES.findIndex(f => f === care.frequency.type)
+  
   const TASK_HEIGHT = care.name.length < 30 ? MIN_TASK_HEIGHT : MAX_TASK_HEIGHT
   
   return (
-    <TouchableOpacity 
-      disabled={!care.repeat}
-      onPress={() => navigation.navigate('CareDetails', { care })}
-      style={[styles.itemContainer,
-      { height: TASK_HEIGHT, backgroundColor: Colors.multi.light[taskColor + 1], opacity: !care.repeat ? 0.5 : 1 }
-      ]}
-    >
-      <View style={styles.itemLeft}>
-        <Image source={iconSource} style={styles.itemIcon} />
-        <Text style={styles.itemText}>{CARES[care.name] ?? care.name}</Text>
-        <PetList petArray={care.pets} size='mini' />
-        {/* <Text style={[styles.itemText, { color: 'gray' }]}>{care.frequency}</Text> */}
+    <AnimatedButton disabled={!care.repeat} scaleFactor={1.1} onPress={() => navigation.navigate('CareDetails', { care })}>
+      <View
+        style={[styles.itemContainer,
+        { height: TASK_HEIGHT, backgroundColor: Colors.multi.light[taskColor + 1], opacity: !care.repeat ? 0.5 : 1 }
+        ]}
+      >
+        <View style={styles.itemLeft}>
+          <Image source={iconSource} style={styles.itemIcon} />
+          <Text { ...wrappedTextProps }>{CARES[care.name] ?? care.name}</Text>
+          {/* <Text style={[styles.itemText, { color: 'gray' }]}>{care.frequency}</Text> */}
+        </View>
+        <PetList petArray={care.pets} size="xxSmall" />
+        <Icon name="next" size="xSmall" styles={{ marginRight: 10, marginLeft: 20 }}/>
       </View>
-      <Image source={getActionIconSource('next')} style={styles.rightIcon} />
-    </TouchableOpacity>
+    </AnimatedButton>
   )
 }
 
-const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
+const CareIndexScreen = ({ navigation, route }: CareIndexProps) => {
+  const [filtered, setFiltered] = useState<string>(null)
+
   const { data, isSuccess, isFetching, isError } = useGetProfile()
   const cares = data.cares
+  const sortedCares = sortByFrequency(cares)
   
-  const [filtered, setFiltered] = useState<string[]>([])
-
-  const careIndex: CareSection[] = SORT_ORDER.map(sectionTitle => ({
+  const careIndex: CareSection[] = Object.keys(sortedCares).map(sectionTitle => ({
     title: sectionTitle,
-    data: cares[sectionTitle] || []
+    data: sortedCares[sectionTitle] || []
   }))
-
+  
   // another method that uses for.. of loop and IIFE
   // const careIndex: Array<{ title: string, data: Care[] }> = (() => {
   //   const result = Object.create(null)
@@ -101,37 +104,25 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
 
   const handleHeaderPress = (sectionToFilter: string, sectionIdx: number) => {
     // sectionListRef.current.scrollToLocation({ sectionIndex: sectionIdx, itemIndex: 0 })
-    setFiltered(prev => {
-      if (prev.includes(sectionToFilter)) {
-        return prev.filter(sectionTitle => sectionTitle !== sectionToFilter)
-      } else {
-        return [...prev, sectionToFilter]
-      }
-    })
+    setFiltered(sectionToFilter)
   }
 
   const handlePressAll = () => {
-    setFiltered(prev => {
-      return prev.length === SORT_ORDER.length ? [] : SORT_ORDER
-    })
+    setFiltered(null)
   }
 
   const CareListHeader = () => (
-    <ScrollView 
-      horizontal
-      contentContainerStyle={styles.listHeader}
-      showsHorizontalScrollIndicator={false}
-    >
-      <HeaderButton bgColor={Colors.multi.light[0]} opacity={filtered.length === 0 ? 1 : 0.3} onPress={handlePressAll} title='All' count={Object.values(cares).flat().length} />
+    <HScrollContainer contentStyles={{ paddingVertical: 5, paddingHorizontal: 10 }} h={0} b={10} t={0}>
+      <HeaderButton bgColor={filtered === null ? Colors.multi.dark[0] : Colors.multi.light[0]} onPress={handlePressAll} title='All' count={cares.length} active={filtered === null} />
       {careIndex.map((section: CareSection, idx: number) => 
         <HeaderButton key={`title-${idx}`}
-          bgColor={Colors.multi.light[idx + 1]} 
-          opacity={filtered.includes(section.title) ? 0.3 : 1} 
+          bgColor={filtered === section.title ? Colors.multi.dark[idx + 1] : Colors.multi.light[idx + 1]} 
           onPress={() => handleHeaderPress(section.title, idx)} 
           title={section.title} count={section.data.length}
+          active={filtered === section.title}
         />
       )}
-    </ScrollView>
+    </HScrollContainer>
   )
 
   useEffect(() => {
@@ -144,42 +135,48 @@ const CareIndexScreen: React.FC<CareIndexProps> = ({ navigation, route }) => {
       }
       setInitialListPosition()
     }
+    navigation.setOptions({
+      header: () => <Header title='All Pet Care' showGoBackButton={true} rightActions={[{ title: 'Add', onPress: () => navigation.navigate('CareCreate') }]} navigation={navigation} mode='card' />
+    })
+    
   }, [route.params, isSuccess])
   
   if (isFetching) return <Loader />
   if (isError) return <ErrorImage />
 
   return (
-    <View style={styles.container}>
-      <RoundButton onPress={() => navigation.navigate('CareCreate')} type='add' position="bottomRight" />
+    <View style={Spacing.fullCon()}>
+      {/* <RoundButton onPress={() => navigation.navigate('CareCreate')} type='add' position="topRight"  /> */}
       { isSuccess && (
-        Object.values(cares).flat().length > 0 ?
-          <SectionList
-            ref={sectionListRef}
-            sections={careIndex}
-            keyExtractor={(item, index) => item + index}
-            ListHeaderComponent={ <CareListHeader /> }
-            renderItem={({ item, index }) => (
-              !filtered.includes(item.frequency) && <CareItem key={item._id} care={item} navigation={navigation} />
-            )}
-            getItemLayout={getItemLayout}
-            showsVerticalScrollIndicator={false}
-            style={{ width: '100%' }}
-          />
-        : <PlaceHolder type='task' navigation={navigation} />
+        cares.length > 0 ?
+          <>
+            <CareListHeader />
+            <SectionList
+              ref={sectionListRef}
+              sections={careIndex}
+              keyExtractor={(item, index) => item + index}
+              renderItem={({ item }) => (
+                (filtered === item.frequency.type || filtered === null) && <CareItem key={item._id} care={item} navigation={navigation} />
+              )}
+              getItemLayout={getItemLayout}
+              { ...verticalScrollProps }
+              style={{ width: '100%' }}
+            />
+          </>
+        : <PlaceHolder type='care' />
       )}
     </View> 
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    ...Spacing.fullCon(),
-  },
   subBtn: {
-    ...Buttons.xxSmallRoundedSolid,
     ...Spacing.flexRow,
-    width: 90,
+    ...Buttons.solid,
+    ...Buttons.rounded,
+    justifyContent: 'space-around',
+    width: 100,
+    height: 35,
     marginHorizontal: 5,
     marginVertical: 0,
     borderWidth: 0,
@@ -192,9 +189,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   headerCount: {
-    color: Colors.red.reg,
     fontWeight: 'bold',
-    marginLeft: 5,
   },
   itemContainer: {
     ...Spacing.flexRow,
@@ -206,8 +201,8 @@ const styles = StyleSheet.create({
   },
   itemLeft: {
     ...Spacing.flexRow,
-    // justifyContent: 'space-evenly',
-    flex: 6,
+    flex: 1,
+    marginRight: 10,
   },
   itemIcon: {
     ...UI.icon(),
@@ -216,14 +211,6 @@ const styles = StyleSheet.create({
   itemBtn: {
     marginLeft: 'auto'
   },
-  itemText: {
-    marginRight: 10,
-    width: '40%',
-  },
-  rightIcon: {
-    ...UI.icon('xSmall'), 
-    marginRight: 15,
-  }
 })
  
 export default CareIndexScreen

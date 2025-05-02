@@ -1,7 +1,6 @@
-import { ViewStyle, TextStyle } from "react-native"
-import Colors from "./colors"
-import { boxShadow, lightPalette } from "./ui"
+import { TextStyle, ViewStyle } from "react-native"
 import { centered } from "./spacing"
+import { boxShadow, lightPalette } from "./ui"
 
 //corners
 export const rounded: ViewStyle = { borderRadius: 30 }

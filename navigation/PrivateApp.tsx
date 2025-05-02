@@ -62,9 +62,9 @@ const PrivateApp = () => {
       <Stack.Screen name='Home' component={HomeTabs} options={{ headerShown: false }} />
 
       <Stack.Group>
-        <Stack.Screen name='CareIndex' component={CareIndexScreen} options={{ title: 'All Pet Care', ...dynamicStackOptions('card') }} />
+        <Stack.Screen name='CareIndex' component={CareIndexScreen} options={dynamicStackOptions('card')} />
         <Stack.Screen name='CareCreate' component={NewCareScreen} />
-        <Stack.Screen name='CareEdit' component={EditCareScreen} options={{ title: 'Edit Task' }}/>
+        <Stack.Screen name='CareEdit' component={EditCareScreen} options={{ title: 'Edit Task' }} />
         <Stack.Screen name='CareDetails' component={CareDetailsScreen} options={dynamicStackOptions('card', true, false)} />
       </Stack.Group>
 

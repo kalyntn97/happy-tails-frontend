@@ -31,6 +31,8 @@ export const AlertForm = ({ body, button }) =>
 
 const actionIconSource = {
   // colored icons
+  careColor: require('@assets/icons/action-care_color.png'),
+  healthColor: require('@assets/icons/action-health_color.png'),
   birthdayColor: require('@assets/icons/action-birthday_color.png'),
   checkColor: require('@assets/icons/action-check_color.png'),
   deleteColor: require('@assets/icons/action-delete_color.png'),
@@ -88,7 +90,6 @@ const actionIconSource = {
   action: require('@assets/icons/action-action.png'),
   add: require('@assets/icons/action-add.png'),
   edit: require('@assets/icons/action-edit.png'),
-  undo: require('@assets/icons/action-undo.png'),
   close: require('@assets/icons/action-close.png'),
   cancel: require('@assets/icons/action-cancel.png'),
   delete: require('@assets/icons/action-delete.png'),

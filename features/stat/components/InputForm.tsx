@@ -55,7 +55,7 @@ const InputForm = ({ name, initialValues, onSelect }: InputFormProps) => {
       </View>
 
       <SubButton title='Helper' onPress={() => navigation.navigate('Settings')} size='xSmall' color={UI.lightPalette().focused} />
-      <SubButton title='Change unit' onPress={() => navigation.navigate('Settings')} size='xSmall' color={UI.lightPalette().unfocused} />
+      <SubButton title='Change unit' onPress={() => navigation.navigate('Settings', { sectionTitle: 'Display Settings' })} size='xSmall' color={UI.lightPalette().unfocused} />
 
       <NoteForm onAddNote={(text: string) => {
         setNotes(text)

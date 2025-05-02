@@ -13,7 +13,7 @@ import { styles } from '@styles/stylesheets/FormStyles'
 
 interface IdFormProps {
   initialValues?: IdFormData
-  onSubmit: (type: 'ids', idFormData: IdFormData) => void
+  onSubmit: (type: 'id', idFormData: IdFormData) => void
   isPending: boolean
 }
 
@@ -37,7 +37,7 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
   const navigation = useNavigation()
   
   function handleSubmit() {
-    onSubmit('ids', { name, type, no, notes })
+    onSubmit('id', { name, type, no, notes })
   }
 
   function handleValidate() {
@@ -55,7 +55,7 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
       <FormInput initial={name} onChange={(text: string) => onChange('name', text)} placeholder='Enter Registry Name' withBorder={false} align='right' /> 
     },
     { key: 'notes', icon: 'note', value: 
-      <NoteInput notes={notes} onChange={(text: string) => onChange('notes', text)} />
+      <NoteInput notes={notes} initial={initialValues?.notes} onChange={(text: string) => onChange('notes', text)} />
     },
   ]
 
@@ -70,7 +70,7 @@ const IdForm = ({ initialValues, onSubmit, isPending }: IdFormProps) => {
       <View style={styles.headerCon}>
         <Icon type='pet' name={type && type !== 'Other' ? type : 'id'} size='large' />
         <View style={styles.titleCon}>
-          <FormInput initial={name} placeholder="New Identification No" onChange={(text: string) => onChange('name', text)} styles={styles.title} maxLength={20} props={{ selectTextOnFocus: true, keyboardType: 'numbers-and-punctuation' }} error={errors?.no} withBorder={false} width='100%' bottom={0} />
+          <FormInput initial={no} placeholder="New Identification No" onChange={(text: string) => onChange('no', text)} styles={styles.title} maxLength={20} props={{ selectTextOnFocus: true, keyboardType: 'numbers-and-punctuation' }} error={errors?.no} withBorder={false} width='100%' bottom={0} />
         </View>
       </View>
 

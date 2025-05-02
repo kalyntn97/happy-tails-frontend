@@ -6,11 +6,11 @@ import { Care } from "@care/CareInterface"
 import { Health } from "@health/HealthInterface"
 //store & queries
 import { useGetProfile } from "@profile/profileQueries"
-import { useFullActiveDate } from "@store/store"
+import { useActiveDate, useFullActiveDate } from "@store/store"
 //components
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
-import { ErrorImage, Icon, ScrollHeader } from "@components/UIComponents"
+import { ErrorImage, Icon, HScrollContainer } from "@components/UIComponents"
 import DraggableList from './DraggableList'
 import { TransparentButton } from "@components/ButtonComponents"
 //types & utils
@@ -43,19 +43,19 @@ const FeedFilter = ({ feeds, onSelect }: { feeds: Feed[], onSelect: (filter: Fee
   }
 
   const buttons: { key: Feed, title: string, icon: string}[] = [
-    { key: 'care', title: 'care', icon: 'care' },
-    { key: 'health', title: 'health', icon: 'health' },
+    { key: 'care', title: 'care', icon: 'careColor' },
+    { key: 'health', title: 'health', icon: 'healthColor' },
   ]
 
   const buttonStyles = useCallback((feed: Feed, index: number) => {
-    const iconCon = [styles.iconCon, { padding: padding, backgroundColor: feeds.includes(feed) ? Colors.multi.lightest[index] : 'transparent', height: conWidth, width: conWidth }] as ViewStyle
+    const iconCon = [styles.iconCon, { padding: padding, backgroundColor: feeds.includes(feed) ? Colors.multi.lightest[index] : 'transparent', height: conWidth, width: conWidth }] as unknown as ViewStyle
     const icon = feeds.includes(feed) ? { width: iconWidth, height: iconWidth } : { width: iconWidth + 5, height: iconWidth + 5 } as ImageStyle
-    const text = [feeds.includes(feed) ? Typography.focused : Typography.unFocused, { textTransform: 'capitalize' }] as TextStyle
+    const text = [feeds.includes(feed) ? Typography.focused : Typography.unFocused, { textTransform: 'capitalize' }] as unknown as TextStyle
     return { iconCon, icon, text }
   }, [feeds])
 
   return (
-    <ScrollHeader b={0}>
+    <HScrollContainer b={0}>
       { buttons.map((button, index) => {
         const { iconCon, icon, text } = buttonStyles(button.key, index)
         return (
@@ -67,7 +67,7 @@ const FeedFilter = ({ feeds, onSelect }: { feeds: Feed[], onSelect: (filter: Fee
           </Pressable>    
         )
       }) }
-    </ScrollHeader>
+    </HScrollContainer>
   )
 }
 
@@ -81,7 +81,7 @@ const filters: { key: Filter, label: string }[] = [
 ]
 
 const FrequencyFilter = ({ filter, onSelect }: { filter: Filter, onSelect: (selected: Filter) => void }) => (
-  <ScrollHeader>
+  <HScrollContainer>
     { filters.map((f, index) => {
       const isSelected = f.key === filter
       const buttonStyles = { paddingVertical: 0, marginRight: index < filters.length - 1 ? 5 : 0, ...(isSelected ? styles.selectedBtn : {}) }
@@ -91,7 +91,7 @@ const FrequencyFilter = ({ filter, onSelect }: { filter: Filter, onSelect: (sele
         <TransparentButton key={f.key} title={f.label} size="xSmall" onPress={() => onSelect(f.key)} buttonStyles={buttonStyles} textStyles={textStyles as TextStyle} color={color} />
       )
     })}
-  </ScrollHeader>
+  </HScrollContainer>
 )
 
 const FilterList = ({ data, filter }: { data: { care: Care[], health: Health[] }, filter: Filter }) => {
@@ -112,7 +112,6 @@ const FilterList = ({ data, filter }: { data: { care: Care[], health: Health[] }
 const HomeFeed = ({ navigation }: HomeFeedProps) => {
   const [feeds, setFeeds] = useState<Feed[]>(defaultFeeds)
   const [filter, setFilter] = useState<Filter>('all')
-
   //queries
   const { data, isFetching, isSuccess, isError } = useGetProfile()
 
@@ -127,7 +126,7 @@ const HomeFeed = ({ navigation }: HomeFeedProps) => {
         { (feeds.includes('care') && data.cares.length > 0) || (feeds.includes('health') && data.healths.length > 0) ? <>
           <FrequencyFilter filter={filter} onSelect={(selected: Filter) => setFilter(selected)} />
           <FilterList data={{ care: data.cares, health: data.healths }} filter={filter} />
-          </> : <PlaceHolder type={'care'} navigation={navigation} />
+          </> : <PlaceHolder type={'care'} />
         }
       </> }
     </View>

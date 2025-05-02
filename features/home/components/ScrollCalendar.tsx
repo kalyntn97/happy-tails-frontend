@@ -43,19 +43,20 @@ const ScrollCalendar = () => {
   const { date: currDate, month: currMonth, year: currYear, week: currWeek, daysInMonth: currMonthDays } = getDateInfo('today')
   const years = getYears()
 
-  const [selectedMonth, setSelectedMonth] = useState<number>(currMonth - 1)
-  const [selectedYear, setSelectedYear] = useState<number>(currYear)
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
-
   const {date: activeDate, month: activeMonth, year: activeYear } = useActiveDate()
   const { date: currDateIsActive, month: currMonthIsActive, year: currYearIsActive } = useCurrentIsActive()
+
+  const [selectedMonth, setSelectedMonth] = useState<number>(activeMonth)
+  const [selectedYear, setSelectedYear] = useState<number>(activeYear)
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+
   const { setActiveDate } = useSetActions()
 
   const DATE_CON = { ...styles.dateContainer, width: CHILD_WIDTH, marginHorizontal: CHILD_MARGIN }
 
   const todayIsActive = currDateIsActive && currMonthIsActive && currYearIsActive
   const pastIsActive = new Date(activeYear, activeMonth, activeDate + 1) < new Date() && new Date(activeYear, activeMonth, activeDate + 1).toDateString() !==  new Date().toDateString()
-  const activeMonthName = getMonth(activeMonth + 1)
+  const activeMonthName = getMonth(activeMonth)
 
   const month = []
   const numDays = 
@@ -63,28 +64,28 @@ const ScrollCalendar = () => {
     : currYearIsActive ? getDaysInMonth(activeMonth, currYear) 
     : getDaysInMonth(activeMonth, activeYear)
 
-  for (let i = 0; i < numDays; i++) {
+  for (let i = 1; i < numDays; i++) {
     const day = getDayOfWeek(new Date(
       activeYear ?? currYear, 
-      activeMonth ?? currMonth - 1,  //month 0-11
-      i + 1 //date 1-31
+      activeMonth - 1 ?? currMonth - 1,  //month 0-11
+      i //date 1-31
     ))
 
     const getStyle = (baseStyle: Style, currStyle: Style, activeStyle: Style) => [
       baseStyle,
-      i + 1 === currDate && currStyle,
+      i === currDate && currStyle,
       i === activeDate && activeStyle
     ]
 
     month.push(
-      <TouchableOpacity key={i} 
+      <TouchableOpacity key={`day-${i}`} 
         style={getStyle(DATE_CON, CURRENT_CON, ACTIVE_CON)}
         onPress={() => { 
-          setActiveDate({ date: i, week: Math.floor((i + 1)/ 7), month: activeMonth, year: activeYear })
+          setActiveDate({ date: i, week: i > 7 ? Math.floor(i / 7) : 1, month: activeMonth, year: activeYear })
         }}
       >
         <Text style={getStyle(DARK_TEXT, LIGHT_TEXT, LIGHT_TEXT)}>{day.slice(0, 3)}</Text>
-        <Text style={getStyle(styles.date, LIGHT_TEXT, LIGHT_TEXT)}>{i + 1}</Text>
+        <Text style={getStyle(styles.date, LIGHT_TEXT, LIGHT_TEXT)}>{i}</Text>
       </TouchableOpacity>
     )
   }
@@ -109,20 +110,20 @@ const ScrollCalendar = () => {
   
   const nav = [
     { title: 'Today', condition: todayIsActive, position: 'left', onPress: () => {
-      setActiveDate({ date: currDate - 1, week: currWeek - 1, month: currMonth - 1, year: currYear })
-      scrollToPos(currDate - 1) 
+      setActiveDate({ date: currDate, week: currWeek, month: currMonth, year: currYear })
+      scrollToPos(currDate) 
     } },
     { title: 'History', condition: pastIsActive, position: 'right', onPress: () => setModalVisible(true)},
   ]
-
+  
   const selectors = [
-    { key: 'month', data: months, onSelect: (selected: number) => setSelectedMonth(selected), initial: activeMonth },
-    { key: 'year', data: years, onSelect: (selected: number) => setSelectedYear(years[selected]), initial: years.findIndex(e => e === activeYear) },
+    { key: 'month', data: months, onSelect: (selected: string) => setSelectedMonth(months.findIndex(m => m === selected) + 1), initial: activeMonth - 1},
+    { key: 'year', data: years, onSelect: (selected: number) => setSelectedYear(selected), initial: years.findIndex(e => e === activeYear) },
   ]
-
+  
   return (
     <View style={styles.container}>
-      <Text style={[styles.middle, { top: NAV_TOP }]}>{activeMonthName.slice(0, 3)} {activeDate + 1}, {activeYear}</Text>
+      <Text style={[styles.middle, { top: NAV_TOP }]}>{activeMonthName.slice(0, 3)} {activeDate}, {activeYear}</Text>
       <View style={[styles.navCon, { marginBottom: NAV_TOP }]}>
         {nav.map(n =>
           <NavButtons key={n.title} title={n.title} condition={n.condition} onPress={n.onPress} position={n.position} />
@@ -133,18 +134,20 @@ const ScrollCalendar = () => {
         ref={scrollViewRef}
         horizontal
         data={month}
-        getItemLayout={(data, index) => (
+        keyExtractor={(_, index) => index.toString()}
+        getItemLayout={(_, index) => (
           {length: 50, offset: 58 * index, index}
         )}
         renderItem={({ item, index }) => item}
         onScroll={onScrollHandler}
-        initialScrollIndex={currDate - 1}
+        initialScrollIndex={currDate}
         snapToAlignment="start"
         snapToInterval={VISIBLE_WIDTH}
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: (SCROLL_WIDTH - VISIBLE_WIDTH) / 2 }}
       />
+
       <Modal
         animationType="fade"
         visible={modalVisible}
@@ -162,24 +165,24 @@ const ScrollCalendar = () => {
               <SubButton title='Confirm' color={ACCENT_COLOR}
                 onPress={() => {
                   setActiveDate({ 
-                    date: selectedMonth === currMonth - 1 ? currDate - 1 : 0, 
-                    week: selectedMonth === currMonth - 1 ? getWeekIndex(currDate) : 0, 
+                    date: selectedMonth === currMonth ? currDate : 1, 
+                    week: selectedMonth === currMonth ? getWeekIndex(currDate) : 1, 
                     month: selectedMonth, 
-                    year: selectedYear 
+                    year: selectedYear,
                   })
-                  scrollToPos(selectedMonth === currMonth - 1 ? currDate - 1 : 0)
+                  scrollToPos(selectedMonth === currMonth ? currDate : 0)
                   setModalVisible(false)
                 }}
               />
               <SubButton title='Reset'
                 onPress={() => {
                   setActiveDate({
-                    date: currDate - 1, 
+                    date: currDate, 
                     week: getWeekIndex(currDate), 
-                    month: currMonth - 1, 
+                    month: currMonth, 
                     year: currYear 
                   })
-                  scrollToPos(currDate - 1)
+                  scrollToPos(currDate)
                   setModalVisible(false)
                 }}
               />

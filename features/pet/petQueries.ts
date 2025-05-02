@@ -1,29 +1,29 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigation } from '@react-navigation/native'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { produce } from 'immer'
 //utils
-import * as petService from './petService'
-import { Detail, DetailType, Pet, PetMutationFormData } from './PetInterface'
-import { profileKeyFactory } from '@profile/profileQueries'
 import { ProfileData } from '@profile/ProfileInterface'
+import { profileKeyFactory } from '@profile/profileQueries'
+import { Detail, DetailType, Pet, PetMutationFormData } from './PetInterface'
+import * as petService from './petService'
 //hooks
 import { showDeleteConfirmation } from '@hooks/sharedHooks'
-import { showToast } from '@utils/misc'
 import { StackScreenNavigationProp } from '@navigation/types'
+import { showToast } from '@utils/misc'
+import { useActiveDate } from '@store/store'
 
 export const petKeyFactory = {
   pets: ['all-pets'],
   petById: (id: string) => [...petKeyFactory.pets, id],
 }
 
-export const useGetPetById = (petId: string, isEnabled: boolean) => {
+export const useGetPetById = (petId: string) => {
   const queryClient = useQueryClient()
-
+  const { year } = useActiveDate()
   return useQuery({
-    queryKey: [...petKeyFactory.petById(petId)],
+    queryKey: petKeyFactory.petById(petId),
     queryFn: () => petService.getPetById(petId),
-    initialData: () => queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).pets.find((pet: Pet) => pet._id === petId),
-    enabled: isEnabled,
+    initialData: () => queryClient.getQueryData<ProfileData>(profileKeyFactory.profile(year)).pets.find((pet: Pet) => pet._id === petId),
   })
 } 
 
@@ -33,7 +33,7 @@ export const useAddPet = (navigation: any) => {
   return useMutation({
     mutationFn: ({ formData, photoData } : PetMutationFormData) => petService.create(formData, photoData),
     onSuccess: (data: Pet) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
         return {...oldData, pets: [...oldData.pets, data]}
       })
       showToast({ text1: 'Pet added.', style: 'success' })
@@ -49,14 +49,17 @@ export const useUpdatePet = (navigation: any) => {
   return useMutation({
     mutationFn: ({ formData, photoData } : PetMutationFormData) => petService.update(formData, photoData),
     onSuccess: (data: Pet) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
-        return {...oldData, pets: oldData.pets.map(pet => pet._id === data._id ? data : pet) }
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
+        return {...oldData, pets: oldData?.pets?.map(pet => pet._id === data._id ? data : pet) }
       })
-      queryClient.prefetchQuery({ queryKey: petKeyFactory.petById(data._id) })
-      showToast({ text1: 'Pet updated.', style: 'success' })
+      queryClient.setQueryData(petKeyFactory.petById(data._id), data)
       navigation.navigate('PetDetails', { petId: data._id })
+      showToast({ text1: 'Pet updated.', style: 'success', position: 'top' })
     },
-    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
+    onError: (error) => {
+      showToast({ text1: 'An error occurred.', style: 'error' })
+      console.log(error)
+    }
   })
 }
 
@@ -66,7 +69,7 @@ export const useDeletePet = (navigation: any) => {
   const deletePetMutation = useMutation({
     mutationFn: (petId: string) => petService.deletePet(petId),
     onSuccess: (data: string) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
         return {...oldData, pets: oldData.pets.filter(pet => pet._id !== data) }
       })
       navigation.navigate('Home', { screen: 'Pets' })
@@ -92,10 +95,10 @@ export const useAddPetDetail = (petId: string) => {
 
   const addPetDetail = (type: string, formData: any) => {
     const typeToService = {
-      ids: () => petService.addId(formData, petId),
-      services: () => petService.addService(formData, petId),
-      illnesses: () => petService.addIllness(formData, petId),
-      meds: () => petService.addMedication(formData, petId),
+      id: () => petService.addId(formData, petId),
+      service: () => petService.addService(formData, petId),
+      illness: () => petService.addIllness(formData, petId),
+      medication: () => petService.addMedication(formData, petId),
     }
     return typeToService[type]()
   }
@@ -107,18 +110,19 @@ export const useAddPetDetail = (petId: string) => {
         data.pets.map(pet => {
           queryClient.setQueryData(petKeyFactory.petById(pet), (oldData: Pet) => 
             produce(oldData, draft => {
-              if (draft[data.type]) draft[data.type] = draft[data.type].push(data.item)
+              if (draft[data.type]) draft[data.type].push(data.item)
+              return draft
             })
             // return { ...oldData, [data.type]: [...oldData[data.type], data.item] }
           )
         })
       } else queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) =>
         produce(oldData, draft => {
-          if (draft[data.type]) draft[data.type] = draft[data.type].push(data.item)
+          if (draft[data.type]) draft[data.type].push(data.item)
         })
-        // return { ...oldData, [data.type]: [...oldData[data.type], data.item] }
       )
-      navigation.navigate('PetMoreDetails', { petId, show: data.type })
+      navigation.pop(1)
+      navigation.replace('PetMoreDetails', { petId, show: data.type })
       showToast({ text1: 'Detail added.', style: 'success' })
     }, 
     onError: (error) => showToast({ text1: 'An error occurred.', style: 'error' })
@@ -130,10 +134,10 @@ export const useDeletePetDetail = (petId: string, navigation: any) => {
   
   const deletePetDetailByType = (type: string, detailId: string) => {
     const typeToService = {
-      ids: () => petService.deleteId(petId, detailId),
-      services: () => petService.deleteService(petId, detailId),
-      illnesses: () => petService.deleteIllness(petId, detailId),
-      meds: () => petService.deleteMedication(petId, detailId),
+      id: () => petService.deleteId(petId, detailId),
+      service: () => petService.deleteService(petId, detailId),
+      illness: () => petService.deleteIllness(petId, detailId),
+      medication: () => petService.deleteMedication(petId, detailId),
     }
     return typeToService[type]()
   }
@@ -142,9 +146,9 @@ export const useDeletePetDetail = (petId: string, navigation: any) => {
     mutationFn: ({ type, detailId }: { type: DetailType, detailId: string }) => deletePetDetailByType(type, detailId),
     onSuccess: (data: { itemId: string, type: DetailType }) => {
       queryClient.setQueryData(petKeyFactory.petById(petId), (oldData: Pet) => {
-        return { ...oldData, [data.type]: oldData[data.type].filter((item: Detail) => item._id !== data.itemId) }
+        return { ...oldData, [data.type]: oldData[`${data.type}s`].filter((item: Detail) => item._id !== data.itemId) }
       })
-      navigation.navigate('MoreDetails', { petId, show: data.type })
+      navigation.replace('PetMoreDetails', { petId, show: data.type })
       showToast({ text1: 'Detail deleted.', style: 'success' })
     },
     onError: () => showToast({ text1: 'An error occurred.', style: 'error' })

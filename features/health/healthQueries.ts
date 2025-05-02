@@ -11,7 +11,7 @@ export const healthKeyFactory = {
 
 export const useGetAllHealths = () => {
   const queryClient = useQueryClient()
-  const healthsCache = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).healths
+  const healthsCache = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile()).healths
 
   return useQuery({
     queryKey: [...healthKeyFactory.healths],

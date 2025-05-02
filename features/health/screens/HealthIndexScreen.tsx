@@ -1,25 +1,25 @@
 //npm modules
 import { FC, useEffect, useRef, useState } from "react"
-import { StyleSheet, Text, TouchableOpacity, View, SectionList, ScrollView, Image, Button } from "react-native"
+import { Image, ScrollView, SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
-import LottieView from "lottie-react-native"
 //components
 import { RoundButton } from "@components/ButtonComponents"
-import PlaceHolder from "@components/PlaceHolder"
 import Loader from "@components/Loader"
-import { ErrorImage, ScrollScreen, TopRightHeader } from "@components/UIComponents"
+import PlaceHolder from "@components/PlaceHolder"
+import { ErrorImage } from "@components/UIComponents"
 //types & helpers
 import PetInfo from "@components/PetInfo/PetInfo"
-import { Health } from "@health/HealthInterface"
-import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 import { HEALTHS } from "@health/healthHelpers"
+import { Health } from "@health/HealthInterface"
 import { useShallowPets } from "@hooks/sharedHooks"
+import { getActionIconSource, getHealthIconSource } from "@utils/ui"
 //queries
 import { profileKeyFactory, useGetProfile } from "@profile/profileQueries"
 //styles
-import { Buttons, Spacing, Typography, Colors, UI } from '@styles/index'
-import { useQueryClient } from "@tanstack/react-query"
 import { ProfileData } from "@profile/ProfileInterface"
+import { Colors, Spacing, Typography, UI } from '@styles/index'
+import { useQueryClient } from "@tanstack/react-query"
+import { Header } from '@navigation/NavigationStyles'
 
 type HealthIndexProps = {
   navigation: any
@@ -54,9 +54,8 @@ const HealthItem: FC<HealthItemProps> = ({ health, navigation }) => {
 
 const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
   const queryClient = useQueryClient()
-  const healthsCache = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).healths
   
-  const { data, isSuccess, isFetching, isError } = useGetProfile(!healthsCache)
+  const { data, isSuccess, isFetching, isError } = useGetProfile()
   const healths = data.healths
 
   const { PET_BASICS, PET_IDS, petIdToPet } = useShallowPets()
@@ -115,6 +114,9 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
       }
       setInitialListPosition()
     }
+    navigation.setOptions({
+      header: () => <Header title='All Pet Care' showGoBackButton={true} rightActions={[{ title: 'Add', onPress: () => navigation.navigate('CareCreate') }]} navigation={navigation} mode='card' />
+    })
   }, [route.params, isSuccess])
   
   if (isFetching) return <Loader />
@@ -122,7 +124,6 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <RoundButton onPress={() => navigation.navigate('HealthCreate')} type='add' position="bottomRight" />
       {isSuccess && (
         healths.length > 0 ?
           <SectionList
@@ -138,7 +139,7 @@ const HealthIndexScreen: FC<HealthIndexProps> = ({ navigation, route }) => {
             showsVerticalScrollIndicator={false}
             style={styles.list}
           /> 
-        : <PlaceHolder navigation={navigation} type='vet' />
+        : <PlaceHolder type='health' />
       )}
         
     </View> 

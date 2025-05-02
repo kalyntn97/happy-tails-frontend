@@ -6,6 +6,7 @@ import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withDelay, withSpr
 import SubFloatingButton from "./SubFloatingButton"
 // styles & constants
 import { Animation, Button, ButtonStyles, ChildrenAnimation, snapThreshold } from "./constants"
+import { TAB_BAR_HEIGHT } from "@navigation/NavigationStyles"
 
 const subButtons = [
   { key: 'pets', label: 'Add a Pet', index: 2, onPress: (navigation) => navigation.navigate('PetCreate') },
@@ -137,7 +138,7 @@ const FloatingButton = () => {
 const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
-    bottom: ButtonStyles.margin,
+    bottom: ButtonStyles.margin + TAB_BAR_HEIGHT,
     right: ButtonStyles.margin,
   },
   button: {

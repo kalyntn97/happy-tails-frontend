@@ -27,25 +27,24 @@ export const tabBarOptions: BottomTabNavigationOptions = {
   headerShown: false,
 }
 
-const RightButton = ({ title, icon, onPress, buttonStyles }: { title?: string | ReactNode, icon?: string, onPress: () => void, buttonStyles?: ViewStyle }) => (
-  <TouchableOpacity onPress={onPress} style={buttonStyles}>
+const RightButton = ({ title, icon, onPress, buttonStyles, disabled }: { title?: string | ReactNode, icon?: string, onPress: () => void, buttonStyles?: ViewStyle, disabled?: boolean }) => (
+  <TouchableOpacity onPress={onPress} style={buttonStyles} disabled={disabled}>
     { icon && <Image source={getActionIconSource(icon)} style={{ width: 25, height: 25 }} /> }
     { title && <Text style={styles.buttonText}>{title}</Text> }
   </TouchableOpacity>
 )
 
-export const Header = ({ title, navigation, showGoBackButton, mode, rightActions, bgColor = Colors.shadow.lightest }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string, rightActions?: { title?: string | ReactNode, icon?: string, onPress: () => void }[], bgColor?: string }) => (
-  <View style={[styles.headerCon, { height: title ? 70 : 50, paddingTop: mode === 'card' ? 25 : 15, backgroundColor: bgColor }]}>
-    { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} /> }
+export const Header = ({ title, navigation, showGoBackButton, mode, rightActions, bgColor = Colors.shadow.lightest }: { title?: string, navigation: any, showGoBackButton: boolean, mode: string, rightActions?: { title?: string | ReactNode, icon?: string, onPress: () => void, disabled?: boolean }[], bgColor?: string }) => (
+  <View style={[styles.headerCon, { height: mode === 'modal' ? (title ? 70 : 50) : (title ? 110 : 90), paddingTop: mode === 'modal' ? 10 : 35, backgroundColor: bgColor }]}>
+    { showGoBackButton && <GoBackButton onPress={() => navigation.goBack()} buttonStyles={{ paddingTop: mode === 'modal' ? 0 : 25 }} /> }
     { title && <Text style={styles.headerText}>{title}</Text> }
     {rightActions && 
-      <View style={[styles.headerRight, { top: mode === 'card' ? 25 : 15 }]}>
+      <View style={[styles.headerRight, { top: mode === 'modal' ? 20 : 45 }]}>
         { rightActions.map((action, index) =>
-          <RightButton key={index} title={action.title} icon={action.icon} onPress={action.onPress} buttonStyles={{ marginLeft: 50 }} />
+          <RightButton key={index} title={action.title} icon={action.icon} onPress={action.onPress} buttonStyles={{ marginLeft: 50 }} disabled={action?.disabled ?? false} />
         )}
       </View> 
     }
-    {/* { mode === 'modal' && <CustomToast /> } */}
   </View> 
 )
 

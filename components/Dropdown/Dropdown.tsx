@@ -7,7 +7,7 @@ import * as careHelpers from '@care/careHelpers'
 import * as healthHelpers from '@health/healthHelpers'
 import * as petHelpers from '@pet/petHelpers'
 //components
-import { ErrorMessage, Icon, ScrollContainer } from "@components/UIComponents"
+import { ErrorMessage, Icon, VScrollContainer } from "@components/UIComponents"
 //styles
 import { Colors, Spacing, Typography, UI } from '@styles/index'
 import { lightPalette } from "@styles/ui"
@@ -91,6 +91,7 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
       setSelected(item)
     }
     dataArray ? onSelect(dataArray.find(i => i.name === item)) : onSelect(item)
+    //* reset the search input
     if (shouldReset) withSearch ? setSearchInput(initial) : setSelected(initial)
     setVisible(false)
   }
@@ -125,21 +126,22 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
     }
   }, [dataType, initial])
 
-  const dropdownBtnStyles = useMemo(() => ([ 
-    styles.dropDownBtn, 
+  const dropdownBtnStyles = useMemo(() => ([
+    styles.dropDownBtn,
     withBorder ? UI.input() : UI.input(false, 0, 0, 0),
     (focused || visible) && UI.focused,
     buttonStyles,
-  ]) as ViewStyle, [focused, visible, buttonStyles, withBorder])
+  ]) as unknown as ViewStyle, [focused, visible, buttonStyles, withBorder])
 
-  const modalStyles = useMemo(() => ([ 
-    styles.modalCon, 
-    { left: dropdownLeft,
+  const modalStyles = useMemo(() => ([
+    styles.modalCon,
+    {
+      left: dropdownLeft,
       maxHeight: withSearch ? dropdownTop * 4 : '50%',
       width: `${contentWidth ?? (withSearch ? 100 : width - (width > 50 ? 20 : 10))}%`,
     },
     contentPosition === 'bottom' ? { top: dropdownTop } : { bottom: dropdownTop },
-  ]) as ViewStyle, [dropdownLeft, dropdownTop, contentPosition, contentWidth, width])
+  ]) as unknown as ViewStyle, [dropdownLeft, dropdownTop, contentPosition, contentWidth, width])
 
   return (
     <View style={[styles.container, { width: `${width}%` as DimensionValue, zIndex: focused ? 100 : 2 }]}>
@@ -163,7 +165,7 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
 
           { visible && 
             <View style={modalStyles}>
-              <ScrollContainer props={{ ...scrollProps }}>
+              <VScrollContainer props={{ ...scrollProps }}>
                 { searchResults.length > 1 ? searchResults.map(result =>
                     <TouchableOpacity key={result.item} style={styles.itemCon} onPress={() => onItemPress(result.item)}>
                       <Text style={{ color: lightPalette().text }}>
@@ -172,7 +174,7 @@ const Dropdown = memo(({ label, dataType, withSearch = false, dataArray, onSelec
                     </TouchableOpacity>
                 )
                 : <Text>No {searchLabel ?? 'item'} found.</Text> }
-              </ScrollContainer>
+              </VScrollContainer>
             </View> 
           }
         </>

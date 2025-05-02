@@ -109,7 +109,7 @@ const ScrollSelector = ({ data, onSelect, initial = 0, leftLabel, rightLabel, he
         directionalLockEnabled={true}
       >
         {data.map((item: any, index: number) =>
-          <Pressable key={index} style={[styles.itemCon, { height: height }]}>
+          <Pressable key={item} style={[styles.itemCon, { height: height }]}>
             <Row item={item} index={index} height={height} scrollY={scrollY} />
           </Pressable>
         )}

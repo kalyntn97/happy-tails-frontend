@@ -1,79 +1,62 @@
-//npm modules
-import { FC, useState } from 'react'
-import { View, StyleSheet, TextInput, Text, Alert, SafeAreaView } from 'react-native'
 import LottieView from 'lottie-react-native'
+import { ActivityIndicator } from 'react-native'
 //context
 import { useAuth } from '@auth/AuthContext'
+//utils & hooks
+import { AuthFormData } from '@auth/AuthInterface'
+import useForm from '@hooks/useForm'
+import { StackScreenNavigationProp } from '@navigation/types'
+import { showToast } from '@utils/misc'
+//components
+import { MainButton, SubButton } from '@components/ButtonComponents'
+import { FormHeader, FormInput, ScrollScreen } from '@components/UIComponents'
 //styles
-import { Buttons, Spacing, UI, Typography, Colors } from '@styles/index'
-import { GoBackButton, MainButton, SubButton } from '@components/ButtonComponents'
 import { styles } from '@styles/stylesheets/FormStyles'
-import { ErrorMessage } from '@components/UIComponents'
 
-const LoginScreen: FC = ({ navigation }) => {
-  const [username, setUserName] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const [errorMsg, setErrorMsg] = useState<string>('')
+type Props = {
+  navigation: StackScreenNavigationProp
+}
+
+const LoginScreen = ({ navigation }: Props) => {
+  const initialState: AuthFormData = {
+    username: null,
+    password: null,
+    errors: {},
+    isPending: false,
+  }
+  const { values, onChange, onValidate } = useForm(login, initialState)
+  const { username, password, errors, isPending }: AuthFormData = values
+
   const { onLogin } = useAuth()
 
-  const login = async () => {
-    const { status, error } = await onLogin!(username, password)
-    navigation.navigate('Home', { screen: 'Welcome' })
+  function handleValidate() {
+    onValidate({ username, password })
+  }
 
-    return Alert.alert(
-      'Alert',
-      status ?? error,
-      [{ text: 'OK' }]
-    )
+  async function login()  {
+    onChange('isPending', true)
+    const { status, error } = await onLogin!(username, password)
+    onChange('isPending', false)
+    showToast({ text1: status ?? error, style: error ? 'error' : 'success' })
+
+    navigation.navigate('Home', { screen: 'Feed' })
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollScreen>
       <LottieView source={require('@assets/animations/writing-cat.json')} autoPlay loop style={styles.catAnimation} />
-      <Text style={styles.header}>Sign in</Text>
-        {errorMsg && <ErrorMessage error={errorMsg} />}
-        <TextInput 
-          style={styles.input} 
-          placeholder='Username'
-          placeholderTextColor={Colors.shadow.reg}
-          onChangeText={(text: string) => setUserName(text)} 
-          value={username} 
-          autoCapitalize='none'
-        />
-        <TextInput 
-          style={styles.input} 
-          placeholder='Password'
-          placeholderTextColor={Colors.shadow.reg}
-          onChangeText={(text: string) => setPassword(text)} 
-          value={password} 
-          secureTextEntry={true}
-        />
-        <MainButton title='Submit' onPress={login} top={40} bottom={0} />
-        <SubButton title='Create Account' onPress={() => navigation.navigate('Register')} top={0} bottom={0} />
-    </SafeAreaView>
+      <FormHeader title='Sign in' size='large' styles={{ marginTop: 0, marginBottom: 20 }} />
+
+      <FormHeader title='Username' size='small' styles={{ marginVertical: 10 }} />
+      <FormInput initial={username} placeholder='Enter username' onChange={(text: string) => onChange('username', text)} error={errors?.username} width='60%' props={{ autoComplete: 'username' }} />
+
+      <FormHeader title='Password' size='small' styles={{ marginTop: 30, marginBottom: 10 }} />
+      <FormInput initial={username} placeholder='Enter password' onChange={(text: string) => onChange('password', text)} error={errors?.password} width='60%' props={{ autoComplete: 'current-password' }} type='password' />
+ 
+      <MainButton title={isPending ? <ActivityIndicator /> : 'Submit'} onPress={handleValidate} buttonStyles={{ marginTop: 60 }} />
+      <SubButton title='Create Account' onPress={() => navigation.navigate('Register')} />
+    </ScrollScreen>
   )
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     ...Spacing.fullCon(),
-//     ...Spacing.centered
-//   },
-//   catAnimation: {
-//     width: '60%',
-//   },
-//   header: {
-//     ...Typography.mainHeader,
-//     marginTop: 0,
-//     color: Colors.pink.dark,
-//   },
-//   form: {
-//     ...UI.form,
-//   },
-//   input: {
-//     ...UI.input(),
-//     borderColor: Colors.pink.reg,
-//   },
-// })
 
 export default LoginScreen

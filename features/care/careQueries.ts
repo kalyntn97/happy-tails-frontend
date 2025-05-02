@@ -14,7 +14,7 @@ export const careKeyFactory = {
 
 export const useGetAllCares = () => {
   const queryClient = useQueryClient()
-  const caresCache = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile).cares
+  const caresCache = queryClient.getQueryData<ProfileData>(profileKeyFactory.profile()).cares
 
   return useQuery({
     queryKey: [...careKeyFactory.cares],
@@ -41,7 +41,7 @@ export const useAddCare = (navigation: any) => {
   return useMutation({
     mutationFn: (formData: CareFormData) => careService.create(formData),
     onSuccess: (data: Care) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
         return { ...oldData, cares: [...oldData.cares, data] }
       })
       navigation.navigate('Home', { screen: 'Feed' })
@@ -57,7 +57,7 @@ export const useUpdateCare = (navigation: any) => {
   return useMutation({
     mutationFn: (formData: CareFormData) => careService.update(formData),
     onSuccess: (data: Care) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
         return { ...oldData, cares: oldData.cares.map(care => care._id === data._id ? data : care) }
       })      
       navigation.navigate('Home', { screen: 'Feed' })
@@ -73,7 +73,7 @@ export const useDeleteCare = (navigation: any) => {
   return useMutation({
     mutationFn: (careId: string) => careService.deleteCare(careId),
     onSuccess: (data: string) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => {
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => {
         return { ...oldData, cares: oldData.cares.filter(care => care._id !== data) }
       })
       navigation.navigate('Home', { screen: 'Feed' })
@@ -90,7 +90,7 @@ export const useCreateLog = () => {
   return useMutation({
     mutationFn: (formData: LogFormData) => careService.createLog(formData),
     onSuccess: (data: Log) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => 
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => 
         produce(oldData, draft => {
           const care = draft.cares.find(care => care._id === data.care)
           if (care) care.logs.push(data)
@@ -109,7 +109,7 @@ export const useUpdateLog = () => {
   return useMutation({
     mutationFn: (formData: LogFormData) => careService.updateLog(formData),
     onSuccess: (data: Log) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => 
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => 
         produce(oldData, draft => {
           const care = draft.cares.find(care => care._id === data.care)
           if (care) care.logs = care.logs.map(log => log._id === data._id ? data : log)
@@ -128,7 +128,7 @@ export const useDeleteLog = () => {
   return useMutation({
     mutationFn: ({ logId, careId }: { logId: string, careId: string }) => careService.deleteLog(logId, careId),
     onSuccess: (data: Log) => {
-      queryClient.setQueryData(profileKeyFactory.profile, (oldData: ProfileData) => 
+      queryClient.setQueryData(profileKeyFactory.profile(), (oldData: ProfileData) => 
         produce(oldData, draft => {
           const care = draft.cares.find(care => care._id === data.care)
           if (care) care.logs = care.logs.filter(log => log._id !== data._id)

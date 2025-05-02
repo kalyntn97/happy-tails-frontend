@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 //components
@@ -6,16 +5,18 @@ import { ActionButton, CloseButton } from '@components/ButtonComponents'
 import PlaceHolder from '@components/PlaceHolder'
 import { ErrorImage, ScrollScreen, TitleLabel, TopRightHeader } from '@components/UIComponents'
 //utils & types
-import { DetailType, Pet, Service } from '@pet/PetInterface'
+import { DetailType, Id, Service } from '@pet/PetInterface'
 import { PET_DETAILS } from '@pet/petHelpers'
-import { petKeyFactory, useDeletePetDetail } from '@pet/petQueries'
+import { useDeletePetDetail, useGetPetById } from '@pet/petQueries'
 import { getActionIconSource, getPetIconSource } from '@utils/ui'
 //styles
+import Loader from '@components/Loader'
+import { CustomToast } from '@navigation/NavigationStyles'
 import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 
 interface MorePetDetailsScreenProps {
-  route: { params: { petId: string, show?: string } }
+  route: { params: { petId: string, show?: DetailType } }
   navigation: any
 }
 
@@ -43,25 +44,23 @@ const IdDetails = ({ id }: { id: Id }) => (
 
 const ServiceDetails = ({ service }: { service: Service }) => (
   <View>
-    { service.addresses && service.addresses.map(address =>
-      <Text style={styles.itemBody}>Address: {address}</Text> 
+    { service.addresses && service.addresses.map((address, idx) =>
+      <Text key={`address-${idx}`} style={styles.itemBody}>Address{idx > 0 ? ` ${idx + 1}` : ''}: {address}</Text> 
     )}
-    { service.emails && service.emails.map(email => 
-      <Text style={styles.itemBody}>Email: {email}</Text> 
+    { service.emails && service.emails.map((email, idx) => 
+      <Text key={`email-${idx}`} style={styles.itemBody}>Email{idx > 0 ? ` ${idx + 1}` : ''}: {email}</Text> 
     )}
-    { service.phones && service.phones.length > 0 && service.phones.map(phone =>
-      <Text style={styles.itemBody}>Phone: {phone}</Text>
+    { service.phones && service.phones.length > 0 && service.phones.map((phone, idx) =>
+      <Text key={`phone-${idx}`} style={styles.itemBody}>Phone{idx > 0 ? ` ${idx + 1}` : ''}: {phone}</Text>
     ) }
     { service.notes && <Text style={styles.itemFooter}>Notes: {service.notes}</Text> }
   </View>
 )
-
 const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) => {
   const { petId, show } = route.params
-  const queryClient = useQueryClient()
   
-  const pet: Pet | undefined = queryClient.getQueryData(petKeyFactory.petById(petId))
-
+  const { data: pet, isSuccess, isFetching, isError } = useGetPetById(petId)
+  
   const { handleDeletePetDetail, isPending } = useDeletePetDetail(petId, navigation)
 
   const detailData = {
@@ -95,19 +94,23 @@ const MorePetDetailsScreen = ({ navigation, route }: MorePetDetailsScreenProps) 
 
   return (
     <ScrollScreen>
-      {!pet && <ErrorImage />}
-      { pet && Object.keys(detailData).map((type: DetailType) =>
-        (type === show) && 
-          <View key={`${type}-details`} style={styles.sectionCon}>
-            {/* <ListHeader name={type} onPress={() => openForm(type)} /> */}
-            <TitleLabel mode='bold' title={PET_DETAILS[type]} iconName={type} size='large' rightAction={
-              <ActionButton title='Add' onPress={() => openForm(type)} textStyles={{ ...Typography.smallHeader, margin: 0 }} size='small' />
-            } />
-            { detailData[type].length > 0 ? detailData[type].map((item: any, index: number) => 
-              <Item key={`${type}-${index}`} item={item} type={type} />
-            ) : <PlaceHolder type={type} petId={petId} /> }
-          </View>
-      )}
+      { isFetching && <Loader /> }
+      { isError && <ErrorImage /> }
+      { isSuccess && 
+        pet && Object.keys(detailData).map((type: DetailType) =>
+          (type === show) && 
+            <View key={`${type}-details`} style={styles.sectionCon}>
+              {/* <ListHeader name={type} onPress={() => openForm(type)} /> */}
+              <TitleLabel mode='bold' title={PET_DETAILS[type]} iconName={type} size='large' rightAction={
+                <ActionButton title='Add' onPress={() => openForm(type)} textStyles={{ ...Typography.smallHeader, margin: 0 }} size='small' />
+              } />
+              { detailData[type].length > 0 ? detailData[type].map((item: any, index: number) => 
+                <Item key={`${type}-${index}`} item={item} type={type} />
+              ) : <PlaceHolder type={type} petId={petId} /> }
+            </View>
+        )
+      }
+      <CustomToast />
     </ScrollScreen>
   )
 }
@@ -134,7 +137,7 @@ const styles = StyleSheet.create({
     ...Typography.smallHeader, 
   },
   itemBody: {
-    ...Typography.smallBody,
+    ...Typography.regBody,
     marginVertical: 5, 
     letterSpacing: 1,
     marginLeft: 20,

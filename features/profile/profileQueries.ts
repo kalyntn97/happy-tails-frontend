@@ -1,26 +1,38 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+import { TabScreenNavigationProp } from "@navigation/types"
+import { useActiveDate } from "@store/store"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { showToast } from "@utils/misc"
+import { PhotoFormData, Profile, ProfileData, ProfileMutationFormData } from "./ProfileInterface"
 import * as profileService from "./profileService"
-import { PhotoData, Profile, ProfileFormData } from "./ProfileInterface"
 
 export const profileKeyFactory = {
-  profile: ['profile'],
+  profile: (year?: number) => ['profile', year],
 }
 
-export const useGetProfile = (isEnabled?: boolean) => {
+export const useGetProfile = (year?: number) => {
+  const { year: activeYear } = useActiveDate()
+  const inputYear = year ?? activeYear
+  
   return useQuery({
-    queryKey: [...profileKeyFactory.profile],
-    queryFn: profileService.getProfile,
+    queryKey: [...profileKeyFactory.profile(inputYear)],
+    queryFn: () => profileService.getProfile(inputYear),
   })
 }
 
-export const useUpdateProfile = () => {
+export const useUpdateProfile = (navigation: TabScreenNavigationProp<'Profile'>) => {
   const queryClient = useQueryClient()
+  const { year } = useActiveDate()
 
   return useMutation({
-    mutationFn: ({ name, bio, photoData }: ProfileFormData) => profileService.update(name, bio, photoData),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...profileKeyFactory.profile] })
-    }
+    mutationFn: ({ formData, photoData }: ProfileMutationFormData) => profileService.update(formData, photoData),
+    onSuccess: (data: Profile) => {
+      queryClient.setQueryData(profileKeyFactory.profile(year), (oldData: ProfileData) => {
+        return {...oldData, profile: data }
+      })
+      showToast({ text1: 'Profile updated.', style: 'success' })
+      navigation.navigate('Home', { screen: 'Profile' })
+    },
+    onError: () => showToast({ text1: 'An error occurred.', style: 'error' })
   })
 }
 
@@ -28,9 +40,9 @@ export const useAddBanner = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (photoData: PhotoData) => profileService.addBanner(photoData),
+    mutationFn: (photoData: PhotoFormData) => profileService.addBanner(photoData),
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [...profileKeyFactory.profile] })
+      return queryClient.invalidateQueries({ queryKey: [...profileKeyFactory.profile()] })
     }
   })
 }
