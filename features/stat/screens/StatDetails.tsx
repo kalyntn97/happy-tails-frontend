@@ -2,7 +2,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker'
 import React, { FC, useMemo, useState } from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 //helpers & types
-import { CHART_PARAMS, STATS, filterByRange, getAverageValue, getUnitKey, statConverter } from '@stat/statHelpers'
+import { STATS, TIME_RANGES, filterByRange, getAverageValue, getUnitKey, statConverter } from '@stat/statHelpers'
 import { Stat, StatName, StatRange } from '@stat/statInterface'
 import { getActionIconSource, getStatQualIconSource } from '@utils/ui'
 //store & queries
@@ -10,11 +10,11 @@ import { useGetStatByPet } from '@stat/statQueries'
 import { useDisplayUnits } from '@store/store'
 //components
 import Loader from '@components/Loader'
+import ToggleableForm from '@components/ToggleableForm'
 import { CircleIcon, ErrorImage, FormHeader, ScrollScreen } from '@components/UIComponents'
 //styles
-import { Colors, Spacing, Typography, UI } from '@styles/index'
-import ToggleableForm from '@components/ToggleableForm'
 import LineChart from '@components/Charts/LineChart'
+import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 interface StatDetailsProps {
   navigation: any
@@ -40,7 +40,8 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
   const displayUnits = useDisplayUnits()
   const unit = displayUnits[getUnitKey(statName)]
   const defaultUnit = STATS[statName].unit
-  const ranges = CHART_PARAMS.ranges
+  const ranges = TIME_RANGES
+  const chartType = STATS[statName].chart
 
   const [selectedRange, setSelectedRange] = useState<StatRange>('All')
   const [startDate, setStartDate] = useState(new Date())
@@ -51,10 +52,11 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
     <ScrollScreen>
       <CircleIcon type='stat' name={statName} />
       <FormHeader title={STATS[statName].name} />
-      <ToggleableForm title='See graph'>
-        <Text>Ha ha</Text>
-        <LineChart />
-      </ToggleableForm>
+      {filtered.length > 0 && 
+        <ToggleableForm title='See graph'>
+          <LineChart data={filtered} lineColor={Colors.pink.dark} />
+        </ToggleableForm>
+      }
       { isFetching && <Loader /> }
       { isError && <ErrorImage /> }
       { isSuccess && <>
