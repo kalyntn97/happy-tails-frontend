@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import * as statService from '@stat/statService'
-import { StatFormData } from "./statInterface"
+import { Stat, StatFormData, StatName } from "./statInterface"
 import { alertError, alertSuccess } from "@utils/misc"
 import { petKeyFactory } from "@pet/petQueries"
 
 export const statKeyFactory = {
   stats: ['all-stats'],
   statById: (id: string) => [...statKeyFactory.stats, id],
+  statByPet: (petId: string, stat: StatName) => [...statKeyFactory.stats, petId, stat]
 }
 
 export const useGetAllStats = () => {
@@ -26,5 +27,12 @@ export const useAddStats = (navigation) => {
       return alertSuccess('Log added', navigation)
     },
     onError: (error) => alertError(error)
+  })
+}
+
+export const useGetStatByPet = (petId: string, stat: StatName) => {
+  return useQuery({
+    queryKey: [...statKeyFactory.statByPet(petId, stat)],
+    queryFn: () =>statService.getStatByPet(petId, stat)
   })
 }

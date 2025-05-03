@@ -1,5 +1,5 @@
 import { dateIsWithinRange, getDateFromRange } from "@utils/datetime"
-import { Record } from "./statInterface"
+import { Record, StatRange } from "./statInterface"
 
 export const DEFAULT_WEIGHT_UNIT = 'kg'
 export const DEFAULT_FOOD_UNIT = 'g'
@@ -11,8 +11,8 @@ export const WEIGHT_UNITS = [DEFAULT_WEIGHT_UNIT, 'lb']
 export const FOOD_UNITS = [DEFAULT_FOOD_UNIT, 'oz']
 export const WATER_UNITS = [DEFAULT_WATER_UNIT, 'oz']
 
-export const CHART_PARAMS = {
-  range: ['All', '1D', '1W', '1M', '3M', '6M', '1Y', '5Y'],
+export const CHART_PARAMS: { ranges: StatRange[] } = {
+  ranges: ['All', '1D', '1W', '1M', '3M', '6M', '1Y', '5Y'],
 }
 
 const unitName = { D: 'day', W: 'week', M: 'month', Y: 'year' }
@@ -29,11 +29,11 @@ export const filterByRange = (range: string, records: Record[], startDate: strin
 }
 
 export const STATS = {
-  mood: { name: 'Mood', type: 'qual' },
+  mood: { name: 'Mood', type: 'qual', unit: '' },
   weight: { name: 'Weight', type: 'quant', unit: DEFAULT_WEIGHT_UNIT },
-  energy: { name: 'Energy', type: 'qual' },
-  sleep: { name: 'Sleep', type: 'qual' },
-  appetite: { name: 'Appetite', type: 'qual' },
+  energy: { name: 'Energy', type: 'qual', unit: '' },
+  sleep: { name: 'Sleep', type: 'qual', unit: '' },
+  appetite: { name: 'Appetite', type: 'qual', unit: '' },
   wetFood: { name: 'Wet food', type: 'quant', unit: DEFAULT_FOOD_UNIT },
   dryFood: { name: 'Dry food', type: 'quant', unit: DEFAULT_FOOD_UNIT },
   treats: { name: 'Treats', type: 'quant', unit: DEFAULT_FOOD_UNIT },
