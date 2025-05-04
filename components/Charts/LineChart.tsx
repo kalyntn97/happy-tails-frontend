@@ -15,13 +15,13 @@ type Props = {
   strokeWidth?: number
 }
 
-const ToolTip = ({ x, y, color, value, font, lineColor }: { x: SharedValue<number>; y: SharedValue<number>, color: string, value: DerivedValue<string>, font: any, lineColor: string }) => {
+const ToolTip = ({ x, y, color, value, font }: { x: SharedValue<number>; y: SharedValue<number>, color: string, value: DerivedValue<string>, font: any }) => {
   const xText = useDerivedValue(() => x.value - 10, [x])
   const yText = useDerivedValue(() => y.value - 20, [y])
 
   return (
     <>
-      <SkiaText x={xText} y={yText} font={font} color={lineColor} text={value} />
+      <SkiaText x={xText} y={yText} font={font} color={color} text={value} />
       <Circle cx={x} cy={y} r={8} color={color} />
     </>
   )

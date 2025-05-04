@@ -18,8 +18,12 @@ import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 interface StatDetailsProps {
   navigation: any
-  route: { params: { stat: StatName, petId: string } }
+  route: { params: { stat: StatName, pet: Pet } }
 }
+
+const headerActions = (navigation: any, pet: Pet) => ([
+  { icon: 'add', onPress:() => navigation.navigate('CreateStat', { pet: { _id: pet._id, name: pet.name } }), size: 'xSmall' },
+])
 
 function useFilteredStat(records: Stat['records'], selectedRange: StatRange, startDate: string) {
   const stat = useMemo(() => {
@@ -33,8 +37,9 @@ function useFilteredStat(records: Stat['records'], selectedRange: StatRange, sta
 }
 
 const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
-  const { petId, stat: statName } = route.params
-  const { data: stat, isSuccess, isFetching, isError } = useGetStatByPet(petId, statName)
+  const { pet, stat: statName } = route.params
+ 
+  const { data: stat, isSuccess, isFetching, isError } = useGetStatByPet(pet._id, statName)
   const records = useMemo(() => [...(stat?.records || [])].reverse(), [stat])
 
   const displayUnits = useDisplayUnits()
@@ -52,9 +57,9 @@ const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
     <ScrollScreen>
       <CircleIcon type='stat' name={statName} />
       <FormHeader title={STATS[statName].name} />
-      {filtered.length > 0 && 
+      {filtered.length > 0 &&
         <ToggleableForm title='See graph'>
-          <LineChart data={filtered} lineColor={Colors.pink.dark} />
+          { chartType === 'line' && <LineChart data={filtered} lineColor={Colors.multi.dark[pet.color]} /> } 
         </ToggleableForm>
       }
       { isFetching && <Loader /> }

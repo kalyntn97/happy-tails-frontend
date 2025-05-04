@@ -97,7 +97,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
     logs: { 
       titles: logs, iconType: 'stat', 
       getName: (log: string) => log, 
-      onNavigate: (log: string) => navigation.navigate('StatDetails', { petId, stat: log }) 
+      onNavigate: (log: string) => navigation.navigate('StatDetails', { pet, stat: log }) 
     },
   }), [info, logs, petId])
 
