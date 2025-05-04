@@ -29,7 +29,7 @@ export type RootStackParamList = DefaultParamList & {
   PetMoreDetails: { petId: string, show: string },
   PetEditDetails: { petId: string, type: DetailType },
   CreateStat: { pet: { _id: string, name: string } },
-  StatDetails: { stat: string },
+  StatDetails: { pet: Pet, stat: string },
   ProfileEdit: { profile: Profile },
   Account: { form: 'update' | 'delete' },
   Settings: { profile: Profile, sectionIndex?: number, itemIndex?: number, sectionTitle?: string },

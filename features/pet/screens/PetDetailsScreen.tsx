@@ -1,5 +1,4 @@
-import { useQueryClient } from "@tanstack/react-query"
-import { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from "react-native"
 //types & context & hooks
 import { Pet } from "@pet/PetInterface"
@@ -13,7 +12,7 @@ import { BottomModal, ErrorImage, FormHeader, Icon, ItemActions, ScrollScreen, T
 import { CustomToast, Header } from "@navigation/NavigationStyles"
 import { IconType } from "@utils/ui"
 //store & queries
-import { petKeyFactory, useDeletePet, useGetPetById } from "@pet/petQueries"
+import { useDeletePet, useGetPetById } from "@pet/petQueries"
 import { useGetPetSettings, useSetActions } from "@store/store"
 //styles
 import { StackScreenNavigationProp } from "@navigation/types"
@@ -98,7 +97,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsProps) => {
     logs: { 
       titles: logs, iconType: 'stat', 
       getName: (log: string) => log, 
-      onNavigate: (log: string) => navigation.navigate('StatDetails', { stat: log }) 
+      onNavigate: (log: string) => navigation.navigate('StatDetails', { pet, stat: log }) 
     },
   }), [info, logs, petId])
 

@@ -1,107 +1,120 @@
 import RNDateTimePicker from '@react-native-community/datetimepicker'
-import React, { FC, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 //helpers & types
-import { CHART_PARAMS, STATS, filterByRange, getAverageValue, getUnitKey, statConverter } from '@stat/statHelpers'
-import { Stat } from '@stat/statInterface'
-import { getActionIconSource, getStatIconSource, getStatQualIconSource } from '@utils/ui'
+import { STATS, TIME_RANGES, filterByRange, getAverageValue, getUnitKey, statConverter } from '@stat/statHelpers'
+import { Stat, StatName, StatRange } from '@stat/statInterface'
+import { getActionIconSource, getStatQualIconSource } from '@utils/ui'
 //store & queries
+import { useGetStatByPet } from '@stat/statQueries'
 import { useDisplayUnits } from '@store/store'
 //components
-import LineChart from '@components/Charts/LineChart'
+import Loader from '@components/Loader'
 import ToggleableForm from '@components/ToggleableForm'
-import { CircleIcon, FormHeader, ScrollScreen } from '@components/UIComponents'
+import { CircleIcon, ErrorImage, FormHeader, ScrollScreen } from '@components/UIComponents'
 //styles
+import LineChart from '@components/Charts/LineChart'
 import { Colors, Spacing, Typography, UI } from '@styles/index'
 
 interface StatDetailsProps {
   navigation: any
-  route: { params: { stat: Stat }}
+  route: { params: { stat: StatName, pet: Pet } }
+}
+
+const headerActions = (navigation: any, pet: Pet) => ([
+  { icon: 'add', onPress:() => navigation.navigate('CreateStat', { pet: { _id: pet._id, name: pet.name } }), size: 'xSmall' },
+])
+
+function useFilteredStat(records: Stat['records'], selectedRange: StatRange, startDate: string) {
+  const stat = useMemo(() => {
+    if (selectedRange === 'All') return {filtered: records, endDate: null}
+    const { filtered, endDate } = filterByRange(selectedRange, records, startDate)
+    return { filtered, endDate: endDate.toDateString().slice(4) }
+  }, [records, selectedRange, startDate])
+  const avgValue = getAverageValue(stat.filtered.map(r => r.value))
+  const avg = Number.isNaN(Number(avgValue)) ? '0' : avgValue
+  return { filtered: stat.filtered, avg, endDate: stat.endDate }
 }
 
 const StatDetails: FC<StatDetailsProps> = ({ navigation, route }) => {
-  const { stat } = route.params
-  const name = STATS[stat.name].name
-  const records = [...stat.records].reverse()
-  const ranges = CHART_PARAMS.range
-  const initialAvg = getAverageValue(records.map(r => r.value))
+  const { pet, stat: statName } = route.params
+ 
+  const { data: stat, isSuccess, isFetching, isError } = useGetStatByPet(pet._id, statName)
+  const records = useMemo(() => [...(stat?.records || [])].reverse(), [stat])
+
   const displayUnits = useDisplayUnits()
-  const unit = displayUnits[getUnitKey(stat.name)]
-  const defaultUnit = STATS[stat.name].unit
+  const unit = displayUnits[getUnitKey(statName)]
+  const defaultUnit = STATS[statName].unit
+  const ranges = TIME_RANGES
+  const chartType = STATS[statName].chart
 
-  const [selectedRange, setSelectedRange] = useState('All')
-  const [filtered, setFiltered] = useState(records)
+  const [selectedRange, setSelectedRange] = useState<StatRange>('All')
   const [startDate, setStartDate] = useState(new Date())
-  const [endDate, setEndDate] = useState(null)
-  const [avg, setAvg] = useState<string>(initialAvg)
 
-  const changeRange = (range: string) => {
-    setSelectedRange(range)
-    const { filtered, endDate } = filterByRange(range, records, startDate.toISOString())
-    setFiltered(filtered)
-    setEndDate(endDate ? endDate.toDateString().slice(4) : null)
-    const avgValue = getAverageValue(filtered.map(r => r.value))
-    setAvg(Number.isNaN(Number(avgValue)) ? '0' : avgValue)
-  }
+  const { filtered, avg, endDate } = useFilteredStat(records, selectedRange, startDate.toISOString())
 
   return (
     <ScrollScreen>
-      <CircleIcon type='stat' name={stat.name} />
-      <FormHeader title={name} />
-      <ToggleableForm title='See graph' content={
-        <LineChart />
-      } />
+      <CircleIcon type='stat' name={statName} />
+      <FormHeader title={STATS[statName].name} />
+      {filtered.length > 0 &&
+        <ToggleableForm title='See graph'>
+          { chartType === 'line' && <LineChart data={filtered} lineColor={Colors.multi.dark[pet.color]} /> } 
+        </ToggleableForm>
+      }
+      { isFetching && <Loader /> }
+      { isError && <ErrorImage /> }
+      { isSuccess && <>
+        <View style={styles.filterBtnCon}>
+          { ranges.map((range, index) =>
+            <Pressable key={range} onPress={() => setSelectedRange(range)}>
+              <Text style={[selectedRange === range ? Typography.focused : Typography.unFocused, { fontSize: 15 }]}>{range}</Text>
+            </Pressable>
+          ) }
+        </View>
 
-      <View style={styles.filterBtnCon}>
-        {ranges.map((range, index) =>
-          <Pressable key={range} onPress={() => changeRange(range)}>
-            <Text style={[selectedRange === range ? Typography.focused : Typography.unFocused, { fontSize: 15 }]}>{range}</Text>
-          </Pressable>
-        )}
-      </View>
-
-      <View style={styles.rangeCon}>
-        <View style={styles.dateRangeCon}>
-          <RNDateTimePicker value={startDate} themeVariant='light' accentColor={Colors.pink.darkest} maximumDate={new Date()} onChange={(event, selectedDate) => {
-            setStartDate(selectedDate)
-            changeRange(selectedRange)
-          }} />
-          <Text> - </Text>
-          <View style={styles.endDate}>
-            <Text style={[{ fontSize: 17 }, !endDate && { ...Typography.unFocused, fontStyle: 'italic' }]}>{endDate ?? 'M D Y'}</Text>
+        <View style={styles.rangeCon}>
+          <View style={styles.dateRangeCon}>
+            <View style={styles.endDate}>
+              <Text style={[{ fontSize: 17 }, !endDate && { ...Typography.unFocused, fontStyle: 'italic' }]}>{ endDate ?? 'M D Y' }</Text>
+            </View>
+            <Text> - </Text>
+            <RNDateTimePicker value={startDate} themeVariant='light' accentColor={Colors.pink.darkest} maximumDate={new Date()} 
+              onChange={ (_, selectedDate) => setStartDate(selectedDate)} />
           </View>
-        </View>
-        <View style={Spacing.flexRow}>
-          <Text>Avg: </Text>
-          <Text style={{ ...Typography.focused, fontSize: 25 }}>{avg}</Text>
-          <Text>{ STATS[stat.name].type === 'qual' && ' / 5' }</Text>
+          <View style={Spacing.flexRow}>
+            <Text>Avg: </Text>
+            <Text style={{ ...Typography.focused, fontSize: 25 }}>{avg}</Text>
+            <Text>{ STATS[stat.name].type === 'qual' && ' / 5' }</Text>
+          </View>
+
         </View>
 
-      </View>
-
-      <View style={[styles.rowCon, styles.tableHeaderCon]}>
-        <View style={[styles.columnCon, styles.leftColumn]}>
-          <Image source={getActionIconSource('date')} style={{ ...UI.icon(), marginRight: 10 }} />
-          <Text>Date</Text>
-        </View>
-        <View style={[styles.columnCon, styles.rightColumn]}>
-          <Text>{name}{unit && <Text> ({unit})</Text>}</Text>
-        </View>
-      </View>
-
-      {filtered.map((record, index) =>
-        <View key={record._id} style={styles.rowCon}>
+        <View style={[styles.rowCon, styles.tableHeaderCon]}>
           <View style={[styles.columnCon, styles.leftColumn]}>
-            <Text style={styles.column}>{new Date(record.createdAt).toLocaleDateString()}</Text>
+            <Image source={getActionIconSource('date')} style={{ ...UI.icon(), marginRight: 10 }} />
+            <Text>Date</Text>
           </View>
           <View style={[styles.columnCon, styles.rightColumn]}>
-            {stat.name === 'mood' ? <Image source={getStatQualIconSource(stat.name, record.value)} style={{ ...UI.icon() }} /> 
-            : <Text style={styles.column}>{(unit === defaultUnit || !unit) ? record.value : statConverter(stat.name, record.value.toString(), unit)}</Text>
-            }
-            
+            <Text>{STATS[statName].name}{unit && <Text> ({unit})</Text>}</Text>
           </View>
         </View>
-      )}
+
+        { filtered.length > 0 ? filtered.map((record, index) =>
+          <View key={record._id} style={styles.rowCon}>
+            <View style={[styles.columnCon, styles.leftColumn]}>
+              <Text style={styles.column}>{new Date(record.createdAt).toLocaleDateString()}</Text>
+            </View>
+            <View style={[styles.columnCon, styles.rightColumn]}>
+              {stat.name === 'mood' ? <Image source={getStatQualIconSource(stat.name, record.value)} style={{ ...UI.icon() }} /> 
+              : <Text style={styles.column}>{(unit === defaultUnit || !unit) ? record.value : statConverter(stat.name, record.value.toString(), unit)}</Text>
+              }
+              
+            </View>
+          </View>
+          ) : <Text style={Typography.smallSubHeader}>No records</Text>
+        }
+      </> }
 
     </ScrollScreen>
   )

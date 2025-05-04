@@ -22,7 +22,7 @@ const ToggleableForm = ({ title, children, onPress, buttonSize, buttonStyles }: 
   
   return (
     <View style={Spacing.flexColumnStretch}>
-      <TransparentButton title={title} onPress={handlePress} icon='down' size={buttonSize} buttonStyles={buttonStyles} />
+      <TransparentButton title={title} onPress={handlePress} icon={visible ? 'up' : 'down'} size={buttonSize} buttonStyles={buttonStyles} />
       {visible && children}
     </View>
   )

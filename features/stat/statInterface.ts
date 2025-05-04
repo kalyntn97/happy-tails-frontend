@@ -1,3 +1,7 @@
+import { STATS } from './statHelpers'
+
+export type StatName = keyof typeof STATS
+export type StatRange = 'All' | '1D' | '1W' | '1M' | '3M' | '6M' | '1Y' | '5Y'
 export interface Record {
   _id: string
   value: number
