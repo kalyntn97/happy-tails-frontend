@@ -7,6 +7,6 @@ export type ClickedItem = {
   type: string
 }
 
-export type Feed = 'care' | 'health'
+export type Feed = 'tasks' | 'events'
 
 export type Filter = Frequency['type'] | 'oneTime' | 'all'

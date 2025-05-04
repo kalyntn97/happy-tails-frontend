@@ -1,6 +1,7 @@
 import { Pet } from "../pet/PetInterface"
 import { Care } from "../care/CareInterface"
 import { Health } from "@health/HealthInterface"
+import { Task } from '@task/taskInterface'
 
 export interface Streak {
   current: number
@@ -11,8 +12,8 @@ export interface Streak {
 export interface ProfileData {
   profile: Profile
   pets: Pet[]
-  cares: Care[]
-  healths: Health[]
+  tasks: Task[]
+  events: Event[]
 }
 
 export interface Profile {

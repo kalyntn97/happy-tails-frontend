@@ -6,3 +6,11 @@ export type Frequency = {
 
 export type FormErrors= { [key: string]: string }
 
+export interface Attachment {
+  name: string
+  url: string
+  tag: 'invoice' | 'receipt' | 'lab' | 'notes' | 'others'
+  event: string
+  pet: string
+  notes: string | null
+}
