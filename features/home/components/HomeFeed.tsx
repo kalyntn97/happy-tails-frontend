@@ -1,21 +1,20 @@
 //npm
-import { useCallback, useState } from "react"
+import React, { useCallback, useState } from 'react'
 import { ImageStyle, Pressable, StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native"
 //types & helpers
-import { Care } from "@care/CareInterface"
-import { Health } from "@health/HealthInterface"
 //store & queries
 import { useGetProfile } from "@profile/profileQueries"
-import { useActiveDate, useFullActiveDate } from "@store/store"
+import { useFullActiveDate } from "@store/store"
 //components
+import { TransparentButton } from "@components/ButtonComponents"
 import Loader from "@components/Loader"
 import PlaceHolder from "@components/PlaceHolder"
-import { ErrorImage, Icon, HScrollContainer } from "@components/UIComponents"
+import { ErrorImage, HScrollContainer, Icon } from "@components/UIComponents"
 import DraggableList from './DraggableList'
-import { TransparentButton } from "@components/ButtonComponents"
 //types & utils
 import { Feed, Filter } from "@home/HomeInterface"
-import { isItemVisible, showToast } from "@utils/misc"
+import { Task } from '@task/taskInterface'
+import { isItemVisible } from "@utils/misc"
 //styles
 import { Colors, Spacing, Typography, UI } from '@styles/index'
 
@@ -23,43 +22,31 @@ interface HomeFeedProps {
   navigation: any
 }
 
-const defaultFeeds: Feed[] = ['care', 'health']
+const defaultFeeds: Feed[] = ['tasks', 'events']
 
 const iconWidth = 50
 const padding = 10
 const conWidth = iconWidth + padding * 2
 
-const FeedFilter = ({ feeds, onSelect }: { feeds: Feed[], onSelect: (filter: Feed[]) => void }) => {
-  const handleSelect = (filter: Feed) => {
-    let updated = []
-    if (feeds.includes(filter)) {
-      if (feeds.length > 1) updated = feeds.filter(f => f!== filter)
-      else {
-        showToast({ text1: 'At least 1 selection is required.', style: 'info' })
-        updated = feeds
-      }
-    } else updated = [...feeds, filter]
-    onSelect(updated)
-  }
+const buttons: { key: Feed, title: string, icon: string}[] = [
+  { key: 'tasks', title: 'tasks', icon: 'careColor' },
+  { key: 'events', title: 'events', icon: 'healthColor' },
+]
 
-  const buttons: { key: Feed, title: string, icon: string}[] = [
-    { key: 'care', title: 'care', icon: 'careColor' },
-    { key: 'health', title: 'health', icon: 'healthColor' },
-  ]
-
+const FeedFilter = ({ selectedFeed, onSelect }: { selectedFeed: Feed, onSelect: (feed: Feed) => void }) => {
   const buttonStyles = useCallback((feed: Feed, index: number) => {
-    const iconCon = [styles.iconCon, { padding: padding, backgroundColor: feeds.includes(feed) ? Colors.multi.lightest[index] : 'transparent', height: conWidth, width: conWidth }] as unknown as ViewStyle
-    const icon = feeds.includes(feed) ? { width: iconWidth, height: iconWidth } : { width: iconWidth + 5, height: iconWidth + 5 } as ImageStyle
-    const text = [feeds.includes(feed) ? Typography.focused : Typography.unFocused, { textTransform: 'capitalize' }] as unknown as TextStyle
+    const iconCon = [styles.iconCon, { padding: padding, backgroundColor: selectedFeed === feed ? Colors.multi.lightest[index] : 'transparent', height: conWidth, width: conWidth }] as unknown as ViewStyle
+    const icon = selectedFeed === feed ? { width: iconWidth, height: iconWidth } : { width: iconWidth + 5, height: iconWidth + 5 } as ImageStyle
+    const text = [selectedFeed === feed ? Typography.focused : Typography.unFocused, { textTransform: 'capitalize' }] as unknown as TextStyle
     return { iconCon, icon, text }
-  }, [feeds])
+  }, [selectedFeed])
 
   return (
     <HScrollContainer b={0}>
       { buttons.map((button, index) => {
         const { iconCon, icon, text } = buttonStyles(button.key, index)
         return (
-          <Pressable key={button.key} style={[Spacing.flexColumn, index < buttons.length - 1 ? { marginRight: 15 } : {}]} onPress={() => handleSelect(button.key)}>
+          <Pressable key={button.key} style={[Spacing.flexColumn, index < buttons.length - 1 ? { marginRight: 15 } : {}]} onPress={() => onSelect(button.key)}>
             <View style={iconCon}>
               <Icon name={button.icon} styles={icon} />
             </View>
@@ -70,6 +57,7 @@ const FeedFilter = ({ feeds, onSelect }: { feeds: Feed[], onSelect: (filter: Fee
     </HScrollContainer>
   )
 }
+
 
 const filters: { key: Filter, label: string }[] = [
   { key: 'all', label: 'All' },
@@ -94,40 +82,36 @@ const FrequencyFilter = ({ filter, onSelect }: { filter: Filter, onSelect: (sele
   </HScrollContainer>
 )
 
-const FilterList = ({ data, filter }: { data: { care: Care[], health: Health[] }, filter: Filter }) => {
+const FilterList = ({ tasks, filter }: { tasks: Task[], filter: Filter }) => {
   const activeDate = useFullActiveDate()
 
-  const filtered = Object.entries(data).flatMap(([key, items]) => {
-    const list = filter === 'all' ? items : items.filter(item => item.frequency.type === filter)
-    return list
-      .filter(item => isItemVisible(item, activeDate))
-      .map(item => ({ type: key as Feed, item }))
-  })
+  const filtered = (filter === 'all' ? tasks : tasks.filter(task => task.frequency.type === filter))
+    .filter(task => isItemVisible(task, activeDate))
+    .map(task => ({ type: 'tasks' as const, item: task }))
 
-  return (
-    <DraggableList initialData={filtered} />
-  )
+  return <DraggableList initialData={filtered} />
 }
 
 const HomeFeed = ({ navigation }: HomeFeedProps) => {
-  const [feeds, setFeeds] = useState<Feed[]>(defaultFeeds)
+  const [selectedFeed, setSelectedFeed] = useState<Feed>(defaultFeeds[0])
   const [filter, setFilter] = useState<Filter>('all')
   //queries
   const { data, isFetching, isSuccess, isError } = useGetProfile()
 
   return (  
     <View style={Spacing.fullScreenDown}>
-      <FeedFilter feeds={feeds} onSelect={setFeeds} />
+      <FeedFilter selectedFeed={selectedFeed} onSelect={setSelectedFeed} />
 
       { isFetching && <Loader /> }
       { isError && <ErrorImage /> }
 
       { isSuccess && <>
-        { (feeds.includes('care') && data.cares.length > 0) || (feeds.includes('health') && data.healths.length > 0) ? <>
-          <FrequencyFilter filter={filter} onSelect={(selected: Filter) => setFilter(selected)} />
-          <FilterList data={{ care: data.cares, health: data.healths }} filter={filter} />
-          </> : <PlaceHolder type={'care'} />
-        }
+        { selectedFeed === 'tasks' ? 
+          data.tasks.length > 0 ? <>
+            <FrequencyFilter filter={filter} onSelect={(selected: Filter) => setFilter(selected)} />
+            <FilterList tasks={data.tasks} filter={filter} />
+          </> : <PlaceHolder type={'task'} />
+        : <PlaceHolder type={'event'} /> }
       </> }
     </View>
   )

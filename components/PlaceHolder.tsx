@@ -8,15 +8,14 @@ import { useNavigation } from "@react-navigation/native"
 import { StackScreenNavigationProp } from "@navigation/types"
 
 type Props = {
-  type: 'pet' | 'care' | 'health' | DetailType
+  type: 'pet' | 'task' | 'event' | DetailType
   petId?: string
 }
 
 const map = {
   pet: { text: 'pet', subText: '' },
-  care: { text: 'task', subText: '' },
-  health: { text: 'vet visit', subText: '' },
-  id: { text: 'ID', subText: '' },
+  task: { text: 'task', subText: '' },
+  event: { text: 'event', subText: '' },
   service: { text: 'service', subText: '' },
   medication: { text: 'medication', subText: '' },
   condition: { text: 'health condition', subText: '' },
@@ -32,8 +31,8 @@ const PlaceHolder = ({ type, petId }: Props) => {
       <LottieView source={require('@assets/animations/cat-yarn.json')} autoPlay loop style={styles.catAnimation} />
       <TransparentButton title={`Add ${map[type].text}`} onPress={() => {
           type === 'pet' ? navigation.navigate('PetCreate') 
-          : type === 'care' ? navigation.navigate('CareCreate')
-          : type === 'health' ? navigation.navigate('HealthCreate')
+          : type === 'task' ? navigation.navigate('CareCreate')
+          : type === 'event' ? navigation.navigate('HealthCreate')
           : navigation.navigate('PetEditDetails', { type, petId })
         }} color={color} bdColor={color} 
       />

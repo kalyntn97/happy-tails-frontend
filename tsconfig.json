@@ -19,6 +19,7 @@
       "@pet/*": [ "features/pet/*"],
       "@care/*": [ "features/care/*"],
       "@health/*": [ "features/health/*"],
+      "@task/*": [ "features/task/*"],
       "@stat/*": [ "features/stat/*"],
     }
   },
